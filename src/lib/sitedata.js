@@ -20,6 +20,7 @@ export const SITEDATA_KEYS = {
   cartoEdges: 'angelo_admin_cartography_edges',
   homepage:   'angelo_admin_homepage',
   bio:        'angelo_admin_bio',
+  visibility: 'angelo_admin_visibility',
 };
 
 /* ===================================================================
@@ -189,7 +190,44 @@ export const getBio = () => {
       href: l.href ?? '',
       image: l.image ?? '',
       description: l.description ?? '',
+      hidden: l.hidden ?? false,
     })),
   };
 };
 export const setBio = (v) => writeJson(SITEDATA_KEYS.bio, v);
+
+/* ===================================================================
+   VISIBILITY — controla o que aparece no site público
+   (por módulo: blog, cursos, materiais, trilhas, etc)
+=================================================================== */
+
+export const DEFAULT_VISIBILITY = {
+  // Módulos com página dedicada: oculta página + preview na home + link no nav
+  blog:       true,
+  cursos:     true,
+  materiais:  true,
+  trilhas:    true,
+  bio:        true,
+  // Seções só da home
+  prelude:      true,
+  about:        true,
+  cartografia:  true,
+  depoimentos:  true,
+  faq:          true,
+  contato:      true,
+  // Extras
+  whatsappFlutuante: true,
+};
+
+export const getSiteVisibility = () => {
+  const stored = readJson(SITEDATA_KEYS.visibility, null);
+  if (!stored) return DEFAULT_VISIBILITY;
+  return { ...DEFAULT_VISIBILITY, ...stored };
+};
+export const setSiteVisibility = (v) => writeJson(SITEDATA_KEYS.visibility, v);
+
+/** É visível? Safe em SSR — devolve default quando sem window. */
+export const isVisible = (key) => {
+  if (typeof window === 'undefined') return DEFAULT_VISIBILITY[key] ?? true;
+  return getSiteVisibility()[key] ?? true;
+};

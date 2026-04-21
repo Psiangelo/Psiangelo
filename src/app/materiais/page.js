@@ -21,6 +21,8 @@ import {
   GoldenArc,
   VesicaPiscis,
 } from '@/components/illustrations';
+import HiddenPlaceholder from '@/components/HiddenPlaceholder';
+import { useVisibility } from '@/lib/useVisibility';
 
 /* ========================================
    HERO
@@ -537,6 +539,10 @@ function Catalog() {
    PAGE
 ======================================== */
 export default function MateriaisPage() {
+  const { visibility, ready } = useVisibility();
+  if (ready && !visibility.materiais) {
+    return <HiddenPlaceholder title="Materiais indisponíveis" />;
+  }
   return (
     <>
       <Navbar />

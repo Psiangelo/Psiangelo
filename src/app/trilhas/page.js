@@ -21,6 +21,8 @@ import {
   DottedCircle,
   HexRing,
 } from '@/components/illustrations';
+import HiddenPlaceholder from '@/components/HiddenPlaceholder';
+import { useVisibility } from '@/lib/useVisibility';
 
 const materialMap = Object.fromEntries(materials.map((m) => [m.id, m]));
 
@@ -195,11 +197,16 @@ function TrilhaSection({ trilha, index }) {
 }
 
 export default function TrilhasPage() {
+  const { visibility, ready } = useVisibility();
   const [trilhas, setTrilhasList] = useState(TRILHAS_DEFAULT);
 
   useEffect(() => {
     setTrilhasList(getTrilhas());
   }, []);
+
+  if (ready && !visibility.trilhas) {
+    return <HiddenPlaceholder title="Trilhas indisponíveis" />;
+  }
 
   return (
     <>

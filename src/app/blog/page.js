@@ -15,6 +15,8 @@ import {
   TriangleCompass,
   GoldenArc,
 } from '@/components/illustrations';
+import HiddenPlaceholder from '@/components/HiddenPlaceholder';
+import { useVisibility } from '@/lib/useVisibility';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 const SERIES_STORAGE_KEY = 'angelo_admin_blog_series';
@@ -542,6 +544,7 @@ function FeaturedCover({ post, onClick }) {
 
 /* ====== BLOG PAGE ====== */
 export default function BlogPage() {
+  const { visibility, ready } = useVisibility();
   const [allPosts, setAllPosts] = useState([]);
   const [seriesList, setSeriesList] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -611,6 +614,10 @@ export default function BlogPage() {
     window.history.pushState({}, '', `?post=${post.slug || post.id}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  if (ready && !visibility.blog) {
+    return <HiddenPlaceholder title="Blog indisponível" />;
+  }
 
   return (
     <>

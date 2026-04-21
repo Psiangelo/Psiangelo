@@ -16,6 +16,8 @@ import {
   HexRing,
   DottedCircle,
 } from '@/components/illustrations';
+import HiddenPlaceholder from '@/components/HiddenPlaceholder';
+import { useVisibility } from '@/lib/useVisibility';
 
 /* ========================================
    ANIMATION VARIANTS
@@ -139,6 +141,7 @@ function loadCategories() {
    MAIN PAGE COMPONENT
 ======================================== */
 export default function CursosPage() {
+  const { visibility, ready } = useVisibility();
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [currentView, setCurrentView] = useState('listing');
@@ -201,6 +204,10 @@ export default function CursosPage() {
         [selectedCourse.id]: getProgress(selectedCourse.id),
       }));
     }
+  }
+
+  if (ready && !visibility.cursos) {
+    return <HiddenPlaceholder title="Cursos indisponíveis" />;
   }
 
   return (

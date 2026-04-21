@@ -1,3 +1,5 @@
+'use client';
+
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/home/Hero';
@@ -16,6 +18,7 @@ import {
   AlchemyDivider,
   DiamondChain,
 } from '@/components/illustrations';
+import { useVisibility } from '@/lib/useVisibility';
 
 function Break({ children, pad = 'py-4' }) {
   return (
@@ -24,33 +27,43 @@ function Break({ children, pad = 'py-4' }) {
 }
 
 export default function HomePage() {
+  const { visibility: v } = useVisibility();
+
   return (
     <>
       <Navbar />
       <main>
         <Hero />
-        <Prelude />
-        <About />
-        <Break>
-          <MandalaDivider size={56} opacity={0.3} />
-        </Break>
-        <Cartography />
-        <Break pad="py-2">
-          <AlchemyDivider />
-        </Break>
-        <StudyPaths />
-        <MaterialsPreview />
-        <Break pad="py-2">
-          <DiamondChain />
-        </Break>
-        <CoursesPreview />
-        <BlogPreview />
-        <Break pad="py-2">
-          <AlchemyDivider />
-        </Break>
-        <Testimonials />
-        <FAQ />
-        <ContactCTA />
+        {v.prelude && <Prelude />}
+        {v.about && <About />}
+        {(v.about || v.prelude) && v.cartografia && (
+          <Break>
+            <MandalaDivider size={56} opacity={0.3} />
+          </Break>
+        )}
+        {v.cartografia && <Cartography />}
+        {v.cartografia && v.trilhas && (
+          <Break pad="py-2">
+            <AlchemyDivider />
+          </Break>
+        )}
+        {v.trilhas && <StudyPaths />}
+        {v.materiais && <MaterialsPreview />}
+        {v.materiais && (v.cursos || v.blog) && (
+          <Break pad="py-2">
+            <DiamondChain />
+          </Break>
+        )}
+        {v.cursos && <CoursesPreview />}
+        {v.blog && <BlogPreview />}
+        {v.blog && v.depoimentos && (
+          <Break pad="py-2">
+            <AlchemyDivider />
+          </Break>
+        )}
+        {v.depoimentos && <Testimonials />}
+        {v.faq && <FAQ />}
+        {v.contato && <ContactCTA />}
       </main>
       <Footer showMaterialsCta={false} />
     </>

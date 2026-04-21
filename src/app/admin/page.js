@@ -9,6 +9,7 @@ import TrilhasManager from '@/components/admin/TrilhasManager';
 import CartographyManager from '@/components/admin/CartographyManager';
 import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
+import VisibilityManager from '@/components/admin/VisibilityManager';
 
 // ─── Constants ───────────────────────────────────────────────────────
 const STORAGE_KEYS = {
@@ -749,6 +750,7 @@ function MobileBottomNav({ activeTab, setActiveTab, materialsList, testimonialsL
     { id: 'courses', label: 'Cursos', icon: IconVideo },
     { id: 'testimonials', label: 'Depoimentos', icon: IconChat, badge: testimonialsList.length },
     { id: 'faqs', label: 'FAQ', icon: IconHelpCircle, badge: faqsList.length },
+    { id: 'visibility', label: 'Visível', icon: IconGrid },
     { id: 'settings', label: 'Config', icon: IconGear },
     { id: 'actions', label: 'Acoes', icon: IconZap },
   ];
@@ -2596,6 +2598,7 @@ function AdminPanel() {
     { id: 'courses', label: 'Cursos', badge: null },
     { id: 'testimonials', label: 'Depoimentos', badge: testimonialsList.length },
     { id: 'faqs', label: 'FAQ', badge: faqsList.length },
+    { id: 'visibility', label: 'Visibilidade', badge: null },
     { id: 'settings', label: 'Configuracoes', badge: null },
     { id: 'actions', label: 'Acoes', badge: null },
   ];
@@ -2756,6 +2759,13 @@ function AdminPanel() {
               key="faqs"
               faqsList={faqsList}
               setFaqsList={setFaqsList}
+              addToast={addToast}
+              addLogEntry={addLogEntry}
+            />
+          )}
+          {activeTab === 'visibility' && (
+            <VisibilityManager
+              key="visibility"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

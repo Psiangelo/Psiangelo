@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import { getBio, DEFAULT_BIO } from '@/lib/sitedata';
 import { img } from '@/lib/basepath';
 import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
+import HiddenPlaceholder from '@/components/HiddenPlaceholder';
+import { useVisibility } from '@/lib/useVisibility';
 
 /**
  * /bio — página mobile-first tipo linktree.
@@ -203,11 +205,16 @@ function Gallery({ images }) {
 }
 
 export default function BioPage() {
+  const { visibility, ready } = useVisibility();
   const [bio, setBio] = useState(DEFAULT_BIO);
 
   useEffect(() => {
     setBio(getBio());
   }, []);
+
+  if (ready && !visibility.bio) {
+    return <HiddenPlaceholder title="Bio indisponível" />;
+  }
 
   return (
     <main className="min-h-screen bg-bg grain-soft relative overflow-hidden">

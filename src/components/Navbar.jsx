@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useVisibility } from '@/lib/useVisibility';
 
 const PsiGlyph = ({ className = '' }) => (
   <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="0.7">
@@ -29,14 +30,16 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const links = [
-    { href: '/', label: 'Home' },
-    { href: '/#sobre', label: 'Sobre' },
-    { href: '/trilhas', label: 'Trilhas' },
-    { href: '/materiais', label: 'Materiais' },
-    { href: '/cursos', label: 'Cursos' },
-    { href: '/blog', label: 'Blog' },
+  const { visibility: v } = useVisibility();
+  const allLinks = [
+    { href: '/', label: 'Home', key: null },
+    { href: '/#sobre', label: 'Sobre', key: 'about' },
+    { href: '/trilhas', label: 'Trilhas', key: 'trilhas' },
+    { href: '/materiais', label: 'Materiais', key: 'materiais' },
+    { href: '/cursos', label: 'Cursos', key: 'cursos' },
+    { href: '/blog', label: 'Blog', key: 'blog' },
   ];
+  const links = allLinks.filter((l) => l.key == null || v[l.key]);
 
   const isActive = (href) => {
     if (href === '/') return pathname === '/';
