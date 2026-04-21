@@ -309,11 +309,22 @@ export default function BioManager({ addToast, addLogEntry }) {
         <div className="space-y-4">
           {data.links?.map((link, idx) => {
             const preview = resolveLinkImage(link.image);
+            const isHidden = !!link.hidden;
             return (
               <div
                 key={idx}
-                className="bg-[#0E0C0A] border border-[rgba(180,140,80,0.08)] rounded-lg p-4 space-y-3"
+                className={`bg-[#0E0C0A] border rounded-lg p-4 space-y-3 transition-opacity ${
+                  isHidden
+                    ? 'border-[rgba(180,140,80,0.04)] opacity-50'
+                    : 'border-[rgba(180,140,80,0.08)]'
+                }`}
               >
+                {isHidden && (
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-[#6E6458] tracking-[0.2em] uppercase">
+                    <span className="block w-1.5 h-1.5 rounded-full bg-[#6E6458]" />
+                    Oculto — não aparece no /bio
+                  </div>
+                )}
                 <div className="flex items-start gap-3">
                   {/* Preview miniatura */}
                   <div className="w-16 h-16 flex-shrink-0 bg-[#1A1714] border border-[rgba(180,140,80,0.12)] rounded overflow-hidden flex items-center justify-center">
@@ -358,6 +369,17 @@ export default function BioManager({ addToast, addLogEntry }) {
 
                   {/* Controles */}
                   <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => updateLink(idx, 'hidden', !isHidden)}
+                      className={
+                        isHidden
+                          ? 'px-3 py-1.5 border border-[rgba(180,140,80,0.4)] text-[#B48C50] text-[10px] font-sans tracking-wider uppercase rounded-lg hover:bg-[rgba(180,140,80,0.1)] transition-colors'
+                          : BTN_SECONDARY
+                      }
+                      title={isHidden ? 'Publicar (mostrar no /bio)' : 'Ocultar (não mostrar no /bio)'}
+                    >
+                      {isHidden ? 'publicar' : 'ocultar'}
+                    </button>
                     <button
                       onClick={() => moveLink(idx, -1)}
                       disabled={idx === 0}

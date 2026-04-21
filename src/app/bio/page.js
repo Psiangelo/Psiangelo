@@ -300,11 +300,13 @@ export default function BioPage() {
           <Gallery images={bio.images} />
         </div>
 
-        {/* Botões / Cards */}
+        {/* Botões / Cards — oculta links marcados como hidden */}
         <div className="w-full flex flex-col gap-3 mb-10">
-          {bio.links.map((link, i) => (
-            <LinkButton key={i} link={link} index={i} />
-          ))}
+          {bio.links
+            .filter((link) => !link.hidden)
+            .map((link, i) => (
+              <LinkButton key={i} link={link} index={i} />
+            ))}
         </div>
 
         {/* Footer leve */}
