@@ -57,7 +57,7 @@ function isExternal(href) {
 function resolveImageSrc(url) {
   if (!url) return null;
   if (url.startsWith('http')) return url;
-  if (url.startsWith('/ANGELO-PSICOLOGIA')) return url;
+  if (url.startsWith('/Psiangelo')) return url;
   if (url.startsWith('/')) return img(url);
   return url;
 }
@@ -173,7 +173,7 @@ function Gallery({ images }) {
       className={`grid gap-2 w-full ${single ? 'grid-cols-1' : 'grid-cols-2'}`}
     >
       {images.map((item, i) => {
-        const src = item.url?.startsWith('http') || item.url?.startsWith('/ANGELO-PSICOLOGIA')
+        const src = item.url?.startsWith('http') || item.url?.startsWith('/Psiangelo')
           ? item.url
           : item.url?.startsWith('/')
             ? img(item.url)

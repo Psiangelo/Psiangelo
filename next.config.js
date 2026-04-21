@@ -4,8 +4,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/ANGELO-PSICOLOGIA',
-  assetPrefix: '/ANGELO-PSICOLOGIA/',
+  basePath: '/Psiangelo',
+  assetPrefix: '/Psiangelo/',
 };
 
 module.exports = nextConfig;

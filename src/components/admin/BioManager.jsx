@@ -84,8 +84,8 @@ export default function BioManager({ addToast, addLogEntry }) {
   const resolveLinkImage = (url) => {
     if (!url) return null;
     if (url.startsWith('http')) return url;
-    if (url.startsWith('/ANGELO-PSICOLOGIA')) return url;
-    if (url.startsWith('/')) return `/ANGELO-PSICOLOGIA${url}`;
+    if (url.startsWith('/Psiangelo')) return url;
+    if (url.startsWith('/')) return `/Psiangelo${url}`;
     return url;
   };
 
@@ -118,7 +118,7 @@ export default function BioManager({ addToast, addLogEntry }) {
         </div>
         <div className="flex gap-2">
           <a
-            href="/ANGELO-PSICOLOGIA/bio"
+            href="/Psiangelo/bio"
             target="_blank"
             rel="noopener noreferrer"
             className={BTN_SECONDARY}
@@ -214,10 +214,10 @@ export default function BioManager({ addToast, addLogEntry }) {
                     src={
                       image.url.startsWith('http')
                         ? image.url
-                        : image.url.startsWith('/ANGELO-PSICOLOGIA')
+                        : image.url.startsWith('/Psiangelo')
                           ? image.url
                           : image.url.startsWith('/')
-                            ? `/ANGELO-PSICOLOGIA${image.url}`
+                            ? `/Psiangelo${image.url}`
                             : image.url
                     }
                     alt={image.alt || ''}
