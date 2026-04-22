@@ -49,31 +49,90 @@ function MateriaisHero() {
 }
 
 /* ========================================
-   EXPLANATION — compacta, 1 linha de 3 bullets
+   EXPLANATION — compacta, com ícones SVG
 ======================================== */
+function IconGraph() {
+  // Grafo de conhecimento (Obsidian) — nós conectados
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+      <line x1="20" y1="20" x2="8"  y2="10" opacity="0.5" />
+      <line x1="20" y1="20" x2="32" y2="10" opacity="0.5" />
+      <line x1="20" y1="20" x2="8"  y2="30" opacity="0.5" />
+      <line x1="20" y1="20" x2="32" y2="30" opacity="0.5" />
+      <line x1="8"  y1="10" x2="8"  y2="30" opacity="0.3" />
+      <line x1="32" y1="10" x2="32" y2="30" opacity="0.3" />
+      <circle cx="20" cy="20" r="3.2" fill="currentColor" fillOpacity="0.2" />
+      <circle cx="8"  cy="10" r="2.2" fill="currentColor" fillOpacity="0.15" />
+      <circle cx="32" cy="10" r="2.2" fill="currentColor" fillOpacity="0.15" />
+      <circle cx="8"  cy="30" r="2.2" fill="currentColor" fillOpacity="0.15" />
+      <circle cx="32" cy="30" r="2.2" fill="currentColor" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconMindmap() {
+  // Mapa mental — nó central com 6 raios
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+      {Array.from({ length: 6 }).map((_, i) => {
+        const a = (i * 60 * Math.PI) / 180;
+        const x1 = 20 + Math.cos(a) * 6;
+        const y1 = 20 + Math.sin(a) * 6;
+        const x2 = 20 + Math.cos(a) * 15;
+        const y2 = 20 + Math.sin(a) * 15;
+        const cx = 20 + Math.cos(a) * 17;
+        const cy = 20 + Math.sin(a) * 17;
+        return (
+          <g key={i}>
+            <line x1={x1} y1={y1} x2={x2} y2={y2} opacity="0.5" />
+            <circle cx={cx} cy={cy} r="1.8" fill="currentColor" fillOpacity="0.25" />
+          </g>
+        );
+      })}
+      <circle cx="20" cy="20" r="4" fill="currentColor" fillOpacity="0.22" />
+      <circle cx="20" cy="20" r="4" />
+    </svg>
+  );
+}
+
+function IconEye() {
+  // Olho — percepção clínica
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 20 Q 20 6, 36 20 Q 20 34, 4 20 Z" opacity="0.7" />
+      <circle cx="20" cy="20" r="5.5" />
+      <circle cx="20" cy="20" r="2.2" fill="currentColor" fillOpacity="0.6" />
+      <circle cx="21.8" cy="18.4" r="0.9" fill="currentColor" fillOpacity="0.9" stroke="none" />
+    </svg>
+  );
+}
+
 function Explanation() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   const features = [
-    { title: 'Feitos no Obsidian',     desc: 'Resumos interconectados com links entre conceitos.' },
-    { title: 'Mapas mentais completos', desc: 'Diagramas detalhados — alguns bastam por si só.' },
-    { title: 'Percepção clínica',      desc: 'Misturados com experiência de atendimento.' },
+    { icon: <IconGraph />,   title: 'Feitos no Obsidian',      desc: 'Resumos interconectados com links entre conceitos.' },
+    { icon: <IconMindmap />, title: 'Mapas mentais completos', desc: 'Diagramas detalhados — alguns bastam por si só.' },
+    { icon: <IconEye />,     title: 'Percepção clínica',       desc: 'Misturados com experiência de atendimento.' },
   ];
 
   return (
-    <section ref={ref} className="py-10 md:py-14 px-5 sm:px-6 md:px-12 bg-bg-warm section-border-t section-border-b">
+    <section ref={ref} className="py-12 md:py-16 px-5 sm:px-6 md:px-12 bg-bg-warm section-border-t section-border-b">
       <motion.div
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         variants={stagger}
         className="max-w-[1280px] mx-auto"
       >
-        <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
+        <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
           {features.map((feat) => (
-            <motion.div key={feat.title} variants={fadeUp} className="border-l-2 border-accent/30 pl-4">
-              <h3 className="font-serif text-base text-text-bright leading-tight mb-1.5">{feat.title}</h3>
-              <p className="text-[0.85rem] text-text-dim leading-[1.7]">{feat.desc}</p>
+            <motion.div key={feat.title} variants={fadeUp} className="flex items-start gap-4">
+              <div className="flex-shrink-0 text-accent mt-0.5">{feat.icon}</div>
+              <div className="min-w-0">
+                <h3 className="font-serif text-base text-text-bright leading-tight mb-1.5">{feat.title}</h3>
+                <p className="text-[0.85rem] text-text-dim leading-[1.7]">{feat.desc}</p>
+              </div>
             </motion.div>
           ))}
         </motion.div>
