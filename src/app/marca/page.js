@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { LOGO_VARIANTS } from '@/components/marca/LogoVariants';
+import { LOGO_GROUPS } from '@/components/marca/LogoVariants';
 
 export default function MarcaPage() {
   const [bg, setBg] = useState('dark');
@@ -26,16 +26,14 @@ export default function MarcaPage() {
               Marca <em className="italic text-accent">Psiangelo</em>
             </h1>
             <p className="text-[0.98rem] text-text-dim leading-[1.8] max-w-2xl">
-              Dez variações para escolher uma direção. Cada uma explora um recorte
-              diferente do nome — do monograma puro ao selo alquímico, passando por
-              soluções editoriais e geométricas. Clique em qualquer uma para ampliar;
-              use o seletor de fundo para ver como fica em contextos diferentes.
+              Duas famílias em destaque — <strong className="text-text-bright">Geométrico</strong> e <strong className="text-text-bright">Alquímico</strong> — com 5 variações cada.
+              Clique em qualquer card pra ampliar; use o seletor de fundo pra ver em contextos diferentes.
             </p>
           </div>
         </section>
 
         {/* Controles */}
-        <section className="px-5 sm:px-6 md:px-12 mb-8">
+        <section className="px-5 sm:px-6 md:px-12 mb-8 sticky top-[60px] z-40 bg-bg/90 backdrop-blur py-3 border-b border-border-subtle/50">
           <div className="max-w-[1180px] mx-auto flex items-center gap-3 flex-wrap">
             <span className="meta-caps-accent mr-2">Fundo</span>
             <div className="inline-flex border border-border-subtle">
@@ -55,23 +53,54 @@ export default function MarcaPage() {
                 </button>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* Grid de logos */}
-        <section className="px-5 sm:px-6 md:px-12 pb-16">
-          <div className="max-w-[1180px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
-            {LOGO_VARIANTS.map((v, i) => (
-              <LogoCard
-                key={v.id}
-                variant={v}
-                bgClass={bgClass}
-                index={i}
-                onExpand={() => setSelected(v)}
-              />
+            {/* Anchor jumps */}
+            <span className="meta-caps-accent ml-6 mr-2 hidden md:inline">Ir para</span>
+            {LOGO_GROUPS.map((g) => (
+              <a
+                key={g.key}
+                href={`#${g.key}`}
+                className="hidden md:inline font-mono text-[0.58rem] tracking-[0.22em] uppercase text-text-dim hover:text-accent transition-colors"
+              >
+                {g.label}
+              </a>
             ))}
           </div>
         </section>
+
+        {/* Seções por família */}
+        {LOGO_GROUPS.map((group) => (
+          <section key={group.key} id={group.key} className="px-5 sm:px-6 md:px-12 pb-14">
+            <div className="max-w-[1180px] mx-auto">
+              <header className="mb-6 flex items-baseline gap-4">
+                <div className="min-w-0">
+                  <p className="meta-caps-accent mb-1">{group.eyebrow}</p>
+                  <h2 className="font-serif text-2xl md:text-3xl text-text-bright leading-tight">
+                    {group.label}
+                  </h2>
+                  <p className="text-[0.9rem] text-text-dim mt-2 max-w-2xl leading-[1.7]">
+                    {group.intro}
+                  </p>
+                </div>
+                <span className="flex-shrink-0 font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">
+                  {group.variants.length}
+                </span>
+              </header>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {group.variants.map((v, i) => (
+                  <LogoCard
+                    key={v.id}
+                    variant={v}
+                    bgClass={bgClass}
+                    index={i}
+                    onExpand={() => setSelected(v)}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        ))}
       </main>
 
       {/* Modal de expansão */}
@@ -89,7 +118,7 @@ export default function MarcaPage() {
             </div>
             <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
               <div>
-                <p className="meta-caps-accent mb-1">{`#${String(LOGO_VARIANTS.findIndex(v => v.id === selected.id) + 1).padStart(2, '0')} · ${selected.name}`}</p>
+                <p className="meta-caps-accent mb-1">{selected.name}</p>
                 <p className="text-text-dim text-[0.9rem] max-w-2xl">{selected.desc}</p>
               </div>
               <button
@@ -109,15 +138,14 @@ export default function MarcaPage() {
 }
 
 function LogoCard({ variant, bgClass, index, onExpand }) {
-  const { Comp, name, desc, id } = variant;
+  const { Comp, name, desc } = variant;
   const number = String(index + 1).padStart(2, '0');
 
   return (
     <article className="group border border-border-subtle hover:border-accent/40 transition-colors bg-bg-card">
-      {/* Preview */}
       <button
         onClick={onExpand}
-        className={`${bgClass} w-full flex items-center justify-center p-6 md:p-10 cursor-zoom-in border-b border-border-subtle`}
+        className={`${bgClass} w-full flex items-center justify-center p-6 md:p-10 cursor-zoom-in border-b border-border-subtle min-h-[220px]`}
         aria-label={`Ampliar logo ${name}`}
       >
         <div className="w-full max-w-[600px]">
@@ -125,7 +153,6 @@ function LogoCard({ variant, bgClass, index, onExpand }) {
         </div>
       </button>
 
-      {/* Meta */}
       <div className="p-5 flex items-start justify-between gap-4">
         <div>
           <div className="flex items-baseline gap-3 mb-1">
