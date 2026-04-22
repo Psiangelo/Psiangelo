@@ -283,6 +283,8 @@ function FeaturedCourseHero({ course, progress, onSelect }) {
           alt={course.title}
           className="absolute inset-0 w-full h-full object-cover"
           referrerPolicy="no-referrer"
+          fetchPriority="high"
+          decoding="async"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-bg-warm via-bg-card to-bg" />
@@ -755,6 +757,8 @@ function CourseDetail({ course, progress, onNavigate }) {
                   src={course.thumbnail}
                   alt={course.title}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </motion.div>
             )}

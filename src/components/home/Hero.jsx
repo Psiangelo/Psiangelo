@@ -7,13 +7,14 @@ import CursorGlow from '@/components/ui/CursorGlow';
 import { PortraitHero } from '@/components/ui/Portrait';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useIsMobile, useReducedMotion } from '@/lib/useMediaQuery';
 import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
 
-function FloatingParticles() {
+function FloatingParticles({ count = 16 }) {
   const [particles, setParticles] = useState([]);
 
   useEffect(() => {
-    const pts = Array.from({ length: 16 }, (_, i) => ({
+    const pts = Array.from({ length: count }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
@@ -24,7 +25,7 @@ function FloatingParticles() {
       opacity: 0.08 + Math.random() * 0.12,
     }));
     setParticles(pts);
-  }, []);
+  }, [count]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -109,6 +110,9 @@ export default function Hero() {
     DEFAULT_HOMEPAGE.hero,
     SITEDATA_KEYS.homepage,
   );
+  const isMobile = useIsMobile();
+  const reducedMotion = useReducedMotion();
+  const showRichFX = !isMobile && !reducedMotion;
 
   const letterAnim = {
     hidden: { opacity: 0, y: 50 },
@@ -134,16 +138,16 @@ export default function Hero() {
       <div className="ambient-glow absolute top-[12%] left-[35%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px]" />
       <div className="absolute bottom-0 left-0 w-full h-[300px] bg-gradient-to-t from-accent/[0.02] to-transparent pointer-events-none" />
 
-      {/* Céu estrelado — camada mais distante */}
-      <StarField count={70} maxOpacity={0.7} accentChance={0.22} />
-      <NebulaField count={8} />
-      <ShootingStars count={3} />
+      {/* Céu estrelado — camada mais distante (reduzido em mobile/reduced-motion) */}
+      <StarField count={showRichFX ? 70 : 25} maxOpacity={0.7} accentChance={0.22} />
+      {showRichFX && <NebulaField count={8} />}
+      {showRichFX && <ShootingStars count={3} />}
 
-      {/* Mandala translúcida no fundo */}
-      <MandalaBackdrop />
+      {/* Mandala translúcida no fundo (desktop apenas) */}
+      {showRichFX && <MandalaBackdrop />}
 
-      {/* Floating particles */}
-      <FloatingParticles />
+      {/* Floating particles — menos em mobile */}
+      <FloatingParticles count={showRichFX ? 16 : 6} />
 
       {/* Subtle grid pattern */}
       <div

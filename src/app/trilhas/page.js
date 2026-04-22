@@ -23,10 +23,13 @@ import {
 } from '@/components/illustrations';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
+import { useTrilhaProgress } from '@/lib/useTrilhaProgress';
 
 const materialMap = Object.fromEntries(materials.map((m) => [m.id, m]));
 
-function StageCard({ stage, idx }) {
+function StageCard({ stage, idx, trilhaId }) {
+  const { isStageDone, toggleStage } = useTrilhaProgress();
+  const done = isStageDone(trilhaId, stage.title);
   const linkedMaterial = stage.material ? materialMap[stage.material] : null;
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind;
   const number = String(idx + 1).padStart(2, '0');
@@ -43,7 +46,7 @@ function StageCard({ stage, idx }) {
   const external = stage.href && stage.href.startsWith('http');
 
   const inner = (
-    <article className="group relative bg-bg-card border border-border-subtle hover:border-border-hover transition-all duration-300 overflow-hidden grid grid-cols-1 md:grid-cols-[180px_1fr] min-h-[180px]">
+    <article className={`group relative bg-bg-card border hover:border-border-hover transition-all duration-300 overflow-hidden grid grid-cols-1 md:grid-cols-[180px_1fr] min-h-[180px] ${done ? 'border-accent/50' : 'border-border-subtle'}`}>
       {/* Coluna imagem ou número grande */}
       <div className="relative bg-bg-warm border-b md:border-b-0 md:border-r border-border-subtle overflow-hidden min-h-[140px] md:min-h-[180px]">
         {image ? (
@@ -53,6 +56,8 @@ function StageCard({ stage, idx }) {
               alt={linkedMaterial.title}
               className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity duration-500"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-bg via-bg/70 to-transparent" />
             <span className="absolute bottom-3 left-4 font-serif italic text-[3.5rem] leading-none text-accent opacity-90 select-none">
@@ -75,6 +80,26 @@ function StageCard({ stage, idx }) {
           <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.18em] uppercase">
             Etapa {idx + 1}
           </span>
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleStage(trilhaId, stage.title); }}
+            aria-pressed={done}
+            aria-label={done ? 'Desmarcar etapa concluída' : 'Marcar etapa como concluída'}
+            className={`ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 border font-mono text-[0.55rem] tracking-[0.18em] uppercase transition-colors ${
+              done
+                ? 'border-accent bg-accent/15 text-accent'
+                : 'border-border-subtle text-text-dim/60 hover:border-accent/50 hover:text-accent'
+            }`}
+          >
+            <span className={`w-3 h-3 border flex items-center justify-center ${done ? 'border-accent bg-accent' : 'border-border-hover'}`}>
+              {done && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="#0E0C0A" strokeWidth="3" className="w-full h-full">
+                  <path d="M5 12l5 5L20 7" />
+                </svg>
+              )}
+            </span>
+            {done ? 'Concluída' : 'Marcar'}
+          </button>
         </div>
 
         <h3 className="font-serif text-xl text-text-bright leading-tight mb-2 group-hover:text-accent transition-colors">
@@ -116,6 +141,9 @@ function TrilhaSection({ trilha, index }) {
   const inView = useInView(ref, { once: true, margin: '-100px' });
   const tone = TRILHA_TONE[trilha.archetype] || TRILHA_TONE.Self;
   const roman = ['I', 'II', 'III', 'IV', 'V'][index] || (index + 1);
+  const { percentOf, resetTrilha, progress } = useTrilhaProgress();
+  const pct = percentOf(trilha);
+  const doneCount = progress[trilha.id]?.completedStages?.length || 0;
   // Cada trilha ganha um accent geométrico diferente
   const Accents = [HexRing, TriangleCompass, DottedCircle];
   const SideAccent = Accents[index % Accents.length];
@@ -166,13 +194,42 @@ function TrilhaSection({ trilha, index }) {
               <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
                 {trilha.stages.length} etapas
               </span>
+              {pct > 0 && (
+                <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1 border border-accent/40 text-accent">
+                  {doneCount}/{trilha.stages.length} concluído
+                </span>
+              )}
             </div>
             <h2 className="font-serif text-[clamp(2rem,4.5vw,3.4rem)] text-text-bright leading-[1.05] mb-3">
               {trilha.name}
             </h2>
-            <p className="font-serif italic text-text-dim text-lg max-w-2xl">
+            <p className="font-serif italic text-text-dim text-lg max-w-2xl mb-5">
               {trilha.subtitle}
             </p>
+
+            {/* Barra de progresso */}
+            <div className="max-w-[520px]">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-mono text-[0.55rem] text-accent tracking-[0.22em] uppercase">Progresso</span>
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-[0.55rem] text-text-dim tracking-[0.22em]">{pct}%</span>
+                  {pct > 0 && (
+                    <button
+                      onClick={() => resetTrilha(trilha.id)}
+                      className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.22em] uppercase hover:text-accent transition-colors"
+                    >
+                      reiniciar
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="h-1 bg-border-subtle overflow-hidden">
+                <div
+                  className="h-full bg-accent transition-all duration-500"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
           </motion.div>
         </header>
 
@@ -186,7 +243,7 @@ function TrilhaSection({ trilha, index }) {
               <motion.div key={i} variants={fadeUp} className="relative">
                 {/* Marker no eixo no desktop */}
                 <span className="hidden lg:block absolute left-[84px] top-7 w-2 h-2 bg-accent rounded-full ring-4 ring-bg z-10" />
-                <StageCard stage={stage} idx={i} />
+                <StageCard stage={stage} idx={i} trilhaId={trilha.id} />
               </motion.div>
             ))}
           </div>

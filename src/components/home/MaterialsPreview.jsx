@@ -56,6 +56,8 @@ function Tile({ item, span, index }) {
               alt={item.title}
               className="w-full h-full object-cover opacity-50 group-hover:opacity-65 group-hover:scale-105 transition-all duration-700"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/35" />
           </div>

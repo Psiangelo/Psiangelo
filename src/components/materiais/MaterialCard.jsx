@@ -77,6 +77,8 @@ export function MaterialCardFull({ material }) {
               alt={material.title}
               className="absolute inset-0 w-full h-full object-cover"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -243,6 +245,8 @@ export function MaterialCardCompact({ material }) {
             alt={material.title}
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

@@ -1,15 +1,33 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { getCartoNodes, getCartoEdges } from '@/lib/sitedata';
+import { glossario } from '@/data/glossario';
 
 // Nós da cartografia — re-exportado de sitedata pra evitar duplicação
 import { DEFAULT_CARTO_NODES as DEFAULT_NODES } from '@/lib/sitedata';
 
 import { DEFAULT_CARTO_EDGES as DEFAULT_EDGES } from '@/lib/sitedata';
+
+// Mapeamento id do nó → slug no glossário (quando existe termo correspondente)
+const NODE_TO_GLOSSARY = {
+  self: 'self',
+  ego: 'ego',
+  persona: 'persona',
+  sombra: 'sombra',
+  anima: 'anima',
+  animus: 'animus',
+  incol: 'inconsciente-coletivo',
+  arc: 'arquetipo',
+  complexo: 'complexo',
+  sincron: 'sincronicidade',
+  individ: 'individuacao',
+  mito: 'mito-pessoal',
+};
 
 const TONE_FILL = {
   accent: '#B48C50',
@@ -21,13 +39,16 @@ const TONE_FILL = {
 function Node({ node, hovered, onHover, onLeave, onClick }) {
   const fill = TONE_FILL[node.tone] || '#B48C50';
   const isActive = hovered === node.id;
-  const isClickable = !!node.href;
+  const hasGlossary = !!NODE_TO_GLOSSARY[node.id];
+  const isClickable = !!node.href || hasGlossary;
   return (
     <g
       onMouseEnter={() => onHover(node.id)}
       onMouseLeave={onLeave}
-      onClick={() => isClickable && onClick(node)}
+      onClick={() => onClick(node)}
       style={{ cursor: isClickable ? 'pointer' : 'default' }}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
     >
       {/* Halo */}
       <circle
@@ -67,9 +88,9 @@ function Node({ node, hovered, onHover, onLeave, onClick }) {
       )}
       <text
         x={node.x}
-        y={node.y + node.size + 16}
+        y={node.y + node.size + 18}
         textAnchor="middle"
-        fontSize="11"
+        className="carto-label"
         fontFamily="'Instrument Sans', system-ui, sans-serif"
         fill={isActive ? '#E8DDD0' : '#B8AD9E'}
         style={{ transition: 'fill 250ms', letterSpacing: '0.02em' }}
@@ -84,6 +105,7 @@ export default function Cartography() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
   const [hovered, setHovered] = useState(null);
+  const [selected, setSelected] = useState(null);
   const [nodes, setNodes] = useState(DEFAULT_NODES);
   const [edges, setEdges] = useState(DEFAULT_EDGES);
 
@@ -92,17 +114,17 @@ export default function Cartography() {
     setEdges(getCartoEdges());
   }, []);
 
+  // ESC fecha drawer
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') setSelected(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const nodeMap = Object.fromEntries(nodes.map((n) => [n.id, n]));
   const hoveredNode = hovered ? nodeMap[hovered] : null;
 
-  const handleNodeClick = (node) => {
-    if (!node.href) return;
-    if (node.href.startsWith('http')) {
-      window.open(node.href, '_blank', 'noopener,noreferrer');
-    } else {
-      window.location.href = node.href;
-    }
-  };
+  const handleNodeClick = (node) => setSelected(node);
 
   return (
     <section
@@ -230,20 +252,142 @@ export default function Cartography() {
                 <span className="font-serif italic text-[1.05rem] text-text-bright">
                   {hoveredNode.axiom}
                 </span>
-                {hoveredNode.href && (
-                  <span className="font-mono text-[0.55rem] text-accent/70 tracking-[0.22em] uppercase ml-auto">
-                    Clique para acessar →
-                  </span>
-                )}
+                <span className="font-mono text-[0.55rem] text-accent/70 tracking-[0.22em] uppercase ml-auto">
+                  Clique para explorar →
+                </span>
               </>
             ) : (
               <span className="font-mono text-[0.6rem] text-text-dim/70 tracking-[0.25em] uppercase">
-                Passe sobre um nó para ler seu axioma · {nodes.length} conceitos · {edges.length} relações
+                Toque em um nó para explorar · {nodes.length} conceitos · {edges.length} relações
               </span>
             )}
           </div>
         </motion.div>
+
+        {/* Drawer de detalhe — slide-in lateral */}
+        <CartographyDrawer
+          node={selected}
+          onClose={() => setSelected(null)}
+          nodes={nodes}
+          edges={edges}
+        />
       </motion.div>
     </section>
+  );
+}
+
+function CartographyDrawer({ node, onClose, nodes, edges }) {
+  if (!node && typeof window === 'undefined') return null;
+
+  const glossarySlug = node ? NODE_TO_GLOSSARY[node.id] : null;
+  const glossaryEntry = glossarySlug ? glossario.find((g) => g.slug === glossarySlug) : null;
+
+  // Nós conectados (via edges)
+  const connected = node
+    ? edges
+        .filter(([a, b]) => a === node.id || b === node.id)
+        .map(([a, b]) => (a === node.id ? b : a))
+        .map((id) => nodes.find((n) => n.id === id))
+        .filter(Boolean)
+    : [];
+
+  return (
+    <AnimatePresence>
+      {node && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 z-[80]"
+          />
+          <motion.aside
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 260 }}
+            className="fixed top-0 right-0 bottom-0 z-[81] w-full sm:w-[440px] bg-bg-warm border-l border-accent/20 overflow-y-auto"
+          >
+            <div className="p-6 md:p-8">
+              <div className="flex items-start justify-between gap-4 mb-6">
+                <span className="font-mono text-[0.6rem] text-accent tracking-[0.25em] uppercase">
+                  Cartografia
+                </span>
+                <button
+                  onClick={onClose}
+                  aria-label="Fechar"
+                  className="w-9 h-9 flex items-center justify-center text-text-dim hover:text-accent transition-colors"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 6l12 12M6 18L18 6" />
+                  </svg>
+                </button>
+              </div>
+
+              <h2 className="font-serif text-[clamp(2rem,4vw,2.8rem)] text-text-bright leading-[1.05] tracking-[-0.01em] mb-3">
+                {node.label}
+              </h2>
+              <p className="font-serif italic text-accent-soft text-lg leading-snug mb-6">
+                {node.axiom}
+              </p>
+
+              {glossaryEntry && (
+                <>
+                  <div className="mb-6">
+                    <p className="meta-caps-accent mb-2">Definição</p>
+                    <p className="font-serif text-[0.98rem] text-text leading-[1.8]">
+                      {glossaryEntry.short}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/glossario/${glossaryEntry.slug}`}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-text-bright text-bg font-sans text-[0.68rem] font-semibold tracking-[0.2em] uppercase transition-colors mb-8"
+                  >
+                    Ler no glossário
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </>
+              )}
+
+              {!glossaryEntry && node.href && (
+                <Link
+                  href={node.href}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-text-bright text-bg font-sans text-[0.68rem] font-semibold tracking-[0.2em] uppercase transition-colors mb-8"
+                >
+                  Explorar
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              )}
+
+              {connected.length > 0 && (
+                <div className="mt-4">
+                  <p className="meta-caps-accent mb-3">Conectado a</p>
+                  <div className="flex flex-wrap gap-2">
+                    {connected.map((c) => {
+                      const cSlug = NODE_TO_GLOSSARY[c.id];
+                      const body = (
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 border border-border-subtle hover:border-accent/50 text-text-dim hover:text-accent font-mono text-[0.6rem] tracking-[0.18em] uppercase transition-colors">
+                          {c.label}
+                        </span>
+                      );
+                      return cSlug ? (
+                        <Link key={c.id} href={`/glossario/${cSlug}`}>{body}</Link>
+                      ) : (
+                        <span key={c.id}>{body}</span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

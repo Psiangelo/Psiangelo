@@ -49,6 +49,8 @@ export default function CourseCard({ course, onClick, progress, variant = 'defau
             alt={course.title}
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div

@@ -17,6 +17,8 @@ import {
 } from '@/components/illustrations';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
+import ListenButton from '@/components/ListenButton';
+import ReadingMode from '@/components/ReadingMode';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 const SERIES_STORAGE_KEY = 'angelo_admin_blog_series';
@@ -33,6 +35,22 @@ function calculateReadingTime(html) {
   if (!html) return 0;
   const words = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 200));
+}
+
+function stripHtmlToText(html) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '.\n')
+    .replace(/<\/h[1-6]>/gi, '.\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function slugifyHeading(text) {
@@ -244,6 +262,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
   const readTime = calculateReadingTime(post.content_html);
   const headings = extractHeadings(post.content_html);
   const htmlWithIds = addHeadingIds(post.content_html);
+  const plainText = useMemo(() => stripHtmlToText(post.content_html), [post.content_html]);
   const articleRef = useRef(null);
 
   return (
@@ -258,6 +277,8 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
             alt={post.featured_image_alt || post.title}
             className="absolute inset-0 w-full h-full object-cover"
             referrerPolicy="no-referrer"
+            fetchPriority="high"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/30" />
           <div className="absolute inset-x-0 bottom-0 px-5 sm:px-6 md:px-12 pb-12 md:pb-16">
@@ -338,6 +359,13 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
           >
             <SeriesNav currentPost={post} allPosts={allPosts} seriesList={seriesList} onNavigate={onNavigate} />
 
+            {plainText && plainText.length > 100 && (
+              <div className="mb-8 flex items-center gap-3 flex-wrap" data-reading-hide="true">
+                <ListenButton text={plainText} title={post.title} />
+                <ReadingMode />
+              </div>
+            )}
+
             <div
               className="blog-content blog-post-body"
               dangerouslySetInnerHTML={{ __html: htmlWithIds }}
@@ -354,7 +382,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
           </motion.article>
 
           {/* TOC sticky lateral — só desktop */}
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block" data-reading-hide="true">
             <StickyTOC headings={headings} />
           </aside>
         </div>
@@ -418,6 +446,8 @@ function BlogCard({ post, onClick, variant = 'default' }) {
             alt={post.featured_image_alt || post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       )}
@@ -465,6 +495,8 @@ function FeaturedCover({ post, onClick }) {
           alt={post.featured_image_alt || post.title}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-bg-warm via-bg-card to-bg" />

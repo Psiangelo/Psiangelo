@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { fadeUp, stagger } from '@/lib/constants';
+import JungQuote from '@/components/JungQuote';
 
 export default function Footer({ showMaterialsCta = false }) {
   return (
@@ -44,6 +45,8 @@ export default function Footer({ showMaterialsCta = false }) {
               <Link href="/" className="text-sm text-text-dim hover:text-text-bright transition-colors">Home</Link>
               <Link href="/#sobre" className="text-sm text-text-dim hover:text-text-bright transition-colors">Sobre</Link>
               <Link href="/materiais" className="text-sm text-text-dim hover:text-text-bright transition-colors">Materiais</Link>
+              <Link href="/glossario" className="text-sm text-text-dim hover:text-text-bright transition-colors">Glossário</Link>
+              <Link href="/feed.xml" className="text-sm text-text-dim hover:text-text-bright transition-colors">RSS</Link>
             </div>
           </div>
           <div>
@@ -60,6 +63,9 @@ export default function Footer({ showMaterialsCta = false }) {
         </div>
 
         <div className="mt-16 pt-10 border-t border-border-subtle flex flex-col gap-8">
+          {/* Citação Jung rotativa */}
+          <JungQuote variant="footer" />
+
           {/* Tagline grega promovida — frontispício do rodapé */}
           <div className="flex flex-col items-center gap-2 text-center">
             <span

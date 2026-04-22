@@ -175,19 +175,56 @@ body::after {
 /* ====================== SMALL CAPS META ====================== */
 .meta-caps {
   font-family: 'Instrument Sans', system-ui, sans-serif;
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 500;
   color: #6E6458;
 }
+@media (min-width: 768px) {
+  .meta-caps { font-size: 0.62rem; }
+}
 
 .meta-caps-accent {
   font-family: 'Courier Prime', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.28em;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: #B48C50;
+}
+@media (min-width: 768px) {
+  .meta-caps-accent {
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+  }
+}
+
+/* ====================== MODO LEITURA ====================== */
+body.reading-mode nav[data-nav="main"],
+body.reading-mode footer,
+body.reading-mode aside,
+body.reading-mode [data-reading-hide="true"] {
+  display: none !important;
+}
+body.reading-mode .blog-post-body {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.9;
+}
+body.reading-mode main > div:first-child {
+  padding-top: 3rem;
+}
+body.reading-mode .whatsapp-button {
+  display: none !important;
+}
+
+/* ====================== CARTOGRAFIA · LABELS ====================== */
+.carto-label {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  .carto-label { font-size: 11px; }
 }
 
 /* ====================== SCROLLBAR-HIDE UTILITY ====================== */

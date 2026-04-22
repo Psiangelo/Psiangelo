@@ -380,6 +380,8 @@ function TemaTile({ material }) {
             alt={material.title}
             className="w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-opacity duration-500"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/90 to-bg/40" />
         </div>

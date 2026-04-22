@@ -269,6 +269,8 @@ export default function BioPage() {
               src={resolveImageSrc(bio.avatar) || img('/images/angelo-portrait.png')}
               alt={bio.name || 'Ângelo'}
               className="w-full h-full object-cover grayscale-[0.15]"
+              fetchPriority="high"
+              decoding="async"
             />
           </div>
         </motion.div>

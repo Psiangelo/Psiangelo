@@ -14,6 +14,7 @@ import Testimonials from '@/components/home/Testimonials';
 import FAQ from '@/components/home/FAQ';
 import ContactCTA from '@/components/home/ContactCTA';
 import MandalaDivider from '@/components/ui/MandalaDivider';
+import JungQuote from '@/components/JungQuote';
 import {
   AlchemyDivider,
   DiamondChain,
@@ -48,6 +49,7 @@ export default function HomePage() {
           </Break>
         )}
         {v.trilhas && <StudyPaths />}
+        <JungQuote />
         {v.materiais && <MaterialsPreview />}
         {v.materiais && (v.cursos || v.blog) && (
           <Break pad="py-2">

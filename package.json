@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:smoke": "playwright test",
+    "test:smoke:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.102.1",

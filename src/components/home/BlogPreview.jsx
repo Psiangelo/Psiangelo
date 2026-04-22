@@ -89,7 +89,8 @@ export default function BlogPreview() {
                   {post.featured_image && (
                     <div className="aspect-[16/9] overflow-hidden bg-bg-warm">
                       <img src={post.featured_image} alt={post.featured_image_alt || post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer"
+                        loading="lazy" decoding="async" />
                     </div>
                   )}
                   <div className="p-5">

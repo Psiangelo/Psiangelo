@@ -38,6 +38,7 @@ export default function Navbar() {
     { href: '/materiais', label: 'Materiais', key: 'materiais' },
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
     { href: '/blog', label: 'Blog', key: 'blog' },
+    { href: '/glossario', label: 'Glossário', key: null },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 
@@ -49,6 +50,7 @@ export default function Navbar() {
 
   return (
     <motion.nav
+      data-nav="main"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.1 }}

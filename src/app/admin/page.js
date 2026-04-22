@@ -2,15 +2,36 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { materials as defaultMaterials, comingSoon as defaultComingSoon, contentTypeLabels } from '@/data/materials';
-import BlogManager from '@/components/admin/BlogManager';
-import CourseManager from '@/components/admin/CourseManager';
-import TrilhasManager from '@/components/admin/TrilhasManager';
-import CartographyManager from '@/components/admin/CartographyManager';
 import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
 import PublishManager from '@/components/admin/PublishManager';
+import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
+
+// Managers pesados: code-split pra não carregar tudo de uma vez
+const DynamicFallback = () => (
+  <div className="py-10 text-center font-mono text-[0.6rem] tracking-[0.22em] uppercase text-[#6E6458]">
+    Carregando…
+  </div>
+);
+const BlogManager = dynamic(() => import('@/components/admin/BlogManager'), {
+  ssr: false,
+  loading: DynamicFallback,
+});
+const CourseManager = dynamic(() => import('@/components/admin/CourseManager'), {
+  ssr: false,
+  loading: DynamicFallback,
+});
+const TrilhasManager = dynamic(() => import('@/components/admin/TrilhasManager'), {
+  ssr: false,
+  loading: DynamicFallback,
+});
+const CartographyManager = dynamic(() => import('@/components/admin/CartographyManager'), {
+  ssr: false,
+  loading: DynamicFallback,
+});
 
 // ─── Constants ───────────────────────────────────────────────────────
 const STORAGE_KEYS = {
@@ -379,18 +400,37 @@ function useActivityLog() {
 
 // ─── Login Screen ────────────────────────────────────────────────────
 function LoginScreen({ onLogin }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
+  // Se Supabase Auth estiver disponível, usa e-mail; senão, senha local
+  const useSupabase = isAuthConfigured;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    if (useSupabase) {
+      setBusy(true);
+      const res = await supabaseSignIn(email.trim(), password);
+      setBusy(false);
+      if (res.ok) {
+        sessionStorage.setItem(STORAGE_KEYS.auth, 'true');
+        onLogin();
+      } else {
+        setError(res.error || 'Credenciais inválidas');
+        setTimeout(() => setError(''), 3000);
+      }
+      return;
+    }
+    // Fallback: senha local
     if (password === getPassword()) {
       sessionStorage.setItem(STORAGE_KEYS.auth, 'true');
       onLogin();
     } else {
-      setError(true);
-      setTimeout(() => setError(false), 2000);
+      setError('Senha incorreta');
+      setTimeout(() => setError(''), 2000);
     }
   };
 
@@ -420,8 +460,24 @@ function LoginScreen({ onLogin }) {
           onSubmit={handleSubmit}
           className="bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-2xl p-8"
         >
+          {useSupabase && (
+            <>
+              <label className="block text-xs uppercase tracking-widest text-[#6E6458] font-sans mb-2">
+                E-mail
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="voce@exemplo.com"
+                required
+                autoFocus
+                className="w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] rounded-lg px-4 py-3 text-[#E8DDD0] font-sans placeholder:text-[#3A352E] focus:outline-none focus:border-[#B48C50] transition-colors mb-4"
+              />
+            </>
+          )}
           <label className="block text-xs uppercase tracking-widest text-[#6E6458] font-sans mb-2">
-            Senha de acesso
+            {useSupabase ? 'Senha' : 'Senha de acesso'}
           </label>
           <div className="relative">
             <input
@@ -429,7 +485,7 @@ function LoginScreen({ onLogin }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="--------"
-              autoFocus
+              autoFocus={!useSupabase}
               className="w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] rounded-lg px-4 py-3 text-[#E8DDD0] font-sans placeholder:text-[#3A352E] focus:outline-none focus:border-[#B48C50] transition-colors"
             />
             <button
@@ -449,21 +505,22 @@ function LoginScreen({ onLogin }) {
                 exit={{ opacity: 0 }}
                 className="mt-3 text-sm text-red-400 font-sans"
               >
-                Senha incorreta
+                {error}
               </motion.p>
             )}
           </AnimatePresence>
 
           <button
             type="submit"
-            className="mt-6 w-full bg-[#B48C50] hover:bg-[#9A7A48] text-[#0E0C0A] font-sans font-semibold py-3 rounded-lg transition-colors"
+            disabled={busy}
+            className="mt-6 w-full bg-[#B48C50] hover:bg-[#9A7A48] disabled:bg-[#3A352E] disabled:cursor-not-allowed text-[#0E0C0A] font-sans font-semibold py-3 rounded-lg transition-colors"
           >
-            Entrar
+            {busy ? 'Entrando…' : 'Entrar'}
           </button>
         </motion.form>
 
         <p className="text-center mt-6 text-xs text-[#3A352E] font-sans">
-          Acesso restrito ao administrador
+          {useSupabase ? 'Autenticação por Supabase' : 'Acesso restrito ao administrador'}
         </p>
       </motion.div>
     </div>

@@ -7,6 +7,7 @@ import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { trilhas as TRILHAS_DEFAULT, TRILHA_TONE } from '@/data/trilhas';
 import { getTrilhas } from '@/lib/sitedata';
+import { useTrilhaProgress } from '@/lib/useTrilhaProgress';
 import { OrbitalAccent, QuaternioSigil } from '@/components/illustrations';
 
 /**
@@ -17,12 +18,19 @@ export default function StudyPaths() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const [trilhas, setTrilhasList] = useState(TRILHAS_DEFAULT);
+  const { percentOf, progress } = useTrilhaProgress();
 
   useEffect(() => {
     setTrilhasList(getTrilhas());
   }, []);
 
   if (!trilhas || trilhas.length === 0) return null;
+
+  // Procura uma trilha em andamento (tem progresso, mas não 100%)
+  const ongoing = trilhas.find((t) => {
+    const p = progress[t.id];
+    return p && p.completedStages.length > 0 && p.completedStages.length < t.stages.length;
+  });
 
   return (
     <section ref={ref} className="py-16 md:py-32 px-5 sm:px-6 md:px-12 relative overflow-hidden">
@@ -75,9 +83,36 @@ export default function StudyPaths() {
           </motion.div>
         </div>
 
+        {/* Continue de onde parou */}
+        {ongoing && (
+          <motion.div variants={fadeUp} className="mb-8 bg-accent/8 border-l-2 border-accent p-4 md:p-5 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="font-mono text-[0.55rem] text-accent tracking-[0.22em] uppercase mb-1">
+                Continue de onde parou
+              </p>
+              <p className="font-serif text-text-bright text-lg leading-tight">
+                {ongoing.name}
+              </p>
+              <p className="text-[0.8rem] text-text-dim mt-1">
+                {percentOf(ongoing)}% concluído · {progress[ongoing.id].completedStages.length} de {ongoing.stages.length} etapas
+              </p>
+            </div>
+            <Link
+              href={`/trilhas#${ongoing.id}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-text-bright text-bg font-sans text-[0.65rem] font-semibold tracking-[0.2em] uppercase transition-colors flex-shrink-0"
+            >
+              Continuar
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </motion.div>
+        )}
+
         <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {trilhas.slice(0, 3).map((t, i) => {
             const tone = TRILHA_TONE[t.archetype] || TRILHA_TONE.Self;
+            const pct = percentOf(t);
             return (
               <motion.div key={t.id} variants={fadeUp}>
                 <Link
@@ -130,8 +165,20 @@ export default function StudyPaths() {
                     )}
                   </ol>
 
-                  <div className="flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase pt-4 border-t border-border-subtle/60">
-                    Ver trilha
+                  {pct > 0 && (
+                    <div className="pt-4 mb-3 border-t border-border-subtle/60">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-mono text-[0.5rem] text-accent/80 tracking-[0.2em] uppercase">Progresso</span>
+                        <span className="font-mono text-[0.5rem] text-text-dim tracking-[0.18em]">{pct}%</span>
+                      </div>
+                      <div className="h-0.5 bg-border-subtle overflow-hidden">
+                        <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className={`flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase ${pct > 0 ? '' : 'pt-4 border-t border-border-subtle/60'}`}>
+                    {pct > 0 ? 'Continuar' : 'Ver trilha'}
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="group-hover:translate-x-1 transition-transform">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>

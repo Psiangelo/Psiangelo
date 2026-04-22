@@ -220,6 +220,8 @@ export function PortraitHero({ className = '', animate = true }) {
           src={img('/images/angelo-portrait.png')}
           alt="Ângelo · retrato"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+          fetchPriority="high"
+          decoding="async"
           style={{
             objectPosition: 'center 25%',
             // Crop sutil pra esconder a marca d'água do Gemini no canto inferior direito
