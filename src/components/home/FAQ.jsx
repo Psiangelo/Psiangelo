@@ -1,70 +1,34 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { OrbitalAccent } from '@/components/illustrations';
+import { getFaqs, DEFAULT_FAQS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 
-// FAQs agrupadas em 3 blocos editoriais: Entrega · Catálogo · Conteúdo
-const faqGroups = [
-  {
-    id: 'entrega',
-    label: 'Entrega',
-    blurb: 'Como o material chega até você.',
-    items: [
-      {
-        question: 'Como recebo os materiais após a compra?',
-        answer:
-          'Após a confirmação do pagamento, os materiais são enviados diretamente pelo WhatsApp e/ou e-mail. Todos os arquivos são em formato PDF digital, prontos para leitura imediata no celular, tablet ou computador.',
-      },
-      {
-        question: 'Os mapas mentais são editáveis?',
-        answer:
-          'Os mapas mentais são entregues em formato PDF, otimizados tanto para estudo digital quanto para impressão. O layout foi pensado para facilitar a visualização das conexões entre conceitos, funcionando como um guia visual de estudo.',
-      },
-      {
-        question: 'Tem desconto para compra de vários materiais?',
-        answer:
-          'Sim! Ofereço condições especiais para quem deseja adquirir mais de um material. Entre em contato pelo WhatsApp para combinarmos um pacote personalizado de acordo com suas necessidades de estudo.',
-      },
-    ],
-  },
-  {
-    id: 'catalogo',
-    label: 'Catálogo',
-    blurb: 'O que existe e o que está por vir.',
-    items: [
-      {
-        question: 'Posso solicitar um material sobre um tema específico?',
-        answer:
-          'Com certeza! Estou sempre aberto a sugestões e pedidos. Se existe um tema da psicologia analítica ou da prática clínica que você gostaria de ver em formato de resumo ou mapa mental, entre em contato e conversamos sobre a viabilidade.',
-      },
-      {
-        question: 'Posso usar os materiais para estudar para concursos?',
-        answer:
-          'Sim! O conteúdo cobre os principais conceitos exigidos em provas e concursos da área de psicologia. Os resumos são úteis para revisão rápida e fixação.',
-      },
-    ],
-  },
-  {
-    id: 'conteudo',
-    label: 'Conteúdo',
-    blurb: 'Sobre a profundidade e o método.',
-    items: [
-      {
-        question: 'Os materiais são baseados em quais autores?',
-        answer:
-          'Os materiais são elaborados com base nas Obras Completas de C. G. Jung, em autores pós-junguianos e na minha experiência clínica e de supervisão.',
-      },
-      {
-        question: 'Qual a diferença entre resumo e mapa mental?',
-        answer:
-          'O resumo é uma síntese textual do conteúdo — organizado em tópicos, com as ideias principais explicadas de forma clara e objetiva. Já o mapa mental é um diagrama visual que conecta conceitos-chave, facilitando a memorização e a compreensão das relações entre os temas.',
-      },
-    ],
-  },
-];
+const GROUP_BLURBS = {
+  Entrega:   'Como o material chega até você.',
+  Catálogo:  'O que existe e o que está por vir.',
+  Conteúdo:  'Sobre a profundidade e o método.',
+  Geral:     'Perguntas variadas.',
+};
+
+function groupFaqs(faqs) {
+  const byGroup = new Map();
+  for (const f of faqs || []) {
+    const g = f.group || 'Geral';
+    if (!byGroup.has(g)) byGroup.set(g, []);
+    byGroup.get(g).push(f);
+  }
+  return Array.from(byGroup.entries()).map(([label, items]) => ({
+    id: label.toLowerCase(),
+    label,
+    blurb: GROUP_BLURBS[label] || 'Perguntas relacionadas.',
+    items,
+  }));
+}
 
 function FAQItem({ item, isOpen, onToggle }) {
   return (
@@ -117,6 +81,9 @@ export default function FAQ() {
   const [openKey, setOpenKey] = useState(null);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
+  const faqs = useSitedata(getFaqs, DEFAULT_FAQS, SITEDATA_KEYS.faqs);
+  const faqGroups = useMemo(() => groupFaqs(faqs), [faqs]);
+  if (faqGroups.length === 0) return null;
 
   return (
     <section

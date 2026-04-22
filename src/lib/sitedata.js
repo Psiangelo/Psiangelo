@@ -13,14 +13,23 @@
  */
 
 import { trilhas as TRILHAS_DEFAULT } from '@/data/trilhas';
+import {
+  materials as MATERIALS_DEFAULT,
+  comingSoon as COMING_SOON_DEFAULT,
+} from '@/data/materials';
 
 export const SITEDATA_KEYS = {
-  trilhas:    'angelo_admin_trilhas',
-  cartoNodes: 'angelo_admin_cartography_nodes',
-  cartoEdges: 'angelo_admin_cartography_edges',
-  homepage:   'angelo_admin_homepage',
-  bio:        'angelo_admin_bio',
-  visibility: 'angelo_admin_visibility',
+  trilhas:      'angelo_admin_trilhas',
+  cartoNodes:   'angelo_admin_cartography_nodes',
+  cartoEdges:   'angelo_admin_cartography_edges',
+  homepage:     'angelo_admin_homepage',
+  bio:          'angelo_admin_bio',
+  visibility:   'angelo_admin_visibility',
+  materials:    'angelo_admin_materials',
+  comingSoon:   'angelo_admin_coming_soon',
+  testimonials: 'angelo_admin_testimonials',
+  faqs:         'angelo_admin_faqs',
+  settings:     'angelo_admin_settings',
 };
 
 /* ===================================================================
@@ -243,3 +252,117 @@ export const isVisible = (key) => {
   if (typeof window === 'undefined') return DEFAULT_VISIBILITY[key] ?? true;
   return getSiteVisibility()[key] ?? true;
 };
+
+/* ===================================================================
+   MATERIALS · COMING SOON
+=================================================================== */
+
+export const getMaterials  = () => readJson(SITEDATA_KEYS.materials,  MATERIALS_DEFAULT);
+export const setMaterials  = (v) => writeJson(SITEDATA_KEYS.materials, v);
+export const getComingSoon = () => readJson(SITEDATA_KEYS.comingSoon, COMING_SOON_DEFAULT);
+export const setComingSoon = (v) => writeJson(SITEDATA_KEYS.comingSoon, v);
+
+/* ===================================================================
+   TESTIMONIALS · FAQS
+=================================================================== */
+
+export const DEFAULT_TESTIMONIALS = [
+  {
+    id: 'test-1',
+    quote: 'Os resumos de Jung são incrivelmente didáticos. Consegui finalmente entender conceitos que me travavam há semestres. Material indispensável para qualquer estudante sério de psicologia analítica.',
+    name: 'Mariana S.',
+    role: 'Estudante de Psicologia',
+    audience: 'estudantes',
+    archetype: 'Persona',
+  },
+  {
+    id: 'test-2',
+    quote: 'Estava perdida no meio de tanta bibliografia para o TCC e esses materiais me deram uma direção clara. A síntese é precisa sem perder a profundidade. Me salvou muito tempo de estudo.',
+    name: 'Letícia A.',
+    role: 'Estudante de Psicologia',
+    audience: 'estudantes',
+    archetype: 'Anima',
+  },
+  {
+    id: 'test-3',
+    quote: 'Uso os materiais do Ângelo como apoio na minha prática clínica. A forma como ele organiza os conceitos facilita demais a revisão antes das sessões. Recomendo para todos os colegas.',
+    name: 'Rafael M.',
+    role: 'Psicólogo Clínico',
+    audience: 'clinicos',
+    archetype: 'Self',
+  },
+  {
+    id: 'test-4',
+    quote: 'Procurei por muito tempo um material que fosse ao mesmo tempo aprofundado e acessível. Encontrei nos resumos dele exatamente isso. A qualidade é de outro nível.',
+    name: 'Camila R.',
+    role: 'Psicanalista',
+    audience: 'clinicos',
+    archetype: 'Sombra',
+  },
+  {
+    id: 'test-5',
+    quote: 'Como supervisor de estágio, indico os materiais do Ângelo para os estagiários. A clareza conceitual e a organização são exemplares. Um trabalho sério e cuidadoso.',
+    name: 'Dr. Fernando L.',
+    role: 'Professor de Psicologia',
+    audience: 'professores',
+    archetype: 'Self',
+  },
+];
+
+export const getTestimonials = () => {
+  const stored = readJson(SITEDATA_KEYS.testimonials, null);
+  if (!stored || !Array.isArray(stored) || stored.length === 0) return DEFAULT_TESTIMONIALS;
+  return stored.map((t) => ({
+    // hidrata campos faltando com defaults razoáveis
+    audience: 'todos',
+    archetype: 'Self',
+    ...t,
+  }));
+};
+export const setTestimonials = (v) => writeJson(SITEDATA_KEYS.testimonials, v);
+
+export const DEFAULT_FAQS = [
+  { id: 'faq-1', group: 'Entrega', question: 'Como recebo os materiais após a compra?',
+    answer: 'Após a confirmação do pagamento, os materiais são enviados diretamente pelo WhatsApp e/ou e-mail. Todos os arquivos são em formato PDF digital, prontos para leitura imediata no celular, tablet ou computador.' },
+  { id: 'faq-2', group: 'Entrega', question: 'Os mapas mentais são editáveis?',
+    answer: 'Os mapas mentais são entregues em formato PDF, otimizados tanto para estudo digital quanto para impressão. O layout foi pensado para facilitar a visualização das conexões entre conceitos, funcionando como um guia visual de estudo.' },
+  { id: 'faq-3', group: 'Entrega', question: 'Tem desconto para compra de vários materiais?',
+    answer: 'Sim! Ofereço condições especiais para quem deseja adquirir mais de um material. Entre em contato pelo WhatsApp para combinarmos um pacote personalizado de acordo com suas necessidades de estudo.' },
+  { id: 'faq-4', group: 'Catálogo', question: 'Posso solicitar um material sobre um tema específico?',
+    answer: 'Com certeza! Estou sempre aberto a sugestões e pedidos. Se existe um tema da psicologia analítica ou da prática clínica que você gostaria de ver em formato de resumo ou mapa mental, entre em contato e conversamos sobre a viabilidade.' },
+  { id: 'faq-5', group: 'Catálogo', question: 'Posso usar os materiais para estudar para concursos?',
+    answer: 'Sim! O conteúdo cobre os principais conceitos exigidos em provas e concursos da área de psicologia. Os resumos são úteis para revisão rápida e fixação.' },
+  { id: 'faq-6', group: 'Conteúdo', question: 'Os materiais são baseados em quais autores?',
+    answer: 'Os materiais são elaborados com base nas Obras Completas de C. G. Jung, em autores pós-junguianos e na minha experiência clínica e de supervisão.' },
+  { id: 'faq-7', group: 'Conteúdo', question: 'Qual a diferença entre resumo e mapa mental?',
+    answer: 'O resumo é uma síntese textual do conteúdo — organizado em tópicos, com as ideias principais explicadas de forma clara e objetiva. Já o mapa mental é um diagrama visual que conecta conceitos-chave, facilitando a memorização e a compreensão das relações entre os temas.' },
+];
+
+export const getFaqs = () => {
+  const stored = readJson(SITEDATA_KEYS.faqs, null);
+  if (!stored || !Array.isArray(stored) || stored.length === 0) return DEFAULT_FAQS;
+  return stored;
+};
+export const setFaqs = (v) => writeJson(SITEDATA_KEYS.faqs, v);
+
+/* ===================================================================
+   SETTINGS — canais de contato e metadados editáveis
+=================================================================== */
+
+export const DEFAULT_SETTINGS = {
+  whatsappNumber: '5581987349114',
+  whatsappMessage: 'Olá! Vi seu site e gostaria de saber mais sobre seus materiais de psicologia.',
+  instagramLink: '',
+  youtubeLink: '',
+  emailAddress: '',
+  siteTitle: 'Psiangelo — Psicologia Analítica & Prática Clínica',
+  siteDescription: 'Resumos, mapas mentais e materiais de estudo com experiência clínica junguiana.',
+  accentColor: '#B48C50',
+};
+
+export const getSettings = () => {
+  const stored = readJson(SITEDATA_KEYS.settings, null);
+  if (!stored) return DEFAULT_SETTINGS;
+  return { ...DEFAULT_SETTINGS, ...stored };
+};
+export const setSettings = (v) => writeJson(SITEDATA_KEYS.settings, v);

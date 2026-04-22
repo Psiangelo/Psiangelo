@@ -6,49 +6,8 @@ import { fadeUp, stagger } from '@/lib/constants';
 import SectionLabel from '@/components/SectionLabel';
 import ArchetypeBadge, { ARCHETYPE_TONE } from '@/components/ui/ArchetypeBadge';
 import { VesicaPiscis, GoldenArc } from '@/components/illustrations';
-
-const testimonials = [
-  {
-    quote:
-      'Os resumos de Jung são incrivelmente didáticos. Consegui finalmente entender conceitos que me travavam há semestres. Material indispensável para qualquer estudante sério de psicologia analítica.',
-    name: 'Mariana S.',
-    role: 'Estudante de Psicologia',
-    audience: 'estudantes',
-    archetype: 'Persona',
-  },
-  {
-    quote:
-      'Estava perdida no meio de tanta bibliografia para o TCC e esses materiais me deram uma direção clara. A síntese é precisa sem perder a profundidade. Me salvou muito tempo de estudo.',
-    name: 'Letícia A.',
-    role: 'Estudante de Psicologia',
-    audience: 'estudantes',
-    archetype: 'Anima',
-  },
-  {
-    quote:
-      'Uso os materiais do Ângelo como apoio na minha prática clínica. A forma como ele organiza os conceitos facilita demais a revisão antes das sessões. Recomendo para todos os colegas.',
-    name: 'Rafael M.',
-    role: 'Psicólogo Clínico',
-    audience: 'clinicos',
-    archetype: 'Self',
-  },
-  {
-    quote:
-      'Procurei por muito tempo um material que fosse ao mesmo tempo aprofundado e acessível. Encontrei nos resumos dele exatamente isso. A qualidade é de outro nível.',
-    name: 'Camila R.',
-    role: 'Psicanalista',
-    audience: 'clinicos',
-    archetype: 'Sombra',
-  },
-  {
-    quote:
-      'Como supervisor de estágio, indico os materiais do Ângelo para os estagiários. A clareza conceitual e a organização são exemplares. Um trabalho sério e cuidadoso.',
-    name: 'Dr. Fernando L.',
-    role: 'Professor de Psicologia',
-    audience: 'professores',
-    archetype: 'Self',
-  },
-];
+import { getTestimonials, DEFAULT_TESTIMONIALS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 
 const TABS = [
   { id: 'todos',       label: 'Todos' },
@@ -115,11 +74,12 @@ export default function Testimonials() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const [tab, setTab] = useState('todos');
+  const testimonials = useSitedata(getTestimonials, DEFAULT_TESTIMONIALS, SITEDATA_KEYS.testimonials);
 
   const filtered = useMemo(() => {
     if (tab === 'todos') return testimonials;
     return testimonials.filter((t) => t.audience === tab);
-  }, [tab]);
+  }, [tab, testimonials]);
 
   return (
     <section className="py-16 md:py-32 px-5 sm:px-6 md:px-12 relative overflow-hidden" ref={ref}>
@@ -186,7 +146,7 @@ export default function Testimonials() {
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((t, i) => (
-              <TestimonialCard key={`${tab}-${t.name}`} testimonial={t} index={i} />
+              <TestimonialCard key={`${tab}-${t.id || t.name}`} testimonial={t} index={i} />
             ))}
           </AnimatePresence>
         </motion.div>

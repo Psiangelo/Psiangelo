@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const PHONE = '5581987349114';
-const MESSAGE = 'Olá! Vi seu site e gostaria de saber mais sobre seus materiais de psicologia.';
+import { getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 
 const HIDDEN_ROUTES = ['/admin'];
 
@@ -34,8 +33,10 @@ export default function WhatsAppButton() {
   }, []);
 
   const show = !hidden && ready && visible;
-
-  const whatsappUrl = `https://wa.me/${PHONE}?text=${encodeURIComponent(MESSAGE)}`;
+  const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const phone = (settings.whatsappNumber || DEFAULT_SETTINGS.whatsappNumber).replace(/\D/g, '');
+  const message = settings.whatsappMessage || DEFAULT_SETTINGS.whatsappMessage;
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
   return (
     <AnimatePresence>

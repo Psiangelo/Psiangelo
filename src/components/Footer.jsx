@@ -5,8 +5,17 @@ import { motion } from 'framer-motion';
 import { fadeUp, stagger } from '@/lib/constants';
 import JungQuote from '@/components/JungQuote';
 import { LogoMarkFull } from '@/components/ui/LogoMark';
+import { getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 
 export default function Footer({ showMaterialsCta = false }) {
+  const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const socials = [
+    settings.instagramLink && { label: 'Instagram', href: settings.instagramLink },
+    settings.youtubeLink   && { label: 'YouTube',   href: settings.youtubeLink },
+    settings.emailAddress  && { label: 'E-mail',    href: `mailto:${settings.emailAddress}` },
+  ].filter(Boolean);
+
   return (
     <footer className="border-t border-border-subtle">
       {/* Optional CTA band */}
@@ -55,10 +64,21 @@ export default function Footer({ showMaterialsCta = false }) {
               Redes
             </h4>
             <div className="flex flex-col gap-2">
-              {/* ALTERE OS LINKS DAS REDES SOCIAIS */}
-              <a href="#" className="text-sm text-text-dim hover:text-text-bright transition-colors">Instagram</a>
-              <a href="#" className="text-sm text-text-dim hover:text-text-bright transition-colors">YouTube</a>
-              <a href="#" className="text-sm text-text-dim hover:text-text-bright transition-colors">E-mail</a>
+              {socials.length > 0 ? (
+                socials.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target={s.href.startsWith('mailto:') ? undefined : '_blank'}
+                    rel={s.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                    className="text-sm text-text-dim hover:text-text-bright transition-colors"
+                  >
+                    {s.label}
+                  </a>
+                ))
+              ) : (
+                <span className="text-sm text-text-dim/40 italic">Em breve</span>
+              )}
             </div>
           </div>
         </div>

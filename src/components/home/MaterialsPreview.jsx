@@ -5,7 +5,9 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
-import { materials, contentTypeLabels } from '@/data/materials';
+import { contentTypeLabels } from '@/data/materials';
+import { getMaterials, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 import { img } from '@/lib/basepath';
 import { SpiralAccent } from '@/components/illustrations';
 
@@ -115,8 +117,9 @@ function Tile({ item, span, index }) {
 export default function MaterialsPreview() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+  const materials = useSitedata(getMaterials, [], SITEDATA_KEYS.materials);
 
-  const previewItems = materials.filter((m) => m.available).slice(0, 6);
+  const previewItems = (materials || []).filter((m) => m.available).slice(0, 6);
 
   return (
     <section

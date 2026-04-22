@@ -8,11 +8,17 @@ import Footer from '@/components/Footer';
 import SectionLabel from '@/components/SectionLabel';
 import PageHero from '@/components/ui/PageHero';
 import { MaterialCardFull } from '@/components/materiais/MaterialCard';
-import { materials, comingSoon, contentTypeLabels } from '@/data/materials';
+import { contentTypeLabels } from '@/data/materials';
 import { fadeUp, stagger } from '@/lib/constants';
 import { img } from '@/lib/basepath';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
+import { useSitedata } from '@/lib/useSitedata';
+import {
+  getMaterials,
+  getComingSoon,
+  SITEDATA_KEYS,
+} from '@/lib/sitedata';
 
 /* ========================================
    HERO
@@ -144,8 +150,6 @@ function Explanation() {
 /* ========================================
    CATALOG — sidebar 240px + grid bento
 ======================================== */
-const ALL_AUTHORS = Array.from(new Set(materials.map((m) => m.author).filter(Boolean))).sort();
-const ALL_TAGS    = Array.from(new Set(materials.flatMap((m) => m.tags || []))).sort();
 const ALL_FORMATS = Object.keys(contentTypeLabels);
 
 // Filtro multi-seleção: arrays vazios = "todos"
@@ -204,7 +208,7 @@ function FilterSection({ title, options, selected, onToggle, counts }) {
   );
 }
 
-function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideHeader }) {
+function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideHeader, materials }) {
   const toggle = (key, value) => {
     setFilters((prev) => ({
       ...prev,
@@ -214,16 +218,20 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
     }));
   };
 
-  const counts = useMemo(() => {
+  const { counts, allAuthors, allTags } = useMemo(() => {
     const byCat = {}, byFmt = {}, byAuth = {}, byTag = {};
-    materials.forEach((m) => {
+    (materials || []).forEach((m) => {
       byCat[m.category] = (byCat[m.category] || 0) + 1;
       byFmt[m.contentType] = (byFmt[m.contentType] || 0) + 1;
       if (m.author) byAuth[m.author] = (byAuth[m.author] || 0) + 1;
       (m.tags || []).forEach((t) => { byTag[t] = (byTag[t] || 0) + 1; });
     });
-    return { category: byCat, format: byFmt, author: byAuth, tags: byTag };
-  }, []);
+    return {
+      counts: { category: byCat, format: byFmt, author: byAuth, tags: byTag },
+      allAuthors: Object.keys(byAuth).sort(),
+      allTags: Object.keys(byTag).sort(),
+    };
+  }, [materials]);
 
   const totalActive = Object.values(filters).reduce((s, arr) => s + arr.length, 0);
 
@@ -271,7 +279,7 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
         selected={filters.author}
         counts={counts.author}
         onToggle={(v) => toggle('author', v)}
-        options={ALL_AUTHORS.map((a) => ({ value: a, label: a }))}
+        options={allAuthors.map((a) => ({ value: a, label: a }))}
       />
 
       <FilterSection
@@ -279,13 +287,13 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
         selected={filters.tags}
         counts={counts.tags}
         onToggle={(v) => toggle('tags', v)}
-        options={ALL_TAGS.map((t) => ({ value: t, label: t }))}
+        options={allTags.map((t) => ({ value: t, label: t }))}
       />
     </>
   );
 }
 
-function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filteredCount }) {
+function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filteredCount, materials }) {
   const totalActive = Object.values(filters).reduce((s, arr) => s + arr.length, 0);
 
   return (
@@ -342,6 +350,7 @@ function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filt
                 total={total}
                 filteredCount={filteredCount}
                 hideHeader
+                materials={materials}
               />
             </div>
 
@@ -421,9 +430,11 @@ function Catalog() {
   const [filters, setFilters] = useState(initialFilters);
   const [search, setSearch] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const materials   = useSitedata(getMaterials,   [], SITEDATA_KEYS.materials);
+  const comingSoon  = useSitedata(getComingSoon,  [], SITEDATA_KEYS.comingSoon);
 
   const filtered = useMemo(() => {
-    return materials.filter((m) => {
+    return (materials || []).filter((m) => {
       if (filters.category.length && !filters.category.includes(m.category)) return false;
       if (filters.format.length   && !filters.format.includes(m.contentType)) return false;
       if (filters.author.length   && !filters.author.includes(m.author)) return false;
@@ -438,7 +449,7 @@ function Catalog() {
       }
       return true;
     });
-  }, [filters, search]);
+  }, [filters, search, materials]);
 
   const livros = filtered.filter((m) => m.category === 'livro');
   const temas  = filtered.filter((m) => m.category === 'tema');
@@ -462,8 +473,9 @@ function Catalog() {
           filters={filters}
           setFilters={setFilters}
           onClear={() => setFilters(initialFilters)}
-          total={materials.length}
+          total={(materials || []).length}
           filteredCount={filtered.length}
+          materials={materials}
         />
 
         {/* Barra de busca + botão Filtros */}
