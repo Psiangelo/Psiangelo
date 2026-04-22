@@ -39,6 +39,7 @@ export default function Navbar() {
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
     { href: '/blog', label: 'Blog', key: 'blog' },
     { href: '/glossario', label: 'Glossário', key: null },
+    { href: '/marca', label: 'Marca', key: null },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 
