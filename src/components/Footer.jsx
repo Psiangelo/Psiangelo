@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { fadeUp, stagger } from '@/lib/constants';
 import JungQuote from '@/components/JungQuote';
+import { LogoMarkFull } from '@/components/ui/LogoMark';
 
 export default function Footer({ showMaterialsCta = false }) {
   return (
@@ -29,9 +30,9 @@ export default function Footer({ showMaterialsCta = false }) {
       <div className="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 pt-12 md:pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-8 md:gap-12">
           <div>
-            <p className="font-serif text-2xl text-text-bright mb-3">
-              Psi<em className="italic text-accent">ângelo</em>
-            </p>
+            <div className="max-w-[280px] mb-4">
+              <LogoMarkFull showTagline={false} />
+            </div>
             <p className="text-sm text-text-dim max-w-xs leading-7">
               Futuro psicólogo clínico de abordagem junguiana. Materiais de estudo,
               formação e conteúdo para quem quer compreender a psiquê com profundidade.

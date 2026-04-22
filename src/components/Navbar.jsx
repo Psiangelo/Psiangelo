@@ -5,14 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useVisibility } from '@/lib/useVisibility';
-
-const PsiGlyph = ({ className = '' }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="0.7">
-    <circle cx="12" cy="12" r="10" opacity="0.35" />
-    <circle cx="12" cy="12" r="6" opacity="0.55" />
-    <path d="M12 4v16M6.5 8.5c0 3 2 5 5.5 5s5.5-2 5.5-5" strokeWidth="1" opacity="0.9" />
-  </svg>
-);
+import { LogoMarkInline } from '@/components/ui/LogoMark';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +32,6 @@ export default function Navbar() {
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
     { href: '/blog', label: 'Blog', key: 'blog' },
     { href: '/glossario', label: 'Glossário', key: null },
-    { href: '/marca', label: 'Marca', key: null },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 
@@ -61,9 +53,8 @@ export default function Navbar() {
           : 'py-4 sm:py-5 px-5 sm:px-6 md:px-12'
       }`}
     >
-      <Link href="/" className="flex items-center gap-2.5 font-serif text-text-bright text-lg tracking-wide group">
-        <PsiGlyph className="w-5 h-5 text-accent group-hover:text-accent-bright transition-colors" />
-        Psi<span className="italic text-accent">ângelo</span>
+      <Link href="/" className="flex items-center group" aria-label="Psiangelo · Home">
+        <LogoMarkInline height={28} className="transition-opacity group-hover:opacity-85" />
       </Link>
 
       <ul className="hidden md:flex items-center gap-10">

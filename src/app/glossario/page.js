@@ -9,7 +9,7 @@ export const metadata = {
   description:
     'Termos essenciais da psicologia analítica — Self, Sombra, Individuação, Arquétipo, Sincronicidade e mais. Definições claras, com links entre conceitos.',
   openGraph: {
-    title: 'Glossário junguiano · Psiângelo',
+    title: 'Glossário junguiano · Psiangelo',
     description: 'Termos essenciais da psicologia analítica, interligados.',
     type: 'article',
   },

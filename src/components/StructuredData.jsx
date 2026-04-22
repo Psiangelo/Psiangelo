@@ -7,7 +7,7 @@ export default function StructuredData() {
       {
         '@type': 'Person',
         '@id': `${BASE}#person`,
-        name: 'Psiângelo',
+        name: 'Psiangelo',
         givenName: 'Ângelo',
         jobTitle: 'Estagiário clínico em Psicologia',
         description:
@@ -30,7 +30,7 @@ export default function StructuredData() {
       {
         '@type': 'ProfessionalService',
         '@id': `${BASE}#service`,
-        name: 'Psiângelo — Psicologia Analítica',
+        name: 'Psiangelo — Psicologia Analítica',
         description:
           'Atendimento clínico em psicologia analítica, grupos de estudo, materiais e cursos em abordagem junguiana.',
         url: BASE,
@@ -42,7 +42,7 @@ export default function StructuredData() {
         '@type': 'WebSite',
         '@id': `${BASE}#website`,
         url: BASE,
-        name: 'Psiângelo',
+        name: 'Psiangelo',
         description:
           'Psicologia analítica, prática clínica e materiais de estudo em Jung.',
         publisher: { '@id': `${BASE}#person` },

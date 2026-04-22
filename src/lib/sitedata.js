@@ -68,7 +68,7 @@ export const DEFAULT_HOMEPAGE = {
   hero: {
     eyebrow: 'Psicologia Analítica · Jung',
     titlePrefix: 'Psi',
-    titleEmphasis: 'ângelo',
+    titleEmphasis: 'angelo',
     tagline: 'Nosce te ipsum',
     lead: 'Estudante de psicologia, estagiário clínico e futuro psicólogo. Aqui você encontra quem eu sou, o que produzo e como a psicologia analítica guia minha prática e meu olhar sobre o mundo.',
   },
@@ -99,7 +99,7 @@ export const DEFAULT_HOMEPAGE = {
 };
 
 export const DEFAULT_BIO = {
-  name: 'Psiângelo',
+  name: 'Psiangelo',
   tagline: 'Psicologia Analítica · Jung',
   bio: 'Estudante de psicologia, estagiário clínico. Aqui divido o que estudo, atendo e ensino.',
   avatar: '/images/angelo-portrait.png',

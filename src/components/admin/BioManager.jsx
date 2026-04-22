@@ -234,7 +234,7 @@ export default function BioManager({ addToast, addLogEntry }) {
               value={data.name}
               onChange={(e) => update('name', e.target.value)}
               className={INPUT}
-              placeholder="Psiângelo"
+              placeholder="Psiangelo"
             />
           </div>
           <div>

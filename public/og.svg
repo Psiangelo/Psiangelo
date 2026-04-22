@@ -1,53 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="accentFade" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#B48C50" stop-opacity="0.7" />
-      <stop offset="100%" stop-color="#B48C50" stop-opacity="0" />
-    </linearGradient>
-  </defs>
-
   <!-- Fundo -->
   <rect width="1200" height="630" fill="#0E0C0A" />
 
-  <!-- Borda dourada -->
-  <rect x="24" y="24" width="1152" height="582" fill="none" stroke="#B48C50" stroke-opacity="0.25" stroke-width="1" />
+  <!-- Borda dupla dourada sutil -->
+  <rect x="24" y="24" width="1152" height="582" fill="none" stroke="#B48C50" stroke-opacity="0.35" stroke-width="1" />
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#B48C50" stroke-opacity="0.15" stroke-width="0.6" />
 
-  <!-- Mandalas decorativas -->
-  <circle cx="1060" cy="140" r="260" fill="none" stroke="#B48C50" stroke-opacity="0.12" stroke-width="1" />
-  <circle cx="1060" cy="140" r="180" fill="none" stroke="#B48C50" stroke-opacity="0.18" stroke-width="1" />
-  <circle cx="1060" cy="140" r="100" fill="none" stroke="#B48C50" stroke-opacity="0.22" stroke-width="1" />
+  <!-- Triângulo vazado acima do nome -->
+  <polygon points="600,140 636,230 564,230" fill="none" stroke="#B48C50" stroke-opacity="0.65" stroke-width="1.6" />
+  <circle cx="600" cy="196" r="6" fill="#B48C50" />
 
-  <!-- Raios -->
-  <g stroke="#B48C50" stroke-opacity="0.14" stroke-width="0.8">
-    <line x1="1060" y1="-40" x2="1060" y2="320" />
-    <line x1="820" y1="140" x2="1300" y2="140" />
-    <line x1="890" y1="-30" x2="1230" y2="310" />
-    <line x1="1230" y1="-30" x2="890" y2="310" />
-  </g>
+  <!-- Linha horizontal superior (frame) -->
+  <line x1="180" y1="280" x2="1020" y2="280" stroke="#B48C50" stroke-opacity="0.45" stroke-width="1.2" />
+  <circle cx="180" cy="280" r="4" fill="#B48C50" />
+  <circle cx="1020" cy="280" r="4" fill="#B48C50" />
 
-  <!-- Marca -->
-  <text x="72" y="110" font-family="Georgia, serif" font-size="72" fill="#B48C50" font-style="italic">ψ</text>
-  <text x="150" y="98" font-family="Courier New, monospace" font-size="18" fill="#B48C50" letter-spacing="6" textLength="190">PSIÂNGELO</text>
+  <!-- Wordmark central -->
+  <text x="600" y="410"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic"
+        font-size="150"
+        fill="#E8DDD0"
+        letter-spacing="-2">Psi<tspan fill="#B48C50">angelo</tspan></text>
 
-  <!-- Eyebrow -->
-  <text x="72" y="270" font-family="Courier New, monospace" font-size="20" fill="#B48C50" letter-spacing="6" textLength="320">PSICOLOGIA ANALÍTICA · JUNG</text>
+  <!-- Linha horizontal inferior (frame) -->
+  <line x1="180" y1="460" x2="1020" y2="460" stroke="#B48C50" stroke-opacity="0.45" stroke-width="1.2" />
+  <circle cx="180" cy="460" r="4" fill="#B48C50" />
+  <circle cx="1020" cy="460" r="4" fill="#B48C50" />
 
-  <!-- Título -->
-  <text x="72" y="390" font-family="Georgia, serif" font-size="110" fill="#E8DDD0" letter-spacing="-2">
-    Psi<tspan font-style="italic" fill="#B48C50">ângelo</tspan>
-  </text>
+  <!-- Tagline -->
+  <text x="600" y="520"
+        text-anchor="middle"
+        font-family="Courier New, monospace"
+        font-size="22"
+        fill="#B48C50"
+        letter-spacing="10">PSICOLOGIA · ANALÍTICA</text>
 
-  <!-- Linha dourada -->
-  <line x1="72" y1="440" x2="180" y2="440" stroke="url(#accentFade)" stroke-width="1.6" />
-
-  <!-- Subtítulo -->
-  <text x="72" y="500" font-family="Georgia, serif" font-size="32" font-style="italic" fill="#E8DDD0" fill-opacity="0.75">
-    Nosce te ipsum · γνῶθι σεαυτόν
-  </text>
-
-  <!-- Footer -->
-  <text x="72" y="566" font-family="Georgia, serif" font-size="22" font-style="italic" fill="#B8AD9E" fill-opacity="0.6">
-    Ensaios, materiais e prática clínica junguiana
-  </text>
+  <!-- Grego discreto no rodapé -->
+  <text x="600" y="568"
+        text-anchor="middle"
+        font-family="Georgia, serif"
+        font-style="italic"
+        font-size="22"
+        fill="#B8AD9E"
+        fill-opacity="0.6">γνῶθι σεαυτόν · Nosce te ipsum</text>
 </svg>
