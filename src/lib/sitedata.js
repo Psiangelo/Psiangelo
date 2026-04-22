@@ -180,12 +180,15 @@ export const getBio = () => {
   const stored = readJson(SITEDATA_KEYS.bio, null);
   if (!stored) return DEFAULT_BIO;
   const links = Array.isArray(stored.links) ? stored.links : DEFAULT_BIO.links;
+  const images = Array.isArray(stored.images) ? stored.images : DEFAULT_BIO.images;
   return {
     ...DEFAULT_BIO,
     ...stored,
-    images: Array.isArray(stored.images) ? stored.images : DEFAULT_BIO.images,
-    // Garante que todo link tem os campos novos (image, description)
-    // mesmo que tenha sido salvo antes deles existirem.
+    images: images.map((img) => ({
+      url: img.url ?? '',
+      alt: img.alt ?? '',
+      hidden: img.hidden ?? false,
+    })),
     links: links.map((l) => ({
       label: l.label ?? '',
       href: l.href ?? '',

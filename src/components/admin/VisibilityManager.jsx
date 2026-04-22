@@ -153,7 +153,7 @@ export default function VisibilityManager({ addToast, addLogEntry }) {
             )}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button onClick={resetAll} className={BTN_SECONDARY}>
             Mostrar tudo
           </button>
@@ -166,6 +166,24 @@ export default function VisibilityManager({ addToast, addLogEntry }) {
           </button>
         </div>
       </div>
+
+      {dirty && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="sticky bottom-16 sm:bottom-4 z-40 bg-[#B48C50] text-[#0E0C0A] rounded-lg shadow-lg shadow-black/40 flex items-center justify-between gap-3 px-4 py-3"
+        >
+          <span className="text-xs sm:text-sm font-sans font-semibold">
+            Você tem mudanças não salvas
+          </span>
+          <button
+            onClick={persist}
+            className="px-4 py-1.5 bg-[#0E0C0A] text-[#B48C50] text-xs font-sans font-semibold rounded tracking-wider uppercase"
+          >
+            Salvar agora
+          </button>
+        </motion.div>
+      )}
 
       {GROUPS.map((group) => {
         const keys = group.items.map((i) => i.key);

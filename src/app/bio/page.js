@@ -164,9 +164,10 @@ function LinkButton({ link, index }) {
 }
 
 function Gallery({ images }) {
-  if (!images || images.length === 0) return null;
+  const visible = (images || []).filter((i) => !i.hidden);
+  if (visible.length === 0) return null;
 
-  const single = images.length === 1;
+  const single = visible.length === 1;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -174,7 +175,7 @@ function Gallery({ images }) {
       transition={{ duration: 0.6, delay: 0.5 }}
       className={`grid gap-2 w-full ${single ? 'grid-cols-1' : 'grid-cols-2'}`}
     >
-      {images.map((item, i) => {
+      {visible.map((item, i) => {
         const src = item.url?.startsWith('http') || item.url?.startsWith('/Psiangelo')
           ? item.url
           : item.url?.startsWith('/')

@@ -116,7 +116,7 @@ export default function BioManager({ addToast, addLogEntry }) {
             Página mobile em /bio — compartilhe como cartão de visita digital
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <a
             href="/Psiangelo/bio"
             target="_blank"
@@ -137,6 +137,25 @@ export default function BioManager({ addToast, addLogEntry }) {
           </button>
         </div>
       </div>
+
+      {/* Sticky save bar quando há mudanças */}
+      {dirty && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="sticky bottom-16 sm:bottom-4 z-40 bg-[#B48C50] text-[#0E0C0A] rounded-lg shadow-lg shadow-black/40 flex items-center justify-between gap-3 px-4 py-3"
+        >
+          <span className="text-xs sm:text-sm font-sans font-semibold">
+            Você tem mudanças não salvas
+          </span>
+          <button
+            onClick={persist}
+            className="px-4 py-1.5 bg-[#0E0C0A] text-[#B48C50] text-xs font-sans font-semibold rounded tracking-wider uppercase"
+          >
+            Salvar agora
+          </button>
+        </motion.div>
+      )}
 
       {/* Identidade */}
       <div className={CARD}>
@@ -265,85 +284,109 @@ export default function BioManager({ addToast, addLogEntry }) {
         )}
 
         <div className="space-y-3">
-          {data.images?.map((image, idx) => (
-            <div
-              key={idx}
-              className="flex gap-3 items-start bg-[#0E0C0A] border border-[rgba(180,140,80,0.08)] rounded-lg p-3"
-            >
-              {/* Preview */}
-              <div className="w-16 h-16 flex-shrink-0 bg-[#1A1714] border border-[rgba(180,140,80,0.12)] rounded overflow-hidden">
-                {image.url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={
-                      image.url.startsWith('http')
-                        ? image.url
-                        : image.url.startsWith('/Psiangelo')
+          {data.images?.map((image, idx) => {
+            const isHidden = !!image.hidden;
+            return (
+              <div
+                key={idx}
+                className={`flex gap-3 items-start bg-[#0E0C0A] border rounded-lg p-3 transition-opacity ${
+                  isHidden
+                    ? 'border-[rgba(180,140,80,0.04)] opacity-50'
+                    : 'border-[rgba(180,140,80,0.08)]'
+                }`}
+              >
+                {/* Preview */}
+                <div className="w-16 h-16 flex-shrink-0 bg-[#1A1714] border border-[rgba(180,140,80,0.12)] rounded overflow-hidden">
+                  {image.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={
+                        image.url.startsWith('http')
                           ? image.url
-                          : image.url.startsWith('/')
-                            ? `/Psiangelo${image.url}`
-                            : image.url
-                    }
-                    alt={image.alt || ''}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { e.currentTarget.style.opacity = '0.3'; }}
+                          : image.url.startsWith('/Psiangelo')
+                            ? image.url
+                            : image.url.startsWith('/')
+                              ? `/Psiangelo${image.url}`
+                              : image.url
+                      }
+                      alt={image.alt || ''}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.style.opacity = '0.3'; }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#6E6458] text-[10px]">
+                      sem url
+                    </div>
+                  )}
+                </div>
+
+                {/* Campos */}
+                <div className="flex-1 space-y-2 min-w-0">
+                  {isHidden && (
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-[#6E6458] tracking-[0.2em] uppercase">
+                      <span className="block w-1.5 h-1.5 rounded-full bg-[#6E6458]" />
+                      Oculta — não aparece no /bio
+                    </div>
+                  )}
+                  <input
+                    type="text"
+                    value={image.url || ''}
+                    onChange={(e) => updateImage(idx, 'url', e.target.value)}
+                    className={INPUT}
+                    placeholder="/images/foto.jpg ou https://..."
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#6E6458] text-[10px]">
-                    sem url
-                  </div>
-                )}
-              </div>
+                  <input
+                    type="text"
+                    value={image.alt || ''}
+                    onChange={(e) => updateImage(idx, 'alt', e.target.value)}
+                    className={INPUT}
+                    placeholder="Descrição (alt text)"
+                  />
+                </div>
 
-              {/* Campos */}
-              <div className="flex-1 space-y-2">
-                <input
-                  type="text"
-                  value={image.url || ''}
-                  onChange={(e) => updateImage(idx, 'url', e.target.value)}
-                  className={INPUT}
-                  placeholder="/images/foto.jpg ou https://..."
-                />
-                <input
-                  type="text"
-                  value={image.alt || ''}
-                  onChange={(e) => updateImage(idx, 'alt', e.target.value)}
-                  className={INPUT}
-                  placeholder="Descrição (alt text)"
-                />
+                {/* Controles */}
+                <div className="flex flex-col gap-1">
+                  <button
+                    onClick={() => updateImage(idx, 'hidden', !isHidden)}
+                    className={
+                      isHidden
+                        ? 'px-3 py-1.5 border border-[rgba(180,140,80,0.4)] text-[#B48C50] text-[10px] font-sans tracking-wider uppercase rounded-lg hover:bg-[rgba(180,140,80,0.1)] transition-colors'
+                        : BTN_SECONDARY
+                    }
+                    title={isHidden ? 'Publicar' : 'Ocultar'}
+                  >
+                    {isHidden ? 'publicar' : 'ocultar'}
+                  </button>
+                  <button
+                    onClick={() => moveImage(idx, -1)}
+                    disabled={idx === 0}
+                    className={BTN_SECONDARY + (idx === 0 ? ' opacity-30 cursor-not-allowed' : '')}
+                    title="Subir"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={() => moveImage(idx, 1)}
+                    disabled={idx === data.images.length - 1}
+                    className={
+                      BTN_SECONDARY +
+                      (idx === data.images.length - 1 ? ' opacity-30 cursor-not-allowed' : '')
+                    }
+                    title="Descer"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    onClick={() => removeImage(idx)}
+                    className={BTN_DANGER_INLINE}
+                    title="Remover"
+                  >
+                    remover
+                  </button>
+                </div>
               </div>
-
-              {/* Controles */}
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => moveImage(idx, -1)}
-                  disabled={idx === 0}
-                  className={BTN_SECONDARY + (idx === 0 ? ' opacity-30 cursor-not-allowed' : '')}
-                  title="Subir"
-                >
-                  ↑
-                </button>
-                <button
-                  onClick={() => moveImage(idx, 1)}
-                  disabled={idx === data.images.length - 1}
-                  className={
-                    BTN_SECONDARY +
-                    (idx === data.images.length - 1 ? ' opacity-30 cursor-not-allowed' : '')
-                  }
-                  title="Descer"
-                >
-                  ↓
-                </button>
-                <button
-                  onClick={() => removeImage(idx)}
-                  className={BTN_DANGER_INLINE}
-                  title="Remover"
-                >
-                  remover
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
