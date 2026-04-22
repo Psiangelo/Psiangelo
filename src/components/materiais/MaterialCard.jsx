@@ -55,33 +55,27 @@ function resolveImg(src) {
 }
 
 /* ================================
-   FULL CARD — editorial com numeração romana, capa maior, preço gigante
+   FULL CARD — compacto, capa menor, tipografia enxuta
 ================================ */
-export function MaterialCardFull({ material, index = 0 }) {
+export function MaterialCardFull({ material }) {
   const [expanded, setExpanded] = useState(false);
   const hasChapters = material.category === 'livro' && material.chapters && material.chapters.length > 0;
   const image = resolveImg(material.image);
-  const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][index] || `${index + 1}`;
 
   return (
     <motion.article
       layout
       id={material.id}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.4 }}
-      className="group relative bg-bg-card border-t border-b border-border-subtle hover:border-border-hover transition-colors overflow-hidden"
+      className="group relative bg-bg-card border border-border-subtle hover:border-border-hover transition-colors overflow-hidden"
     >
-      {/* Linha dourada top (vai aparecendo no hover) */}
-      <span className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-      <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[240px_1fr]">
-        {/* CAPA — coluna fixa larga, com gradient overlay e numeração romana */}
-        <div className="relative bg-bg border-b sm:border-b-0 sm:border-r border-border-subtle overflow-hidden min-h-[280px] sm:min-h-[360px]">
+      <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] md:grid-cols-[160px_1fr]">
+        {/* CAPA compacta */}
+        <div className="relative bg-bg border-b sm:border-b-0 sm:border-r border-border-subtle overflow-hidden min-h-[160px] sm:min-h-[200px]">
           {image ? (
             <img
               src={image}
               alt={material.title}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              className="absolute inset-0 w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
           ) : (
@@ -91,96 +85,44 @@ export function MaterialCardFull({ material, index = 0 }) {
               </span>
             </div>
           )}
-          {/* Gradient sutil pra integrar com o card */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-bg-card/40 pointer-events-none" />
-
-          {/* Numeração romana editorial sobre a capa */}
-          <span className="absolute top-3 left-3 font-serif italic text-[2.2rem] leading-none text-accent select-none pointer-events-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-            {roman}
-          </span>
         </div>
 
-        {/* INFO — coluna editorial */}
-        <div className="p-6 md:p-8 flex flex-col gap-5">
-          {/* Badges + autor */}
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <CategoryBadge category={material.category} />
-              <ContentBadge contentType={material.contentType} />
-              <AvailBadge available={material.available} />
-            </div>
-            {material.author && (
-              <span className="font-mono text-[0.55rem] text-text-dim tracking-[0.2em] uppercase whitespace-nowrap">
-                {material.author}
-              </span>
-            )}
+        {/* INFO enxuta */}
+        <div className="p-4 md:p-5 flex flex-col gap-3">
+          {/* Badge único: tipo do conteúdo */}
+          <div className="flex items-center justify-between gap-3">
+            <ContentBadge contentType={material.contentType} />
+            {!material.available && <AvailBadge available={false} />}
           </div>
 
-          {/* Título + subtítulo + descrição */}
+          {/* Título + subtítulo */}
           <header>
-            <h3 className="font-serif text-2xl md:text-3xl text-text-bright leading-[1.1] tracking-[-0.01em] mb-2 group-hover:text-accent transition-colors">
+            <h3 className="font-serif text-lg md:text-xl text-text-bright leading-[1.15] tracking-[-0.01em] group-hover:text-accent transition-colors">
               {material.title}
             </h3>
             {material.subtitle && (
-              <p className="font-serif italic text-text-dim text-[0.95rem] mb-3">
+              <p className="font-serif italic text-text-dim text-[0.82rem] mt-1">
                 {material.subtitle}
-              </p>
-            )}
-            {material.description && (
-              <p className="text-[0.9rem] text-text leading-[1.8] max-w-2xl">
-                {material.description}
               </p>
             )}
           </header>
 
-          {/* Tags */}
-          {material.tags && material.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {material.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="font-mono text-[0.5rem] tracking-[0.18em] uppercase text-text-dim border-b border-border-subtle/60 pb-0.5 px-1"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Linha divisória dourada */}
-          <div className="h-px bg-gradient-to-r from-accent/30 via-accent/15 to-transparent" />
-
-          {/* Preço editorial gigante + CTA */}
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
-            <div className="flex items-end gap-7 flex-wrap">
+          {/* Preço + CTA */}
+          <div className="flex items-end justify-between gap-4 mt-auto pt-2">
+            <div>
               {hasChapters ? (
                 <>
-                  <div>
-                    <p className="font-mono text-[0.55rem] text-accent/80 tracking-[0.22em] uppercase mb-0.5">
-                      Livro completo
-                    </p>
-                    <p className="font-serif text-3xl md:text-4xl text-text-bright leading-none tracking-tight">
-                      {material.price}
-                    </p>
-                  </div>
-                  <div className="opacity-70">
-                    <p className="font-mono text-[0.55rem] text-text-dim tracking-[0.22em] uppercase mb-0.5">
-                      Por capítulo
-                    </p>
-                    <p className="font-serif text-xl md:text-2xl text-text leading-none tracking-tight">
-                      {material.chapterPrice}
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <p className="font-mono text-[0.55rem] text-accent/80 tracking-[0.22em] uppercase mb-0.5">
-                    Investimento
+                  <p className="font-mono text-[0.5rem] text-text-dim tracking-[0.22em] uppercase mb-0.5">
+                    Livro completo
                   </p>
-                  <p className="font-serif text-3xl md:text-4xl text-text-bright leading-none tracking-tight">
+                  <p className="font-serif text-xl text-text-bright leading-none tracking-tight">
                     {material.price}
                   </p>
-                </div>
+                </>
+              ) : (
+                <p className="font-serif text-xl text-text-bright leading-none tracking-tight">
+                  {material.price}
+                </p>
               )}
             </div>
 
@@ -189,36 +131,29 @@ export function MaterialCardFull({ material, index = 0 }) {
                 href={material.whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/btn relative inline-flex items-center gap-2.5 px-6 py-3 font-sans text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-bg bg-accent hover:bg-text-bright transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/20 overflow-hidden self-start md:self-end"
+                className="inline-flex items-center gap-2 px-4 py-2 font-sans text-[0.6rem] font-semibold tracking-[0.18em] uppercase text-bg bg-accent hover:bg-text-bright transition-colors"
               >
-                <span className="relative z-10 flex items-center gap-2.5">
-                  {waIcon}
-                  {hasChapters ? 'Quero o livro' : 'Quero este'}
-                </span>
+                {waIcon}
+                Quero
               </a>
             )}
           </div>
 
           {/* Capítulos toggle (apenas livros) */}
           {hasChapters && (
-            <div className="pt-2 border-t border-border-subtle/50">
-              <p className="font-serif italic text-text-dim text-[0.85rem] mb-3">
-                O livro completo sai mais em conta que comprar capítulos avulsos.
-              </p>
-              <button
-                onClick={() => setExpanded(!expanded)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 font-mono text-[0.6rem] tracking-[0.2em] uppercase text-text-dim border border-border-hover hover:text-accent hover:border-accent/50 transition-colors bg-transparent cursor-pointer"
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="inline-flex items-center gap-1.5 pt-2 mt-1 border-t border-border-subtle/40 font-mono text-[0.55rem] tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors self-start"
+            >
+              {expanded ? 'Ocultar capítulos' : `${material.chapters.length} capítulos avulsos`}
+              <motion.svg
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+                width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
               >
-                {expanded ? 'Ocultar capítulos' : `Ver ${material.chapters.length} capítulos avulsos`}
-                <motion.svg
-                  animate={{ rotate: expanded ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </motion.svg>
-              </button>
-            </div>
+                <path d="M6 9l6 6 6-6" />
+              </motion.svg>
+            </button>
           )}
         </div>
       </div>

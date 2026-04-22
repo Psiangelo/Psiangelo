@@ -7,20 +7,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SectionLabel from '@/components/SectionLabel';
 import PageHero from '@/components/ui/PageHero';
-import MandalaDivider from '@/components/ui/MandalaDivider';
 import { MaterialCardFull } from '@/components/materiais/MaterialCard';
 import { materials, comingSoon, contentTypeLabels } from '@/data/materials';
 import { fadeUp, stagger } from '@/lib/constants';
 import { img } from '@/lib/basepath';
-import {
-  SpiralAccent,
-  BranchOrnament,
-  QuaternioSigil,
-  DiamondChain,
-  ConcentricSquares,
-  GoldenArc,
-  VesicaPiscis,
-} from '@/components/illustrations';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
 
@@ -59,53 +49,32 @@ function MateriaisHero() {
 }
 
 /* ========================================
-   EXPLANATION
+   EXPLANATION — compacta, 1 linha de 3 bullets
 ======================================== */
 function Explanation() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   const features = [
-    { mark: 'I',   title: 'Feitos no Obsidian',     desc: 'Resumos interconectados, com links entre conceitos e uma estrutura que reflete como o conhecimento realmente se organiza.' },
-    { mark: 'II',  title: 'Mapas mentais completos', desc: 'Diagramas detalhados — alguns suficientes por si só para estudar, sem precisar do resumo.' },
-    { mark: 'III', title: 'Percepção clínica',      desc: 'Misturados com minha percepção e experiência de atendimento — não só o que está nos livros.' },
+    { title: 'Feitos no Obsidian',     desc: 'Resumos interconectados com links entre conceitos.' },
+    { title: 'Mapas mentais completos', desc: 'Diagramas detalhados — alguns bastam por si só.' },
+    { title: 'Percepção clínica',      desc: 'Misturados com experiência de atendimento.' },
   ];
 
   return (
-    <section
-      ref={ref}
-      className="py-14 md:py-24 px-5 sm:px-6 md:px-12 bg-bg-warm section-border-t section-border-b grain-soft relative"
-    >
+    <section ref={ref} className="py-10 md:py-14 px-5 sm:px-6 md:px-12 bg-bg-warm section-border-t section-border-b">
       <motion.div
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         variants={stagger}
-        className="relative max-w-[1280px] mx-auto"
+        className="max-w-[1280px] mx-auto"
       >
-        <SectionLabel label="O que são" />
-        <motion.h2
-          variants={fadeUp}
-          className="font-serif text-[clamp(1.9rem,3.6vw,2.6rem)] text-text-bright leading-[1.05] mb-5 max-w-3xl"
-        >
-          Resumos e <em className="italic text-accent">mapas mentais</em>
-        </motion.h2>
-        <motion.p variants={fadeUp} className="text-[0.95rem] text-text-dim max-w-2xl leading-[1.85] mb-12">
-          Cada material vem da minha leitura, da supervisão e da experiência no consultório.
-        </motion.p>
-
-        <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+        <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
           {features.map((feat) => (
-            <motion.article
-              key={feat.title}
-              variants={fadeUp}
-              className="relative pt-7 border-t border-accent/25"
-            >
-              <span className="absolute -top-[14px] left-0 bg-bg-warm pr-3 font-serif italic text-2xl text-accent leading-none">
-                {feat.mark}
-              </span>
-              <h3 className="font-serif text-xl text-text-bright mb-3 leading-tight">{feat.title}</h3>
-              <p className="text-[0.88rem] text-text-dim leading-[1.85]">{feat.desc}</p>
-            </motion.article>
+            <motion.div key={feat.title} variants={fadeUp} className="border-l-2 border-accent/30 pl-4">
+              <h3 className="font-serif text-base text-text-bright leading-tight mb-1.5">{feat.title}</h3>
+              <p className="text-[0.85rem] text-text-dim leading-[1.7]">{feat.desc}</p>
+            </motion.div>
           ))}
         </motion.div>
       </motion.div>
@@ -257,17 +226,7 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
   );
 }
 
-function CatalogSidebar(props) {
-  return (
-    <aside className="hidden lg:block lg:w-[240px] lg:flex-shrink-0">
-      <div className="lg:sticky lg:top-24">
-        <FilterPanel {...props} />
-      </div>
-    </aside>
-  );
-}
-
-function MobileFilterDrawer({ open, onClose, filters, setFilters, onClear, total, filteredCount }) {
+function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filteredCount }) {
   const totalActive = Object.values(filters).reduce((s, arr) => s + arr.length, 0);
 
   return (
@@ -279,14 +238,14 @@ function MobileFilterDrawer({ open, onClose, filters, setFilters, onClear, total
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/70 z-[90] lg:hidden"
+            className="fixed inset-0 bg-black/70 z-[90]"
           />
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 32, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-[91] bg-bg-warm border-t border-accent/30 rounded-t-2xl max-h-[85vh] flex flex-col lg:hidden"
+            className="fixed bottom-0 left-0 right-0 z-[91] bg-bg-warm border-t border-accent/30 rounded-t-2xl max-h-[85vh] flex flex-col sm:max-w-[480px] sm:left-1/2 sm:-translate-x-1/2 sm:rounded-t-2xl"
           >
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-border-subtle">
               <div>
@@ -342,10 +301,8 @@ function MobileFilterDrawer({ open, onClose, filters, setFilters, onClear, total
   );
 }
 
-/* ============== GRID BENTO ============== */
-
-// Tile compacto pra "tema" — preview com mapa-icon hover
-function TemaTile({ material, span = '' }) {
+/* ============== TILE TEMA — compacto uniforme ============== */
+function TemaTile({ material }) {
   const typeInfo = contentTypeLabels[material.contentType];
   const image = material.image
     ? (material.image.startsWith('http') ? material.image : img(material.image))
@@ -354,79 +311,45 @@ function TemaTile({ material, span = '' }) {
   return (
     <motion.article
       layout
-      whileHover={{ y: -3 }}
-      transition={{ duration: 0.35 }}
       id={material.id}
-      className={`group relative bg-bg-card border border-border-subtle overflow-hidden flex flex-col hover:border-border-hover transition-colors min-h-[220px] ${span}`}
+      className="group relative bg-bg-card border border-border-subtle overflow-hidden flex flex-col hover:border-border-hover transition-colors min-h-[160px]"
     >
       {image && (
         <div className="absolute inset-0">
           <img
             src={image}
             alt={material.title}
-            className="w-full h-full object-cover opacity-45 group-hover:opacity-70 group-hover:scale-105 transition-all duration-700"
+            className="w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-opacity duration-500"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/90 to-bg/40" />
         </div>
       )}
 
-      {/* Mind-map preview overlay no hover (só pra contentType=mapa) */}
-      {material.contentType === 'mapa' && (
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none flex items-center justify-center">
-          <svg className="w-32 h-32 text-accent" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.6">
-            <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.25" />
-            {Array.from({ length: 6 }).map((_, i) => {
-              const a = (i * 60 * Math.PI) / 180;
-              const x = 50 + Math.cos(a) * 32;
-              const y = 50 + Math.sin(a) * 32;
-              return (
-                <g key={i}>
-                  <line x1="50" y1="50" x2={x} y2={y} opacity="0.35" />
-                  <circle cx={x} cy={y} r="3" fill="currentColor" opacity="0.55" />
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-      )}
-
-      <div className="relative z-10 p-6 flex flex-col h-full">
-        <div className="flex items-center gap-1.5 mb-auto">
-          <span className="font-mono text-[0.55rem] tracking-[0.18em] uppercase px-2 py-1 border border-accent/30 text-accent bg-accent/[0.08]">
-            Tema
+      <div className="relative z-10 p-4 flex flex-col h-full gap-2">
+        {typeInfo && (
+          <span className="self-start font-mono text-[0.5rem] tracking-[0.18em] uppercase px-1.5 py-0.5 text-accent/80">
+            {typeInfo.label}
           </span>
-          {typeInfo && (
-            <span className="font-mono text-[0.55rem] tracking-[0.15em] uppercase px-2 py-1 border border-border-subtle/60 text-text-dim">
-              {typeInfo.label}
-            </span>
-          )}
-        </div>
+        )}
 
-        <div className="mt-6">
-          <h3 className="font-serif text-lg text-text-bright leading-tight mb-2 group-hover:text-accent transition-colors">
+        <div className="mt-auto">
+          <h3 className="font-serif text-[0.95rem] text-text-bright leading-tight group-hover:text-accent transition-colors">
             {material.title}
           </h3>
-          {material.subtitle && (
-            <p className="text-[0.78rem] text-text-dim leading-snug">
-              {material.subtitle}
-            </p>
-          )}
           {material.available && (
             <a
               href={material.whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="mt-4 inline-flex items-center gap-2 font-mono text-[0.58rem] tracking-[0.18em] uppercase text-accent hover:text-text-bright transition-colors"
+              className="mt-2 inline-flex items-center gap-1.5 font-mono text-[0.55rem] tracking-[0.18em] uppercase text-accent hover:text-text-bright transition-colors"
             >
               {material.price} →
             </a>
           )}
         </div>
       </div>
-
-      <span className="absolute bottom-0 left-0 h-px w-0 bg-accent group-hover:w-full transition-all duration-500" />
     </motion.article>
   );
 }
@@ -436,7 +359,7 @@ function Catalog() {
   const inView = useInView(ref, { once: true, margin: '-60px' });
   const [filters, setFilters] = useState(initialFilters);
   const [search, setSearch] = useState('');
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return materials.filter((m) => {
@@ -458,185 +381,127 @@ function Catalog() {
 
   const livros = filtered.filter((m) => m.category === 'livro');
   const temas  = filtered.filter((m) => m.category === 'tema');
-
-  // Spans bento — tema #0 grande, depois 1×1, alterna 2×1
-  const bentoSpan = (i) => {
-    if (i === 0) return 'sm:col-span-2 sm:row-span-2 min-h-[400px]';
-    if (i === 4) return 'sm:col-span-2';
-    return '';
-  };
+  const totalActiveFilters = Object.values(filters).reduce((s, arr) => s + arr.length, 0);
 
   return (
-    <section id="catalogo" ref={ref} className="py-14 md:py-24 px-5 sm:px-6 md:px-12 relative overflow-hidden">
-      <ConcentricSquares
-        className="absolute top-10 -right-8 pointer-events-none hidden md:block"
-        size={140}
-        opacity={0.15}
-      />
-      <VesicaPiscis
-        className="absolute bottom-10 -left-10 pointer-events-none hidden lg:block"
-        size={200}
-        opacity={0.1}
-      />
+    <section id="catalogo" ref={ref} className="py-10 md:py-16 px-5 sm:px-6 md:px-12">
       <motion.div
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         variants={stagger}
-        className="max-w-[1280px] mx-auto relative"
+        className="max-w-[1100px] mx-auto"
       >
-        <div className="mb-10">
+        <div className="mb-6">
           <SectionLabel label="Catálogo" />
-          <motion.h2
-            variants={fadeUp}
-            className="font-serif text-[clamp(1.9rem,3.8vw,2.8rem)] text-text-bright leading-[1.05] mb-5"
-          >
-            Materiais <em className="italic text-accent">disponíveis</em>
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-[0.95rem] text-text-dim max-w-xl leading-[1.85] mb-2">
-            Cada material indica o que inclui. Livros podem ser adquiridos completos
-            (com desconto) ou por capítulos avulsos — expandidos no próprio catálogo.
-          </motion.p>
         </div>
 
-        {/* Layout principal — sidebar + conteúdo */}
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-12">
-          <CatalogSidebar
-            filters={filters}
-            setFilters={setFilters}
-            onClear={() => setFilters(initialFilters)}
-            total={materials.length}
-            filteredCount={filtered.length}
-          />
+        <FilterDrawer
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          filters={filters}
+          setFilters={setFilters}
+          onClear={() => setFilters(initialFilters)}
+          total={materials.length}
+          filteredCount={filtered.length}
+        />
 
-          <MobileFilterDrawer
-            open={mobileFiltersOpen}
-            onClose={() => setMobileFiltersOpen(false)}
-            filters={filters}
-            setFilters={setFilters}
-            onClear={() => setFilters(initialFilters)}
-            total={materials.length}
-            filteredCount={filtered.length}
-          />
-
-          <div className="flex-1 min-w-0">
-            {/* Search + mobile filters */}
-            <div className="mb-6 md:mb-8 flex items-center gap-3">
-              <div className="flex-1 relative border-b border-border-subtle hover:border-border-hover focus-within:border-accent/50 transition-colors">
-                <svg
-                  className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Buscar…"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 bg-transparent text-text-bright placeholder:text-text-dim/50 focus:outline-none font-serif italic text-base"
-                />
-              </div>
-
-              <button
-                onClick={() => setMobileFiltersOpen(true)}
-                className="lg:hidden relative flex items-center gap-2 px-4 py-2.5 border border-accent/30 text-accent font-mono text-[0.62rem] tracking-[0.18em] uppercase hover:bg-accent/10 transition-colors"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 6h18M6 12h12M10 18h4" />
-                </svg>
-                Filtros
-                {Object.values(filters).reduce((s, a) => s + a.length, 0) > 0 && (
-                  <span className="ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-bg flex items-center justify-center text-[0.6rem] font-sans font-semibold">
-                    {Object.values(filters).reduce((s, a) => s + a.length, 0)}
-                  </span>
-                )}
-              </button>
-            </div>
-
-            {filtered.length === 0 && (
-              <div className="text-center py-20 border border-border-subtle border-dashed">
-                <p className="font-serif italic text-text-dim text-lg mb-4">Nenhum material com esses filtros.</p>
-                <button
-                  onClick={() => { setFilters(initialFilters); setSearch(''); }}
-                  className="font-mono text-[0.62rem] text-accent tracking-[0.22em] uppercase hover:text-text-bright transition-colors"
-                >
-                  Limpar filtros
-                </button>
-              </div>
-            )}
-
-            {/* LIVROS — cards completos com capítulos expostos */}
-            {livros.length > 0 && (
-              <div className="mb-14">
-                <header className="flex items-baseline gap-4 mb-5">
-                  <span className="font-mono text-[0.62rem] text-accent tracking-[0.22em] uppercase">Livros</span>
-                  <span className="flex-1 h-px bg-border-subtle" />
-                  <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">
-                    {livros.length}
-                  </span>
-                </header>
-                <p className="font-serif italic text-text-dim text-[0.92rem] mb-6">
-                  Resumo completo, capítulo a capítulo ou inteiro — capítulos expandidos abaixo.
-                </p>
-                <div className="flex flex-col gap-4">
-                  {livros.map((mat, i) => (
-                    <MaterialCardFull key={mat.id} material={mat} index={i} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* TEMAS — bento grid */}
-            {temas.length > 0 && (
-              <div>
-                <header className="flex items-baseline gap-4 mb-5">
-                  <span className="font-mono text-[0.62rem] text-accent tracking-[0.22em] uppercase">Temas</span>
-                  <span className="flex-1 h-px bg-border-subtle" />
-                  <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">
-                    {temas.length}
-                  </span>
-                </header>
-                <p className="font-serif italic text-text-dim text-[0.92rem] mb-6">
-                  Mapas mentais e resumos por tema — passe o cursor para preview do mapa.
-                </p>
-                <motion.div
-                  layout
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:auto-rows-[200px] gap-4"
-                >
-                  <AnimatePresence mode="popLayout">
-                    {temas.map((mat, i) => (
-                      <TemaTile key={mat.id} material={mat} span={bentoSpan(i)} />
-                    ))}
-                  </AnimatePresence>
-                </motion.div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* EM BREVE — abaixo de tudo */}
-        {comingSoon.length > 0 && (
-          <motion.div variants={fadeUp} className="mt-20 relative">
-            <QuaternioSigil
-              className="absolute -top-10 right-0 pointer-events-none hidden md:block"
-              size={56}
-              opacity={0.3}
-              animated={false}
+        {/* Barra de busca + botão Filtros */}
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex-1 relative border-b border-border-subtle focus-within:border-accent/50 transition-colors">
+            <svg
+              className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Buscar…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-transparent text-text-bright placeholder:text-text-dim/50 focus:outline-none font-serif italic text-[0.95rem]"
             />
-            <div className="flex items-baseline gap-4 mb-6">
-              <span className="font-mono text-[0.62rem] text-accent tracking-[0.25em] uppercase">Em breve</span>
-              <span className="flex-1 h-px bg-border-subtle" />
-              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em] uppercase">
-                {comingSoon.length} títulos
+          </div>
+
+          <button
+            onClick={() => setFiltersOpen(true)}
+            className="relative flex items-center gap-2 px-4 py-2 border border-border-subtle hover:border-accent/50 text-text-dim hover:text-accent font-mono text-[0.6rem] tracking-[0.18em] uppercase transition-colors"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 6h18M6 12h12M10 18h4" />
+            </svg>
+            Filtros
+            {totalActiveFilters > 0 && (
+              <span className="ml-1 min-w-[16px] h-[16px] px-1 rounded-full bg-accent text-bg flex items-center justify-center text-[0.55rem] font-sans font-semibold">
+                {totalActiveFilters}
               </span>
+            )}
+          </button>
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-16 border border-border-subtle border-dashed">
+            <p className="font-serif italic text-text-dim mb-4">Nenhum material com esses filtros.</p>
+            <button
+              onClick={() => { setFilters(initialFilters); setSearch(''); }}
+              className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase hover:text-text-bright transition-colors"
+            >
+              Limpar filtros
+            </button>
+          </div>
+        )}
+
+        {/* LIVROS */}
+        {livros.length > 0 && (
+          <div className="mb-12">
+            <header className="flex items-baseline gap-4 mb-4">
+              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Livros</span>
+              <span className="flex-1 h-px bg-border-subtle" />
+              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{livros.length}</span>
+            </header>
+            <div className="flex flex-col gap-3">
+              {livros.map((mat) => (
+                <MaterialCardFull key={mat.id} material={mat} />
+              ))}
             </div>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
+          </div>
+        )}
+
+        {/* TEMAS — grid uniforme */}
+        {temas.length > 0 && (
+          <div>
+            <header className="flex items-baseline gap-4 mb-4">
+              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Temas</span>
+              <span className="flex-1 h-px bg-border-subtle" />
+              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{temas.length}</span>
+            </header>
+            <motion.div
+              layout
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+            >
+              <AnimatePresence mode="popLayout">
+                {temas.map((mat) => (
+                  <TemaTile key={mat.id} material={mat} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        )}
+
+        {/* EM BREVE */}
+        {comingSoon.length > 0 && (
+          <motion.div variants={fadeUp} className="mt-14">
+            <header className="flex items-baseline gap-4 mb-4">
+              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Em breve</span>
+              <span className="flex-1 h-px bg-border-subtle" />
+              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{comingSoon.length}</span>
+            </header>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1">
               {comingSoon.map((title) => (
-                <li key={title} className="flex items-baseline gap-3 py-2 border-b border-border-subtle/40 text-text-dim/70">
-                  <span className="text-accent/40 text-[0.6rem]">◇</span>
-                  <span className="font-serif text-[0.92rem] leading-tight">{title}</span>
+                <li key={title} className="py-1.5 text-text-dim/60 font-serif text-[0.88rem] leading-tight">
+                  {title}
                 </li>
               ))}
             </ul>
@@ -660,19 +525,7 @@ export default function MateriaisPage() {
       <Navbar />
       <main>
         <MateriaisHero />
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-12 relative">
-          <SpiralAccent
-            className="absolute -top-4 -right-16 pointer-events-none hidden md:block"
-            size={220}
-            opacity={0.1}
-          />
-          <MandalaDivider size={48} opacity={0.25} />
-          <BranchOrnament className="mx-auto mt-4" opacity={0.45} />
-        </div>
         <Explanation />
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-12 py-4">
-          <DiamondChain opacity={0.5} />
-        </div>
         <Catalog />
       </main>
       <Footer />
