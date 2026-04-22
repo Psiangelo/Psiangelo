@@ -102,6 +102,7 @@ export const DEFAULT_BIO = {
   name: 'Psiângelo',
   tagline: 'Psicologia Analítica · Jung',
   bio: 'Estudante de psicologia, estagiário clínico. Aqui divido o que estudo, atendo e ensino.',
+  avatar: '/images/angelo-portrait.png',
   images: [],
   links: [
     {

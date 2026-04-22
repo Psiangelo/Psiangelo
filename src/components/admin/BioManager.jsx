@@ -7,7 +7,7 @@ import { getBio, setBio, DEFAULT_BIO } from '@/lib/sitedata';
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y min-h-[80px]';
 const LABEL = 'block text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-2';
-const CARD = 'bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-xl p-5';
+const CARD = 'bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-xl p-4 sm:p-5';
 const BTN_PRIMARY = 'px-4 py-2 bg-[#B48C50] hover:bg-[#9A7A48] text-[#0E0C0A] text-sm font-sans font-semibold rounded-lg transition-colors';
 const BTN_SECONDARY = 'px-3 py-1.5 border border-[rgba(180,140,80,0.2)] text-[#B8AD9E] text-xs font-sans rounded-lg hover:border-[#B48C50] hover:text-[#B48C50] transition-colors';
 const BTN_DANGER_INLINE = 'text-red-400/70 hover:text-red-400 text-xs px-2 py-1';
@@ -143,6 +143,70 @@ export default function BioManager({ addToast, addLogEntry }) {
         <h3 className="font-serif text-[#B48C50] mb-4 text-sm uppercase tracking-widest">
           Identidade
         </h3>
+
+        {/* Avatar */}
+        <div className="mb-4">
+          <label className={LABEL}>Foto de perfil (avatar)</label>
+          <div className="flex items-start gap-3 flex-wrap">
+            <div className="w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-[rgba(180,140,80,0.2)] bg-[#0E0C0A]">
+              {data.avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={resolveLinkImage(data.avatar)}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.style.opacity = '0.3'; }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#6E6458] text-[10px]">
+                  sem foto
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-[200px] space-y-2">
+              <input
+                type="text"
+                value={data.avatar || ''}
+                onChange={(e) => update('avatar', e.target.value)}
+                className={INPUT}
+                placeholder="/images/foto.jpg ou https://..."
+              />
+              <div className="flex gap-2 flex-wrap">
+                <label className={BTN_SECONDARY + ' cursor-pointer'}>
+                  Escolher arquivo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 800 * 1024) {
+                        addToast?.('Imagem muito grande (max 800KB). Use URL externa.', 'error');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = () => update('avatar', reader.result);
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+                {data.avatar && (
+                  <button
+                    onClick={() => update('avatar', '')}
+                    className={BTN_DANGER_INLINE}
+                  >
+                    remover
+                  </button>
+                )}
+              </div>
+              <p className="text-[10px] text-[#6E6458]">
+                Cole uma URL ou suba um arquivo (max 800KB). Arquivos são salvos embutidos no navegador.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className={LABEL}>Nome exibido</label>

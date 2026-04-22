@@ -256,8 +256,8 @@ export default function BioPage() {
           <div className="absolute inset-3 rounded-full overflow-hidden border border-accent/30">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={img('/images/angelo-portrait.png')}
-              alt="Ângelo"
+              src={resolveImageSrc(bio.avatar) || img('/images/angelo-portrait.png')}
+              alt={bio.name || 'Ângelo'}
               className="w-full h-full object-cover grayscale-[0.15]"
             />
           </div>

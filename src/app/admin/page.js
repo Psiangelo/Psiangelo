@@ -559,7 +559,7 @@ function ConfirmModal({ open, title, message, onConfirm, onCancel }) {
 const INPUT_CLASS =
   'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] rounded-lg px-4 py-3 text-sm text-[#E8DDD0] font-sans focus:outline-none focus:border-[#B48C50] transition-colors';
 const LABEL_CLASS = 'block text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-2';
-const CARD_CLASS = 'bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-xl p-5';
+const CARD_CLASS = 'bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-xl p-4 sm:p-5';
 const BTN_PRIMARY = 'px-4 py-2 bg-[#B48C50] hover:bg-[#9A7A48] text-[#0E0C0A] text-sm font-sans font-semibold rounded-lg transition-colors';
 const BTN_SECONDARY = 'px-3 py-1.5 border border-[rgba(180,140,80,0.2)] text-[#B8AD9E] text-xs font-sans rounded-lg hover:border-[#B48C50] hover:text-[#B48C50] transition-colors';
 const BTN_DANGER = 'px-3 py-1.5 border border-red-900/30 text-red-400 text-xs font-sans rounded-lg hover:border-red-600 hover:text-red-300 transition-colors';
@@ -738,44 +738,136 @@ function CommandPalette({ open, onClose, materialsList, testimonialsList, faqsLi
 }
 
 // ─── Mobile Bottom Navigation ───────────────────────────────────────
+function IconMenu({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  );
+}
+
 function MobileBottomNav({ activeTab, setActiveTab, materialsList, testimonialsList, faqsList }) {
-  const tabs = [
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const allTabs = [
     { id: 'dashboard', label: 'Dashboard', icon: IconGrid },
     { id: 'materials', label: 'Materiais', icon: IconBook, badge: materialsList.length },
     { id: 'trilhas', label: 'Trilhas', icon: IconBook },
     { id: 'cartography', label: 'Cartografia', icon: IconGrid },
     { id: 'content', label: 'Conteúdo', icon: IconPen },
-    { id: 'bio', label: 'Bio', icon: IconUser },
+    { id: 'bio', label: 'Bio / Linktree', icon: IconUser },
     { id: 'blog', label: 'Blog', icon: IconPen },
     { id: 'courses', label: 'Cursos', icon: IconVideo },
     { id: 'testimonials', label: 'Depoimentos', icon: IconChat, badge: testimonialsList.length },
     { id: 'faqs', label: 'FAQ', icon: IconHelpCircle, badge: faqsList.length },
-    { id: 'visibility', label: 'Visível', icon: IconGrid },
-    { id: 'settings', label: 'Config', icon: IconGear },
-    { id: 'actions', label: 'Acoes', icon: IconZap },
+    { id: 'visibility', label: 'Visibilidade', icon: IconGrid },
+    { id: 'settings', label: 'Configurações', icon: IconGear },
+    { id: 'actions', label: 'Ações', icon: IconZap },
   ];
 
+  const primary = ['dashboard', 'materials', 'bio', 'visibility'];
+  const primaryTabs = primary.map((id) => allTabs.find((t) => t.id === id));
+  const activeInMore = !primary.includes(activeTab);
+
+  const pickTab = (id) => {
+    setActiveTab(id);
+    setMenuOpen(false);
+  };
+
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#0E0C0A]/95 backdrop-blur-md border-t border-[rgba(180,140,80,0.1)]">
-      <div className="flex items-center justify-around px-1 py-1.5">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-0 flex-1 ${
-                isActive ? 'text-[#B48C50]' : 'text-[#6E6458]'
-              }`}
+    <>
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#0E0C0A]/95 backdrop-blur-md border-t border-[rgba(180,140,80,0.1)]">
+        <div className="flex items-stretch justify-around px-1 py-1 safe-bottom">
+          {primaryTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg transition-colors min-w-0 flex-1 ${
+                  isActive ? 'text-[#B48C50]' : 'text-[#6E6458]'
+                }`}
+              >
+                <Icon size={20} />
+                <span className="text-[10px] font-sans truncate leading-tight">{tab.label}</span>
+              </button>
+            );
+          })}
+          <button
+            onClick={() => setMenuOpen(true)}
+            className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg transition-colors min-w-0 flex-1 ${
+              activeInMore || menuOpen ? 'text-[#B48C50]' : 'text-[#6E6458]'
+            }`}
+          >
+            <IconMenu size={20} />
+            <span className="text-[10px] font-sans truncate leading-tight">Mais</span>
+          </button>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenuOpen(false)}
+              className="sm:hidden fixed inset-0 bg-black/70 z-[110]"
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+              className="sm:hidden fixed bottom-0 left-0 right-0 z-[111] bg-[#1A1714] border-t border-[rgba(180,140,80,0.2)] rounded-t-2xl max-h-[80vh] flex flex-col"
             >
-              <Icon size={18} />
-              <span className="text-[9px] font-sans truncate leading-tight">{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </nav>
+              <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[rgba(180,140,80,0.1)]">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#B48C50] font-sans">
+                  Navegação
+                </p>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  aria-label="Fechar"
+                  className="w-9 h-9 flex items-center justify-center text-[#6E6458] hover:text-[#B48C50]"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 6l12 12M6 18L18 6" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-3 py-3 grid grid-cols-2 gap-2">
+                {allTabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => pickTab(tab.id)}
+                      className={`flex items-center gap-3 px-3 py-3 rounded-lg border transition-colors text-left ${
+                        isActive
+                          ? 'border-[#B48C50] bg-[#B48C50]/10 text-[#B48C50]'
+                          : 'border-[rgba(180,140,80,0.1)] text-[#B8AD9E] hover:border-[rgba(180,140,80,0.3)]'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      <span className="text-xs font-sans flex-1 truncate">{tab.label}</span>
+                      {tab.badge != null && tab.badge > 0 && (
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[rgba(180,140,80,0.15)] text-[#B48C50]">
+                          {tab.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -2676,7 +2768,7 @@ function AdminPanel() {
       />
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <main className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         <AnimatePresence mode="wait">
           {activeTab === 'dashboard' && (
             <DashboardTab

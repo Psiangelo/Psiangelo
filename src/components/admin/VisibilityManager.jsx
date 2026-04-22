@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { DEFAULT_VISIBILITY, getSiteVisibility, setSiteVisibility } from '@/lib/sitedata';
 
-const CARD = 'bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-xl p-5';
+const CARD = 'bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-xl p-4 sm:p-5';
 const BTN_PRIMARY = 'px-4 py-2 bg-[#B48C50] hover:bg-[#9A7A48] text-[#0E0C0A] text-sm font-sans font-semibold rounded-lg transition-colors';
 const BTN_SECONDARY = 'px-3 py-1.5 border border-[rgba(180,140,80,0.2)] text-[#B8AD9E] text-xs font-sans rounded-lg hover:border-[#B48C50] hover:text-[#B48C50] transition-colors';
 
@@ -43,8 +43,29 @@ const GROUPS = [
 
 function Toggle({ checked, onChange, label, url, onVisit }) {
   return (
-    <label className="flex items-center justify-between gap-4 py-3 border-b border-[rgba(180,140,80,0.06)] last:border-b-0 cursor-pointer group">
-      <div className="flex-1 min-w-0">
+    <div className="flex items-center gap-3 py-3 border-b border-[rgba(180,140,80,0.06)] last:border-b-0">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={`${checked ? 'Ocultar' : 'Mostrar'} ${label}`}
+        onClick={() => onChange(!checked)}
+        className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B48C50] ${
+          checked ? 'bg-[#B48C50]' : 'bg-[rgba(180,140,80,0.15)]'
+        }`}
+      >
+        <span
+          className={`inline-block h-5 w-5 transform rounded-full bg-[#0E0C0A] transition-transform ${
+            checked ? 'translate-x-6' : 'translate-x-1'
+          }`}
+        />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onChange(!checked)}
+        className="flex-1 min-w-0 text-left"
+      >
         <p className={`text-sm font-sans ${checked ? 'text-[#E8DDD0]' : 'text-[#6E6458]'} transition-colors`}>
           {label}
         </p>
@@ -53,37 +74,18 @@ function Toggle({ checked, onChange, label, url, onVisit }) {
             {url}
           </span>
         )}
-      </div>
+      </button>
 
       {url && (
         <button
           type="button"
-          onClick={(e) => { e.preventDefault(); onVisit?.(); }}
-          className="text-[10px] font-mono tracking-[0.15em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors whitespace-nowrap"
+          onClick={onVisit}
+          className="text-[10px] font-mono tracking-[0.15em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors whitespace-nowrap px-2 py-1"
         >
           abrir →
         </button>
       )}
-
-      {/* Switch visual */}
-      <span
-        className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors ${
-          checked ? 'bg-[#B48C50]' : 'bg-[rgba(180,140,80,0.15)]'
-        }`}
-      >
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          className="sr-only"
-        />
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-[#0E0C0A] transition-transform ${
-            checked ? 'translate-x-6' : 'translate-x-1'
-          }`}
-        />
-      </span>
-    </label>
+    </div>
   );
 }
 

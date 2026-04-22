@@ -1,21 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PHONE = '5581987349114';
 const MESSAGE = 'Olá! Vi seu site e gostaria de saber mais sobre seus materiais de psicologia.';
 
+const HIDDEN_ROUTES = ['/admin'];
+
 export default function WhatsAppButton() {
+  const pathname = usePathname() || '';
+  const hidden = HIDDEN_ROUTES.some((r) => pathname.includes(r));
+
   const [visible, setVisible] = useState(false);
   const [ready, setReady] = useState(false);
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    // Delay entrance by 2s
+    if (hidden) return;
     const timer = setTimeout(() => setReady(true), 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [hidden]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -27,7 +33,7 @@ export default function WhatsAppButton() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const show = ready && visible;
+  const show = !hidden && ready && visible;
 
   const whatsappUrl = `https://wa.me/${PHONE}?text=${encodeURIComponent(MESSAGE)}`;
 
