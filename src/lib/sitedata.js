@@ -149,11 +149,19 @@ function readJson(key, fallback) {
 }
 
 function writeJson(key, value) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return false;
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    /* swallow quota errors */
+    // storage event só dispara entre abas; emitimos custom pra reagir na mesma aba
+    try {
+      window.dispatchEvent(new CustomEvent('sitedata:changed', { detail: { key } }));
+    } catch {
+      /* noop */
+    }
+    return true;
+  } catch (err) {
+    console.error(`[sitedata] falha ao salvar ${key}:`, err);
+    return false;
   }
 }
 

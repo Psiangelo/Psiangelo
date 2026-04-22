@@ -1,22 +1,23 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import SectionLabel from '@/components/SectionLabel';
 import PullQuote from '@/components/ui/PullQuote';
 import DropCap from '@/components/ui/DropCap';
 import { fadeUp, stagger, slideInLeft, slideInRight } from '@/lib/constants';
-import { getHomepage, DEFAULT_HOMEPAGE } from '@/lib/sitedata';
+import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 import { QuaternioSigil, SpiralAccent } from '@/components/illustrations';
 
 export default function About() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
-  const [content, setContent] = useState(DEFAULT_HOMEPAGE.about);
-
-  useEffect(() => {
-    setContent(getHomepage().about);
-  }, []);
+  const content = useSitedata(
+    () => getHomepage().about,
+    DEFAULT_HOMEPAGE.about,
+    SITEDATA_KEYS.homepage,
+  );
 
   const credentials = content.credentials || [];
   const milestones  = content.milestones || [];

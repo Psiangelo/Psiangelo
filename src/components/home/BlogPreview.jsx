@@ -28,9 +28,10 @@ export default function BlogPreview() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
+    const load = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) { setPosts([]); return; }
         const all = JSON.parse(raw);
         const published = all
           .filter((p) => p.status === 'published')
@@ -41,8 +42,25 @@ export default function BlogPreview() {
           })
           .slice(0, 3);
         setPosts(published);
-      }
-    } catch {}
+      } catch { setPosts([]); }
+    };
+
+    load();
+
+    const onStorage = (e) => {
+      if (!e.key || e.key === STORAGE_KEY) load();
+    };
+    const onChanged = (e) => {
+      if (!e.detail?.key || e.detail.key === STORAGE_KEY) load();
+    };
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('sitedata:bootstrap', load);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('sitedata:bootstrap', load);
+    };
   }, []);
 
   if (posts.length === 0) return null;

@@ -1,6 +1,7 @@
 import './globals.css';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import AmbientPsi from '@/components/ui/AmbientPsi';
+import ContentBootstrap from '@/components/ContentBootstrap';
 
 export const metadata = {
   title: 'Psiangelo — Psicologia Analítica & Prática Clínica',
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body>
+        <ContentBootstrap />
         {children}
         <AmbientPsi />
         <WhatsAppButton />

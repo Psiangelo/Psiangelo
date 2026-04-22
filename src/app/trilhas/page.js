@@ -201,7 +201,16 @@ export default function TrilhasPage() {
   const [trilhas, setTrilhasList] = useState(TRILHAS_DEFAULT);
 
   useEffect(() => {
-    setTrilhasList(getTrilhas());
+    const reload = () => setTrilhasList(getTrilhas());
+    reload();
+    window.addEventListener('storage', reload);
+    window.addEventListener('sitedata:changed', reload);
+    window.addEventListener('sitedata:bootstrap', reload);
+    return () => {
+      window.removeEventListener('storage', reload);
+      window.removeEventListener('sitedata:changed', reload);
+      window.removeEventListener('sitedata:bootstrap', reload);
+    };
   }, []);
 
   if (ready && !visibility.trilhas) {

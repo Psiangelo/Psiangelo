@@ -552,12 +552,32 @@ export default function BlogPage() {
   const [selectedTag, setSelectedTag] = useState('');
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setAllPosts(JSON.parse(raw));
-      const seriesRaw = localStorage.getItem(SERIES_STORAGE_KEY);
-      if (seriesRaw) setSeriesList(JSON.parse(seriesRaw));
-    } catch {}
+    const load = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        setAllPosts(raw ? JSON.parse(raw) : []);
+        const seriesRaw = localStorage.getItem(SERIES_STORAGE_KEY);
+        setSeriesList(seriesRaw ? JSON.parse(seriesRaw) : []);
+      } catch {}
+    };
+
+    load();
+
+    const onStorage = (e) => {
+      if (!e.key || e.key === STORAGE_KEY || e.key === SERIES_STORAGE_KEY) load();
+    };
+    const onChanged = (e) => {
+      const k = e.detail?.key;
+      if (!k || k === STORAGE_KEY || k === SERIES_STORAGE_KEY) load();
+    };
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('sitedata:bootstrap', load);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('sitedata:bootstrap', load);
+    };
   }, []);
 
   const publishedPosts = useMemo(() => {

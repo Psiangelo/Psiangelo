@@ -151,13 +151,32 @@ export default function CursosPage() {
 
   // Load data and parse URL on mount
   useEffect(() => {
-    setCourses(loadCourses());
-    setCategories(loadCategories());
+    const reload = () => {
+      setCourses(loadCourses());
+      setCategories(loadCategories());
+    };
+
+    reload();
     parseURL();
 
     const handlePop = () => parseURL();
+    const onStorage = (e) => {
+      if (!e.key || e.key === 'angelo_admin_courses' || e.key === 'angelo_admin_course_categories') reload();
+    };
+    const onChanged = (e) => {
+      const k = e.detail?.key;
+      if (!k || k === 'angelo_admin_courses' || k === 'angelo_admin_course_categories') reload();
+    };
     window.addEventListener('popstate', handlePop);
-    return () => window.removeEventListener('popstate', handlePop);
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('sitedata:bootstrap', reload);
+    return () => {
+      window.removeEventListener('popstate', handlePop);
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('sitedata:bootstrap', reload);
+    };
   }, []);
 
   function parseURL() {

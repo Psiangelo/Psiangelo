@@ -25,9 +25,10 @@ export default function CoursesPreview() {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
+    const load = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) { setCourses([]); return; }
         const all = JSON.parse(raw);
         const published = all
           .filter((c) => c.status === 'published')
@@ -38,8 +39,25 @@ export default function CoursesPreview() {
           })
           .slice(0, 4);
         setCourses(published);
-      }
-    } catch {}
+      } catch { setCourses([]); }
+    };
+
+    load();
+
+    const onStorage = (e) => {
+      if (!e.key || e.key === STORAGE_KEY) load();
+    };
+    const onChanged = (e) => {
+      if (!e.detail?.key || e.detail.key === STORAGE_KEY) load();
+    };
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('sitedata:bootstrap', load);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('sitedata:bootstrap', load);
+    };
   }, []);
 
   if (courses.length === 0) return null;

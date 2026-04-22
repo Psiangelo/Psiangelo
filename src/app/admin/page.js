@@ -10,6 +10,7 @@ import CartographyManager from '@/components/admin/CartographyManager';
 import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
+import PublishManager from '@/components/admin/PublishManager';
 
 // ─── Constants ───────────────────────────────────────────────────────
 const STORAGE_KEYS = {
@@ -140,8 +141,19 @@ function loadFromStorage(key, fallback) {
 }
 
 function saveToStorage(key, value) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(key, JSON.stringify(value));
+  if (typeof window === 'undefined') return false;
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    try {
+      window.dispatchEvent(new CustomEvent('sitedata:changed', { detail: { key } }));
+    } catch {
+      /* noop */
+    }
+    return true;
+  } catch (err) {
+    console.error(`[admin] falha ao salvar ${key}:`, err);
+    return false;
+  }
 }
 
 function generateId() {
@@ -2693,6 +2705,7 @@ function AdminPanel() {
     { id: 'visibility', label: 'Visibilidade', badge: null },
     { id: 'settings', label: 'Configuracoes', badge: null },
     { id: 'actions', label: 'Acoes', badge: null },
+    { id: 'publish', label: 'Publicar', badge: null },
   ];
 
   return (
@@ -2882,6 +2895,13 @@ function AdminPanel() {
               addToast={addToast}
               addLogEntry={addLogEntry}
               clearLog={clearLog}
+            />
+          )}
+          {activeTab === 'publish' && (
+            <PublishManager
+              key="publish"
+              addToast={addToast}
+              addLogEntry={addLogEntry}
             />
           )}
         </AnimatePresence>

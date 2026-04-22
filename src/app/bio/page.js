@@ -210,7 +210,16 @@ export default function BioPage() {
   const [bio, setBio] = useState(DEFAULT_BIO);
 
   useEffect(() => {
-    setBio(getBio());
+    const reload = () => setBio(getBio());
+    reload();
+    window.addEventListener('storage', reload);
+    window.addEventListener('sitedata:changed', reload);
+    window.addEventListener('sitedata:bootstrap', reload);
+    return () => {
+      window.removeEventListener('storage', reload);
+      window.removeEventListener('sitedata:changed', reload);
+      window.removeEventListener('sitedata:bootstrap', reload);
+    };
   }, []);
 
   if (ready && !visibility.bio) {

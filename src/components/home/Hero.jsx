@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import CursorGlow from '@/components/ui/CursorGlow';
 import { PortraitHero } from '@/components/ui/Portrait';
-import { getHomepage, DEFAULT_HOMEPAGE } from '@/lib/sitedata';
+import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
 
 function FloatingParticles() {
@@ -103,11 +104,11 @@ function MandalaBackdrop() {
 }
 
 export default function Hero() {
-  const [content, setContent] = useState(DEFAULT_HOMEPAGE.hero);
-
-  useEffect(() => {
-    setContent(getHomepage().hero);
-  }, []);
+  const content = useSitedata(
+    () => getHomepage().hero,
+    DEFAULT_HOMEPAGE.hero,
+    SITEDATA_KEYS.homepage,
+  );
 
   const letterAnim = {
     hidden: { opacity: 0, y: 50 },
