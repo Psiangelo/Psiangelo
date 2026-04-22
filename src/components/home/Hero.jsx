@@ -127,7 +127,8 @@ export default function Hero() {
     }),
   };
 
-  const titleLetters = (content.titlePrefix || 'Psi').split('');
+  const prefixLetters = (content.titlePrefix || 'Psi').split('');
+  const emphasisLetters = (content.titleEmphasis || 'angelo').split('');
 
   return (
     <section className="relative min-h-screen flex items-center px-5 sm:px-6 md:px-12 overflow-hidden pt-28 md:pt-20 pb-14 md:pb-20">
@@ -176,13 +177,28 @@ export default function Hero() {
             {content.eyebrow}
           </motion.p>
 
-          {/* Animated title — display gigante: Psi (regular) + ângelo (italic accent) */}
-          <h1 className="font-serif font-normal text-text-bright leading-[0.95] mb-3 tracking-[-0.02em]">
-            <span className="block text-[clamp(3.4rem,9vw,7rem)]">
+          {/* Triângulo da marca — acima do wordmark */}
+          <motion.svg
+            initial={{ opacity: 0, y: -8, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            width="46"
+            height="42"
+            viewBox="0 0 46 42"
+            className="mb-4 text-accent"
+            aria-hidden
+          >
+            <polygon points="23,4 42,38 4,38" fill="none" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.2" strokeLinejoin="round" />
+            <circle cx="23" cy="28" r="3" fill="currentColor" />
+          </motion.svg>
+
+          {/* Animated title — "Psiangelo" em linha única: Psi bright + angelo italic accent */}
+          <h1 className="font-serif font-normal text-text-bright leading-[1] mb-5 tracking-[-0.02em]">
+            <span className="flex items-baseline flex-wrap text-[clamp(3.2rem,9vw,6.8rem)]">
               <span className="inline-flex overflow-hidden align-baseline">
-                {titleLetters.map((letter, i) => (
+                {prefixLetters.map((letter, i) => (
                   <motion.span
-                    key={i}
+                    key={`p-${i}`}
                     custom={i}
                     initial="hidden"
                     animate="visible"
@@ -193,23 +209,29 @@ export default function Hero() {
                   </motion.span>
                 ))}
               </span>
+              <span className="inline-flex overflow-hidden align-baseline italic text-accent">
+                {emphasisLetters.map((letter, i) => (
+                  <motion.span
+                    key={`e-${i}`}
+                    custom={i + prefixLetters.length}
+                    initial="hidden"
+                    animate="visible"
+                    variants={letterAnim}
+                    className="inline-block"
+                  >
+                    {letter}
+                  </motion.span>
+                ))}
+              </span>
             </span>
-            <motion.span
-              initial={{ opacity: 0, y: 40, skewY: 3 }}
-              animate={{ opacity: 1, y: 0, skewY: 0 }}
-              transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="block text-[clamp(2.6rem,7vw,5.4rem)] -mt-2"
-            >
-              <em className="italic text-accent">{content.titleEmphasis || 'ângelo'}</em>
-            </motion.span>
           </h1>
 
-          {/* Underline accent */}
+          {/* Moldura dourada (homenagem ao Geo Triângulo) */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 1.2, delay: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="h-px w-40 bg-gradient-to-r from-accent/70 to-transparent origin-left mb-7"
+            transition={{ duration: 1.2, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            className="h-px w-full max-w-[420px] bg-gradient-to-r from-accent/60 via-accent/30 to-transparent origin-left mb-7"
           />
 
           <motion.p

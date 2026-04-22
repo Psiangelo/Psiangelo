@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <!-- Fundo -->
+  <rect width="1200" height="1200" fill="#0E0C0A" />
+
+  <!-- Borda dupla dourada -->
+  <rect x="48" y="48" width="1104" height="1104" fill="none" stroke="#B48C50" stroke-opacity="0.35" stroke-width="1.4" />
+  <rect x="68" y="68" width="1064" height="1064" fill="none" stroke="#B48C50" stroke-opacity="0.18" stroke-width="0.8" />
+
+  <!-- pontos cardeais externos -->
+  <circle cx="48" cy="48" r="5" fill="#B48C50" />
+  <circle cx="1152" cy="48" r="5" fill="#B48C50" />
+  <circle cx="48" cy="1152" r="5" fill="#B48C50" />
+  <circle cx="1152" cy="1152" r="5" fill="#B48C50" />
+
+  <!-- Eyebrow superior -->
+  <text x="600" y="200"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="26"
+        fill="#B48C50"
+        letter-spacing="12">PSICOLOGIA · ANALÍTICA</text>
+
+  <!-- Triângulo vazado (marca Geo) -->
+  <polygon points="600,320 668,470 532,470" fill="none" stroke="#B48C50" stroke-opacity="0.75" stroke-width="2.2" stroke-linejoin="round" />
+  <circle cx="600" cy="430" r="10" fill="#B48C50" />
+
+  <!-- linha superior -->
+  <line x1="200" y1="560" x2="1000" y2="560" stroke="#B48C50" stroke-opacity="0.5" stroke-width="1.6" />
+  <circle cx="200" cy="560" r="6" fill="#B48C50" />
+  <circle cx="1000" cy="560" r="6" fill="#B48C50" />
+
+  <!-- Wordmark central -->
+  <text x="600" y="720"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic"
+        font-size="188"
+        fill="#E8DDD0"
+        letter-spacing="-4">Psi<tspan fill="#B48C50">angelo</tspan></text>
+
+  <!-- linha inferior -->
+  <line x1="200" y1="790" x2="1000" y2="790" stroke="#B48C50" stroke-opacity="0.5" stroke-width="1.6" />
+  <circle cx="200" cy="790" r="6" fill="#B48C50" />
+  <circle cx="1000" cy="790" r="6" fill="#B48C50" />
+
+  <!-- Nosce te ipsum -->
+  <text x="600" y="880"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic"
+        font-size="44"
+        fill="#E8DDD0"
+        fill-opacity="0.85">Nosce te ipsum</text>
+
+  <!-- Grego -->
+  <text x="600" y="940"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic"
+        font-size="32"
+        fill="#B8AD9E"
+        fill-opacity="0.55">γνῶθι σεαυτόν</text>
+
+  <!-- Rodapé: tagline + créditos -->
+  <line x1="420" y1="1030" x2="780" y2="1030" stroke="#B48C50" stroke-opacity="0.35" stroke-width="0.8" />
+  <text x="600" y="1076"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="28"
+        fill="#B8AD9E"
+        fill-opacity="0.7">Prática clínica e estudos junguianos</text>
+</svg>

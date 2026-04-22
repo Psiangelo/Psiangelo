@@ -37,13 +37,17 @@ export const metadata = {
     siteName: 'Psiangelo',
     title: 'Psiangelo — Psicologia Analítica & Prática Clínica',
     description: 'Resumos, mapas mentais e materiais de estudo com experiência clínica junguiana.',
-    images: [{ url: `${SITE_URL}/og.svg`, width: 1200, height: 630, alt: 'Psiangelo' }],
+    images: [
+      // Quadrado primeiro — WhatsApp/iMessage dão preferência à primeira imagem
+      { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo', type: 'image/png' },
+      { url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: 'Psiangelo', type: 'image/png' },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Psiangelo — Psicologia Analítica & Prática Clínica',
     description: 'Resumos, mapas mentais e materiais de estudo com experiência clínica junguiana.',
-    images: [`${SITE_URL}/og.svg`],
+    images: [`${SITE_URL}/og.png`],
   },
   robots: {
     index: true,
