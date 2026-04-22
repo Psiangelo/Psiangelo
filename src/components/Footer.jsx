@@ -25,8 +25,8 @@ export default function Footer({ showMaterialsCta = false }) {
         </div>
       )}
 
-      <div className="max-w-[1100px] mx-auto px-6 md:px-12 pt-16 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-12">
+      <div className="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 pt-12 md:pt-16 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-8 md:gap-12">
           <div>
             <p className="font-serif text-2xl text-text-bright mb-3">
               Psi<em className="italic text-accent">ângelo</em>

@@ -27,7 +27,7 @@ export default function PageHero({
   actions,
 }) {
   return (
-    <section className="relative pt-32 md:pt-40 pb-16 md:pb-20 px-6 md:px-12 overflow-hidden">
+    <section className="relative pt-28 md:pt-40 pb-12 md:pb-20 px-5 sm:px-6 md:px-12 overflow-hidden">
       <CursorGlow contained size={420} intensity={0.09} />
       <div className="ambient-glow absolute top-[10%] left-[35%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]" />
 

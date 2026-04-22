@@ -107,7 +107,7 @@ export default function ContactCTA() {
   return (
     <section
       id="contato"
-      className="relative py-24 md:py-32 px-6 md:px-12 section-border-t overflow-hidden"
+      className="relative py-16 md:py-32 px-5 sm:px-6 md:px-12 section-border-t overflow-hidden"
       ref={ref}
     >
       <div className="ambient-glow w-[700px] h-[700px] -top-40 left-1/2 -translate-x-1/2 opacity-60" />

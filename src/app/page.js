@@ -22,7 +22,7 @@ import { useVisibility } from '@/lib/useVisibility';
 
 function Break({ children, pad = 'py-4' }) {
   return (
-    <div className={`max-w-[1180px] mx-auto px-6 md:px-12 ${pad}`}>{children}</div>
+    <div className={`max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 ${pad}`}>{children}</div>
   );
 }
 

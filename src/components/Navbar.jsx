@@ -54,8 +54,8 @@ export default function Navbar() {
       transition={{ duration: 0.6, delay: 0.1 }}
       className={`fixed top-0 w-full z-[500] flex items-center justify-between transition-all duration-500 ${
         scrolled
-          ? 'py-3 px-6 md:px-12 bg-bg/[0.92] backdrop-blur-xl border-b border-border-subtle'
-          : 'py-5 px-6 md:px-12'
+          ? 'py-3 px-5 sm:px-6 md:px-12 bg-bg/[0.92] backdrop-blur-xl border-b border-border-subtle'
+          : 'py-4 sm:py-5 px-5 sm:px-6 md:px-12'
       }`}
     >
       <Link href="/" className="flex items-center gap-2.5 font-serif text-text-bright text-lg tracking-wide group">

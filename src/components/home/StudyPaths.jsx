@@ -25,7 +25,7 @@ export default function StudyPaths() {
   if (!trilhas || trilhas.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-6 md:px-12 relative overflow-hidden">
+    <section ref={ref} className="py-16 md:py-32 px-5 sm:px-6 md:px-12 relative overflow-hidden">
       {/* Orbital accent no canto direito */}
       <OrbitalAccent
         className="absolute -top-20 -right-24 pointer-events-none hidden md:block"

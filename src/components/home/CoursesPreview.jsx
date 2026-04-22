@@ -48,7 +48,7 @@ export default function CoursesPreview() {
   const regular = courses.filter((c) => !c.featured);
 
   return (
-    <section ref={ref} className="py-20 px-6 md:px-12 relative overflow-hidden">
+    <section ref={ref} className="py-14 md:py-20 px-5 sm:px-6 md:px-12 relative overflow-hidden">
       <QuaternioSigil
         className="absolute top-8 right-8 pointer-events-none hidden md:block"
         size={96}

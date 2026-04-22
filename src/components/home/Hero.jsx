@@ -125,7 +125,7 @@ export default function Hero() {
   const titleLetters = (content.titlePrefix || 'Psi').split('');
 
   return (
-    <section className="relative min-h-screen flex items-center px-6 md:px-12 overflow-hidden pt-28 md:pt-20 pb-20">
+    <section className="relative min-h-screen flex items-center px-5 sm:px-6 md:px-12 overflow-hidden pt-28 md:pt-20 pb-14 md:pb-20">
       {/* Cursor glow contido no hero */}
       <CursorGlow contained size={460} intensity={0.11} />
 

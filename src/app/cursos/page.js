@@ -257,7 +257,7 @@ function FeaturedCourseHero({ course, progress, onSelect }) {
   const hasStarted = Object.keys(progress).length > 0;
 
   return (
-    <section className="relative h-[60vh] md:h-[72vh] min-h-[480px] overflow-hidden">
+    <section className="relative h-[55vh] md:h-[72vh] min-h-[380px] md:min-h-[480px] overflow-hidden">
       {course.thumbnail ? (
         <img
           src={course.thumbnail}
@@ -300,7 +300,7 @@ function FeaturedCourseHero({ course, progress, onSelect }) {
       </motion.svg>
 
       <div className="absolute inset-0 flex items-end pb-12 md:pb-16">
-        <div className="max-w-[1180px] w-full mx-auto px-6 md:px-12">
+        <div className="max-w-[1180px] w-full mx-auto px-5 sm:px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -380,7 +380,7 @@ function ContinueWatching({ courses, progressMap, onSelect }) {
   if (inProgress.length === 0) return null;
 
   return (
-    <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-14">
+    <section className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-12 mb-14">
       <header className="flex items-baseline gap-4 mb-6">
         <span className="font-mono text-[0.62rem] text-accent tracking-[0.25em] uppercase">
           Continuar assistindo
@@ -390,7 +390,7 @@ function ContinueWatching({ courses, progressMap, onSelect }) {
           {inProgress.length} {inProgress.length === 1 ? 'curso' : 'cursos'}
         </span>
       </header>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
         {inProgress.map((course) => {
           const pct = calculateCourseProgress(course, progressMap[course.id] || {});
           return (
@@ -498,7 +498,7 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
       )}
 
       {/* Ornamento alquímico entre hero e lista */}
-      <div className="max-w-[1180px] mx-auto px-6 md:px-12 pt-8 flex justify-center">
+      <div className="max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 pt-8 flex justify-center">
         <GlyphTrio opacity={0.45} />
       </div>
 
@@ -512,13 +512,13 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
       </div>
 
       {/* Divisor entre ContinueWatching e filtros */}
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-6">
+      <div className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-12 py-6">
         <DiamondChain opacity={0.5} />
       </div>
 
       {/* Filtros: categoria + busca */}
       {publishedCourses.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-10 relative">
+        <section className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-12 mb-10 relative">
           <QuaternioSigil
             className="absolute -top-2 right-0 pointer-events-none hidden md:block"
             size={48}
@@ -557,7 +557,7 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
             </div>
 
             {/* Search */}
-            <div className="relative border-b border-border-subtle hover:border-border-hover focus-within:border-accent/50 transition-colors min-w-[220px]">
+            <div className="relative border-b border-border-subtle hover:border-border-hover focus-within:border-accent/50 transition-colors w-full md:min-w-[220px] md:w-auto">
               <svg
                 className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -579,7 +579,7 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
       {/* Conteúdo principal */}
       {isFiltering ? (
         // Grid de resultados filtrados
-        <section className="max-w-[1280px] mx-auto px-6 md:px-12 pb-24 relative overflow-hidden">
+        <section className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-12 pb-24 relative overflow-hidden">
           <OrbitalAccent
             className="absolute -top-20 -left-32 pointer-events-none hidden lg:block"
             size={320}
@@ -604,7 +604,7 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
             {filteredCourses.length} {filteredCourses.length === 1 ? 'curso' : 'cursos'}
           </p>
           {filteredCourses.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
               {filteredCourses.map((course) => (
                 <CourseCardComponent
                   key={course.id}
@@ -633,7 +633,7 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
         <section className="max-w-[1280px] mx-auto pb-24">
           {/* Outros destaques (sem o featured #1 já no hero) */}
           {otherFeatured.length > 0 && (
-            <div className="px-6 md:px-12 mb-12">
+            <div className="px-5 sm:px-6 md:px-12 mb-12">
               <header className="flex items-baseline gap-4 mb-5">
                 <span className="font-mono text-[0.62rem] text-accent tracking-[0.25em] uppercase">
                   Mais destaques
@@ -661,7 +661,7 @@ function CourseListing({ courses, categories, progressMap, onNavigate }) {
 
           {/* Carrosséis por categoria */}
           {categoryGroups.map(([category, categoryCourses]) => (
-            <div key={category} className="px-6 md:px-12">
+            <div key={category} className="px-5 sm:px-6 md:px-12">
               <CategoryCarousel
                 title={category}
                 courses={categoryCourses}
@@ -706,7 +706,7 @@ function CourseDetail({ course, progress, onNavigate }) {
   };
 
   return (
-    <main className="min-h-screen pt-28 md:pt-36 pb-24 px-6 md:px-12">
+    <main className="min-h-screen pt-28 md:pt-36 pb-24 px-5 sm:px-6 md:px-12">
       <div className="max-w-[1100px] mx-auto">
         {/* Back */}
         <motion.button

@@ -23,7 +23,7 @@ export default function Prelude() {
   return (
     <section
       ref={ref}
-      className="relative py-20 md:py-28 px-6 md:px-12 overflow-hidden grain-medium"
+      className="relative py-14 md:py-28 px-5 sm:px-6 md:px-12 overflow-hidden grain-medium"
       aria-label="Prelúdio"
     >
       {/* Campo estelar ambiente */}

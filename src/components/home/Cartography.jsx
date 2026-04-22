@@ -108,7 +108,7 @@ export default function Cartography() {
     <section
       ref={ref}
       id="cartografia"
-      className="relative py-24 md:py-32 px-6 md:px-12 bg-bg-warm overflow-hidden section-border-t section-border-b"
+      className="relative py-16 md:py-32 px-5 sm:px-6 md:px-12 bg-bg-warm overflow-hidden section-border-t section-border-b"
     >
       {/* Linhas radiais decorativas atrás */}
       <div

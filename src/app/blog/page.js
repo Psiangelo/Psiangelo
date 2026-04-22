@@ -260,7 +260,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/30" />
-          <div className="absolute inset-x-0 bottom-0 px-6 md:px-12 pb-12 md:pb-16">
+          <div className="absolute inset-x-0 bottom-0 px-5 sm:px-6 md:px-12 pb-12 md:pb-16">
             <div className="max-w-[1180px] mx-auto">
               <button
                 onClick={onBack}
@@ -298,7 +298,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
         </header>
       ) : (
         // Sem imagem — header textual com PageHero-style
-        <header className="pt-32 md:pt-40 pb-12 px-6 md:px-12">
+        <header className="pt-32 md:pt-40 pb-12 px-5 sm:px-6 md:px-12">
           <div className="max-w-[1180px] mx-auto">
             <button
               onClick={onBack}
@@ -327,7 +327,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
       )}
 
       {/* Corpo do post + TOC sticky */}
-      <div className="px-6 md:px-12 py-12 md:py-16">
+      <div className="px-5 sm:px-6 md:px-12 py-12 md:py-16">
         <div className="max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-12 lg:gap-16">
           <motion.article
             ref={articleRef}
@@ -501,7 +501,7 @@ function FeaturedCover({ post, onClick }) {
         </g>
       </motion.svg>
 
-      <div className="absolute inset-x-0 bottom-0 px-6 md:px-12 pb-12 md:pb-16">
+      <div className="absolute inset-x-0 bottom-0 px-5 sm:px-6 md:px-12 pb-12 md:pb-16">
         <div className="max-w-[1180px] mx-auto">
           {/* Pin badge */}
           <div className="flex items-center gap-3 mb-5">
@@ -641,7 +641,7 @@ export default function BlogPage() {
               <>
                 <div className="pt-16" />
                 <FeaturedCover post={pinnedPost} onClick={() => handleSelectPost(pinnedPost)} />
-                <div className="px-6 md:px-12 pt-12 pb-6">
+                <div className="px-5 sm:px-6 md:px-12 pt-8 md:pt-12 pb-6">
                   <div className="max-w-[1180px] mx-auto flex items-baseline gap-4">
                     <span className="font-mono text-[0.62rem] text-accent tracking-[0.25em] uppercase">
                       Reflexões & ensaios
@@ -663,7 +663,7 @@ export default function BlogPage() {
               />
             )}
 
-            <div className="max-w-[1180px] mx-auto px-6 md:px-12 pb-24 relative">
+            <div className="max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 pb-24 relative">
               <SpiralAccent
                 className="absolute top-20 -left-24 pointer-events-none hidden lg:block"
                 size={260}
@@ -691,7 +691,7 @@ export default function BlogPage() {
               </div>
               {publishedPosts.length > 0 && (
                 <div className="flex flex-col gap-6 mb-12 pb-8 border-b border-border-subtle relative">
-                  <div className="relative border-b border-border-subtle hover:border-border-hover focus-within:border-accent/50 transition-colors max-w-md">
+                  <div className="relative border-b border-border-subtle hover:border-border-hover focus-within:border-accent/50 transition-colors w-full md:max-w-md">
                     <svg
                       className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim"
                       fill="none"

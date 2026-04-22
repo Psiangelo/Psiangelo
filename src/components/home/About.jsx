@@ -24,7 +24,7 @@ export default function About() {
   return (
     <section
       id="sobre"
-      className="relative py-24 md:py-32 px-6 md:px-12 overflow-hidden grain-soft"
+      className="relative py-16 md:py-32 px-5 sm:px-6 md:px-12 overflow-hidden grain-soft"
       ref={ref}
     >
       {/* Fundo levemente diferenciado pelo grain */}

@@ -121,7 +121,7 @@ function TrilhaSection({ trilha, index }) {
   const SideAccent = Accents[index % Accents.length];
 
   return (
-    <section ref={ref} id={trilha.id} className="py-20 md:py-24 px-6 md:px-12 relative overflow-hidden">
+    <section ref={ref} id={trilha.id} className="py-14 md:py-24 px-5 sm:px-6 md:px-12 relative overflow-hidden">
       <SideAccent
         className={`absolute ${index % 2 === 0 ? 'top-12 -right-6' : 'top-12 -left-6'} pointer-events-none hidden md:block`}
         size={110}
@@ -228,7 +228,7 @@ export default function TrilhasPage() {
           }
         />
 
-        <div className="max-w-[1180px] mx-auto px-6 md:px-12 relative">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 relative">
           <OrbitalAccent
             className="absolute -top-20 -right-28 pointer-events-none hidden md:block"
             size={320}
@@ -242,14 +242,14 @@ export default function TrilhasPage() {
           <div key={t.id}>
             <TrilhaSection trilha={t} index={i} />
             {i < trilhas.length - 1 && (
-              <div className="max-w-[1180px] mx-auto px-6 md:px-12 py-2">
+              <div className="max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 py-2">
                 <AlchemyDivider opacity={0.45} />
               </div>
             )}
           </div>
         ))}
 
-        <div className="max-w-[1180px] mx-auto px-6 md:px-12 py-8 relative">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 py-8 relative">
           <SpiralAccent
             className="absolute -bottom-12 -left-24 pointer-events-none hidden md:block"
             size={240}
