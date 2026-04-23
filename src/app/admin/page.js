@@ -7,6 +7,7 @@ import { materials as defaultMaterials, comingSoon as defaultComingSoon, content
 import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
+import SectionOrderManager from '@/components/admin/SectionOrderManager';
 import PublishManager from '@/components/admin/PublishManager';
 import UnpublishedBanner from '@/components/admin/UnpublishedBanner';
 import AdminSidebar from '@/components/admin/AdminSidebar';
@@ -2785,6 +2786,7 @@ function AdminPanel() {
     { id: 'cartography', label: 'Cartografia', badge: null },
     { id: 'atlas', label: 'Atlas', badge: null },
     { id: 'content', label: 'Conteúdo', badge: null },
+    { id: 'sectionOrder', label: 'Ordem das seções', badge: null },
     { id: 'bio', label: 'Bio / Linktree', badge: null },
     { id: 'blog', label: 'Blog', badge: null },
     { id: 'courses', label: 'Cursos', badge: null },
@@ -2820,6 +2822,7 @@ function AdminPanel() {
       label: 'Página inicial',
       items: [
         { id: 'content',      label: 'Textos da home', icon: IconPen },
+        { id: 'sectionOrder', label: 'Ordem das seções', icon: IconGrid },
         { id: 'testimonials', label: 'Depoimentos',    icon: IconChat },
         { id: 'faqs',         label: 'FAQ',            icon: IconHelpCircle },
         { id: 'bio',          label: 'Bio / Linktree', icon: IconUser },
@@ -2999,6 +3002,13 @@ function AdminPanel() {
           {activeTab === 'content' && (
             <ContentManager
               key="content"
+              addToast={addToast}
+              addLogEntry={addLogEntry}
+            />
+          )}
+          {activeTab === 'sectionOrder' && (
+            <SectionOrderManager
+              key="sectionOrder"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

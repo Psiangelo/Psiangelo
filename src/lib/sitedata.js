@@ -32,6 +32,7 @@ export const SITEDATA_KEYS = {
   settings:       'angelo_admin_settings',
   atlasOverrides: 'angelo_admin_atlas_overrides',
   therapy:        'angelo_admin_therapy',
+  homeSections:   'angelo_admin_home_sections',
 };
 
 /* ===================================================================
@@ -105,6 +106,18 @@ export const DEFAULT_HOMEPAGE = {
       { year: 'Allos',  label: 'Estágio',        detail: 'Supervisionado' },
       { year: 'UNICAP', label: 'Liga',           detail: 'Psicologia Analítica' },
       { year: 'Hoje',   label: 'Clínica',        detail: 'Atendimento online BR' },
+    ],
+    images: [
+      {
+        src: '/images/sobre/aprimoramento-clinico.jpg',
+        alt: 'Aprimoramento clínico de habilidades terapêuticas conduzido por Ângelo',
+        caption: 'Aprimoramento clínico de habilidades terapêuticas que conduzi.',
+      },
+      {
+        src: '/images/sobre/grupo-estudos.jpg',
+        alt: 'Grupo de estudos sobre a prática da psicoterapia',
+        caption: 'Grupo de estudos sobre a prática da psicoterapia.',
+      },
     ],
   },
   contact: {
@@ -316,6 +329,42 @@ export const DEFAULT_VISIBILITY = {
   // Extras
   whatsappFlutuante: true,
 };
+
+/* ===================================================================
+   HOME SECTIONS ORDER — ordem vertical das seções da página inicial
+=================================================================== */
+
+export const HOME_SECTION_META = [
+  { id: 'hero',         label: 'Hero (topo)',                           fixed: true  },
+  { id: 'disclaimer',   label: 'Faixa de status (estagiário)',          visKey: 'disclaimerEstagio' },
+  { id: 'seoIntro',     label: 'Intro SEO (texto clínico)' },
+  { id: 'audience',     label: 'Para quem atendo (3 públicos)' },
+  { id: 'approach',     label: 'Como trabalho (3 princípios)' },
+  { id: 'about',        label: 'Sobre mim',                             visKey: 'about' },
+  { id: 'prelude',      label: 'Prelúdio (editorial)',                  visKey: 'prelude' },
+  { id: 'trilhas',      label: 'Trilhas de estudo',                     visKey: 'trilhas' },
+  { id: 'jungQuote',    label: 'Citação de Jung' },
+  { id: 'materials',    label: 'Materiais (preview)',                   visKey: 'materiais' },
+  { id: 'blog',         label: 'Blog (preview)',                        visKey: 'blog' },
+  { id: 'cursos',       label: 'Cursos (preview)',                      visKey: 'cursos' },
+  { id: 'cartografia',  label: 'Cartografia de conceitos',              visKey: 'cartografia' },
+  { id: 'depoimentos',  label: 'Depoimentos',                           visKey: 'depoimentos' },
+  { id: 'faq',          label: 'FAQ',                                   visKey: 'faq' },
+  { id: 'contato',      label: 'Contato (CTA final)',                   visKey: 'contato' },
+];
+
+export const DEFAULT_HOME_SECTIONS = HOME_SECTION_META.map((s) => s.id);
+
+export const getHomeSections = () => {
+  const stored = readJson(SITEDATA_KEYS.homeSections, null);
+  if (!Array.isArray(stored)) return DEFAULT_HOME_SECTIONS;
+  const valid = stored.filter((id) => DEFAULT_HOME_SECTIONS.includes(id));
+  // Concat seções do default que ainda não estão salvas (futuras adições)
+  const seen = new Set(valid);
+  DEFAULT_HOME_SECTIONS.forEach((id) => { if (!seen.has(id)) valid.push(id); });
+  return valid;
+};
+export const setHomeSections = (v) => writeJson(SITEDATA_KEYS.homeSections, v);
 
 export const getSiteVisibility = () => {
   const stored = readJson(SITEDATA_KEYS.visibility, null);

@@ -24,6 +24,7 @@ import {
   DiamondChain,
 } from '@/components/illustrations';
 import { useVisibility } from '@/lib/useVisibility';
+import { useHomeSections } from '@/lib/useHomeSections';
 
 function Break({ children, pad = 'py-4' }) {
   return (
@@ -31,75 +32,86 @@ function Break({ children, pad = 'py-4' }) {
   );
 }
 
+// Renderers por id — cada um recebe o mapa de visibilidade e devolve o JSX
+// (ou null quando a seção está oculta / não deve renderizar).
+const RENDERERS = {
+  hero: () => <Hero />,
+  disclaimer: (v) => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
+  seoIntro: () => <HomeSeoIntro />,
+  audience: () => <AudienceCards heading="Para quem atendo" />,
+  approach: () => <HomeApproach />,
+  about: (v) => (v.about ? <About /> : null),
+  prelude: (v) => (v.prelude ? <Prelude /> : null),
+  trilhas: (v) => (v.trilhas ? <StudyPaths /> : null),
+  jungQuote: () => <JungQuote />,
+  materials: (v) => (v.materiais ? <MaterialsPreview /> : null),
+  blog: (v) => (v.blog ? <BlogPreview /> : null),
+  cursos: (v) => (v.cursos ? <CoursesPreview /> : null),
+  cartografia: (v) => (v.cartografia ? <Cartography /> : null),
+  depoimentos: (v) => (v.depoimentos ? <Testimonials /> : null),
+  faq: (v) => (v.faq ? <FAQ /> : null),
+  contato: (v) => (v.contato ? <ContactCTA /> : null),
+};
+
 export default function HomePage() {
   const { visibility: v } = useVisibility();
+  const sections = useHomeSections();
+
+  // Monta a lista de nodes ativos (filtra nulls de visibilidade)
+  const rendered = sections
+    .map((id) => {
+      const fn = RENDERERS[id];
+      if (!fn) return null;
+      const node = fn(v);
+      return node ? { id, node } : null;
+    })
+    .filter(Boolean);
+
+  // Divisores contextuais — só aparecem se os vizinhos certos existiram
+  const renderedIds = new Set(rendered.map((r) => r.id));
+  const showAboutPreludeDivider = renderedIds.has('about') || renderedIds.has('prelude');
+  const showMaterialsDivider =
+    renderedIds.has('materials') && (renderedIds.has('blog') || renderedIds.has('cursos'));
+  const showCartografiaDivider = renderedIds.has('cartografia');
 
   return (
     <>
       <Navbar />
       <main>
-        {/* 1. Identidade visual + CTAs clínicos */}
-        <Hero />
-
-        {/* 2. Disclaimer de estagiário (compliance CFP/CRP) — logo abaixo do hero.
-            Toggle via admin → Visibilidade → "Faixa de status". Default ligado. */}
-        {v.disclaimerEstagio !== false && <HomeDisclaimer />}
-
-        {/* 3. Intro SEO server-rendered — garante texto rico no HTML inicial.
-            Sempre visível: é a âncora clínica da home pra Googlebot. */}
-        <HomeSeoIntro />
-
-        {/* 4. Para quem atendo — 3 públicos (adolescente/adulto/idoso).
-            Reutiliza o componente server da landing /psicoterapia-analitica. */}
-        <AudienceCards heading="Para quem atendo" />
-
-        {/* 5. Como trabalho — 3 princípios clínicos + CTA pra landing */}
-        <HomeApproach />
-
-        {/* 6. Quem sou — trajetória clínica e formação */}
-        {v.about && <About />}
-
-        {/* 7. Prelude opcional (texto editorial curto) */}
-        {v.prelude && <Prelude />}
-
-        {(v.about || v.prelude) && (
-          <Break>
-            <MandalaDivider size={56} opacity={0.3} />
-          </Break>
-        )}
-
-        {/* 8. Caminhos de estudo (trilhas) — autoridade, secundário */}
-        {v.trilhas && <StudyPaths />}
-
-        <JungQuote />
-
-        {/* 9. O que publico — materiais/ensaios/cursos como obra, não produto */}
-        {v.materiais && <MaterialsPreview />}
-        {v.materiais && (v.cursos || v.blog) && (
-          <Break pad="py-2">
-            <DiamondChain />
-          </Break>
-        )}
-        {v.blog && <BlogPreview />}
-        {v.cursos && <CoursesPreview />}
-
-        {/* 10. Cartografia ornamental (oculta por default — reativar em /glossario ou /trilhas) */}
-        {v.cartografia && <Cartography />}
-
-        {v.cartografia && (
-          <Break pad="py-2">
-            <AlchemyDivider />
-          </Break>
-        )}
-
-        {/* 11. Depoimentos — oculto por default na home clínica (CFP veda depoimentos de pacientes) */}
-        {v.depoimentos && <Testimonials />}
-
-        {/* 12. FAQ clínico */}
-        {v.faq && <FAQ />}
-
-        {/* 13. Contato — CTA final */}
-        {v.contato && <ContactCTA />}
+        {rendered.map(({ id, node }, i) => {
+          const next = rendered[i + 1]?.id;
+          // Divisor mandala: logo após about ou prelude se o próximo não for o par
+          const afterAboutPrelude =
+            showAboutPreludeDivider &&
+            (id === 'prelude' || (id === 'about' && next !== 'prelude'));
+          // Divisor diamond chain: entre materials e (blog|cursos)
+          const afterMaterials =
+            showMaterialsDivider &&
+            id === 'materials' &&
+            (next === 'blog' || next === 'cursos');
+          // Divisor alchemy: logo após cartografia
+          const afterCartografia = showCartografiaDivider && id === 'cartografia';
+          return (
+            <div key={id}>
+              {node}
+              {afterAboutPrelude && (
+                <Break>
+                  <MandalaDivider size={56} opacity={0.3} />
+                </Break>
+              )}
+              {afterMaterials && (
+                <Break pad="py-2">
+                  <DiamondChain />
+                </Break>
+              )}
+              {afterCartografia && (
+                <Break pad="py-2">
+                  <AlchemyDivider />
+                </Break>
+              )}
+            </div>
+          );
+        })}
       </main>
       <Footer showMaterialsCta={false} />
     </>

@@ -67,6 +67,41 @@ export default function ContentManager({ addToast, addLogEntry }) {
     setDirty(true);
   };
 
+  const updateAboutImage = (idx, key, value) => {
+    const images = [...(data.about.images || [])];
+    images[idx] = { ...images[idx], [key]: value };
+    setData({ ...data, about: { ...data.about, images } });
+    setDirty(true);
+  };
+
+  const addAboutImage = () => {
+    const images = [...(data.about.images || []), { src: '', alt: '', caption: '' }];
+    setData({ ...data, about: { ...data.about, images } });
+    setDirty(true);
+  };
+
+  const removeAboutImage = (idx) => {
+    const images = (data.about.images || []).filter((_, i) => i !== idx);
+    setData({ ...data, about: { ...data.about, images } });
+    setDirty(true);
+  };
+
+  const moveAboutImage = (idx, dir) => {
+    const images = [...(data.about.images || [])];
+    const target = idx + dir;
+    if (target < 0 || target >= images.length) return;
+    [images[idx], images[target]] = [images[target], images[idx]];
+    setData({ ...data, about: { ...data.about, images } });
+    setDirty(true);
+  };
+
+  const handleImageUpload = (idx, file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => updateAboutImage(idx, 'src', e.target.result);
+    reader.readAsDataURL(file);
+  };
+
   const persist = () => {
     setHomepage(data);
     setDirty(false);
@@ -241,6 +276,67 @@ export default function ContentManager({ addToast, addLogEntry }) {
                 <input value={c.label} onChange={(e) => updateCredential(i, 'label', e.target.value)} placeholder="Label" className={INPUT + ' col-span-3 text-xs'} />
                 <input value={c.detail} onChange={(e) => updateCredential(i, 'detail', e.target.value)} placeholder="Descrição" className={INPUT + ' col-span-7 text-xs'} />
                 <button onClick={() => removeCredential(i)} className={BTN_DANGER_INLINE + ' col-span-1 text-center'}>×</button>
+              </div>
+            ))}
+          </div>
+
+          <div className={CARD + ' space-y-3'}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">
+                Imagens ({(data.about.images || []).length})
+              </h3>
+              <button onClick={addAboutImage} className={BTN_SECONDARY}>+ Adicionar imagem</button>
+            </div>
+            <p className="text-[11px] text-[#6E6458] font-sans italic">
+              Renderizadas em grid 2 colunas no final da seção Sobre. Use o path relativo (ex. <code>/images/sobre/foto.jpg</code>) ou faça upload de um arquivo do computador.
+            </p>
+            {(data.about.images || []).map((img, i) => (
+              <div key={i} className="bg-[#0E0C0A] border border-[rgba(180,140,80,0.1)] rounded-lg p-3 space-y-2">
+                <div className="flex gap-3 items-start">
+                  <div className="w-24 h-24 flex-shrink-0 bg-[#1A1714] border border-[rgba(180,140,80,0.15)] rounded overflow-hidden flex items-center justify-center">
+                    {img.src ? (
+                      <img src={img.src} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[10px] text-[#6E6458] font-mono">sem imagem</span>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-2 min-w-0">
+                    <input
+                      value={img.src || ''}
+                      onChange={(e) => updateAboutImage(i, 'src', e.target.value)}
+                      placeholder="Caminho ou data URL (/images/sobre/foto.jpg)"
+                      className={INPUT + ' text-xs'}
+                    />
+                    <input
+                      value={img.alt || ''}
+                      onChange={(e) => updateAboutImage(i, 'alt', e.target.value)}
+                      placeholder="Alt text (acessibilidade)"
+                      className={INPUT + ' text-xs'}
+                    />
+                    <input
+                      value={img.caption || ''}
+                      onChange={(e) => updateAboutImage(i, 'caption', e.target.value)}
+                      placeholder="Legenda (aparece abaixo da imagem, italic)"
+                      className={INPUT + ' text-xs'}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <label className={BTN_SECONDARY + ' cursor-pointer'}>
+                    upload…
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageUpload(i, e.target.files?.[0])}
+                    />
+                  </label>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => moveAboutImage(i, -1)} className={BTN_SECONDARY} disabled={i === 0}>↑</button>
+                    <button onClick={() => moveAboutImage(i, 1)} className={BTN_SECONDARY} disabled={i === (data.about.images || []).length - 1}>↓</button>
+                    <button onClick={() => removeAboutImage(i)} className={BTN_DANGER_INLINE + ' px-2'}>remover</button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

@@ -21,6 +21,7 @@ export default function About() {
 
   const credentials = content.credentials || [];
   const milestones  = content.milestones || [];
+  const images      = (content.images || []).filter((img) => img && img.src && !img.hidden);
 
   return (
     <section
@@ -153,6 +154,43 @@ export default function About() {
             </div>
           </motion.div>
         </div>
+
+        {/* Galeria editorial — imagens de prática/formação */}
+        {images.length > 0 && (
+          <motion.div
+            variants={fadeUp}
+            className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
+          >
+            {images.map((img, i) => (
+              <motion.figure
+                key={img.src + i}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.6, delay: i * 0.08 }}
+                className="group relative"
+              >
+                <div className="relative overflow-hidden rounded-lg border border-border-subtle/60 bg-[#14110E]">
+                  <img
+                    src={img.src}
+                    alt={img.alt || img.caption || 'Imagem'}
+                    loading="lazy"
+                    className="w-full h-auto object-cover aspect-[4/3] transition-transform duration-700 group-hover:scale-[1.02]"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                </div>
+                {img.caption && (
+                  <figcaption className="mt-3 flex items-start gap-3">
+                    <span className="block w-6 h-px bg-accent/40 mt-[10px] flex-shrink-0" />
+                    <span className="font-serif italic text-[0.88rem] text-text-dim leading-snug">
+                      {img.caption}
+                    </span>
+                  </figcaption>
+                )}
+              </motion.figure>
+            ))}
+          </motion.div>
+        )}
       </motion.div>
     </section>
   );
