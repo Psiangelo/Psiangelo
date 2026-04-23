@@ -51,6 +51,7 @@ const ASPECT_CLASS = {
   '3/2': 'aspect-[3/2]',
   '2/3': 'aspect-[2/3]',
   '3/4': 'aspect-[3/4]',
+  '9/16': 'aspect-[9/16]',
   '1/1': 'aspect-square',
 };
 

@@ -581,7 +581,7 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
                 <span className="text-[9px] text-[#B48C50]/80 normal-case tracking-normal italic">cards da lista /blog</span>
               </h3>
               <p className="text-[10px] text-[#6E6458] mb-3 font-sans italic">
-                Formato retrato (2:3 ou 3:4). Fica melhor no mobile e virou a cara da lista. Se vazia, os cards usam a imagem horizontal recortada.
+                Formato 9:16 (mesmo de Reels/Story do Instagram — ex. 1080×1920). Otimizado pra mobile e vira a cara da lista. Se vazia, os cards usam a imagem horizontal recortada.
               </p>
               <FeaturedImagePicker
                 value={data.featured_cover || ''}

@@ -466,7 +466,7 @@ function BlogCard({ post, onClick, variant = 'default' }) {
           <PosterCover
             src={post.featured_cover || post.featured_image}
             alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
-            aspect={post.featured_cover ? '2/3' : (isLarge ? '16/10' : '16/9')}
+            aspect={post.featured_cover ? '9/16' : (isLarge ? '16/10' : '16/9')}
             seed={seed}
             intensity={2}
             titleOverlay
