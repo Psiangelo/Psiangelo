@@ -44,7 +44,7 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
   const minStart = Math.min(...shownDays.map((d) => byDow.get(d).startHour));
   const maxEnd = Math.max(...shownDays.map((d) => byDow.get(d).endHour));
   const hours = [];
-  for (let h = minStart; h < maxEnd; h += step) hours.push(h);
+  for (let h = minStart; h <= maxEnd; h += step) hours.push(h);
 
   const handleClick = (dow, hour) => {
     const day = byDow.get(dow).label || DOW_ABBR[dow];
@@ -148,7 +148,7 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
             </div>
             {shownDays.map((dow) => {
               const w = byDow.get(dow);
-              const active = h >= w.startHour && h < w.endHour;
+              const active = h >= w.startHour && h <= w.endHour;
               if (!active) {
                 return (
                   <div

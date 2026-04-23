@@ -48,7 +48,7 @@ function ScheduleBlocker({ schedule, onChange }) {
   const minStart = Math.min(...shownDays.map((d) => byDow.get(d).startHour));
   const maxEnd = Math.max(...shownDays.map((d) => byDow.get(d).endHour));
   const hours = [];
-  for (let h = minStart; h < maxEnd; h += step) hours.push(h);
+  for (let h = minStart; h <= maxEnd; h += step) hours.push(h);
 
   const toggle = (dow, h) => {
     const key = `${dow}-${h}`;
@@ -63,7 +63,7 @@ function ScheduleBlocker({ schedule, onChange }) {
     const all = [];
     for (const dow of shownDays) {
       const w = byDow.get(dow);
-      for (let h = w.startHour; h < w.endHour; h += step) all.push(`${dow}-${h}`);
+      for (let h = w.startHour; h <= w.endHour; h += step) all.push(`${dow}-${h}`);
     }
     onChange(all);
   };
@@ -105,7 +105,7 @@ function ScheduleBlocker({ schedule, onChange }) {
               </div>
               {shownDays.map((dow) => {
                 const w = byDow.get(dow);
-                const active = h >= w.startHour && h < w.endHour;
+                const active = h >= w.startHour && h <= w.endHour;
                 if (!active) {
                   return (
                     <div key={dow} className="bg-black/30 border-b border-r border-[rgba(180,140,80,0.08)] last:border-r-0" />
@@ -449,10 +449,13 @@ export default function TherapyManager({ addToast, addLogEntry }) {
             <textarea value={data.schedule.note} rows={2} onChange={(e) => update('schedule', { note: e.target.value })} className={TEXTAREA} />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="text-xs uppercase tracking-widest text-[#6E6458] font-sans">Janelas recorrentes ({data.schedule.windows.length})</span>
               <button onClick={() => update('schedule', { windows: [...data.schedule.windows, { dow: 1, label: 'Segunda', startHour: 14, endHour: 21 }] })} className={BTN_SECONDARY}>+ Adicionar</button>
             </div>
+            <p className="text-[11px] text-[#6E6458] italic">
+              Horários são <strong className="text-[#B48C50]">inclusivos</strong>: 14 → 21 mostra slots 14h, 15h, …, 21h.
+            </p>
             {data.schedule.windows.map((w, i) => (
               <div key={i} className="grid grid-cols-[1fr_1fr_80px_80px_auto] gap-2 items-center bg-[#0E0C0A] border border-[rgba(180,140,80,0.1)] rounded-lg p-2">
                 <select
@@ -489,10 +492,11 @@ export default function TherapyManager({ addToast, addLogEntry }) {
                     update('schedule', { windows });
                   }}
                   className={INPUT + ' text-xs'}
-                  placeholder="Início (h)"
+                  title="Primeiro horário disponível (ex: 14 = 14h)"
+                  placeholder="1º slot"
                 />
                 <input
-                  type="number" min={0} max={24}
+                  type="number" min={0} max={23}
                   value={w.endHour}
                   onChange={(e) => {
                     const windows = [...data.schedule.windows];
@@ -500,7 +504,8 @@ export default function TherapyManager({ addToast, addLogEntry }) {
                     update('schedule', { windows });
                   }}
                   className={INPUT + ' text-xs'}
-                  placeholder="Fim (h)"
+                  title="Último horário disponível (ex: 21 = 21h inclusive)"
+                  placeholder="Último slot"
                 />
                 <button
                   onClick={() => update('schedule', { windows: data.schedule.windows.filter((_, j) => j !== i) })}
