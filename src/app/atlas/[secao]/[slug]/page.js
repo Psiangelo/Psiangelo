@@ -41,6 +41,25 @@ export default function NotePage({ params }) {
       <Navbar />
       <main className="pt-28 md:pt-36 pb-16 px-5 sm:px-6 md:px-12">
         <article className="max-w-[860px] mx-auto">
+          {/* Back bar */}
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <Link
+              href={`/atlas/${n.section}`}
+              className="group inline-flex items-center gap-2 px-3 py-2 border border-border-subtle hover:border-accent/50 bg-bg-card/40 transition-colors"
+            >
+              <span className="text-accent group-hover:-translate-x-0.5 transition-transform">←</span>
+              <span className="font-mono text-[0.6rem] text-text-dim group-hover:text-text-bright tracking-[0.22em] uppercase transition-colors">
+                {section?.label || 'Atlas'}
+              </span>
+            </Link>
+            <Link
+              href="/atlas"
+              className="font-mono text-[0.6rem] text-text-dim hover:text-accent tracking-[0.22em] uppercase transition-colors"
+            >
+              Atlas · Home
+            </Link>
+          </div>
+
           {/* Breadcrumb */}
           <nav className="mb-6 flex flex-wrap items-center gap-2 font-mono text-[0.58rem] tracking-[0.22em] uppercase">
             <Link href="/atlas" className="text-accent hover:text-text-bright transition-colors">
@@ -121,7 +140,8 @@ export default function NotePage({ params }) {
                       >
                         <a
                           href={`#${t.id}`}
-                          className="text-text-dim hover:text-accent transition-colors block leading-snug"
+                          className="text-text-dim hover:text-accent transition-colors block leading-snug line-clamp-3"
+                          title={t.text}
                         >
                           {t.text}
                         </a>
@@ -147,8 +167,42 @@ export default function NotePage({ params }) {
             </div>
           </div>
 
+          {/* Prev / Next */}
+          {(n.prev || n.next) && (
+            <nav className="mt-16 pt-10 border-t border-border-subtle grid gap-4 md:grid-cols-2">
+              {n.prev ? (
+                <Link
+                  href={`/atlas/${n.prev.section}/${n.prev.slug}`}
+                  className="group block p-5 border border-border-subtle hover:border-accent/40 bg-bg-card/40 transition-colors"
+                >
+                  <p className="font-mono text-[0.55rem] text-text-dim tracking-[0.22em] uppercase mb-1.5 flex items-center gap-2">
+                    <span className="text-accent group-hover:-translate-x-0.5 transition-transform">←</span>
+                    Anterior
+                  </p>
+                  <p className="font-serif text-[1.02rem] text-text-bright group-hover:text-accent transition-colors leading-snug">
+                    {n.prev.title}
+                  </p>
+                </Link>
+              ) : <div />}
+              {n.next ? (
+                <Link
+                  href={`/atlas/${n.next.section}/${n.next.slug}`}
+                  className="group block p-5 border border-border-subtle hover:border-accent/40 bg-bg-card/40 transition-colors md:text-right"
+                >
+                  <p className="font-mono text-[0.55rem] text-text-dim tracking-[0.22em] uppercase mb-1.5 flex items-center gap-2 md:justify-end">
+                    Próxima
+                    <span className="text-accent group-hover:translate-x-0.5 transition-transform">→</span>
+                  </p>
+                  <p className="font-serif text-[1.02rem] text-text-bright group-hover:text-accent transition-colors leading-snug">
+                    {n.next.title}
+                  </p>
+                </Link>
+              ) : <div />}
+            </nav>
+          )}
+
           {/* Rodapé: relações */}
-          <footer className="mt-16 pt-10 border-t border-border-subtle grid gap-10 md:grid-cols-2">
+          <footer className="mt-12 pt-10 border-t border-border-subtle grid gap-10 md:grid-cols-2">
             {(n.wikilinksOut || []).length > 0 && (
               <div>
                 <p className="meta-caps-accent mb-3">Conceitos citados</p>
@@ -191,6 +245,24 @@ export default function NotePage({ params }) {
               </div>
             )}
           </footer>
+
+          {/* Voltar */}
+          <div className="mt-14 flex flex-wrap items-center justify-between gap-3 pt-6 border-t border-border-subtle/40">
+            <Link
+              href={`/atlas/${n.section}`}
+              className="group inline-flex items-center gap-2 font-mono text-[0.6rem] text-text-dim hover:text-accent tracking-[0.22em] uppercase transition-colors"
+            >
+              <span className="text-accent group-hover:-translate-x-0.5 transition-transform">←</span>
+              Voltar a {section?.label}
+            </Link>
+            <a
+              href="#top"
+              className="group inline-flex items-center gap-2 font-mono text-[0.6rem] text-text-dim hover:text-accent tracking-[0.22em] uppercase transition-colors"
+            >
+              Topo
+              <span className="text-accent group-hover:-translate-y-0.5 transition-transform">↑</span>
+            </a>
+          </div>
         </article>
       </main>
       <Footer />

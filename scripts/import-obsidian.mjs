@@ -304,6 +304,16 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+function decodeHtmlEntities(s) {
+  return String(s)
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&');
+}
+
 // ─────────────────────────────────────────────────────────────
 // 8. Main pipeline
 // ─────────────────────────────────────────────────────────────
@@ -505,12 +515,37 @@ function main() {
       toc.push({
         level: parseInt(tm[1], 10),
         id: tm[2],
-        text: tm[3].replace(/<[^>]+>/g, ''),
+        text: decodeHtmlEntities(tm[3].replace(/<[^>]+>/g, '')),
       });
     }
 
     n.html = html;
     n.toc = toc;
+  }
+
+  // ─── Passo 4.5: ordenação natural + prev/next por seção/subpath ───
+  // Ordena: mesma seção → mesma subpasta (subpath[0]) → natural sort no título
+  const naturalKey = (s) =>
+    String(s || '').replace(/\d+/g, (d) => d.padStart(8, '0'));
+  const groupOf = (n) => `${n.section}/${(n.subpath[0]?.raw) || ''}`;
+  const sorted = [...notes].sort((a, b) => {
+    if (a.section !== b.section) return (a.section > b.section ? 1 : -1);
+    const ga = groupOf(a);
+    const gb = groupOf(b);
+    if (ga !== gb) return ga.localeCompare(gb, 'pt');
+    // dentro do mesmo grupo, ordena pelo caminho completo pra preservar sequência de capítulos
+    return naturalKey(a.relPath).localeCompare(naturalKey(b.relPath), 'pt');
+  });
+  for (let i = 0; i < sorted.length; i++) {
+    const cur = sorted[i];
+    const prev = sorted[i - 1];
+    const next = sorted[i + 1];
+    if (prev && groupOf(prev) === groupOf(cur)) {
+      cur.prev = { section: prev.section, slug: prev.slug, title: prev.title };
+    }
+    if (next && groupOf(next) === groupOf(cur)) {
+      cur.next = { section: next.section, slug: next.slug, title: next.title };
+    }
   }
 
   // ─── Passo 5: backlinks ───
@@ -579,6 +614,8 @@ function main() {
       readingMinutes: n.readingMinutes,
       html: n.html,
       toc: n.toc,
+      prev: n.prev || null,
+      next: n.next || null,
       backlinks: backlinks.get(`${n.section}/${n.slug}`) || [],
       wikilinksOut: n.wikilinks
         .map((l) => {
