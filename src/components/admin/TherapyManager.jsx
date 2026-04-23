@@ -313,8 +313,13 @@ export default function TherapyManager({ addToast, addLogEntry }) {
               <input value={data.schedule.sectionLabel} onChange={(e) => update('schedule', { sectionLabel: e.target.value })} className={INPUT} />
             </div>
             <div>
-              <label className={LABEL}>Duração do slot (min)</label>
-              <input type="number" min={30} step={30} value={data.schedule.slotMinutes} onChange={(e) => update('schedule', { slotMinutes: Number(e.target.value) })} className={INPUT} />
+              <label className={LABEL}>Intervalo entre horários (horas)</label>
+              <select value={data.schedule.stepHour || 1} onChange={(e) => update('schedule', { stepHour: Number(e.target.value) })} className={INPUT}>
+                <option value={0.5}>30 min</option>
+                <option value={1}>1 hora</option>
+                <option value={1.5}>1h30</option>
+                <option value={2}>2 horas</option>
+              </select>
             </div>
           </div>
           <div>

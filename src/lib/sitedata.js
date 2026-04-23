@@ -386,7 +386,7 @@ export const DEFAULT_THERAPY = {
   schedule: {
     show: true,
     sectionLabel: 'Janelas de atendimento',
-    note: 'Atendo de tarde para noite. Selecione um horário — vamos combinar pelo WhatsApp.',
+    note: 'Atendo de tarde para noite. Escolha o dia e horário que prefere — vamos combinar pelo WhatsApp.',
     // Janelas recorrentes por dia da semana (0=dom, 1=seg, ..., 6=sáb)
     windows: [
       { dow: 1, label: 'Segunda', startHour: 14, endHour: 21 },
@@ -395,7 +395,7 @@ export const DEFAULT_THERAPY = {
       { dow: 4, label: 'Quinta',  startHour: 14, endHour: 21 },
       { dow: 5, label: 'Sexta',   startHour: 14, endHour: 21 },
     ],
-    slotMinutes: 60,
+    stepHour: 1, // granularidade da grade: 1 = horários inteiros, 0.5 = de meia em meia
   },
   cta: {
     primaryLabel: 'Marcar uma primeira conversa',
