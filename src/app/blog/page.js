@@ -275,7 +275,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
 
       {/* Hero do post — fullbleed cover quando tem imagem */}
       {post.featured_image ? (
-        <header className="relative h-[55vh] md:h-[65vh] min-h-[420px] overflow-hidden">
+        <header className="relative h-[55vh] md:h-[65vh] min-h-[420px] overflow-hidden" data-reading-hide="true">
           <img
             src={post.featured_image}
             alt={post.featured_image_alt || post.title}
@@ -323,7 +323,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
         </header>
       ) : (
         // Sem imagem — header textual com PageHero-style
-        <header className="pt-32 md:pt-40 pb-12 px-5 sm:px-6 md:px-12">
+        <header className="pt-32 md:pt-40 pb-12 px-5 sm:px-6 md:px-12" data-reading-hide="true">
           <div className="max-w-[1180px] mx-auto">
             <button
               onClick={onBack}

@@ -27,6 +27,10 @@ const out  = resolve(pub, 'og', 'posts');
 const WIDTH  = 1200;
 const HEIGHT = 630;
 
+// OG vertical (WhatsApp portrait preview)
+const V_WIDTH  = 1080;
+const V_HEIGHT = 1920;
+
 // Paleta do site
 const GOLD = '#B48C50';
 const BG   = '#0E0C0A';
@@ -157,19 +161,32 @@ function ornament(seed, cx, cy) {
     <g transform="translate(${cx},${cy})" opacity="${o}">${dots}</g>`;
 }
 
-function composeSvg({ imageUri, title, eyebrow, date, seed }) {
-  const titleLines = wrapTitle(title, 28, 3);
-  const lineHeight = 62;
-  const titleStartY = HEIGHT - 100 - (titleLines.length - 1) * lineHeight;
+function composeSvg({ imageUri, title, eyebrow, date, seed, width = WIDTH, height = HEIGHT }) {
+  const isVertical = height > width;
+  const maxChars = isVertical ? 18 : 28;
+  const lineHeight = isVertical ? 110 : 62;
+  const titleFontSize = isVertical ? 96 : 54;
+  const padX = isVertical ? 80 : 90;
+  const eyebrowY = isVertical ? 160 : 100;
+  const eyebrowSize = isVertical ? 34 : 22;
+  const eyebrowTick = isVertical ? 44 : 28;
+  const signatureBottom = isVertical ? 90 : 50;
+  const signatureSize = isVertical ? 26 : 18;
+  const ornamentCx = isVertical ? width - 150 : width - 110;
+  const ornamentCy = isVertical ? 220 : 120;
+  const frameWidth = isVertical ? 4 : 3;
+
+  const titleLines = wrapTitle(title, maxChars, 4);
+  const titleStartY = height - (isVertical ? 220 : 100) - (titleLines.length - 1) * lineHeight;
 
   // Dessatura + escurece levemente via filter SVG — harmoniza a imagem
   const imageLayer = imageUri
-    ? `<image href="${imageUri}" x="0" y="0" width="${WIDTH}" height="${HEIGHT}" preserveAspectRatio="xMidYMid slice" filter="url(#desat)" />`
-    : `<rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="${BG}" />`;
+    ? `<image href="${imageUri}" x="0" y="0" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice" filter="url(#desat)" />`
+    : `<rect x="0" y="0" width="${width}" height="${height}" fill="${BG}" />`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-     width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
+     width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
     <!-- Dessatura + escurecimento sutil da imagem -->
     <filter id="desat" x="0" y="0" width="100%" height="100%">
@@ -205,39 +222,39 @@ function composeSvg({ imageUri, title, eyebrow, date, seed }) {
   ${imageLayer}
 
   <!-- 2. Tint dourado (harmonização de identidade) -->
-  <rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="url(#tint)" />
+  <rect x="0" y="0" width="${width}" height="${height}" fill="url(#tint)" />
 
   <!-- 3. Vignette -->
-  <rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="url(#vignette)" />
+  <rect x="0" y="0" width="${width}" height="${height}" fill="url(#vignette)" />
 
   <!-- 4. Gradient escuro embaixo pra legibilidade -->
-  <rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="url(#darken)" />
+  <rect x="0" y="0" width="${width}" height="${height}" fill="url(#darken)" />
 
-  <!-- 5. Ornamento geométrico (canto inferior-direito) -->
-  ${ornament(seed || title || 'psi', WIDTH - 110, 120)}
+  <!-- 5. Ornamento geométrico (canto superior-direito) -->
+  ${ornament(seed || title || 'psi', ornamentCx, ornamentCy)}
 
   <!-- 6. Faixa lateral dourada (moldura editorial) -->
-  <rect x="60" y="60" width="3" height="${HEIGHT - 120}" fill="${GOLD}" opacity="0.7" />
+  <rect x="60" y="60" width="${frameWidth}" height="${height - 120}" fill="${GOLD}" opacity="0.7" />
 
   <!-- 7. Eyebrow: meta caps -->
   ${eyebrow ? `
-    <g transform="translate(90, 100)">
-      <rect x="0" y="-4" width="28" height="2" fill="${GOLD}" />
-      <text x="42" y="0" font-family="Courier New, monospace" font-size="22" font-weight="bold"
+    <g transform="translate(${padX}, ${eyebrowY})">
+      <rect x="0" y="-4" width="${eyebrowTick}" height="2" fill="${GOLD}" />
+      <text x="${eyebrowTick + 14}" y="0" font-family="Courier New, monospace" font-size="${eyebrowSize}" font-weight="bold"
             fill="${GOLD}" letter-spacing="4">${esc(eyebrow.toUpperCase())}</text>
     </g>` : ''}
 
   <!-- 8. Título -->
   <g font-family="Georgia, 'Times New Roman', serif" fill="#E8DDD0">
     ${titleLines.map((line, i) => `
-      <text x="90" y="${titleStartY + i * lineHeight}" font-size="54" font-weight="400">${esc(line)}</text>
+      <text x="${padX}" y="${titleStartY + i * lineHeight}" font-size="${titleFontSize}" font-weight="400">${esc(line)}</text>
     `).join('')}
   </g>
 
   <!-- 9. Assinatura rodapé -->
-  <g transform="translate(90, ${HEIGHT - 50})">
+  <g transform="translate(${padX}, ${height - signatureBottom})">
     <rect x="0" y="-4" width="20" height="1.5" fill="${GOLD}" opacity="0.7" />
-    <text x="32" y="0" font-family="Courier New, monospace" font-size="18" fill="${GOLD}"
+    <text x="32" y="0" font-family="Courier New, monospace" font-size="${signatureSize}" fill="${GOLD}"
           letter-spacing="3" opacity="0.85">PSIANGELO${date ? `  ·  ${esc(date.toUpperCase())}` : ''}</text>
   </g>
 </svg>`;
@@ -262,7 +279,9 @@ async function main() {
     return;
   }
 
+  const outV = resolve(pub, 'og', 'posts-v');
   mkdirSync(out, { recursive: true });
+  mkdirSync(outV, { recursive: true });
 
   let ok = 0;
   let skip = 0;
@@ -271,31 +290,38 @@ async function main() {
     if (!slug) { skip++; continue; }
     if (post.status && post.status !== 'published') { skip++; continue; }
 
-    const outFile = resolve(out, `${slug}.png`);
+    const outFile  = resolve(out,  `${slug}.png`);
+    const outFileV = resolve(outV, `${slug}.png`);
     try {
-      const imageUri = resolveImageDataUri(post.featured_image);
-      const svg = composeSvg({
-        imageUri,
+      const imageUri  = resolveImageDataUri(post.featured_image);
+      // Vertical prefere featured_cover (já 9:16); fallback pra featured_image
+      const imageUriV = resolveImageDataUri(post.featured_cover) || imageUri;
+
+      const baseOpts = {
         title: post.title || 'Sem título',
         eyebrow: post.tags?.[0] || 'Ensaio',
         date: fmtDate(post.updated_at || post.created_at),
         seed: slug,
-      });
-      const resvg = new Resvg(svg, {
-        fitTo: { mode: 'width', value: WIDTH },
-        font: {
-          loadSystemFonts: true,
-          defaultFontFamily: 'Georgia',
-          serifFamily: 'Georgia',
-          sansSerifFamily: 'Arial',
-          monospaceFamily: 'Courier New',
-        },
-        background: BG,
-      });
-      const png = resvg.render().asPng();
+      };
+      const fontOpts = {
+        loadSystemFonts: true,
+        defaultFontFamily: 'Georgia',
+        serifFamily: 'Georgia',
+        sansSerifFamily: 'Arial',
+        monospaceFamily: 'Courier New',
+      };
+
+      // Horizontal (Twitter/Facebook/Fallback)
+      const svg = composeSvg({ imageUri, ...baseOpts, width: WIDTH, height: HEIGHT });
+      const png = new Resvg(svg, { fitTo: { mode: 'width', value: WIDTH }, font: fontOpts, background: BG }).render().asPng();
       writeFileSync(outFile, png);
-      const kb = (png.length / 1024).toFixed(0);
-      console.log(`✓ og/posts/${slug}.png (${kb} KB)`);
+
+      // Vertical (WhatsApp portrait)
+      const svgV = composeSvg({ imageUri: imageUriV, ...baseOpts, width: V_WIDTH, height: V_HEIGHT });
+      const pngV = new Resvg(svgV, { fitTo: { mode: 'width', value: V_WIDTH }, font: fontOpts, background: BG }).render().asPng();
+      writeFileSync(outFileV, pngV);
+
+      console.log(`✓ og/posts/${slug}.png (${(png.length/1024).toFixed(0)} KB) + posts-v (${(pngV.length/1024).toFixed(0)} KB)`);
       ok++;
     } catch (e) {
       console.warn(`✗ falhou ${slug}: ${e.message}`);

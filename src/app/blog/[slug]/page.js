@@ -44,8 +44,10 @@ export function generateMetadata({ params }) {
   const description =
     post.excerpt ||
     'Ensaio de psicologia analítica — Psiangelo. Psicoterapia junguiana online.';
-  const ogImage = `${SITE_URL}/og/posts/${post.slug || post.id}.png`;
-  const url = `${SITE_URL}/blog/${post.slug || post.id}`;
+  const slug = post.slug || post.id;
+  const ogImage  = `${SITE_URL}/og/posts/${slug}.png`;
+  const ogImageV = `${SITE_URL}/og/posts-v/${slug}.png`;
+  const url = `${SITE_URL}/blog/${slug}`;
 
   return {
     title,
@@ -59,7 +61,9 @@ export function generateMetadata({ params }) {
       title,
       description,
       images: [
-        { url: ogImage, width: 1200, height: 630, alt: title, type: 'image/png' },
+        // Vertical primeiro — scrapers do WhatsApp costumam pegar o primeiro
+        { url: ogImageV, width: 1080, height: 1920, alt: title, type: 'image/png' },
+        { url: ogImage,  width: 1200, height: 630,  alt: title, type: 'image/png' },
         // Fallback global, caso a imagem gerada não exista
         { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo' },
       ],
@@ -68,6 +72,7 @@ export function generateMetadata({ params }) {
       tags: post.tags || [],
     },
     twitter: {
+      // Twitter lida melhor com a horizontal
       card: 'summary_large_image',
       title,
       description,
