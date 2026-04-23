@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BlogEditor from './BlogEditor';
+import FeaturedImagePicker from './FeaturedImagePicker';
 
 // ─── Constants ──────────────────────────────────────────────────────
 const STORAGE_KEY = 'angelo_admin_blog';
@@ -558,18 +559,16 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
 
             {/* Featured Image */}
             <div className={CARD_CLASS}>
-              <h3 className="text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-3">Imagem de capa</h3>
-              <input value={data.featured_image} onChange={(e) => setData({ ...data, featured_image: e.target.value })}
-                placeholder="URL da imagem" className={INPUT_CLASS + ' text-xs mb-2'} />
-              {data.featured_image && (
-                <>
-                  <div className="aspect-video rounded-lg overflow-hidden border border-[rgba(180,140,80,0.1)] mb-2">
-                    <img src={data.featured_image} alt={data.featured_image_alt} className="w-full h-full object-cover" referrerPolicy="no-referrer" onError={(e) => { e.target.style.display = 'none'; }} />
-                  </div>
-                  <input value={data.featured_image_alt} onChange={(e) => setData({ ...data, featured_image_alt: e.target.value })}
-                    placeholder="Texto alternativo (alt)" className={INPUT_CLASS + ' text-xs'} />
-                </>
-              )}
+              <h3 className="text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-3 flex items-center gap-2">
+                Imagem de capa
+                <span className="text-[9px] text-[#B48C50]/80 normal-case tracking-normal italic">recomendada</span>
+              </h3>
+              <FeaturedImagePicker
+                value={data.featured_image || ''}
+                alt={data.featured_image_alt || ''}
+                onChange={(v) => setData({ ...data, featured_image: v })}
+                onAltChange={(v) => setData({ ...data, featured_image_alt: v })}
+              />
             </div>
 
             {/* Excerpt */}

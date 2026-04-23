@@ -19,6 +19,8 @@ import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
 import ListenButton from '@/components/ListenButton';
 import ReadingMode from '@/components/ReadingMode';
+import ShareButtons from '@/components/blog/ShareButtons';
+import RelatedPosts from '@/components/blog/RelatedPosts';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 const SERIES_STORAGE_KEY = 'angelo_admin_blog_series';
@@ -371,7 +373,17 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
               dangerouslySetInnerHTML={{ __html: htmlWithIds }}
             />
 
-            <div className="mt-16 pt-8 border-t border-border-subtle flex justify-between items-center">
+            <div className="mt-12 pt-6 border-t border-border-subtle" data-reading-hide="true">
+              <ShareButtons title={post.title} />
+            </div>
+
+            <RelatedPosts
+              currentPost={post}
+              allPosts={allPosts}
+              onNavigate={onNavigate}
+            />
+
+            <div className="mt-12 pt-6 border-t border-border-subtle flex justify-between items-center" data-reading-hide="true">
               <button
                 onClick={onBack}
                 className="text-xs font-sans text-accent hover:text-text-bright transition-colors uppercase tracking-widest"
