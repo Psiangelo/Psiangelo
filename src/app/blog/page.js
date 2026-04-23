@@ -545,7 +545,27 @@ function FeaturedCover({ post, onClick }) {
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-bg-warm via-bg-card to-bg" />
       )}
+
+      {/* Filtro de identidade — tint dourado em multiply pra harmonizar a imagem */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none mix-blend-multiply"
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(180,140,80,0.22) 0%, rgba(180,140,80,0) 55%, rgba(14,12,10,0.30) 100%)',
+        }}
+      />
+      {/* Gradient escuro que cobre e garante legibilidade do título */}
       <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/75 to-bg/20" />
+      {/* Vignette radial — derrete as bordas no fundo */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at center, rgba(14,12,10,0) 50%, rgba(14,12,10,0.55) 100%)',
+        }}
+      />
 
       {/* Mandala translúcida no canto */}
       <motion.svg
