@@ -21,10 +21,14 @@ function getPosts() {
 }
 
 export function generateStaticParams() {
-  return getPosts().map((p) => ({ slug: String(p.slug || p.id) }));
+  const posts = getPosts();
+  if (posts.length === 0) {
+    // Next 14 + output:'export' exige ao menos um param. Gera um
+    // placeholder que redireciona pro blog — some assim que houver posts.
+    return [{ slug: '__placeholder__' }];
+  }
+  return posts.map((p) => ({ slug: String(p.slug || p.id) }));
 }
-
-export const dynamicParams = false;
 
 export function generateMetadata({ params }) {
   const posts = getPosts();
