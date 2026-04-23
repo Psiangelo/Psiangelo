@@ -8,6 +8,7 @@ import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
 import PublishManager from '@/components/admin/PublishManager';
+import UnpublishedBanner from '@/components/admin/UnpublishedBanner';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import atlasData from '@/data/atlas.json';
 import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
@@ -2917,6 +2918,13 @@ function AdminPanel() {
           </div>
         </div>
       </header>
+
+      {/* Banner de mudanças não publicadas — visível em todas as abas */}
+      <UnpublishedBanner
+        addToast={addToast}
+        addLogEntry={addLogEntry}
+        onGoToPublish={() => setActiveTab('publish')}
+      />
 
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav

@@ -8,6 +8,7 @@ import {
   isSiteSupabaseConfigured,
   isSiteSupabaseWriteConfigured,
 } from '@/lib/supabase-site';
+import { markPublished } from '@/lib/unpublishedChanges';
 
 /**
  * PublishManager — publica o conteúdo do admin no site público.
@@ -118,6 +119,7 @@ export default function PublishManager({ addToast, addLogEntry }) {
     const result = await publishSnapshot({ data: snapshot.data, note: snapshot.note });
     setPublishing(false);
     if (result.ok) {
+      markPublished();
       addToast?.('Publicado no Supabase — visitantes já veem as mudanças', 'success');
       addLogEntry?.('Publicado (Supabase)', `versão ${result.version}, ${keyCount} chaves`);
       loadRemote();
