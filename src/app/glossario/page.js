@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
+import AtlasGate from '@/components/atlas/AtlasGate';
 import { glossario, CATEGORIES, getGlossarioByCategory } from '@/data/glossario';
 
 export const metadata = {
@@ -20,7 +21,7 @@ export default function GlossarioPage() {
   const categoryOrder = ['estrutura', 'arquetipos', 'dinamica', 'processo', 'clinica', 'alquimia'];
 
   return (
-    <>
+    <AtlasGate visibilityKey="glossario" title="Glossário indisponível">
       <Navbar />
       <main>
         <PageHero
@@ -71,6 +72,6 @@ export default function GlossarioPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </AtlasGate>
   );
 }

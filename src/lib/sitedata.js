@@ -229,6 +229,8 @@ export const DEFAULT_VISIBILITY = {
   materiais:  true,
   trilhas:    true,
   bio:        true,
+  atlas:      true,
+  glossario:  true,
   // Seções só da home
   prelude:      true,
   about:        true,

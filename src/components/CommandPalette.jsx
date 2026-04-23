@@ -8,6 +8,7 @@ import { glossario } from '@/data/glossario';
 import { materials } from '@/data/materials';
 import { trilhas } from '@/data/trilhas';
 import { atlasNotes, atlasSections } from '@/lib/atlas';
+import { useVisibility } from '@/lib/useVisibility';
 
 const STATIC_PAGES = [
   { id: 'home',       title: 'Home',       href: '/',          hint: 'Página inicial' },
@@ -128,8 +129,21 @@ export default function CommandPalette() {
   const listRef = useRef(null);
   const router = useRouter();
 
+  const { visibility } = useVisibility();
   const index = useMemo(() => buildIndex(), []);
-  const results = useMemo(() => searchIndex(index, query), [index, query]);
+  const filteredIndex = useMemo(() => {
+    return index.filter((item) => {
+      if (visibility.atlas === false && (item.type === 'atlas' || (item.href || '').startsWith('/atlas'))) return false;
+      if (visibility.glossario === false && (item.type === 'glossario' || (item.href || '').startsWith('/glossario'))) return false;
+      if (visibility.blog === false && (item.href || '').startsWith('/blog')) return false;
+      if (visibility.cursos === false && (item.href || '').startsWith('/cursos')) return false;
+      if (visibility.materiais === false && (item.href || '').startsWith('/materiais')) return false;
+      if (visibility.trilhas === false && (item.href || '').startsWith('/trilhas')) return false;
+      if (visibility.bio === false && item.href === '/bio') return false;
+      return true;
+    });
+  }, [index, visibility]);
+  const results = useMemo(() => searchIndex(filteredIndex, query), [filteredIndex, query]);
 
   const close = useCallback(() => {
     setOpen(false);

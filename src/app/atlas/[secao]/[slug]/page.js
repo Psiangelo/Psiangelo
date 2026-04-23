@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import AtlasGate from '@/components/atlas/AtlasGate';
 import { atlasNotes, getNote, getSection, formatBreadcrumb } from '@/lib/atlas';
 
 export function generateStaticParams() {
@@ -37,7 +38,7 @@ export default function NotePage({ params }) {
   const hubSection = n.section === 'conceitos';
 
   return (
-    <>
+    <AtlasGate visibilityKey="atlas" title="Atlas indisponível">
       <Navbar />
       <main className="pt-28 md:pt-36 pb-16 px-5 sm:px-6 md:px-12">
         <article className="max-w-[860px] mx-auto">
@@ -266,7 +267,7 @@ export default function NotePage({ params }) {
         </article>
       </main>
       <Footer />
-    </>
+    </AtlasGate>
   );
 }
 

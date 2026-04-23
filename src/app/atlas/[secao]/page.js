@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import AtlasTree from '@/components/atlas/AtlasTree';
+import AtlasGate from '@/components/atlas/AtlasGate';
 import { atlasSections, getSection, getSectionTree } from '@/lib/atlas';
 
 export function generateStaticParams() {
@@ -26,7 +27,7 @@ export default function SecaoPage({ params }) {
   const tree = getSectionTree(params.secao);
 
   return (
-    <>
+    <AtlasGate visibilityKey="atlas" title="Atlas indisponível">
       <Navbar />
       <main>
         <PageHero
@@ -50,6 +51,6 @@ export default function SecaoPage({ params }) {
         </section>
       </main>
       <Footer />
-    </>
+    </AtlasGate>
   );
 }

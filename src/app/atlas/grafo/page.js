@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import AtlasGraph from '@/components/atlas/AtlasGraph';
+import AtlasGate from '@/components/atlas/AtlasGate';
 import { getGraphData, atlasStats } from '@/lib/atlas';
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default function GrafoPage() {
   const { nodes, links, sectionLabels } = getGraphData();
 
   return (
-    <>
+    <AtlasGate visibilityKey="atlas" title="Atlas indisponível">
       <Navbar />
       <main>
         <PageHero
@@ -41,6 +42,6 @@ export default function GrafoPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </AtlasGate>
   );
 }

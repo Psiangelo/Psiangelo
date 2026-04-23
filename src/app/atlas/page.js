@@ -2,6 +2,8 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
+import AtlasGate from '@/components/atlas/AtlasGate';
+import WhenVisible from '@/components/atlas/WhenVisible';
 import {
   atlasSections,
   atlasStats,
@@ -27,7 +29,7 @@ export default function AtlasHomePage() {
     .slice(0, 12);
 
   return (
-    <>
+    <AtlasGate visibilityKey="atlas" title="Atlas indisponível">
       <Navbar />
       <main>
         <PageHero
@@ -182,6 +184,7 @@ export default function AtlasHomePage() {
         )}
 
         {/* Glossário curado (link pra coleção separada) */}
+        <WhenVisible k="glossario">
         <section className="py-8 md:py-10 px-5 sm:px-6 md:px-12 section-border-t">
           <div className="max-w-[1180px] mx-auto">
             <Link
@@ -207,9 +210,10 @@ export default function AtlasHomePage() {
             </Link>
           </div>
         </section>
+        </WhenVisible>
 
       </main>
       <Footer />
-    </>
+    </AtlasGate>
   );
 }

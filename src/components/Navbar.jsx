@@ -31,7 +31,7 @@ export default function Navbar() {
     { href: '/materiais', label: 'Materiais', key: 'materiais' },
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
     { href: '/blog', label: 'Blog', key: 'blog' },
-    { href: '/atlas', label: 'Atlas', key: null },
+    { href: '/atlas', label: 'Atlas', key: 'atlas' },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 

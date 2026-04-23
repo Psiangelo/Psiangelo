@@ -18,6 +18,8 @@ const GROUPS = [
       { key: 'cursos',    label: 'Cursos',             url: '/cursos' },
       { key: 'materiais', label: 'Materiais',          url: '/materiais' },
       { key: 'trilhas',   label: 'Trilhas de estudo',  url: '/trilhas' },
+      { key: 'atlas',     label: 'Atlas (vault Obsidian)', url: '/atlas' },
+      { key: 'glossario', label: 'Glossário junguiano (curado)', url: '/glossario' },
       { key: 'bio',       label: 'Bio / Linktree',     url: '/bio' },
     ],
   },

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
+import AtlasGate from '@/components/atlas/AtlasGate';
 import { getAllNotesAlpha, atlasStats } from '@/lib/atlas';
 
 export const metadata = {
@@ -25,7 +26,7 @@ export default function IndicePage() {
   const letters = [...groups.keys()].sort();
 
   return (
-    <>
+    <AtlasGate visibilityKey="atlas" title="Atlas indisponível">
       <Navbar />
       <main>
         <PageHero
@@ -86,6 +87,6 @@ export default function IndicePage() {
         </section>
       </main>
       <Footer />
-    </>
+    </AtlasGate>
   );
 }
