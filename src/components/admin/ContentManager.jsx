@@ -80,6 +80,14 @@ export default function ContentManager({ addToast, addLogEntry }) {
     setDirty(true);
   };
 
+  const resetBlock = (blockId) => {
+    const block = blocks.find((b) => b.id === blockId);
+    const label = block?.label || blockId;
+    if (!confirm(`Restaurar a seção "${label}" para o padrão? As edições desta seção serão perdidas.`)) return;
+    setData((prev) => ({ ...prev, [blockId]: DEFAULT_HOMEPAGE[blockId] }));
+    setDirty(true);
+  };
+
   const blocks = [
     { id: 'hero', label: 'Hero' },
     { id: 'prelude', label: 'Prelúdio' },
@@ -124,7 +132,16 @@ export default function ContentManager({ addToast, addLogEntry }) {
       {/* HERO */}
       {activeBlock === 'hero' && (
         <div className={CARD + ' space-y-4'}>
-          <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Hero (topo da home)</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Hero (topo da home)</h3>
+            <button
+              onClick={() => resetBlock('hero')}
+              className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+              title="Substitui o conteúdo desta seção pelo texto padrão."
+            >
+              ↺ Restaurar
+            </button>
+          </div>
           <div>
             <label className={LABEL}>Eyebrow (linha mono pequena)</label>
             <input value={data.hero.eyebrow} onChange={(e) => updateBlock('hero', 'eyebrow', e.target.value)} className={INPUT} />
@@ -153,7 +170,16 @@ export default function ContentManager({ addToast, addLogEntry }) {
       {/* PRELUDE */}
       {activeBlock === 'prelude' && (
         <div className={CARD + ' space-y-4'}>
-          <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Prelúdio (entre Hero e Sobre)</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Prelúdio (entre Hero e Sobre)</h3>
+            <button
+              onClick={() => resetBlock('prelude')}
+              className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+              title="Substitui o conteúdo desta seção pelo texto padrão."
+            >
+              ↺ Restaurar
+            </button>
+          </div>
           <div>
             <label className={LABEL}>Corpo do prelúdio</label>
             <textarea value={data.prelude.body} rows={6} onChange={(e) => updateBlock('prelude', 'body', e.target.value)} className={TEXTAREA} />
@@ -170,7 +196,16 @@ export default function ContentManager({ addToast, addLogEntry }) {
       {activeBlock === 'about' && (
         <>
           <div className={CARD + ' space-y-4'}>
-            <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Sobre — texto principal</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Sobre — texto principal</h3>
+              <button
+                onClick={() => resetBlock('about')}
+                className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+                title="Substitui o conteúdo desta seção (texto, atuação e timeline) pelo padrão."
+              >
+                ↺ Restaurar
+              </button>
+            </div>
             <div>
               <label className={LABEL}>Título da seção</label>
               <input value={data.about.title} onChange={(e) => updateBlock('about', 'title', e.target.value)} className={INPUT} />
@@ -230,9 +265,18 @@ export default function ContentManager({ addToast, addLogEntry }) {
       {/* CONTACT */}
       {activeBlock === 'contact' && (
         <div className={CARD + ' space-y-4'}>
-          <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">
-            Contato (seção final da home)
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">
+              Contato (seção final da home)
+            </h3>
+            <button
+              onClick={() => resetBlock('contact')}
+              className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+              title="Substitui o conteúdo desta seção pelo texto padrão."
+            >
+              ↺ Restaurar
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className={LABEL}>Label da seção</label>

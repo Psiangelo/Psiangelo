@@ -41,8 +41,9 @@ export default function HomePage() {
         {/* 1. Identidade visual + CTAs clínicos */}
         <Hero />
 
-        {/* 2. Disclaimer de estagiário (compliance CFP/CRP) — logo abaixo do hero */}
-        <HomeDisclaimer />
+        {/* 2. Disclaimer de estagiário (compliance CFP/CRP) — logo abaixo do hero.
+            Toggle via admin → Visibilidade → "Faixa de status". Default ligado. */}
+        {v.disclaimerEstagio !== false && <HomeDisclaimer />}
 
         {/* 3. Intro SEO server-rendered — garante texto rico no HTML inicial.
             Sempre visível: é a âncora clínica da home pra Googlebot. */}

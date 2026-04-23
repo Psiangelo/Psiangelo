@@ -198,17 +198,71 @@ export const getCartoNodes = () => readJson(SITEDATA_KEYS.cartoNodes, DEFAULT_CA
 export const setCartoNodes = (v) => writeJson(SITEDATA_KEYS.cartoNodes, v);
 export const getCartoEdges = () => readJson(SITEDATA_KEYS.cartoEdges, DEFAULT_CARTO_EDGES);
 export const setCartoEdges = (v) => writeJson(SITEDATA_KEYS.cartoEdges, v);
-export const getHomepage   = () => {
+// Markers de copy legada (anterior ao reposicionamento clínico de 2026-04-23).
+// Quando detectados, a seção é migrada pro default novo e re-persistida no
+// localStorage — caso contrário o "Publicar" levaria a copy antiga pro Supabase.
+const HOMEPAGE_LEGACY_MARKERS = {
+  hero: [
+    'nosce te ipsum',
+    'estudante de psicologia, estagiário clínico e futuro psicólogo',
+  ],
+  contact: [
+    'aprofundar seus estudos',
+    'formação em psicologia analítica',
+    'sobre os materiais',
+    'monte um pacote',
+    'abrir conversa',
+  ],
+  prelude: [
+    'materiais, trilhas, anotações de clínica e textos',
+  ],
+};
+
+function looksLegacy(section, markers) {
+  if (!section) return false;
+  const s = JSON.stringify(section).toLowerCase();
+  return markers.some((m) => s.includes(m));
+}
+
+let _homepageMigrated = false;
+
+export const getHomepage = () => {
   // Merge profundo: garante que campos novos do default apareçam mesmo
   // se o admin tiver salvo antes de existirem.
   const stored = readJson(SITEDATA_KEYS.homepage, null);
   if (!stored) return DEFAULT_HOMEPAGE;
-  return {
-    hero:    { ...DEFAULT_HOMEPAGE.hero,    ...(stored.hero    || {}) },
-    prelude: { ...DEFAULT_HOMEPAGE.prelude, ...(stored.prelude || {}) },
-    about:   { ...DEFAULT_HOMEPAGE.about,   ...(stored.about   || {}) },
-    contact: { ...DEFAULT_HOMEPAGE.contact, ...(stored.contact || {}) },
-  };
+
+  const hero = looksLegacy(stored.hero, HOMEPAGE_LEGACY_MARKERS.hero)
+    ? DEFAULT_HOMEPAGE.hero
+    : { ...DEFAULT_HOMEPAGE.hero, ...(stored.hero || {}) };
+  const prelude = looksLegacy(stored.prelude, HOMEPAGE_LEGACY_MARKERS.prelude)
+    ? DEFAULT_HOMEPAGE.prelude
+    : { ...DEFAULT_HOMEPAGE.prelude, ...(stored.prelude || {}) };
+  const contact = looksLegacy(stored.contact, HOMEPAGE_LEGACY_MARKERS.contact)
+    ? DEFAULT_HOMEPAGE.contact
+    : { ...DEFAULT_HOMEPAGE.contact, ...(stored.contact || {}) };
+  const about = { ...DEFAULT_HOMEPAGE.about, ...(stored.about || {}) };
+
+  // Se houve migração, persiste uma vez por sessão pra que o snapshot publicado
+  // no Supabase reflita a copy nova (e não volte o legacy quando outros devices sincronizam).
+  if (!_homepageMigrated && typeof window !== 'undefined') {
+    const migratedHero    = hero    !== undefined && looksLegacy(stored.hero,    HOMEPAGE_LEGACY_MARKERS.hero);
+    const migratedContact = contact !== undefined && looksLegacy(stored.contact, HOMEPAGE_LEGACY_MARKERS.contact);
+    const migratedPrelude = prelude !== undefined && looksLegacy(stored.prelude, HOMEPAGE_LEGACY_MARKERS.prelude);
+    if (migratedHero || migratedContact || migratedPrelude) {
+      _homepageMigrated = true;
+      try {
+        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, prelude, about, contact }));
+        // não dispara evento aqui pra evitar loop de re-render; o resultado retornado já tem a copy correta
+      } catch {
+        /* quota cheia — migração só em memória */
+      }
+    } else {
+      _homepageMigrated = true;
+    }
+  }
+
+  return { hero, prelude, about, contact };
 };
 export const setHomepage = (v) => writeJson(SITEDATA_KEYS.homepage, v);
 
@@ -252,12 +306,13 @@ export const DEFAULT_VISIBILITY = {
   glossario:  true,
   psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
-  prelude:      true,
-  about:        true,
-  cartografia:  false, // rebaixada na home clínica (fica acessível via /trilhas e nav)
-  depoimentos:  false, // vedado publicar depoimentos de pacientes (CFP) — mantém oculto na home
-  faq:          true,
-  contato:      true,
+  prelude:           true,
+  about:             true,
+  cartografia:       false, // rebaixada na home clínica (fica acessível via /trilhas e nav)
+  depoimentos:       false, // vedado publicar depoimentos de pacientes (CFP) — mantém oculto na home
+  disclaimerEstagio: true,  // faixa "estagiário + supervisão" logo abaixo do hero
+  faq:               true,
+  contato:           true,
   // Extras
   whatsappFlutuante: true,
 };
