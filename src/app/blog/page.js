@@ -21,6 +21,7 @@ import ListenButton from '@/components/ListenButton';
 import ReadingMode from '@/components/ReadingMode';
 import ShareButtons from '@/components/blog/ShareButtons';
 import RelatedPosts from '@/components/blog/RelatedPosts';
+import PosterCover from '@/components/ui/PosterCover';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 const SERIES_STORAGE_KEY = 'angelo_admin_blog_series';
@@ -440,6 +441,8 @@ function BlogCard({ post, onClick, variant = 'default' }) {
     );
   }
 
+  const seed = post.slug || post.id || post.title || '';
+
   return (
     <motion.article
       layout
@@ -447,44 +450,73 @@ function BlogCard({ post, onClick, variant = 'default' }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       onClick={onClick}
-      className={`group cursor-pointer bg-bg-card border border-border-subtle hover:border-border-hover overflow-hidden flex flex-col h-full transition-all ${
+      className={`group cursor-pointer relative flex flex-col h-full transition-all ${
         isLarge ? 'min-h-[420px]' : ''
       }`}
     >
-      {post.featured_image && (
-        <div className={`overflow-hidden bg-bg-warm ${isLarge ? 'aspect-[16/10]' : 'aspect-[16/9]'}`}>
-          <img
+      {/* Moldura lateral dourada — assinatura editorial */}
+      <span
+        aria-hidden
+        className="absolute left-0 top-3 bottom-3 w-[2px] bg-accent/20 group-hover:bg-accent/60 transition-colors"
+      />
+
+      <div className="pl-4">
+        {post.featured_image ? (
+          <PosterCover
             src={post.featured_image}
             alt={post.featured_image_alt || post.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            referrerPolicy="no-referrer"
-            loading="lazy"
-            decoding="async"
+            aspect={isLarge ? '16/10' : '16/9'}
+            seed={seed}
+            intensity={2}
+            titleOverlay
+            eyebrow={post.tags?.[0]}
+            title={post.title}
+            footer={
+              <>
+                <time>{formatDate(post.updated_at)}</time>
+                <span className="text-text-dim/70">·</span>
+                <span>{readTime} min</span>
+              </>
+            }
           />
-        </div>
-      )}
-      <div className={`flex flex-col flex-1 ${isLarge ? 'p-7' : 'p-5'}`}>
-        <div className="flex items-center gap-3 mb-3 flex-wrap">
-          <time className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-text-dim">
-            {formatDate(post.updated_at)}
-          </time>
-          <span className="font-mono text-[0.55rem] text-text-dim/70">{readTime} min</span>
-          {post.tags && post.tags[0] && (
-            <span className="font-mono text-[0.55rem] tracking-[0.2em] uppercase text-accent">
-              {post.tags[0]}
-            </span>
-          )}
-        </div>
-        <h3 className={`font-serif text-text-bright leading-tight mb-3 group-hover:text-accent transition-colors line-clamp-2 ${
-          isLarge ? 'text-2xl md:text-3xl' : 'text-lg'
-        }`}>
-          {post.title}
-        </h3>
-        <p className={`text-text-dim leading-relaxed flex-1 ${
-          isLarge ? 'text-[0.95rem] line-clamp-4' : 'text-[0.82rem] line-clamp-3'
-        }`}>
-          {post.excerpt}
-        </p>
+        ) : (
+          // Sem imagem: card somente-texto com a mesma linguagem visual
+          <div className="bg-bg-card border border-border-subtle group-hover:border-accent/40 rounded-lg p-6 transition-colors">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <time className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-text-dim">
+                {formatDate(post.updated_at)}
+              </time>
+              <span className="font-mono text-[0.55rem] text-text-dim/70">{readTime} min</span>
+              {post.tags && post.tags[0] && (
+                <span className="font-mono text-[0.55rem] tracking-[0.2em] uppercase text-accent">
+                  {post.tags[0]}
+                </span>
+              )}
+            </div>
+            <h3 className={`font-serif text-text-bright leading-tight mb-3 group-hover:text-accent transition-colors line-clamp-2 ${
+              isLarge ? 'text-2xl md:text-3xl' : 'text-lg'
+            }`}>
+              {post.title}
+            </h3>
+            <p className={`text-text-dim leading-relaxed ${
+              isLarge ? 'text-[0.95rem] line-clamp-4' : 'text-[0.82rem] line-clamp-3'
+            }`}>
+              {post.excerpt}
+            </p>
+          </div>
+        )}
+
+        {/* Com imagem: excerpt + linha dourada fica embaixo */}
+        {post.featured_image && (
+          <div className="mt-4 flex items-start gap-3">
+            <span className="block w-8 h-px bg-accent/40 mt-[10px] flex-shrink-0 group-hover:bg-accent/80 transition-colors" />
+            <p className={`text-text-dim leading-relaxed flex-1 ${
+              isLarge ? 'text-[0.95rem] line-clamp-3' : 'text-[0.82rem] line-clamp-2'
+            }`}>
+              {post.excerpt}
+            </p>
+          </div>
+        )}
       </div>
     </motion.article>
   );

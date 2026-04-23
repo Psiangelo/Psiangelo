@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import PosterCover from '@/components/ui/PosterCover';
 
 function readTimeOf(html) {
   const words = (html || '').replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
@@ -55,15 +56,13 @@ export default function RelatedPosts({ currentPost, allPosts, onNavigate }) {
               className="group block w-full text-left bg-bg-card/60 border border-border-subtle hover:border-accent/40 transition-colors overflow-hidden h-full"
             >
               {p.featured_image ? (
-                <div className="aspect-[16/10] overflow-hidden bg-bg-warm">
-                  <img
-                    src={p.featured_image}
-                    alt={p.featured_image_alt || p.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                  />
-                </div>
+                <PosterCover
+                  src={p.featured_image}
+                  alt={p.featured_image_alt || p.title}
+                  aspect="16/10"
+                  seed={p.slug || p.id || p.title || ''}
+                  intensity={2}
+                />
               ) : (
                 <div className="aspect-[16/10] bg-gradient-to-br from-bg-warm via-bg-card to-bg flex items-center justify-center">
                   <span className="font-serif italic text-accent/40 text-2xl">ψ</span>
