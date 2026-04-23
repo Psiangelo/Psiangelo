@@ -8,6 +8,7 @@ import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
 import PublishManager from '@/components/admin/PublishManager';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
 
 // Managers pesados: code-split pra não carregar tudo de uma vez
@@ -2770,6 +2771,64 @@ function AdminPanel() {
     { id: 'publish', label: 'Publicar', badge: null },
   ];
 
+  // Agrupamento semântico para o sidebar (desktop)
+  const sidebarGroups = [
+    {
+      id: 'overview',
+      label: 'Visão geral',
+      items: [{ id: 'dashboard', label: 'Dashboard', icon: IconGrid }],
+    },
+    {
+      id: 'library',
+      label: 'Biblioteca',
+      items: [
+        { id: 'materials',   label: 'Materiais',   icon: IconBook },
+        { id: 'blog',        label: 'Blog',        icon: IconPen },
+        { id: 'courses',     label: 'Cursos',      icon: IconVideo },
+        { id: 'trilhas',     label: 'Trilhas',     icon: IconBook },
+        { id: 'atlas',       label: 'Atlas',       icon: IconGrid },
+        { id: 'cartography', label: 'Cartografia', icon: IconGrid },
+      ],
+    },
+    {
+      id: 'home',
+      label: 'Página inicial',
+      items: [
+        { id: 'content',      label: 'Textos da home', icon: IconPen },
+        { id: 'testimonials', label: 'Depoimentos',    icon: IconChat },
+        { id: 'faqs',         label: 'FAQ',            icon: IconHelpCircle },
+        { id: 'bio',          label: 'Bio / Linktree', icon: IconUser },
+      ],
+    },
+    {
+      id: 'publish',
+      label: 'Publicação',
+      items: [
+        { id: 'visibility', label: 'Visibilidade', icon: IconGrid },
+        { id: 'publish',    label: 'Publicar',     icon: IconZap },
+      ],
+    },
+    {
+      id: 'system',
+      label: 'Sistema',
+      items: [
+        { id: 'settings', label: 'Configurações', icon: IconGear },
+        { id: 'actions',  label: 'Ações',         icon: IconZap },
+      ],
+    },
+  ];
+
+  const sidebarCounts = {
+    materials: materialsList.length,
+    testimonials: testimonialsList.length,
+    faqs: faqsList.length,
+  };
+
+  // Título da aba ativa (breadcrumb no topo do conteúdo)
+  const activeTabMeta = sidebarGroups
+    .flatMap((g) => g.items.map((i) => ({ ...i, group: g.label })))
+    .find((i) => i.id === activeTab);
+
   return (
     <div className="min-h-screen bg-[#0E0C0A] pb-16 sm:pb-0">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
@@ -2822,17 +2881,6 @@ function AdminPanel() {
         </div>
       </header>
 
-      {/* Tab nav (hidden on mobile, replaced by bottom nav) */}
-      <nav className="hidden sm:block border-b border-[rgba(180,140,80,0.06)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex gap-1 overflow-x-auto">
-          {tabs.map((tab) => (
-            <TabButton key={tab.id} active={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} badge={tab.badge}>
-              {tab.label}
-            </TabButton>
-          ))}
-        </div>
-      </nav>
-
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav
         activeTab={activeTab}
@@ -2842,9 +2890,29 @@ function AdminPanel() {
         faqsList={faqsList}
       />
 
-      {/* Content */}
-      <main className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
-        <AnimatePresence mode="wait">
+      {/* Layout desktop: sidebar + content */}
+      <div className="sm:grid sm:grid-cols-[220px_1fr] max-w-[1400px] mx-auto">
+        <AdminSidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          groups={sidebarGroups}
+          counts={sidebarCounts}
+        />
+
+        {/* Content */}
+        <main className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6 min-w-0">
+          {/* Breadcrumb + título da aba */}
+          {activeTabMeta && (
+            <div className="mb-5 pb-4 border-b border-[rgba(180,140,80,0.08)]">
+              <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#6E6458] mb-1">
+                Admin · {activeTabMeta.group}
+              </p>
+              <h1 className="font-serif text-2xl text-[#E8DDD0]">
+                {activeTabMeta.label}
+              </h1>
+            </div>
+          )}
+          <AnimatePresence mode="wait">
           {activeTab === 'dashboard' && (
             <DashboardTab
               key="dashboard"
@@ -2974,7 +3042,8 @@ function AdminPanel() {
             />
           )}
         </AnimatePresence>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
