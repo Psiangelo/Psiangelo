@@ -821,28 +821,16 @@ function IconMenu({ size = 20 }) {
   );
 }
 
-function MobileBottomNav({ activeTab, setActiveTab, materialsList, testimonialsList, faqsList }) {
+function MobileBottomNav({ activeTab, setActiveTab, groups, counts }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const allTabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: IconGrid },
-    { id: 'materials', label: 'Materiais', icon: IconBook, badge: materialsList.length },
-    { id: 'trilhas', label: 'Trilhas', icon: IconBook },
-    { id: 'cartography', label: 'Cartografia', icon: IconGrid },
-    { id: 'content', label: 'Conteúdo', icon: IconPen },
-    { id: 'bio', label: 'Bio / Linktree', icon: IconUser },
-    { id: 'blog', label: 'Blog', icon: IconPen },
-    { id: 'courses', label: 'Cursos', icon: IconVideo },
-    { id: 'testimonials', label: 'Depoimentos', icon: IconChat, badge: testimonialsList.length },
-    { id: 'faqs', label: 'FAQ', icon: IconHelpCircle, badge: faqsList.length },
-    { id: 'visibility', label: 'Visibilidade', icon: IconGrid },
-    { id: 'settings', label: 'Configurações', icon: IconGear },
-    { id: 'actions', label: 'Ações', icon: IconZap },
-  ];
-
-  const primary = ['dashboard', 'materials', 'bio', 'visibility'];
-  const primaryTabs = primary.map((id) => allTabs.find((t) => t.id === id));
-  const activeInMore = !primary.includes(activeTab);
+  // 4 atalhos primários representativos (cobrem fluxo diário)
+  const primaryIds = ['dashboard', 'atlas', 'content', 'visibility'];
+  const allItems = groups.flatMap((g) => g.items);
+  const primaryTabs = primaryIds
+    .map((id) => allItems.find((t) => t.id === id))
+    .filter(Boolean);
+  const activeInMore = !primaryIds.includes(activeTab);
 
   const pickTab = (id) => {
     setActiveTab(id);
@@ -860,22 +848,22 @@ function MobileBottomNav({ activeTab, setActiveTab, materialsList, testimonialsL
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg transition-colors min-w-0 flex-1 ${
+                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-0 flex-1 ${
                   isActive ? 'text-[#B48C50]' : 'text-[#6E6458]'
                 }`}
               >
-                <Icon size={20} />
+                <Icon size={19} />
                 <span className="text-[10px] font-sans truncate leading-tight">{tab.label}</span>
               </button>
             );
           })}
           <button
             onClick={() => setMenuOpen(true)}
-            className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg transition-colors min-w-0 flex-1 ${
+            className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-0 flex-1 ${
               activeInMore || menuOpen ? 'text-[#B48C50]' : 'text-[#6E6458]'
             }`}
           >
-            <IconMenu size={20} />
+            <IconMenu size={19} />
             <span className="text-[10px] font-sans truncate leading-tight">Mais</span>
           </button>
         </div>
@@ -896,7 +884,7 @@ function MobileBottomNav({ activeTab, setActiveTab, materialsList, testimonialsL
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-              className="sm:hidden fixed bottom-0 left-0 right-0 z-[111] bg-[#1A1714] border-t border-[rgba(180,140,80,0.2)] rounded-t-2xl max-h-[80vh] flex flex-col"
+              className="sm:hidden fixed bottom-0 left-0 right-0 z-[111] bg-[#1A1714] border-t border-[rgba(180,140,80,0.2)] rounded-t-2xl max-h-[85vh] flex flex-col"
             >
               <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[rgba(180,140,80,0.1)]">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[#B48C50] font-sans">
@@ -913,30 +901,40 @@ function MobileBottomNav({ activeTab, setActiveTab, materialsList, testimonialsL
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-3 py-3 grid grid-cols-2 gap-2">
-                {allTabs.map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => pickTab(tab.id)}
-                      className={`flex items-center gap-3 px-3 py-3 rounded-lg border transition-colors text-left ${
-                        isActive
-                          ? 'border-[#B48C50] bg-[#B48C50]/10 text-[#B48C50]'
-                          : 'border-[rgba(180,140,80,0.1)] text-[#B8AD9E] hover:border-[rgba(180,140,80,0.3)]'
-                      }`}
-                    >
-                      <Icon size={18} />
-                      <span className="text-xs font-sans flex-1 truncate">{tab.label}</span>
-                      {tab.badge != null && tab.badge > 0 && (
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[rgba(180,140,80,0.15)] text-[#B48C50]">
-                          {tab.badge}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+              <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+                {groups.map((group) => (
+                  <div key={group.id}>
+                    <p className="px-2 mb-2 text-[10px] uppercase tracking-[0.22em] text-[#6E6458] font-sans">
+                      {group.label}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {group.items.map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeTab === tab.id;
+                        const count = counts?.[tab.id];
+                        return (
+                          <button
+                            key={tab.id}
+                            onClick={() => pickTab(tab.id)}
+                            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border transition-colors text-left ${
+                              isActive
+                                ? 'border-[#B48C50] bg-[#B48C50]/10 text-[#B48C50]'
+                                : 'border-[rgba(180,140,80,0.1)] text-[#B8AD9E] hover:border-[rgba(180,140,80,0.3)]'
+                            }`}
+                          >
+                            <Icon size={17} />
+                            <span className="text-[12px] font-sans flex-1 truncate">{tab.label}</span>
+                            {count != null && count !== '' && (
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[rgba(180,140,80,0.15)] text-[#B48C50]">
+                                {count}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </>
@@ -2872,19 +2870,18 @@ function AdminPanel() {
 
       {/* Top bar */}
       <header className="sticky top-0 z-50 bg-[#0E0C0A]/90 backdrop-blur-md border-b border-[rgba(180,140,80,0.08)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl font-serif text-[#B48C50]">{'\u03C8'}</span>
-            <div className="flex items-center gap-1">
-              <div>
-                <h1 className="text-sm font-serif text-[#E8DDD0] leading-tight">Admin</h1>
-                <p className="text-[10px] text-[#6E6458] font-sans">Angelo Psicologia</p>
-              </div>
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="text-xl sm:text-2xl font-serif text-[#B48C50] leading-none">ψ</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="text-sm font-serif text-[#E8DDD0] leading-tight">
+                Admin <span className="hidden sm:inline text-[#6E6458] font-sans text-[10px] tracking-[0.18em] uppercase ml-1.5">Psiangelo</span>
+              </h1>
               <AutoSaveIndicator show={showSaved} />
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            {/* Command palette shortcut hint */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            {/* Command palette — desktop mostra hint, mobile só ícone */}
             <button
               onClick={() => setCmdPaletteOpen(true)}
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#1A1714] border border-[rgba(180,140,80,0.1)] rounded-lg text-xs text-[#6E6458] font-sans hover:border-[rgba(180,140,80,0.3)] transition-colors"
@@ -2892,6 +2889,13 @@ function AdminPanel() {
               <IconSearch size={14} />
               <span>Buscar...</span>
               <kbd className="text-[10px] border border-[rgba(180,140,80,0.15)] rounded px-1 py-0.5 ml-1 text-[#6E6458]">{'\u2318'}K</kbd>
+            </button>
+            <button
+              onClick={() => setCmdPaletteOpen(true)}
+              aria-label="Buscar"
+              className="sm:hidden w-9 h-9 flex items-center justify-center rounded-lg text-[#6E6458] hover:text-[#B48C50] hover:bg-[#1A1714] transition-colors"
+            >
+              <IconSearch size={18} />
             </button>
             <button
               onClick={handleLogout}
@@ -2907,9 +2911,8 @@ function AdminPanel() {
       <MobileBottomNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        materialsList={materialsList}
-        testimonialsList={testimonialsList}
-        faqsList={faqsList}
+        groups={sidebarGroups}
+        counts={sidebarCounts}
       />
 
       {/* Layout desktop: sidebar + content */}
@@ -2922,14 +2925,14 @@ function AdminPanel() {
         />
 
         {/* Content */}
-        <main className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6 min-w-0">
+        <main className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 sm:pb-8 min-w-0">
           {/* Breadcrumb + título da aba */}
           {activeTabMeta && (
-            <div className="mb-5 pb-4 border-b border-[rgba(180,140,80,0.08)]">
-              <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#6E6458] mb-1">
+            <div className="mb-4 sm:mb-5 pb-3 sm:pb-4 border-b border-[rgba(180,140,80,0.08)]">
+              <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-[#6E6458] mb-1">
                 Admin · {activeTabMeta.group}
               </p>
-              <h1 className="font-serif text-2xl text-[#E8DDD0]">
+              <h1 className="font-serif text-xl sm:text-2xl text-[#E8DDD0]">
                 {activeTabMeta.label}
               </h1>
             </div>

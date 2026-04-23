@@ -617,6 +617,14 @@ body.reading-mode .whatsapp-button {
   border-radius: 2px;
 }
 
+/* ====================== SAFE AREA (iPhone notch) ====================== */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
 /* ====================== ATLAS (vault Obsidian) ====================== */
 .prose-atlas {
   font-family: 'Libre Baskerville', Georgia, serif;
