@@ -47,6 +47,48 @@ export function getNotesBySectionGrouped(slug) {
   return [...groups.entries()].map(([label, notes]) => ({ label, notes }));
 }
 
+// Constrói árvore hierárquica (pastas → pastas → notas) a partir do subpath.
+// Usado em /atlas/[secao] para refletir a estrutura do vault Obsidian.
+export function getSectionTree(slug) {
+  const notes = getNotesBySection(slug);
+
+  const natural = (s) => String(s || '').replace(/\d+/g, (d) => d.padStart(8, '0'));
+  const root = { type: 'root', children: new Map(), notes: [] };
+
+  for (const n of notes) {
+    let cursor = root;
+    for (const seg of n.subpath || []) {
+      const key = seg.raw;
+      if (!cursor.children.has(key)) {
+        cursor.children.set(key, {
+          type: 'folder',
+          label: seg.clean || seg.raw,
+          raw: seg.raw,
+          children: new Map(),
+          notes: [],
+        });
+      }
+      cursor = cursor.children.get(key);
+    }
+    cursor.notes.push(n);
+  }
+
+  // Converte Map → array, recursivo, ordenado naturalmente pelo raw
+  function toArray(node) {
+    const folders = [...node.children.values()]
+      .map(toArray)
+      .sort((a, b) => natural(a.raw).localeCompare(natural(b.raw), 'pt'));
+    const notes = [...node.notes].sort((a, b) =>
+      natural(a.title).localeCompare(natural(b.title), 'pt')
+    );
+    const totalNotes =
+      notes.length + folders.reduce((acc, f) => acc + f.totalNotes, 0);
+    return { ...node, children: folders, notes, totalNotes };
+  }
+
+  return toArray(root);
+}
+
 export function getTag(slug) {
   return atlas.tags.find((t) => t.slug === slug);
 }
