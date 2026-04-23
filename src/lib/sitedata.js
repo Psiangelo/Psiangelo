@@ -358,9 +358,16 @@ export const DEFAULT_HOME_SECTIONS = HOME_SECTION_META.map((s) => s.id);
 export const getHomeSections = () => {
   const stored = readJson(SITEDATA_KEYS.homeSections, null);
   if (!Array.isArray(stored)) return DEFAULT_HOME_SECTIONS;
-  const valid = stored.filter((id) => DEFAULT_HOME_SECTIONS.includes(id));
+  // Valida + deduplica (user pode ter salvo ordem corrompida com duplicatas)
+  const seen = new Set();
+  const valid = [];
+  for (const id of stored) {
+    if (DEFAULT_HOME_SECTIONS.includes(id) && !seen.has(id)) {
+      valid.push(id);
+      seen.add(id);
+    }
+  }
   // Concat seções do default que ainda não estão salvas (futuras adições)
-  const seen = new Set(valid);
   DEFAULT_HOME_SECTIONS.forEach((id) => { if (!seen.has(id)) valid.push(id); });
   return valid;
 };
