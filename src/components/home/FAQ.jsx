@@ -120,7 +120,7 @@ export default function FAQ() {
           Respostas às dúvidas mais comuns sobre o atendimento online, a
           abordagem junguiana e a ética da clínica. Para mais detalhes, veja{' '}
           <a
-            href="/psicoterapia-analitica"
+            href="/Psiangelo/psicoterapia-analitica/"
             className="text-accent hover:text-text-bright transition-colors underline decoration-accent/30 underline-offset-4"
           >
             a página de psicoterapia

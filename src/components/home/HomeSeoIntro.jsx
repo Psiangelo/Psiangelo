@@ -57,28 +57,28 @@ export default function HomeSeoIntro() {
             Saiba mais
           </span>
           <a
-            href="/psicoterapia-analitica"
+            href="/Psiangelo/psicoterapia-analitica/"
             className="font-serif text-[0.98rem] text-accent hover:text-text-bright transition-colors link-underline"
           >
             Abordagem clínica
           </a>
           <span aria-hidden className="text-text-dim/30">·</span>
           <a
-            href="/psicoterapia-analitica/adolescentes"
+            href="/Psiangelo/psicoterapia-analitica/adolescentes/"
             className="font-serif text-[0.98rem] text-accent hover:text-text-bright transition-colors link-underline"
           >
             Adolescentes
           </a>
           <span aria-hidden className="text-text-dim/30">·</span>
           <a
-            href="/psicoterapia-analitica/adultos"
+            href="/Psiangelo/psicoterapia-analitica/adultos/"
             className="font-serif text-[0.98rem] text-accent hover:text-text-bright transition-colors link-underline"
           >
             Adultos
           </a>
           <span aria-hidden className="text-text-dim/30">·</span>
           <a
-            href="/psicoterapia-analitica/idosos"
+            href="/Psiangelo/psicoterapia-analitica/idosos/"
             className="font-serif text-[0.98rem] text-accent hover:text-text-bright transition-colors link-underline"
           >
             Idosos

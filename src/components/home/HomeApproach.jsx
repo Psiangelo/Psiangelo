@@ -70,14 +70,14 @@ export default function HomeApproach() {
 
         <div className="mt-10 flex flex-wrap items-center gap-5">
           <a
-            href="/psicoterapia-analitica"
+            href="/Psiangelo/psicoterapia-analitica/"
             className="inline-flex items-center gap-3 px-7 py-3.5 font-sans text-[0.72rem] font-medium tracking-[0.18em] uppercase text-text border border-border-hover hover:border-accent hover:text-accent transition-all"
           >
             Conheça a abordagem completa
             <span aria-hidden>→</span>
           </a>
           <a
-            href="/psicoterapia-analitica#como-funciona"
+            href="/Psiangelo/psicoterapia-analitica/#como-funciona"
             className="font-sans text-[0.7rem] font-medium tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors link-underline"
           >
             Como funciona a sessão
