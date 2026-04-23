@@ -158,27 +158,16 @@ export default function PosterCover({
         />
       )}
 
-      {/* 2. Vignette radial reforçada — escurece fortemente os cantos */}
+      {/* 2. Vignette sutil — suaviza bordas sem escurecer demais */}
       {intensity > 0 && (
-        <>
-          {/* 2a. Vignette principal (oval suave, bordas escuras) */}
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(ellipse at center, rgba(14,12,10,0) 30%, rgba(14,12,10,0.55) 80%, rgba(14,12,10,0.92) 100%)',
-            }}
-          />
-          {/* 2b. Vignette de canto (quadrada, reforça as 4 quinas) */}
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              boxShadow: 'inset 0 0 120px 40px rgba(14,12,10,0.75)',
-            }}
-          />
-        </>
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse at center, rgba(14,12,10,0) 55%, rgba(14,12,10,0.22) 90%, rgba(14,12,10,0.45) 100%)',
+          }}
+        />
       )}
 
       {/* 3. Ornamento geométrico + linha dourada */}

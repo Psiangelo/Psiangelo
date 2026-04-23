@@ -193,11 +193,11 @@ function composeSvg({ imageUri, title, eyebrow, date, seed }) {
       <stop offset="80%" stop-color="${BG}" stop-opacity="0.10" />
       <stop offset="100%" stop-color="${BG}" stop-opacity="0.35" />
     </linearGradient>
-    <!-- Vignette radial forte (escurece cantos) -->
+    <!-- Vignette sutil (leve escurecimento das bordas) -->
     <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
-      <stop offset="30%"  stop-color="${BG}" stop-opacity="0" />
-      <stop offset="80%"  stop-color="${BG}" stop-opacity="0.55" />
-      <stop offset="100%" stop-color="${BG}" stop-opacity="0.92" />
+      <stop offset="55%"  stop-color="${BG}" stop-opacity="0" />
+      <stop offset="90%"  stop-color="${BG}" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="${BG}" stop-opacity="0.45" />
     </radialGradient>
   </defs>
 
