@@ -4,3 +4,6 @@ out/
 .DS_Store
 .env.local
 .env
+
+# OG images geradas por post no prebuild (fallback global em public/og.png)
+public/og/posts/

@@ -722,12 +722,16 @@ export default function BlogPage() {
 
   const handleBack = () => {
     setSelectedPost(null);
-    window.history.pushState({}, '', window.location.pathname);
+    const basePath = window.location.pathname.replace(/\/blog\/.+$/, '/blog');
+    window.history.pushState({}, '', basePath);
   };
 
   const handleSelectPost = (post) => {
     setSelectedPost(post);
-    window.history.pushState({}, '', `?post=${post.slug || post.id}`);
+    // URL canônico "bonito" pra compartilhamento — /blog/{slug} aponta
+    // pra rota estática que tem OG image gerada com o filtro de identidade
+    const slug = post.slug || post.id;
+    window.history.pushState({}, '', `${window.location.pathname.replace(/\/blog.*/, '/blog')}/${slug}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
