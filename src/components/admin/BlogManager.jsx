@@ -557,18 +557,45 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
               </div>
             </div>
 
-            {/* Featured Image */}
+            {/* Featured Image (horizontal) — usada no hero da publicação aberta e no OG */}
             <div className={CARD_CLASS}>
               <h3 className="text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-3 flex items-center gap-2">
-                Imagem de capa
-                <span className="text-[9px] text-[#B48C50]/80 normal-case tracking-normal italic">recomendada</span>
+                Imagem horizontal
+                <span className="text-[9px] text-[#B48C50]/80 normal-case tracking-normal italic">hero do post + compartilhamento</span>
               </h3>
+              <p className="text-[10px] text-[#6E6458] mb-3 font-sans italic">
+                Formato paisagem (16:9). Aparece quando alguém abre a publicação e no preview ao compartilhar o link.
+              </p>
               <FeaturedImagePicker
                 value={data.featured_image || ''}
                 alt={data.featured_image_alt || ''}
                 onChange={(v) => setData((prev) => ({ ...prev, featured_image: v }))}
                 onAltChange={(v) => setData((prev) => ({ ...prev, featured_image_alt: v }))}
               />
+            </div>
+
+            {/* Featured Cover (vertical) — usada nos cards da lista /blog */}
+            <div className={CARD_CLASS}>
+              <h3 className="text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-3 flex items-center gap-2">
+                Capa vertical
+                <span className="text-[9px] text-[#B48C50]/80 normal-case tracking-normal italic">cards da lista /blog</span>
+              </h3>
+              <p className="text-[10px] text-[#6E6458] mb-3 font-sans italic">
+                Formato retrato (2:3 ou 3:4). Fica melhor no mobile e virou a cara da lista. Se vazia, os cards usam a imagem horizontal recortada.
+              </p>
+              <FeaturedImagePicker
+                value={data.featured_cover || ''}
+                alt={data.featured_cover_alt || ''}
+                onChange={(v) => setData((prev) => ({ ...prev, featured_cover: v }))}
+                onAltChange={(v) => setData((prev) => ({ ...prev, featured_cover_alt: v }))}
+              />
+            </div>
+
+            {/* Dica sobre destaque no título */}
+            <div className={CARD_CLASS + ' border-[#B48C50]/20 bg-[#B48C50]/[0.03]'}>
+              <p className="text-[11px] text-[#B8AD9E] font-sans leading-relaxed">
+                <span className="text-[#B48C50]">Dica:</span> marque partes do título com <code className="bg-[#0E0C0A] px-1.5 py-0.5 rounded text-[#B48C50] font-mono">*palavra*</code> pra virar dourado (italic). Ex.: <code className="bg-[#0E0C0A] px-1.5 py-0.5 rounded text-[#B8AD9E] font-mono">O que é *inconsciente* em Jung?</code>
+              </p>
             </div>
 
             {/* Excerpt */}

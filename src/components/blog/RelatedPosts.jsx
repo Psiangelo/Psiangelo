@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import PosterCover from '@/components/ui/PosterCover';
+import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 
 function readTimeOf(html) {
   const words = (html || '').replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
@@ -58,7 +59,7 @@ export default function RelatedPosts({ currentPost, allPosts, onNavigate }) {
               {p.featured_image ? (
                 <PosterCover
                   src={p.featured_image}
-                  alt={p.featured_image_alt || p.title}
+                  alt={p.featured_image_alt || stripHighlights(p.title)}
                   aspect="16/10"
                   seed={p.slug || p.id || p.title || ''}
                   intensity={2}
@@ -83,7 +84,7 @@ export default function RelatedPosts({ currentPost, allPosts, onNavigate }) {
                   </span>
                 </div>
                 <h3 className="font-serif text-[1.05rem] text-text-bright leading-snug line-clamp-2 group-hover:text-accent transition-colors">
-                  {p.title}
+                  {renderHighlightedTitle(p.title)}
                 </h3>
                 {p.excerpt && (
                   <p className="mt-2 text-[0.82rem] text-text-dim leading-relaxed line-clamp-2">

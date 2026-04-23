@@ -22,6 +22,7 @@ import ReadingMode from '@/components/ReadingMode';
 import ShareButtons from '@/components/blog/ShareButtons';
 import RelatedPosts from '@/components/blog/RelatedPosts';
 import PosterCover from '@/components/ui/PosterCover';
+import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 const SERIES_STORAGE_KEY = 'angelo_admin_blog_series';
@@ -310,7 +311,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
                 ))}
               </div>
               <h1 className="font-serif text-[clamp(2.2rem,5.5vw,4.6rem)] text-text-bright leading-[1] tracking-[-0.015em] max-w-4xl">
-                {post.title}
+                {renderHighlightedTitle(post.title)}
               </h1>
               {post.author && (
                 <p className="text-sm text-text-dim font-sans mt-5">
@@ -344,7 +345,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
               ))}
             </div>
             <h1 className="font-serif text-[clamp(2.2rem,5.5vw,4.6rem)] text-text-bright leading-[1] tracking-[-0.015em] max-w-4xl">
-              {post.title}
+              {renderHighlightedTitle(post.title)}
             </h1>
           </div>
         </header>
@@ -427,7 +428,7 @@ function BlogCard({ post, onClick, variant = 'default' }) {
           <span className="font-mono text-[0.55rem] text-text-dim/70">{readTime} min</span>
         </div>
         <h3 className="font-serif text-xl text-text-bright leading-tight mb-3 group-hover:text-accent transition-colors">
-          {post.title}
+          {renderHighlightedTitle(post.title)}
         </h3>
         <p className="text-[0.85rem] text-text-dim leading-[1.7] line-clamp-4 mb-4 flex-1">
           {post.excerpt}
@@ -461,16 +462,16 @@ function BlogCard({ post, onClick, variant = 'default' }) {
       />
 
       <div className="pl-4">
-        {post.featured_image ? (
+        {(post.featured_cover || post.featured_image) ? (
           <PosterCover
-            src={post.featured_image}
-            alt={post.featured_image_alt || post.title}
-            aspect={isLarge ? '16/10' : '16/9'}
+            src={post.featured_cover || post.featured_image}
+            alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
+            aspect={post.featured_cover ? '2/3' : (isLarge ? '16/10' : '16/9')}
             seed={seed}
             intensity={2}
             titleOverlay
             eyebrow={post.tags?.[0]}
-            title={post.title}
+            title={renderHighlightedTitle(post.title, { accentClassName: 'text-accent not-italic' })}
             footer={
               <>
                 <time>{formatDate(post.updated_at)}</time>
@@ -496,7 +497,7 @@ function BlogCard({ post, onClick, variant = 'default' }) {
             <h3 className={`font-serif text-text-bright leading-tight mb-3 group-hover:text-accent transition-colors line-clamp-2 ${
               isLarge ? 'text-2xl md:text-3xl' : 'text-lg'
             }`}>
-              {post.title}
+              {renderHighlightedTitle(post.title)}
             </h3>
             <p className={`text-text-dim leading-relaxed ${
               isLarge ? 'text-[0.95rem] line-clamp-4' : 'text-[0.82rem] line-clamp-3'
@@ -507,7 +508,7 @@ function BlogCard({ post, onClick, variant = 'default' }) {
         )}
 
         {/* Com imagem: excerpt + linha dourada fica embaixo */}
-        {post.featured_image && (
+        {(post.featured_cover || post.featured_image) && (
           <div className="mt-4 flex items-start gap-3">
             <span className="block w-8 h-px bg-accent/40 mt-[10px] flex-shrink-0 group-hover:bg-accent/80 transition-colors" />
             <p className={`text-text-dim leading-relaxed flex-1 ${
@@ -617,7 +618,7 @@ function FeaturedCover({ post, onClick }) {
           </div>
 
           <h2 className="font-serif text-[clamp(2.4rem,6vw,5rem)] text-text-bright leading-[1] tracking-[-0.015em] max-w-4xl mb-5 group-hover:text-accent transition-colors duration-500">
-            {post.title}
+            {renderHighlightedTitle(post.title)}
           </h2>
 
           {post.excerpt && (
