@@ -9,6 +9,7 @@ import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
 import PublishManager from '@/components/admin/PublishManager';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import atlasData from '@/data/atlas.json';
 import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
 
 // Managers pesados: code-split pra não carregar tudo de uma vez
@@ -968,6 +969,24 @@ function AutoSaveIndicator({ show }) {
 function DashboardTab({ materialsList, testimonialsList, faqsList, comingSoonList, setComingSoonList, activityLog, addToast, addLogEntry, onNavigateToMaterials }) {
   const [newComingSoon, setNewComingSoon] = useState('');
 
+  // Stats extras (atlas/blog/cursos) pra dashboard completo
+  const atlasTotal = (atlasData.stats?.published) || 0;
+  const [atlasHidden, setAtlasHidden] = useState(0);
+  const [blogTotal, setBlogTotal] = useState(0);
+  const [coursesTotal, setCoursesTotal] = useState(0);
+  useEffect(() => {
+    try {
+      const ov = JSON.parse(localStorage.getItem('angelo_admin_atlas_overrides') || '{}');
+      setAtlasHidden((ov.hiddenNotes?.length || 0) + (ov.hiddenFolders?.length || 0));
+      const blog = JSON.parse(localStorage.getItem('angelo_admin_blog') || '[]');
+      setBlogTotal(Array.isArray(blog) ? blog.length : 0);
+      const courses = JSON.parse(localStorage.getItem('angelo_admin_courses') || '[]');
+      setCoursesTotal(Array.isArray(courses) ? courses.length : 0);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const total = materialsList.length;
   const available = materialsList.filter((m) => m.available).length;
   const unavailable = total - available;
@@ -1025,16 +1044,19 @@ function DashboardTab({ materialsList, testimonialsList, faqsList, comingSoonLis
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <StatCard label="Total Materiais" value={total} accent />
-        <StatCard label="Disponiveis" value={available} />
-        <StatCard label="Em breve" value={unavailable} />
-        <StatCard label="Capitulos" value={`${availableChapters}/${totalChapters}`} />
+      {/* Stats principais — site todo */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+        <StatCard label="Atlas · notas" value={atlasTotal} accent />
+        <StatCard label="Atlas ocultas" value={atlasHidden} />
+        <StatCard label="Blog · posts" value={blogTotal} />
+        <StatCard label="Cursos" value={coursesTotal} />
+        <StatCard label="Materiais" value={total} />
+        <StatCard label="Capítulos" value={`${availableChapters}/${totalChapters}`} />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Livros" value={livros} />
-        <StatCard label="Temas" value={temas} />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <StatCard label="Materiais disponíveis" value={available} />
+        <StatCard label="Materiais em breve" value={unavailable} />
         <StatCard label="Depoimentos" value={testimonialsList.length} />
         <StatCard label="FAQs" value={faqsList.length} />
       </div>
