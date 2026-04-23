@@ -26,6 +26,11 @@ const EXCLUDED_KEYS = new Set([
   'angelo_admin_password',
   'angelo_admin_activity_log',
   'angelo_admin_content_version',
+  // Metadados locais do banner "mudanças não publicadas" — se forem pro
+  // snapshot, o ContentBootstrap sobrescreve o hash local com um valor
+  // antigo e o banner aparece mesmo sem edições.
+  'angelo_admin_last_published_hash',
+  'angelo_admin_last_published_at',
 ]);
 const ADMIN_KEY_PREFIX = 'angelo_admin_';
 
