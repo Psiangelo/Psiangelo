@@ -121,6 +121,9 @@ export default function MaterialsPreview() {
 
   const previewItems = (materials || []).filter((m) => m.available).slice(0, 6);
 
+  // Sem materiais publicados não renderiza nada — evita espaço vazio enorme na home
+  if (previewItems.length === 0) return null;
+
   return (
     <section
       ref={ref}
