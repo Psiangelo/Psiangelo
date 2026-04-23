@@ -52,7 +52,8 @@ export function generateMetadata({ params }) {
   const slug = post.slug || post.id;
   const ogImage  = `${SITE_URL}/og/posts/${slug}.png`;
   const ogImageV = `${SITE_URL}/og/posts-v/${slug}.png`;
-  const url = `${SITE_URL}/blog/${slug}`;
+  // trailingSlash:true no next.config — canonical precisa bater com a rota real
+  const url = `${SITE_URL}/blog/${slug}/`;
 
   return {
     title,

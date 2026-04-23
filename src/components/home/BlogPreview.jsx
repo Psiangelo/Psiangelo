@@ -90,7 +90,7 @@ export default function BlogPreview() {
             const hasImage = post.featured_cover || post.featured_image;
             return (
               <motion.article key={post.id} variants={fadeUp} className="group w-full max-w-[300px] relative">
-                <Link href={`/blog/${post.slug || post.id}`} className="block">
+                <Link href={`/blog/${post.slug || post.id}/`} className="block">
                   <span aria-hidden className="absolute left-0 top-3 bottom-3 w-[2px] bg-accent/20 group-hover:bg-accent/60 transition-colors" />
                   <div className="pl-3">
                     {hasImage ? (
