@@ -566,8 +566,8 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
               <FeaturedImagePicker
                 value={data.featured_image || ''}
                 alt={data.featured_image_alt || ''}
-                onChange={(v) => setData({ ...data, featured_image: v })}
-                onAltChange={(v) => setData({ ...data, featured_image_alt: v })}
+                onChange={(v) => setData((prev) => ({ ...prev, featured_image: v }))}
+                onAltChange={(v) => setData((prev) => ({ ...prev, featured_image_alt: v }))}
               />
             </div>
 

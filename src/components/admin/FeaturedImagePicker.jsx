@@ -125,7 +125,7 @@ export default function FeaturedImagePicker({ value, alt, onChange, onAltChange 
           <button
             type="button"
             onClick={clear}
-            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 hover:bg-red-900/80 text-white text-xs flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100"
+            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/75 hover:bg-red-900/80 text-white text-sm flex items-center justify-center transition-colors opacity-80 group-hover:opacity-100 shadow-lg"
             aria-label="Remover imagem"
           >
             ✕
