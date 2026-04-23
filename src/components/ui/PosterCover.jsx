@@ -165,7 +165,7 @@ export default function PosterCover({
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse at center, rgba(14,12,10,0) 55%, rgba(14,12,10,0.22) 90%, rgba(14,12,10,0.45) 100%)',
+              'radial-gradient(ellipse at center, rgba(14,12,10,0) 45%, rgba(14,12,10,0.4) 85%, rgba(14,12,10,0.7) 100%)',
           }}
         />
       )}

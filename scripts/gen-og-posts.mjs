@@ -195,9 +195,9 @@ function composeSvg({ imageUri, title, eyebrow, date, seed }) {
     </linearGradient>
     <!-- Vignette sutil (leve escurecimento das bordas) -->
     <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
-      <stop offset="55%"  stop-color="${BG}" stop-opacity="0" />
-      <stop offset="90%"  stop-color="${BG}" stop-opacity="0.25" />
-      <stop offset="100%" stop-color="${BG}" stop-opacity="0.45" />
+      <stop offset="45%"  stop-color="${BG}" stop-opacity="0" />
+      <stop offset="85%"  stop-color="${BG}" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="${BG}" stop-opacity="0.7" />
     </radialGradient>
   </defs>
 
