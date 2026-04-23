@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import CursorGlow from '@/components/ui/CursorGlow';
 import { PortraitHero } from '@/components/ui/Portrait';
-import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
+import { getHomepage, getSettings, DEFAULT_HOMEPAGE, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 import { useVisibility } from '@/lib/useVisibility';
 import { useIsMobile, useReducedMotion } from '@/lib/useMediaQuery';
@@ -111,10 +111,20 @@ export default function Hero() {
     DEFAULT_HOMEPAGE.hero,
     SITEDATA_KEYS.homepage,
   );
+  const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
   const showRichFX = !isMobile && !reducedMotion;
   const { visibility: v } = useVisibility();
+
+  const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
+  const whatsappMsg = encodeURIComponent(
+    settings.whatsappMessage ||
+      'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.',
+  );
+  const whatsappUrl = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`
+    : '#contato';
 
   const letterAnim = {
     hidden: { opacity: 0, y: 50 },
@@ -257,18 +267,20 @@ export default function Hero() {
             {content.lead}
           </motion.p>
 
-          {/* CTA hierárquico — primário sólido + secundário ghost + terciário texto */}
+          {/* CTA hierárquico — primário (WhatsApp clínico) + secundário (abordagem) + terciário (ensaios) */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1.2 }}
             className="flex flex-wrap items-center gap-4"
           >
-            <Link
-              href="/materiais"
+            <a
+              href={whatsappUrl}
+              target={whatsappNumber ? '_blank' : undefined}
+              rel={whatsappNumber ? 'noopener noreferrer' : undefined}
               className="group relative inline-flex items-center gap-3 px-8 py-4 font-sans text-[0.74rem] font-semibold tracking-[0.18em] uppercase text-bg bg-accent hover:bg-text-bright transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/15 overflow-hidden"
             >
-              <span className="relative z-10">Ver materiais</span>
+              <span className="relative z-10">Marcar conversa inicial</span>
               <svg
                 className="relative z-10"
                 width="14"
@@ -286,12 +298,12 @@ export default function Hero() {
                 whileHover={{ x: 0 }}
                 transition={{ duration: 0.3 }}
               />
-            </Link>
+            </a>
             <Link
-              href="#sobre"
+              href="/psicoterapia-analitica"
               className="group inline-flex items-center gap-3 px-7 py-3.5 font-sans text-[0.72rem] font-medium tracking-[0.18em] uppercase text-text border border-border-hover hover:border-accent hover:text-accent transition-all relative"
             >
-              Conheça meu trabalho
+              Como atendo
               <motion.span
                 className="absolute bottom-0 left-0 h-px bg-accent"
                 initial={{ width: 0 }}

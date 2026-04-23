@@ -11,23 +11,25 @@ const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Psicólogo Junguiano Online · Adolescentes, Adultos e Idosos · Psiangelo',
+    default: 'Psicoterapia Junguiana Online · Adolescentes, Adultos e Idosos · Psiangelo',
     template: '%s · Psiangelo',
   },
   description:
-    'Psicoterapia analítica online de abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil. Marque uma conversa inicial sem compromisso.',
+    'Psicoterapia analítica online em abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil. Escuta clínica da tradição de Jung, por videochamada. Marque uma conversa inicial sem compromisso.',
   keywords: [
-    'psicoterapia analítica',
-    'psicólogo junguiano online',
-    'terapia online junguiana',
+    'psicoterapia analítica online',
+    'psicoterapia junguiana online',
+    'terapia junguiana online',
     'psicologia analítica online',
-    'análise junguiana',
-    'psicólogo para adolescente online',
-    'psicólogo para idoso',
-    'terapia para idoso online',
+    'análise junguiana online',
+    'terapeuta junguiano online',
+    'psicoterapia online Brasil',
     'análise de sonhos online',
-    'crise de meia idade psicólogo',
+    'terapia para adolescente online',
+    'terapia para idoso online',
+    'crise de meia idade',
     'individuação',
+    'segunda metade da vida',
     'Psiangelo',
   ],
   authors: [{ name: 'Psiangelo' }],
@@ -37,9 +39,9 @@ export const metadata = {
     locale: 'pt_BR',
     url: SITE_URL,
     siteName: 'Psiangelo',
-    title: 'Psicólogo Junguiano Online · Psiangelo',
+    title: 'Psicoterapia Junguiana Online · Psiangelo',
     description:
-      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
+      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil. Marque uma conversa inicial sem compromisso.',
     images: [
       // Quadrado primeiro — WhatsApp/iMessage dão preferência à primeira imagem
       { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo', type: 'image/png' },
@@ -48,7 +50,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Psicólogo Junguiano Online · Psiangelo',
+    title: 'Psicoterapia Junguiana Online · Psiangelo',
     description:
       'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
     images: [`${SITE_URL}/og.png`],

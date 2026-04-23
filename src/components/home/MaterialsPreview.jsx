@@ -140,7 +140,7 @@ export default function MaterialsPreview() {
       >
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
-            <SectionLabel label="Materiais" />
+            <SectionLabel label="O que publico" />
             <motion.h2
               variants={fadeUp}
               className="font-serif text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.05] mb-4"
@@ -151,8 +151,9 @@ export default function MaterialsPreview() {
               variants={fadeUp}
               className="text-[0.95rem] text-text-dim max-w-xl leading-[1.85]"
             >
-              Resumos feitos no Obsidian, misturados com percepção clínica,
-              experiência e compreensão prática. Cada material indica seu formato.
+              Resumos, mapas e ensaios que atravessam minha formação em
+              psicologia analítica. Nada substitui o processo clínico — servem
+              como companhia de estudo, leitura e aprofundamento.
             </motion.p>
           </div>
           <motion.div variants={fadeUp}>

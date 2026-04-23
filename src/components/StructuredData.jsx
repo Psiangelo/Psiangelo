@@ -9,9 +9,9 @@ export default function StructuredData() {
         '@id': `${BASE}#person`,
         name: 'Psiangelo',
         givenName: 'Ângelo',
-        jobTitle: 'Estagiário clínico em Psicologia',
+        jobTitle: 'Estagiário de psicologia — atendimento clínico supervisionado',
         description:
-          'Estagiário clínico em psicoterapia analítica de abordagem junguiana. Atendimento online para adolescentes, adultos e idosos em todo o Brasil.',
+          'Estagiário de psicologia em estágio clínico supervisionado (Associação Allos), atuando em psicoterapia analítica de abordagem junguiana. Atendimento 100% online para adolescentes, adultos e idosos em todo o Brasil.',
         url: BASE,
         image: `${BASE}/images/angelo-portrait.png`,
         knowsAbout: [

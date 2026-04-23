@@ -77,51 +77,51 @@ export const CARTO_TONES = ['accent', 'bright', 'citrinit', 'rubedo'];
 
 export const DEFAULT_HOMEPAGE = {
   hero: {
-    eyebrow: 'Psicologia Analítica · Jung',
+    eyebrow: 'Psicoterapia Analítica · Abordagem Junguiana · 100% Online',
     titlePrefix: 'Psi',
     titleEmphasis: 'angelo',
-    tagline: 'Nosce te ipsum',
-    lead: 'Estudante de psicologia, estagiário clínico e futuro psicólogo. Aqui você encontra quem eu sou, o que produzo e como a psicologia analítica guia minha prática e meu olhar sobre o mundo.',
+    tagline: 'Uma escuta para a sua vida.',
+    lead: 'Atendimento clínico em psicoterapia analítica, online, para adolescentes, adultos e idosos em todo o Brasil. Não parto de pressupostos sobre você — o trabalho começa do que você me conta e do que ressoa entre nós.',
   },
   prelude: {
-    body: 'Aqui você encontra o que estudo, atendo e ensino — materiais, trilhas, anotações de clínica e textos sobre psicologia analítica.',
+    body: 'Atendo adolescentes, adultos e idosos em psicoterapia analítica, 100% online, em todo o Brasil. Aqui você conhece a abordagem, a minha trajetória e o que publico sobre psicologia junguiana.',
     tagline: 'γνῶθι σεαυτόν',
   },
   about: {
     title: 'Sobre',
-    paragraph1: 'Atendo em clínica desde o terceiro período da graduação. Faço estágio na Associação Allos, com supervisão e pesquisa.',
-    paragraph2: 'Também conduzo grupos de estudo para estudantes e psicólogos que buscam se aprimorar na prática clínica. Dou aulas, conduzo intervisões e participo da Liga de Psicologia Analítica da UNICAP.',
+    paragraph1: 'Atendo em clínica desde o terceiro período da graduação, em estágio supervisionado pela Associação Allos. A abordagem é a psicologia analítica — a prática clínica desenvolvida a partir do trabalho de Carl Gustav Jung.',
+    paragraph2: 'Além do atendimento, conduzo grupos de estudo para estudantes e profissionais que buscam aprofundar a prática clínica junguiana, participo de intervisões e da Liga de Psicologia Analítica da UNICAP. O que publico aqui — materiais, trilhas, ensaios — nasce desse atravessamento entre estudo e clínica.',
     quoteText: 'Quem olha para fora, sonha; quem olha para dentro, desperta.',
     quoteAuthor: 'Carl Gustav Jung',
     credentials: [
-      { mark: '◆', label: 'Estágio',     detail: 'Clínico · Associação Allos' },
+      { mark: '◆', label: 'Atendimento', detail: '100% online · Brasil inteiro' },
+      { mark: '◇', label: 'Estágio',     detail: 'Clínico · Associação Allos' },
+      { mark: '◆', label: 'Supervisão',  detail: 'Intervisão e supervisão clínica' },
       { mark: '◇', label: 'Facilitação', detail: 'Liga de Psicologia Analítica · UNICAP' },
-      { mark: '◆', label: 'Formação',    detail: 'Intervisão e supervisão clínica' },
-      { mark: '◇', label: 'Método',      detail: 'Prática deliberada para psicoterapeutas' },
-      { mark: '◆', label: 'Atuação',     detail: 'Plantão psicológico' },
+      { mark: '◆', label: 'Abordagem',   detail: 'Psicologia analítica (C. G. Jung)' },
     ],
     milestones: [
       { year: 'III',    label: 'Início clínico', detail: '3º período da graduação' },
-      { year: 'Allos',  label: 'Estágio',         detail: 'Processo seletivo' },
-      { year: 'UNICAP', label: 'Liga',            detail: 'Psicologia Analítica' },
-      { year: 'Hoje',   label: 'Clínica',         detail: 'Atendimento e ensino' },
+      { year: 'Allos',  label: 'Estágio',        detail: 'Supervisionado' },
+      { year: 'UNICAP', label: 'Liga',           detail: 'Psicologia Analítica' },
+      { year: 'Hoje',   label: 'Clínica',        detail: 'Atendimento online BR' },
     ],
   },
   contact: {
-    sectionLabel: 'Contato',
-    title: 'Pronto para aprofundar seus estudos?',
-    lead: 'Dê o próximo passo na sua formação em psicologia analítica. Entre em contato pelo WhatsApp — é o canal mais rápido para conversarmos.',
+    sectionLabel: 'Agendar',
+    title: 'Pronto para uma primeira conversa?',
+    lead: 'Uma conversa inicial sem compromisso — você me conta o que traz e avaliamos juntos se faz sentido seguir. Atendimento 100% online, por videochamada, em todo o Brasil.',
     primaryLabel: 'Canal principal',
-    primaryHeadingPrefix: 'Fale comigo no',
+    primaryHeadingPrefix: 'Marque pelo',
     primaryHeadingEmphasis: 'WhatsApp',
-    primaryText: 'Tire dúvidas sobre os materiais, monte um pacote, ou apenas converse sobre psicologia analítica.',
-    primaryButton: 'Abrir conversa',
+    primaryText: 'Me conta brevemente o que te traz e combinamos um horário. Costumo responder no mesmo dia.',
+    primaryButton: 'Marcar conversa inicial',
     whatsappNumber: '5581987349114',
     instagramLabel: 'Instagram',
     instagramValue: '@psiangelo',
     instagramUrl: 'https://instagram.com/psiangelo',
     emailLabel: 'E-mail',
-    emailValue: 'contato@angelopsicologia.com',
+    emailValue: '',
   },
 };
 
@@ -254,8 +254,8 @@ export const DEFAULT_VISIBILITY = {
   // Seções só da home
   prelude:      true,
   about:        true,
-  cartografia:  true,
-  depoimentos:  true,
+  cartografia:  false, // rebaixada na home clínica (fica acessível via /trilhas e nav)
+  depoimentos:  false, // vedado publicar depoimentos de pacientes (CFP) — mantém oculto na home
   faq:          true,
   contato:      true,
   // Extras
@@ -523,20 +523,24 @@ export const getTestimonials = () => {
 export const setTestimonials = (v) => writeJson(SITEDATA_KEYS.testimonials, v);
 
 export const DEFAULT_FAQS = [
-  { id: 'faq-1', group: 'Entrega', question: 'Como recebo os materiais após a compra?',
-    answer: 'Após a confirmação do pagamento, os materiais são enviados diretamente pelo WhatsApp e/ou e-mail. Todos os arquivos são em formato PDF digital, prontos para leitura imediata no celular, tablet ou computador.' },
-  { id: 'faq-2', group: 'Entrega', question: 'Os mapas mentais são editáveis?',
-    answer: 'Os mapas mentais são entregues em formato PDF, otimizados tanto para estudo digital quanto para impressão. O layout foi pensado para facilitar a visualização das conexões entre conceitos, funcionando como um guia visual de estudo.' },
-  { id: 'faq-3', group: 'Entrega', question: 'Tem desconto para compra de vários materiais?',
-    answer: 'Sim! Ofereço condições especiais para quem deseja adquirir mais de um material. Entre em contato pelo WhatsApp para combinarmos um pacote personalizado de acordo com suas necessidades de estudo.' },
-  { id: 'faq-4', group: 'Catálogo', question: 'Posso solicitar um material sobre um tema específico?',
-    answer: 'Com certeza! Estou sempre aberto a sugestões e pedidos. Se existe um tema da psicologia analítica ou da prática clínica que você gostaria de ver em formato de resumo ou mapa mental, entre em contato e conversamos sobre a viabilidade.' },
-  { id: 'faq-5', group: 'Catálogo', question: 'Posso usar os materiais para estudar para concursos?',
-    answer: 'Sim! O conteúdo cobre os principais conceitos exigidos em provas e concursos da área de psicologia. Os resumos são úteis para revisão rápida e fixação.' },
-  { id: 'faq-6', group: 'Conteúdo', question: 'Os materiais são baseados em quais autores?',
-    answer: 'Os materiais são elaborados com base nas Obras Completas de C. G. Jung, em autores pós-junguianos e na minha experiência clínica e de supervisão.' },
-  { id: 'faq-7', group: 'Conteúdo', question: 'Qual a diferença entre resumo e mapa mental?',
-    answer: 'O resumo é uma síntese textual do conteúdo — organizado em tópicos, com as ideias principais explicadas de forma clara e objetiva. Já o mapa mental é um diagrama visual que conecta conceitos-chave, facilitando a memorização e a compreensão das relações entre os temas.' },
+  { id: 'faq-clin-1', group: 'Clínica', question: 'Como é a primeira conversa?',
+    answer: 'É uma conversa curta, sem compromisso. Serve para você me conhecer, me contar o que traz e avaliarmos juntos se faz sentido seguir. Marcamos pelo WhatsApp.' },
+  { id: 'faq-clin-2', group: 'Clínica', question: 'Você atende online em todo o Brasil?',
+    answer: 'Sim. Todo o atendimento é online, por videochamada — basta uma conexão estável e um lugar tranquilo. Atendo pessoas em qualquer estado do Brasil e brasileiros vivendo no exterior, em português.' },
+  { id: 'faq-clin-3', group: 'Clínica', question: 'Para quais públicos você atende?',
+    answer: 'Adolescentes a partir de 14 anos (com consentimento dos responsáveis), adultos e idosos. Cada faixa etária tem suas particularidades clínicas e o trabalho é ajustado a quem chega.' },
+  { id: 'faq-clin-4', group: 'Clínica', question: 'Quanto tempo dura um processo de psicoterapia?',
+    answer: 'Depende do momento e do que aparece no trabalho. Pode ser meses, pode ser anos. O tempo é acompanhado, não prescrito — não há promessa de prazo.' },
+  { id: 'faq-abor-1', group: 'Abordagem', question: 'O que é psicoterapia analítica?',
+    answer: 'Também conhecida como psicologia analítica ou abordagem junguiana, é a prática clínica desenvolvida a partir do trabalho de Carl Gustav Jung. Trabalha com símbolos, sonhos, complexos e o processo de individuação — o caminho de tornar-se quem você é.' },
+  { id: 'faq-abor-2', group: 'Abordagem', question: 'Atendimento online funciona tão bem quanto presencial?',
+    answer: 'Sim. O vínculo clínico se estabelece pela palavra e pela continuidade — o essencial é a presença e o cuidado, não o espaço físico. A literatura clínica recente é consistente em demonstrar a eficácia da psicoterapia online para a maioria das demandas.' },
+  { id: 'faq-abor-3', group: 'Abordagem', question: 'Vocês fazem análise de sonhos?',
+    answer: 'Sim, quando faz sentido. A análise de sonhos é uma das ferramentas centrais da psicologia analítica — não como decifração de manuais, mas como escuta cuidadosa do que o inconsciente está dizendo na sua linguagem própria.' },
+  { id: 'faq-etic-1', group: 'Ética e sigilo', question: 'Como funciona o sigilo?',
+    answer: 'Absoluto, conforme o Código de Ética da profissão. Nada do que você trouxer sai daqui. No atendimento de adolescente, o sigilo também é resguardado — converso com a família apenas o necessário e sempre com transparência prévia.' },
+  { id: 'faq-etic-2', group: 'Ética e sigilo', question: 'Você é psicólogo formado?',
+    answer: 'Ainda não. Atendo como estagiário de psicologia em estágio clínico supervisionado pela Associação Allos. Ao concluir a graduação e obter registro no CRP, esta indicação será atualizada.' },
 ];
 
 export const getFaqs = () => {
@@ -552,12 +556,12 @@ export const setFaqs = (v) => writeJson(SITEDATA_KEYS.faqs, v);
 
 export const DEFAULT_SETTINGS = {
   whatsappNumber: '5581987349114',
-  whatsappMessage: 'Olá! Vi seu site e gostaria de saber mais sobre seus materiais de psicologia.',
-  instagramLink: '',
+  whatsappMessage: 'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.',
+  instagramLink: 'https://instagram.com/psiangelo',
   youtubeLink: '',
   emailAddress: '',
-  siteTitle: 'Psiangelo — Psicologia Analítica & Prática Clínica',
-  siteDescription: 'Resumos, mapas mentais e materiais de estudo com experiência clínica junguiana.',
+  siteTitle: 'Psiangelo — Psicoterapia Junguiana Online',
+  siteDescription: 'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
   accentColor: '#B48C50',
 };
 

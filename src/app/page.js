@@ -3,6 +3,10 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/home/Hero';
+import HomeDisclaimer from '@/components/home/HomeDisclaimer';
+import HomeSeoIntro from '@/components/home/HomeSeoIntro';
+import HomeApproach from '@/components/home/HomeApproach';
+import AudienceCards from '@/components/therapy/AudienceCards';
 import Prelude from '@/components/home/Prelude';
 import About from '@/components/home/About';
 import Cartography from '@/components/home/Cartography';
@@ -34,37 +38,66 @@ export default function HomePage() {
     <>
       <Navbar />
       <main>
+        {/* 1. Identidade visual + CTAs clínicos */}
         <Hero />
-        {v.prelude && <Prelude />}
+
+        {/* 2. Disclaimer de estagiário (compliance CFP/CRP) — logo abaixo do hero */}
+        <HomeDisclaimer />
+
+        {/* 3. Intro SEO server-rendered — garante texto rico no HTML inicial.
+            Sempre visível: é a âncora clínica da home pra Googlebot. */}
+        <HomeSeoIntro />
+
+        {/* 4. Para quem atendo — 3 públicos (adolescente/adulto/idoso).
+            Reutiliza o componente server da landing /psicoterapia-analitica. */}
+        <AudienceCards heading="Para quem atendo" />
+
+        {/* 5. Como trabalho — 3 princípios clínicos + CTA pra landing */}
+        <HomeApproach />
+
+        {/* 6. Quem sou — trajetória clínica e formação */}
         {v.about && <About />}
-        {(v.about || v.prelude) && v.cartografia && (
+
+        {/* 7. Prelude opcional (texto editorial curto) */}
+        {v.prelude && <Prelude />}
+
+        {(v.about || v.prelude) && (
           <Break>
             <MandalaDivider size={56} opacity={0.3} />
           </Break>
         )}
-        {v.cartografia && <Cartography />}
-        {v.cartografia && v.trilhas && (
-          <Break pad="py-2">
-            <AlchemyDivider />
-          </Break>
-        )}
+
+        {/* 8. Caminhos de estudo (trilhas) — autoridade, secundário */}
         {v.trilhas && <StudyPaths />}
+
         <JungQuote />
+
+        {/* 9. O que publico — materiais/ensaios/cursos como obra, não produto */}
         {v.materiais && <MaterialsPreview />}
         {v.materiais && (v.cursos || v.blog) && (
           <Break pad="py-2">
             <DiamondChain />
           </Break>
         )}
-        {v.cursos && <CoursesPreview />}
         {v.blog && <BlogPreview />}
-        {v.blog && v.depoimentos && (
+        {v.cursos && <CoursesPreview />}
+
+        {/* 10. Cartografia ornamental (oculta por default — reativar em /glossario ou /trilhas) */}
+        {v.cartografia && <Cartography />}
+
+        {v.cartografia && (
           <Break pad="py-2">
             <AlchemyDivider />
           </Break>
         )}
+
+        {/* 11. Depoimentos — oculto por default na home clínica (CFP veda depoimentos de pacientes) */}
         {v.depoimentos && <Testimonials />}
+
+        {/* 12. FAQ clínico */}
         {v.faq && <FAQ />}
+
+        {/* 13. Contato — CTA final */}
         {v.contato && <ContactCTA />}
       </main>
       <Footer showMaterialsCta={false} />

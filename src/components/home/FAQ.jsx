@@ -9,10 +9,14 @@ import { getFaqs, DEFAULT_FAQS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 
 const GROUP_BLURBS = {
-  Entrega:   'Como o material chega até você.',
-  Catálogo:  'O que existe e o que está por vir.',
-  Conteúdo:  'Sobre a profundidade e o método.',
-  Geral:     'Perguntas variadas.',
+  'Clínica':        'Como funciona o atendimento online.',
+  'Abordagem':      'O que é a psicologia analítica.',
+  'Ética e sigilo': 'Sobre o cuidado, o status profissional e o sigilo.',
+  // Legado (compatibilidade caso admin ainda tenha FAQ antiga de materiais)
+  'Entrega':   'Como o material chega até você.',
+  'Catálogo':  'O que existe e o que está por vir.',
+  'Conteúdo':  'Sobre a profundidade e o método.',
+  'Geral':     'Perguntas variadas.',
 };
 
 function groupFaqs(faqs) {
@@ -113,8 +117,15 @@ export default function FAQ() {
           variants={fadeUp}
           className="text-[0.95rem] text-text-dim leading-[1.85] max-w-xl mb-14"
         >
-          Organizadas em três frentes — entrega, catálogo e conteúdo. Clique em
-          qualquer pergunta para expandir.
+          Respostas às dúvidas mais comuns sobre o atendimento online, a
+          abordagem junguiana e a ética da clínica. Para mais detalhes, veja{' '}
+          <a
+            href="/psicoterapia-analitica"
+            className="text-accent hover:text-text-bright transition-colors underline decoration-accent/30 underline-offset-4"
+          >
+            a página de psicoterapia
+          </a>
+          .
         </motion.p>
 
         {/* 3 grupos em 2 colunas: a primeira larga (Entrega) ocupa coluna 1
