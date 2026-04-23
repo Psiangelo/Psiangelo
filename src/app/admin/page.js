@@ -38,6 +38,10 @@ const AtlasManager = dynamic(() => import('@/components/admin/AtlasManager'), {
   ssr: false,
   loading: DynamicFallback,
 });
+const TherapyManager = dynamic(() => import('@/components/admin/TherapyManager'), {
+  ssr: false,
+  loading: DynamicFallback,
+});
 
 // ─── Constants ───────────────────────────────────────────────────────
 const STORAGE_KEYS = {
@@ -2821,6 +2825,13 @@ function AdminPanel() {
       ],
     },
     {
+      id: 'clinic',
+      label: 'Consultório',
+      items: [
+        { id: 'therapy', label: 'Psicoterapia · landing', icon: IconChat },
+      ],
+    },
+    {
       id: 'publish',
       label: 'Publicação',
       items: [
@@ -3026,6 +3037,13 @@ function AdminPanel() {
           {activeTab === 'atlas' && (
             <AtlasManager
               key="atlas"
+              addToast={addToast}
+              addLogEntry={addLogEntry}
+            />
+          )}
+          {activeTab === 'therapy' && (
+            <TherapyManager
+              key="therapy"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

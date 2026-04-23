@@ -22,6 +22,7 @@ const STATIC_PAGES = [
   { id: 'atlas',      title: 'Atlas',      href: '/atlas',     hint: 'Cartografia editorial' },
   { id: 'atlas-grafo', title: 'Atlas · Grafo', href: '/atlas/grafo', hint: 'Grafo de conexões entre notas' },
   { id: 'atlas-indice', title: 'Atlas · Índice A–Z', href: '/atlas/indice', hint: 'Todas as notas em ordem alfabética' },
+  { id: 'atender',    title: 'Atendimento', href: '/psicoterapia-analitica', hint: 'Psicoterapia analítica · agendar primeira conversa' },
   { id: 'glossario',  title: 'Glossário',  href: '/glossario', hint: 'Termos junguianos (curadoria)' },
   { id: 'bio',        title: 'Bio · Links',href: '/bio',       hint: 'Linktree' },
 ];
@@ -143,6 +144,7 @@ export default function CommandPalette() {
       if (visibility.materiais === false && (item.href || '').startsWith('/materiais')) return false;
       if (visibility.trilhas === false && (item.href || '').startsWith('/trilhas')) return false;
       if (visibility.bio === false && item.href === '/bio') return false;
+      if (visibility.psicoterapia === false && (item.href || '').startsWith('/psicoterapia')) return false;
       // Filtro de notas individuais do Atlas (admin curadoria)
       if (item.type === 'atlas' && item._note && isNoteHidden(item._note)) return false;
       return true;

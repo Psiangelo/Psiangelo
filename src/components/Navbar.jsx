@@ -32,6 +32,7 @@ export default function Navbar() {
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
     { href: '/blog', label: 'Blog', key: 'blog' },
     { href: '/atlas', label: 'Atlas', key: 'atlas' },
+    { href: '/psicoterapia-analitica', label: 'Atendimento', key: 'psicoterapia' },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 

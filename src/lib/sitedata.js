@@ -31,6 +31,7 @@ export const SITEDATA_KEYS = {
   faqs:           'angelo_admin_faqs',
   settings:       'angelo_admin_settings',
   atlasOverrides: 'angelo_admin_atlas_overrides',
+  therapy:        'angelo_admin_therapy',
 };
 
 /* ===================================================================
@@ -249,6 +250,7 @@ export const DEFAULT_VISIBILITY = {
   bio:        true,
   atlas:      true,
   glossario:  true,
+  psicoterapia: false, // oculta por padrão — ativa no admin quando começar a atender
   // Seções só da home
   prelude:      true,
   about:        true,
@@ -288,6 +290,155 @@ export const getAtlasOverrides = () => {
   return { ...DEFAULT_ATLAS_OVERRIDES, ...stored };
 };
 export const setAtlasOverrides = (v) => writeJson(SITEDATA_KEYS.atlasOverrides, v);
+
+/* ===================================================================
+   THERAPY — configuração da landing /psicoterapia-analitica
+=================================================================== */
+
+export const DEFAULT_THERAPY = {
+  hero: {
+    eyebrow: 'Psicoterapia analítica · abordagem junguiana',
+    title: 'Um trabalho para escutar',
+    emphasis: 'quem você é',
+    lead:
+      'Não parto de nenhum pressuposto sobre você. O trabalho começa do que você me conta e do que ressoa entre nós — e o que se segue é único para a sua vida.',
+  },
+  approach: {
+    sectionLabel: 'Como trabalho',
+    intro: 'Três princípios que atravessam a clínica aqui.',
+    items: [
+      {
+        title: 'Cada pessoa é única',
+        body:
+          'Não aplico uma teoria pronta. Para cada pessoa que procura o consultório, faço uma psicologia inteiramente nova — porque cada vida tem sua própria forma.',
+      },
+      {
+        title: 'É uma relação, não um enquadramento',
+        body:
+          'A postura é dialética: estou tão presente quanto você. O que surge na clínica é o que surge entre nós dois — escutar, perceber, dialogar.',
+      },
+      {
+        title: 'Escuta, não suposição',
+        body:
+          'Saberemos de você pelo que você conta e pelo que acontece no contato. É a partir daí — e só daí — que o trabalho toma forma.',
+      },
+    ],
+  },
+  process: {
+    sectionLabel: 'Como funciona',
+    steps: [
+      {
+        title: 'Uma primeira conversa',
+        body:
+          'Uma conversa curta, sem custo e sem compromisso. Serve pra você me conhecer, me contar o que traz e a gente avaliar juntos se faz sentido seguir.',
+      },
+      {
+        title: 'O processo',
+        body:
+          'Se fizer sentido, começamos. Uma ou duas sessões por semana, conforme combinarmos. Online ou presencial, em Recife.',
+      },
+      {
+        title: 'O tempo é seu',
+        body:
+          'Não há tempo pré-definido. O processo acompanha você até onde fizer sentido — o ritmo e a duração são parte do que vamos descobrindo.',
+      },
+    ],
+  },
+  format: {
+    sectionLabel: 'Formato',
+    modalityLabel: 'Modalidade',
+    modalities: ['Online', 'Presencial · Recife'],
+    durationLabel: 'Duração',
+    duration: '50 minutos',
+    frequencyLabel: 'Frequência',
+    frequency: '1 a 2 vezes por semana',
+  },
+  values: {
+    show: false, // default oculto por conta da Nota Técnica CFP 01/2022
+    sectionLabel: 'Valores',
+    perSession: 'R$ 120',
+    perMonth: 'R$ 400',
+    note: 'Valor conversável conforme o contexto.',
+    fallback: 'Conversamos sobre valor e frequência na primeira conversa.',
+  },
+  faq: [
+    {
+      q: 'Quanto tempo dura o processo?',
+      a: 'Depende do momento e do que aparece no trabalho. Pode ser meses, pode ser anos. O tempo é acompanhado, não prescrito.',
+    },
+    {
+      q: 'Atendimento online funciona tão bem quanto presencial?',
+      a: 'Sim. O vínculo clínico se estabelece pela palavra — o essencial é a presença e a continuidade, não o espaço físico.',
+    },
+    {
+      q: 'E se eu precisar faltar?',
+      a: 'Combinamos na primeira conversa. Há uma política simples de ausência, explicada antes de começarmos.',
+    },
+    {
+      q: 'Sigilo',
+      a: 'Absoluto, conforme o Código de Ética da profissão. Nada do que você trazer sai daqui.',
+    },
+    {
+      q: 'Você atende quais demandas?',
+      a: 'Demandas adultas — ansiedade, questões de sentido, relacionamentos, sonhos, crises. Na primeira conversa avaliamos se é pertinente para a minha abordagem.',
+    },
+  ],
+  schedule: {
+    show: true,
+    sectionLabel: 'Janelas de atendimento',
+    note: 'Atendo de tarde para noite. Selecione um horário — vamos combinar pelo WhatsApp.',
+    // Janelas recorrentes por dia da semana (0=dom, 1=seg, ..., 6=sáb)
+    windows: [
+      { dow: 1, label: 'Segunda', startHour: 14, endHour: 21 },
+      { dow: 2, label: 'Terça',   startHour: 14, endHour: 21 },
+      { dow: 3, label: 'Quarta',  startHour: 14, endHour: 21 },
+      { dow: 4, label: 'Quinta',  startHour: 14, endHour: 21 },
+      { dow: 5, label: 'Sexta',   startHour: 14, endHour: 21 },
+    ],
+    slotMinutes: 60,
+  },
+  cta: {
+    primaryLabel: 'Marcar uma primeira conversa',
+    helper: 'Sem custo e sem compromisso.',
+    modalTitleStep1: 'O que te traz?',
+    motivations: [
+      'Escuta e elaboração',
+      'Ansiedade e angústia',
+      'Relacionamentos',
+      'Sonhos e vida simbólica',
+      'Autoconhecimento',
+      'Não tenho certeza ainda',
+    ],
+    modalTitleStep2: 'Como você prefere?',
+    formats: ['Online', 'Presencial em Recife'],
+    modalTitleStep3: 'Mensagem',
+    messageTemplate:
+      'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa.\n\nMotivação: {{motivation}}\nFormato: {{format}}{{slot}}\n\nAguardo retorno.',
+  },
+  deontology: {
+    show: true,
+    text:
+      'Atendo como estagiário em psicologia, sob supervisão clínica da Associação Allos. Quando concluir a graduação e obtiver registro no CRP, esta indicação será atualizada.',
+    crp: '',
+  },
+  whatsappNumber: '5581987349114',
+};
+
+export const getTherapy = () => {
+  const stored = readJson(SITEDATA_KEYS.therapy, null);
+  if (!stored) return DEFAULT_THERAPY;
+  // merge profundo em 1 nível (objeto com subobjetos)
+  const merged = { ...DEFAULT_THERAPY };
+  for (const k of Object.keys(DEFAULT_THERAPY)) {
+    if (typeof DEFAULT_THERAPY[k] === 'object' && !Array.isArray(DEFAULT_THERAPY[k]) && DEFAULT_THERAPY[k] !== null) {
+      merged[k] = { ...DEFAULT_THERAPY[k], ...(stored[k] || {}) };
+    } else if (stored[k] !== undefined) {
+      merged[k] = stored[k];
+    }
+  }
+  return merged;
+};
+export const setTherapy = (v) => writeJson(SITEDATA_KEYS.therapy, v);
 
 /* ===================================================================
    MATERIALS · COMING SOON
