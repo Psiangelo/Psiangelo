@@ -92,7 +92,7 @@ export default function FAQ() {
   return (
     <section
       id="faq"
-      className="py-16 md:py-32 px-5 sm:px-6 md:px-12 section-border-t relative overflow-hidden"
+      className="py-12 md:py-20 px-5 sm:px-6 md:px-12 section-border-t relative overflow-hidden"
       ref={ref}
     >
       <OrbitalAccent

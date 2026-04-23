@@ -54,7 +54,7 @@ export default function JungQuote({ variant = 'block', rotate = true, rotateMs =
   }
 
   return (
-    <section className="relative py-14 md:py-20 px-5 sm:px-6 md:px-12 overflow-hidden">
+    <section className="relative py-8 md:py-12 px-5 sm:px-6 md:px-12 overflow-hidden">
       {/* decoração sutil: aspas gigantes */}
       <span
         aria-hidden
