@@ -94,21 +94,22 @@ export default function TherapyScheduler({
             onClick={close}
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[300]"
           />
+          <div
+            className="fixed inset-0 z-[301] flex items-end sm:items-center justify-center pointer-events-none"
+          >
           <motion.div
-            initial={{ opacity: 0, y: 80, scale: 0.98 }}
+            initial={{ opacity: 0, y: 40, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 40, scale: 0.98 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: 20, scale: 0.98 }}
+            transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
             role="dialog"
             aria-label="Marcar primeira conversa"
-            className="fixed z-[301]
-                       inset-x-0 bottom-0
-                       sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2
+            className="pointer-events-auto
                        w-full sm:w-[min(620px,92vw)]
                        max-h-[92vh] sm:max-h-[84vh]
                        flex flex-col
                        bg-bg-warm sm:border border-accent/30
-                       rounded-t-3xl sm:rounded-none
+                       rounded-t-3xl sm:rounded-sm
                        shadow-2xl shadow-black/60"
           >
             {/* Swipe handle (mobile only) */}
@@ -141,7 +142,7 @@ export default function TherapyScheduler({
             </header>
 
             {/* Conteúdo com scroll interno */}
-            <div className="flex-1 overflow-y-auto overscroll-contain">
+            <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
               <AnimatePresence mode="wait" custom={direction} initial={false}>
                 <motion.div
                   key={step}
@@ -192,6 +193,7 @@ export default function TherapyScheduler({
               </AnimatePresence>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

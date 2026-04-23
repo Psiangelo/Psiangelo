@@ -26,6 +26,128 @@ const DOW_OPTIONS = [
   { v: 0, l: 'Domingo' },
 ];
 
+const DOW_ABBR = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+function formatHourShort(h) {
+  return `${String(Math.floor(h)).padStart(2, '0')}h${h % 1 ? String((h % 1) * 60).padStart(2, '0') : ''}`;
+}
+
+function ScheduleBlocker({ schedule, onChange }) {
+  const step = schedule.stepHour || 1;
+  const windows = schedule.windows || [];
+  const blocked = new Set(schedule.blockedSlots || []);
+
+  const byDow = new Map();
+  for (const w of windows) byDow.set(w.dow, w);
+  const shownDays = [1, 2, 3, 4, 5, 6, 0].filter((d) => byDow.has(d));
+  if (shownDays.length === 0) {
+    return (
+      <p className="text-xs text-[#6E6458] italic">Adicione janelas antes de marcar ocupados.</p>
+    );
+  }
+  const minStart = Math.min(...shownDays.map((d) => byDow.get(d).startHour));
+  const maxEnd = Math.max(...shownDays.map((d) => byDow.get(d).endHour));
+  const hours = [];
+  for (let h = minStart; h < maxEnd; h += step) hours.push(h);
+
+  const toggle = (dow, h) => {
+    const key = `${dow}-${h}`;
+    const next = new Set(blocked);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    onChange([...next]);
+  };
+
+  const clearAll = () => onChange([]);
+  const blockAll = () => {
+    const all = [];
+    for (const dow of shownDays) {
+      const w = byDow.get(dow);
+      for (let h = w.startHour; h < w.endHour; h += step) all.push(`${dow}-${h}`);
+    }
+    onChange(all);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <p className="text-xs text-[#6E6458] font-sans">
+          Clique num slot para alternar entre <span className="text-green-400">disponível</span> e{' '}
+          <span className="text-red-400/80">ocupado</span>.
+        </p>
+        <div className="flex gap-1.5">
+          <button type="button" onClick={clearAll} className="text-[10px] font-mono tracking-widest uppercase text-[#6E6458] hover:text-green-400 px-2 py-1 border border-[rgba(180,140,80,0.2)] rounded">
+            Liberar tudo
+          </button>
+          <button type="button" onClick={blockAll} className="text-[10px] font-mono tracking-widest uppercase text-[#6E6458] hover:text-red-400/80 px-2 py-1 border border-[rgba(180,140,80,0.2)] rounded">
+            Bloquear tudo
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <div
+          className="inline-grid border border-[rgba(180,140,80,0.15)] rounded overflow-hidden min-w-full"
+          style={{ gridTemplateColumns: `56px repeat(${shownDays.length}, minmax(64px, 1fr))` }}
+        >
+          <div className="bg-[#0E0C0A] border-b border-r border-[rgba(180,140,80,0.1)]" />
+          {shownDays.map((dow) => (
+            <div key={dow} className="bg-[#0E0C0A] border-b border-r border-[rgba(180,140,80,0.1)] last:border-r-0 py-2 px-1 text-center">
+              <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">
+                {(byDow.get(dow).label || DOW_ABBR[dow]).slice(0, 3)}
+              </span>
+            </div>
+          ))}
+          {hours.map((h) => (
+            <div key={h} className="contents">
+              <div className="bg-[#0E0C0A] border-b border-r border-[rgba(180,140,80,0.08)] py-2 px-2 flex items-center justify-end">
+                <span className="font-mono text-[10px] text-[#6E6458]">{formatHourShort(h)}</span>
+              </div>
+              {shownDays.map((dow) => {
+                const w = byDow.get(dow);
+                const active = h >= w.startHour && h < w.endHour;
+                if (!active) {
+                  return (
+                    <div key={dow} className="bg-black/30 border-b border-r border-[rgba(180,140,80,0.08)] last:border-r-0" />
+                  );
+                }
+                const isBlocked = blocked.has(`${dow}-${h}`);
+                return (
+                  <button
+                    key={dow}
+                    type="button"
+                    onClick={() => toggle(dow, h)}
+                    className={`border-b border-r border-[rgba(180,140,80,0.08)] last:border-r-0 py-2.5 transition-colors ${
+                      isBlocked
+                        ? 'bg-red-900/15 hover:bg-red-900/30'
+                        : 'bg-green-900/10 hover:bg-green-900/25'
+                    }`}
+                    aria-label={`Alternar ${byDow.get(dow).label || DOW_ABBR[dow]} ${formatHourShort(h)}`}
+                    title={isBlocked ? 'Ocupado (clique para liberar)' : 'Disponível (clique para ocupar)'}
+                  >
+                    {isBlocked ? (
+                      <svg width="12" height="12" viewBox="0 0 14 14" className="mx-auto text-red-400/80">
+                        <line x1="2" y1="2" x2="12" y2="12" stroke="currentColor" strokeWidth="0.8" />
+                        <line x1="2" y1="12" x2="12" y2="2" stroke="currentColor" strokeWidth="0.8" />
+                      </svg>
+                    ) : (
+                      <span className="block w-1.5 h-1.5 rounded-full bg-green-400/50 mx-auto" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-[10px] text-[#6E6458] font-sans italic">
+        Slots ocupados somem do site (aparecem como 𐄂). Use pra marcar pacientes fixos ou semanas em que um horário não pode.
+      </p>
+    </div>
+  );
+}
+
 export default function TherapyManager({ addToast, addLogEntry }) {
   const [data, setData] = useState(DEFAULT_THERAPY);
   const [dirty, setDirty] = useState(false);
@@ -388,6 +510,16 @@ export default function TherapyManager({ addToast, addLogEntry }) {
                 </button>
               </div>
             ))}
+          </div>
+
+          <div className="border-t border-[rgba(180,140,80,0.1)] pt-4 space-y-3">
+            <h4 className="text-xs uppercase tracking-widest text-[#6E6458] font-sans">
+              Slots ocupados · {(data.schedule.blockedSlots || []).length}
+            </h4>
+            <ScheduleBlocker
+              schedule={data.schedule}
+              onChange={(blocked) => update('schedule', { blockedSlots: blocked })}
+            />
           </div>
         </div>
       )}

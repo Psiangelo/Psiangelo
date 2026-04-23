@@ -396,6 +396,8 @@ export const DEFAULT_THERAPY = {
       { dow: 5, label: 'Sexta',   startHour: 14, endHour: 21 },
     ],
     stepHour: 1, // granularidade da grade: 1 = horários inteiros, 0.5 = de meia em meia
+    // Slots recorrentemente ocupados (ex.: paciente fixo). Formato: "dow-hour" como string.
+    blockedSlots: [],
   },
   cta: {
     primaryLabel: 'Marcar uma primeira conversa',

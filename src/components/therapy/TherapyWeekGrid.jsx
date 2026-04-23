@@ -24,6 +24,8 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
 
   const windows = schedule?.windows || [];
   const step = schedule?.stepHour || 1;
+  const blocked = new Set(schedule?.blockedSlots || []);
+  const isBlocked = (dow, hour) => blocked.has(`${dow}-${hour}`);
 
   const byDow = new Map();
   for (const w of windows) byDow.set(w.dow, w);
@@ -153,6 +155,22 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
                     key={dow}
                     className="border-b border-r border-border-subtle/40 last:border-r-0 bg-bg/40"
                   />
+                );
+              }
+              if (isBlocked(dow, h)) {
+                return (
+                  <div
+                    key={dow}
+                    className="relative border-b border-r border-border-subtle/40 last:border-r-0 py-3.5 sm:py-4 bg-bg-card/20 cursor-not-allowed"
+                    aria-label="Ocupado"
+                  >
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 14 14" className="text-text-dim/40">
+                        <line x1="2" y1="2" x2="12" y2="12" stroke="currentColor" strokeWidth="0.8" />
+                        <line x1="2" y1="12" x2="12" y2="2" stroke="currentColor" strokeWidth="0.8" />
+                      </svg>
+                    </span>
+                  </div>
                 );
               }
               return (
