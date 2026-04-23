@@ -147,8 +147,8 @@ export default function ContactCTA() {
       <ShootingStars count={2} />
 
       <motion.div
-        initial="hidden"
-        animate={inView ? 'visible' : 'hidden'}
+        initial="visible"
+        animate="visible"
         variants={stagger}
         className="relative max-w-[1100px] mx-auto"
       >

@@ -33,8 +33,8 @@ function Reveal({ children, className = '', delay = 0 }) {
   return (
     <motion.div
       ref={ref}
-      initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
+      initial="visible"
+        animate="visible"
       variants={{
         hidden: { opacity: 0, y: 24 },
         visible: {

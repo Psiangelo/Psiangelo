@@ -72,7 +72,7 @@ export default function BlogPreview() {
         size={260}
         opacity={0.1}
       />
-      <motion.div initial="hidden" animate={inView ? 'visible' : 'hidden'} variants={stagger} className="max-w-[1100px] mx-auto">
+      <motion.div initial="visible" animate="visible" variants={stagger} className="max-w-[1100px] mx-auto">
         <SectionLabel label="Blog" />
         <motion.div variants={fadeUp} className="flex items-end justify-between mb-10">
           <h2 className="font-serif text-2xl text-text-bright">Publicacoes recentes</h2>

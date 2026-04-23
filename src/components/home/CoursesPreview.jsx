@@ -72,7 +72,7 @@ export default function CoursesPreview() {
         size={96}
         opacity={0.12}
       />
-      <motion.div initial="hidden" animate={inView ? 'visible' : 'hidden'} variants={stagger} className="max-w-[1100px] mx-auto">
+      <motion.div initial="visible" animate="visible" variants={stagger} className="max-w-[1100px] mx-auto">
         <SectionLabel label="Formacao" />
         <motion.div variants={fadeUp} className="flex items-end justify-between mb-10">
           <div>

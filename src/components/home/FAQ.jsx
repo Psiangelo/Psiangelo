@@ -101,8 +101,8 @@ export default function FAQ() {
         opacity={0.07}
       />
       <motion.div
-        initial="hidden"
-        animate={inView ? 'visible' : 'hidden'}
+        initial="visible"
+        animate="visible"
         variants={stagger}
         className="max-w-[1180px] mx-auto relative"
       >
