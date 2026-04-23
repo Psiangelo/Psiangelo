@@ -398,6 +398,8 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
     content_html: post?.content_html || '',
     featured_image: post?.featured_image || '',
     featured_image_alt: post?.featured_image_alt || '',
+    featured_cover: post?.featured_cover || '',
+    featured_cover_alt: post?.featured_cover_alt || '',
     author: post?.author || 'Angelo',
     seo_title: post?.seo_title || '',
     seo_description: post?.seo_description || '',
@@ -445,6 +447,8 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
       content_html: d.content_html,
       featured_image: d.featured_image,
       featured_image_alt: d.featured_image_alt,
+      featured_cover: d.featured_cover,
+      featured_cover_alt: d.featured_cover_alt,
       author: d.author,
       seo_title: d.seo_title,
       seo_description: d.seo_description,
@@ -708,7 +712,7 @@ export default function BlogManager({ addToast, addLogEntry }) {
   const handleNewPost = () => {
     const post = {
       id: generateId(), title: '', slug: '', excerpt: '', content: null, content_html: '',
-      featured_image: '', featured_image_alt: '', author: 'Angelo',
+      featured_image: '', featured_image_alt: '', featured_cover: '', featured_cover_alt: '', author: 'Angelo',
       seo_title: '', seo_description: '', tags: [], status: 'draft',
       pinned: false, seriesId: '', seriesOrder: 0, scheduled_at: '',
       created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
