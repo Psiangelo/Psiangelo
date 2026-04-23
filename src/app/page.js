@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, Fragment } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/home/Hero';
@@ -172,7 +172,7 @@ export default function HomePage() {
             (next === 'blog' || next === 'cursos');
           const afterCartografia = showCartografiaDivider && id === 'cartografia';
           return (
-            <div key={id}>
+            <Fragment key={id}>
               {node}
               {afterAboutPrelude && (
                 <Break>
@@ -189,7 +189,7 @@ export default function HomePage() {
                   <AlchemyDivider />
                 </Break>
               )}
-            </div>
+            </Fragment>
           );
         })}
       </main>
