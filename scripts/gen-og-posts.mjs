@@ -67,6 +67,11 @@ function resolveImageDataUri(src) {
   return fileToDataUri(resolve(pub, clean));
 }
 
+// Remove marcação *asterisco* de destaque (contexto de texto puro)
+function stripHighlights(s) {
+  return String(s ?? '').replace(/\*([^*]+)\*/g, '$1');
+}
+
 // XML-safe
 function esc(s) {
   return String(s ?? '')
@@ -298,7 +303,7 @@ async function main() {
       const imageUriV = resolveImageDataUri(post.featured_cover) || imageUri;
 
       const baseOpts = {
-        title: post.title || 'Sem título',
+        title: stripHighlights(post.title) || 'Sem título',
         eyebrow: post.tags?.[0] || 'Ensaio',
         date: fmtDate(post.updated_at || post.created_at),
         seed: slug,

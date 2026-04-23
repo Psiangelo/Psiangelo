@@ -14,6 +14,11 @@ import BlogSlugClient from './BlogSlugClient';
 
 const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 
+// Remove marcação *asterisco* de destaque — contexto de texto puro
+function stripHighlights(t) {
+  return typeof t === 'string' ? t.replace(/\*([^*]+)\*/g, '$1') : (t ?? '');
+}
+
 function getPosts() {
   const posts = siteContent?.data?.angelo_admin_blog;
   if (!Array.isArray(posts)) return [];
@@ -40,9 +45,9 @@ export function generateMetadata({ params }) {
     };
   }
 
-  const title = post.title || 'Publicação';
+  const title = stripHighlights(post.title) || 'Publicação';
   const description =
-    post.excerpt ||
+    stripHighlights(post.excerpt) ||
     'Ensaio de psicologia analítica — Psiangelo. Psicoterapia junguiana online.';
   const slug = post.slug || post.id;
   const ogImage  = `${SITE_URL}/og/posts/${slug}.png`;
