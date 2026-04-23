@@ -50,41 +50,59 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
     setOpen(true);
   };
 
+  // cálculos auxiliares: qual hora é "tarde" (< 18) e "noite" (>= 18)
+  const isNight = (h) => h >= 18;
+
+  const colGridTemplate = `58px repeat(${shownDays.length}, minmax(0, 1fr))`;
+
   return (
     <div ref={ref}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="relative overflow-hidden bg-bg-card/30 border border-border-subtle"
+        className="relative overflow-hidden bg-bg-card/30 border border-border-subtle rounded-sm"
       >
-        {/* Subtle grain ornament */}
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] pointer-events-none opacity-[0.04]">
+        {/* Mandala decorativa ambiente */}
+        <div className="absolute top-0 right-0 w-[320px] h-[320px] pointer-events-none opacity-[0.04] -translate-y-1/4 translate-x-1/4">
           <svg viewBox="0 0 300 300" className="w-full h-full">
             <g stroke="#B48C50" strokeWidth="0.3" fill="none">
               {Array.from({ length: 7 }).map((_, i) => (
                 <circle key={i} cx="150" cy="150" r={30 + i * 20} />
               ))}
+              {Array.from({ length: 12 }).map((_, i) => {
+                const a = (i * 30 * Math.PI) / 180;
+                return (
+                  <line
+                    key={i}
+                    x1={150 + Math.cos(a) * 30}
+                    y1={150 + Math.sin(a) * 30}
+                    x2={150 + Math.cos(a) * 150}
+                    y2={150 + Math.sin(a) * 150}
+                  />
+                );
+              })}
             </g>
           </svg>
         </div>
 
         {/* Header dias */}
-        <div
-          className="grid relative"
-          style={{ gridTemplateColumns: `72px repeat(${shownDays.length}, minmax(0, 1fr))` }}
-        >
+        <div className="grid relative bg-bg-warm/30" style={{ gridTemplateColumns: colGridTemplate }}>
           <div className="border-b border-r border-border-subtle/50" />
-          {shownDays.map((dow) => (
-            <div
-              key={dow}
-              className="border-b border-r border-border-subtle/50 last:border-r-0 py-3 px-2 text-center"
-            >
-              <p className="font-mono text-[0.58rem] text-accent tracking-[0.22em] uppercase">
-                {(byDow.get(dow).label || DOW_ABBR[dow]).slice(0, 3)}
-              </p>
-            </div>
-          ))}
+          {shownDays.map((dow) => {
+            const fullLabel = (byDow.get(dow).label || DOW_ABBR[dow]);
+            return (
+              <div
+                key={dow}
+                className="border-b border-r border-border-subtle/50 last:border-r-0 py-3 sm:py-4 px-2 text-center"
+              >
+                <p className="font-mono text-[0.55rem] sm:text-[0.6rem] text-accent tracking-[0.24em] uppercase">
+                  <span className="sm:hidden">{fullLabel.slice(0, 3)}</span>
+                  <span className="hidden sm:inline">{fullLabel}</span>
+                </p>
+              </div>
+            );
+          })}
         </div>
 
         {/* Grid */}
@@ -95,10 +113,34 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.2 + ri * 0.03 }}
             className="grid relative"
-            style={{ gridTemplateColumns: `72px repeat(${shownDays.length}, minmax(0, 1fr))` }}
+            style={{ gridTemplateColumns: colGridTemplate }}
           >
-            <div className="border-b border-r border-border-subtle/40 last:border-b-0 py-3 px-3 flex items-center justify-end">
-              <span className="font-mono text-[0.62rem] text-text-dim tracking-[0.12em]">
+            <div className="border-b border-r border-border-subtle/40 last:border-b-0 py-3 sm:py-3.5 px-2 sm:px-3 flex items-center justify-end gap-1.5">
+              {isNight(h) ? (
+                <svg width="9" height="9" viewBox="0 0 9 9" className="text-accent/50 flex-shrink-0">
+                  <path d="M 7 6 a 4 4 0 1 1 -4 -5 a 3 3 0 0 0 4 5 z" fill="currentColor" />
+                </svg>
+              ) : (
+                <svg width="9" height="9" viewBox="0 0 9 9" className="text-accent/40 flex-shrink-0">
+                  <circle cx="4.5" cy="4.5" r="2" fill="currentColor" />
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => {
+                    const rad = (a * Math.PI) / 180;
+                    return (
+                      <line
+                        key={a}
+                        x1={4.5 + Math.cos(rad) * 3}
+                        y1={4.5 + Math.sin(rad) * 3}
+                        x2={4.5 + Math.cos(rad) * 4}
+                        y2={4.5 + Math.sin(rad) * 4}
+                        stroke="currentColor"
+                        strokeWidth="0.8"
+                        strokeLinecap="round"
+                      />
+                    );
+                  })}
+                </svg>
+              )}
+              <span className="font-mono text-[0.58rem] sm:text-[0.62rem] text-text-dim tracking-[0.1em]">
                 {formatHour(h)}
               </span>
             </div>
@@ -109,7 +151,7 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
                 return (
                   <div
                     key={dow}
-                    className="border-b border-r border-border-subtle/40 last:border-r-0 bg-bg/30"
+                    className="border-b border-r border-border-subtle/40 last:border-r-0 bg-bg/40"
                   />
                 );
               }
@@ -117,11 +159,14 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
                 <button
                   key={dow}
                   onClick={() => handleClick(dow, h)}
-                  className="group relative border-b border-r border-border-subtle/40 last:border-r-0 py-4 px-2 transition-colors hover:bg-accent/10 focus:bg-accent/10 focus:outline-none"
+                  className="group relative border-b border-r border-border-subtle/40 last:border-r-0 py-3.5 sm:py-4 transition-colors hover:bg-accent/10 focus:bg-accent/10 focus:outline-none"
+                  aria-label={`Marcar ${byDow.get(dow).label || DOW_ABBR[dow]} às ${formatHour(h)}`}
                 >
-                  <span className="block w-1 h-1 rounded-full bg-accent/30 mx-auto group-hover:bg-accent transition-colors" />
-                  <span className="absolute inset-x-0 bottom-1 text-center font-mono text-[0.55rem] text-accent opacity-0 group-hover:opacity-100 transition-opacity tracking-[0.15em]">
-                    marcar →
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="block w-1.5 h-1.5 rounded-full bg-accent/30 group-hover:bg-accent group-hover:scale-150 transition-all" />
+                  </span>
+                  <span className="absolute inset-x-0 bottom-1 text-center font-mono text-[0.5rem] text-accent opacity-0 group-hover:opacity-100 transition-opacity tracking-[0.15em] hidden sm:block">
+                    marcar ↵
                   </span>
                 </button>
               );
@@ -130,9 +175,11 @@ export default function TherapyWeekGrid({ schedule, cta, whatsappNumber }) {
         ))}
       </motion.div>
 
-      <p className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.22em] uppercase mt-4 text-center">
-        Clique em qualquer horário para propor pelo WhatsApp
-      </p>
+      <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
+        <p className="font-mono text-[0.55rem] text-text-dim/80 tracking-[0.22em] uppercase text-center">
+          Clique em qualquer horário para propor pelo WhatsApp
+        </p>
+      </div>
 
       <TherapyScheduler
         open={open}

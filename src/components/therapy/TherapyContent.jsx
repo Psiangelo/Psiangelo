@@ -56,17 +56,19 @@ export default function TherapyContent() {
   return (
     <>
       {/* Hero ornamentado: mandala + campos estelares + CTA primário embutido */}
-      <section className="relative -mt-4 md:-mt-12 mb-6 md:mb-14 px-5 sm:px-6 md:px-12">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <section className="relative -mt-2 md:-mt-8 mb-8 md:mb-16 px-5 sm:px-6 md:px-12">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
           <StarField count={42} maxOpacity={0.45} accentChance={0.25} />
           <NebulaField count={3} />
-          <HeroMandala size={720} opacity={0.05} />
+          <div className="hidden md:block absolute -right-40 -top-40">
+            <HeroMandala size={720} opacity={0.05} />
+          </div>
         </div>
         <div className="relative max-w-[1100px] mx-auto">
           <Reveal>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <TherapyCTAButton cta={data.cta} whatsappNumber={data.whatsappNumber} helper={false} />
-              <span className="font-serif italic text-[0.92rem] text-text-dim max-w-xs">
+              <span className="font-serif italic text-[0.92rem] text-text-dim max-w-xs leading-relaxed">
                 {data.cta.helper}
               </span>
             </div>
@@ -125,10 +127,25 @@ export default function TherapyContent() {
         </div>
       </section>
 
-      {/* Divisor ornamental */}
-      <Reveal className="py-10">
-        <OrnamentalDivider />
-      </Reveal>
+      {/* Pull quote — Jung sobre o encontro clínico */}
+      <section className="py-12 md:py-20 px-5 sm:px-6 md:px-12 relative">
+        <Reveal className="max-w-[820px] mx-auto text-center">
+          <OrnamentalDivider />
+          <blockquote className="mt-8 mb-6">
+            <p className="font-serif italic text-[clamp(1.3rem,2.6vw,1.85rem)] text-text-bright leading-[1.45] tracking-[-0.005em]">
+              &ldquo;O encontro de duas personalidades é como o contato de duas
+              substâncias químicas: se há alguma reação,{' '}
+              <em className="text-accent not-italic" style={{ fontStyle: 'italic' }}>
+                ambas se transformam.
+              </em>
+              &rdquo;
+            </p>
+          </blockquote>
+          <p className="font-mono text-[0.58rem] text-text-dim tracking-[0.3em] uppercase">
+            C. G. Jung
+          </p>
+        </Reveal>
+      </section>
 
       {/* COMO FUNCIONA — timeline vertical editorial */}
       <section className="relative py-10 md:py-20 px-5 sm:px-6 md:px-12 overflow-hidden">
