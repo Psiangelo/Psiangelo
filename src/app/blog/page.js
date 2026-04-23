@@ -864,30 +864,46 @@ export default function BlogPage() {
                 </div>
               )}
 
-              {/* Grid assimétrico — 6 colunas, primeiro card span 4 (large), próximos 2 (default), depois alterna */}
+              {/* Grid assimétrico — no mobile vira carrossel horizontal pra n virar uma parede vertical */}
               {restPosts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5 lg:gap-6 lg:auto-rows-min">
-                  {restPosts.map((post, i) => {
-                    const mod = i % 7;
-                    let span = 'lg:col-span-2';
-                    let variant = 'default';
-                    if (mod === 0) { span = 'lg:col-span-4'; variant = 'large'; }
-                    else if (mod === 3) { span = 'lg:col-span-2'; variant = 'text'; }
-                    else if (mod === 4) { span = 'lg:col-span-4'; variant = 'large'; }
-                    else if (mod === 6) { span = 'lg:col-span-2'; variant = 'text'; }
-                    // Capa vertical 9:16 — sempre default + span 2 (não fica
-                    // gigante em 4-col como o horizontal)
-                    if (post.featured_cover && variant !== 'text') {
-                      span = 'lg:col-span-2';
-                      variant = 'default';
-                    }
-                    return (
-                      <div key={post.id} className={span}>
-                        <BlogCard post={post} onClick={() => handleSelectPost(post)} variant={variant} />
-                      </div>
-                    );
-                  })}
-                </div>
+                <>
+                  {/* Hint de swipe — só mobile, só se houver mais de 1 post */}
+                  {restPosts.length > 1 && (
+                    <div className="sm:hidden mb-3 flex items-center gap-2 text-text-dim/70">
+                      <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase">
+                        Arraste
+                      </span>
+                      <span aria-hidden className="font-mono text-[0.7rem] text-accent/60 tracking-[-0.08em]">
+                        &gt;&gt;&gt;
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 -mx-5 px-5 pb-6 scrollbar-hide sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none sm:mx-0 sm:px-0 sm:pb-0 lg:grid-cols-6 lg:gap-6 lg:auto-rows-min">
+                    {restPosts.map((post, i) => {
+                      const mod = i % 7;
+                      let span = 'lg:col-span-2';
+                      let variant = 'default';
+                      if (mod === 0) { span = 'lg:col-span-4'; variant = 'large'; }
+                      else if (mod === 3) { span = 'lg:col-span-2'; variant = 'text'; }
+                      else if (mod === 4) { span = 'lg:col-span-4'; variant = 'large'; }
+                      else if (mod === 6) { span = 'lg:col-span-2'; variant = 'text'; }
+                      // Capa vertical 9:16 — sempre default + span 2 (não fica
+                      // gigante em 4-col como o horizontal)
+                      if (post.featured_cover && variant !== 'text') {
+                        span = 'lg:col-span-2';
+                        variant = 'default';
+                      }
+                      return (
+                        <div
+                          key={post.id}
+                          className={`w-[78vw] shrink-0 snap-start sm:w-auto sm:shrink ${span}`}
+                        >
+                          <BlogCard post={post} onClick={() => handleSelectPost(post)} variant={variant} />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
               ) : publishedPosts.length > 0 ? (
                 <div className="text-center py-20">
                   <p className="text-text-dim font-sans text-sm">Nenhuma publicação encontrada com esses filtros.</p>
