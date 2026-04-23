@@ -463,23 +463,25 @@ function BlogCard({ post, onClick, variant = 'default' }) {
 
       <div className="pl-4">
         {(post.featured_cover || post.featured_image) ? (
-          <PosterCover
-            src={post.featured_cover || post.featured_image}
-            alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
-            aspect={post.featured_cover ? '9/16' : (isLarge ? '16/10' : '16/9')}
-            seed={seed}
-            intensity={2}
-            titleOverlay
-            eyebrow={post.tags?.[0]}
-            title={renderHighlightedTitle(post.title, { accentClassName: 'text-accent not-italic' })}
-            footer={
-              <>
-                <time>{formatDate(post.updated_at)}</time>
-                <span className="text-text-dim/70">·</span>
-                <span>{readTime} min</span>
-              </>
-            }
-          />
+          <div className={post.featured_cover ? 'sm:max-w-[280px] mx-auto' : ''}>
+            <PosterCover
+              src={post.featured_cover || post.featured_image}
+              alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
+              aspect={post.featured_cover ? '9/16' : (isLarge ? '16/10' : '16/9')}
+              seed={seed}
+              intensity={2}
+              titleOverlay
+              eyebrow={post.tags?.[0]}
+              title={renderHighlightedTitle(post.title, { accentClassName: 'text-accent not-italic' })}
+              footer={
+                <>
+                  <time>{formatDate(post.updated_at)}</time>
+                  <span className="text-text-dim/70">·</span>
+                  <span>{readTime} min</span>
+                </>
+              }
+            />
+          </div>
         ) : (
           // Sem imagem: card somente-texto com a mesma linguagem visual
           <div className="bg-bg-card border border-border-subtle group-hover:border-accent/40 rounded-lg p-6 transition-colors">
@@ -866,8 +868,6 @@ export default function BlogPage() {
               {restPosts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5 lg:gap-6 lg:auto-rows-min">
                   {restPosts.map((post, i) => {
-                    // Padrão: 0=large(4col), 1=default(2col), 2=default(2col),
-                    //         3=text(2col), 4=default(4col), 5=default(2col), 6=default(2col), 7=default(2col), 8=text(2col)…
                     const mod = i % 7;
                     let span = 'lg:col-span-2';
                     let variant = 'default';
@@ -875,6 +875,12 @@ export default function BlogPage() {
                     else if (mod === 3) { span = 'lg:col-span-2'; variant = 'text'; }
                     else if (mod === 4) { span = 'lg:col-span-4'; variant = 'large'; }
                     else if (mod === 6) { span = 'lg:col-span-2'; variant = 'text'; }
+                    // Capa vertical 9:16 — sempre default + span 2 (não fica
+                    // gigante em 4-col como o horizontal)
+                    if (post.featured_cover && variant !== 'text') {
+                      span = 'lg:col-span-2';
+                      variant = 'default';
+                    }
                     return (
                       <div key={post.id} className={span}>
                         <BlogCard post={post} onClick={() => handleSelectPost(post)} variant={variant} />
