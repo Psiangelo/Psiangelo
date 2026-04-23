@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { fadeUp, stagger } from '@/lib/constants';
 import SectionLabel from '@/components/SectionLabel';
 import { BranchOrnament, SpiralAccent } from '@/components/illustrations';
+import PosterCover from '@/components/ui/PosterCover';
+import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 
@@ -81,33 +83,60 @@ export default function BlogPreview() {
           </Link>
         </motion.div>
 
-        <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <motion.div key={post.id} variants={fadeUp}>
-              <Link href={`/blog?post=${post.slug || post.id}`} className="group block">
-                <div className="bg-bg-card border border-border-subtle rounded-xl overflow-hidden hover:border-accent/30 transition-all duration-300 group-hover:-translate-y-1">
-                  {post.featured_image && (
-                    <div className="aspect-[16/9] overflow-hidden bg-bg-warm">
-                      <img src={post.featured_image} alt={post.featured_image_alt || post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer"
-                        loading="lazy" decoding="async" />
-                    </div>
-                  )}
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <time className="text-[10px] uppercase tracking-widest text-text-dim font-sans">{formatDate(post.updated_at)}</time>
-                      <span className="text-[10px] text-text-dim font-sans">{calculateReadingTime(post.content_html)} min</span>
-                      {post.tags && post.tags.length > 0 && (
-                        <span className="text-[10px] px-2 py-0.5 bg-accent/10 text-accent rounded-full font-sans">{post.tags[0]}</span>
-                      )}
-                    </div>
-                    <h3 className="font-serif text-base text-text-bright mb-2 group-hover:text-accent transition-colors line-clamp-2">{post.title}</h3>
-                    <p className="text-sm text-text-dim leading-relaxed line-clamp-3">{post.excerpt}</p>
+        <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 justify-items-center">
+          {posts.map((post) => {
+            const readTime = calculateReadingTime(post.content_html);
+            const seed = post.slug || post.id || post.title || '';
+            const hasImage = post.featured_cover || post.featured_image;
+            return (
+              <motion.article key={post.id} variants={fadeUp} className="group w-full max-w-[300px] relative">
+                <Link href={`/blog/${post.slug || post.id}`} className="block">
+                  <span aria-hidden className="absolute left-0 top-3 bottom-3 w-[2px] bg-accent/20 group-hover:bg-accent/60 transition-colors" />
+                  <div className="pl-3">
+                    {hasImage ? (
+                      <PosterCover
+                        src={post.featured_cover || post.featured_image}
+                        alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
+                        aspect={post.featured_cover ? '9/16' : '16/9'}
+                        seed={seed}
+                        intensity={2}
+                        titleOverlay
+                        eyebrow={post.tags?.[0]}
+                        title={renderHighlightedTitle(post.title, { accentClassName: 'text-accent not-italic' })}
+                        footer={
+                          <>
+                            <time>{formatDate(post.updated_at)}</time>
+                            <span className="text-text-dim/70">·</span>
+                            <span>{readTime} min</span>
+                          </>
+                        }
+                      />
+                    ) : (
+                      <div className="bg-bg-card border border-border-subtle group-hover:border-accent/40 rounded-lg p-5 transition-colors">
+                        <div className="flex items-center gap-3 mb-3 flex-wrap">
+                          <time className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-text-dim">{formatDate(post.updated_at)}</time>
+                          <span className="font-mono text-[0.55rem] text-text-dim/70">{readTime} min</span>
+                          {post.tags?.[0] && (
+                            <span className="font-mono text-[0.55rem] tracking-[0.2em] uppercase text-accent">{post.tags[0]}</span>
+                          )}
+                        </div>
+                        <h3 className="font-serif text-lg text-text-bright leading-tight mb-3 group-hover:text-accent transition-colors line-clamp-2">
+                          {renderHighlightedTitle(post.title)}
+                        </h3>
+                        <p className="text-[0.82rem] text-text-dim leading-relaxed line-clamp-3">{post.excerpt}</p>
+                      </div>
+                    )}
+                    {hasImage && post.excerpt && (
+                      <div className="mt-4 flex items-start gap-3">
+                        <span className="block w-8 h-px bg-accent/40 mt-[10px] flex-shrink-0 group-hover:bg-accent/80 transition-colors" />
+                        <p className="text-[0.82rem] text-text-dim leading-relaxed flex-1 line-clamp-2">{post.excerpt}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                </Link>
+              </motion.article>
+            );
+          })}
         </motion.div>
       </motion.div>
     </section>
