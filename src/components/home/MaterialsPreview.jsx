@@ -127,7 +127,7 @@ export default function MaterialsPreview() {
   return (
     <section
       ref={ref}
-      className="py-16 md:py-32 px-5 sm:px-6 md:px-12 section-border-t section-border-b relative overflow-hidden"
+      className="py-12 md:py-20 px-5 sm:px-6 md:px-12 section-border-t section-border-b relative overflow-hidden"
     >
       {/* Espiral decorativa no canto esquerdo */}
       <SpiralAccent

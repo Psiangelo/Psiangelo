@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/home/Hero';
@@ -25,6 +26,16 @@ import {
 } from '@/components/illustrations';
 import { useVisibility } from '@/lib/useVisibility';
 import { useHomeSections } from '@/lib/useHomeSections';
+import { useSitedata } from '@/lib/useSitedata';
+import {
+  getMaterials,
+  getTrilhas,
+  getTestimonials,
+  getFaqs,
+  SITEDATA_KEYS,
+  DEFAULT_FAQS,
+  DEFAULT_TESTIMONIALS,
+} from '@/lib/sitedata';
 
 function Break({ children, pad = 'py-4' }) {
   return (
@@ -32,42 +43,114 @@ function Break({ children, pad = 'py-4' }) {
   );
 }
 
-// Renderers por id — cada um recebe o mapa de visibilidade e devolve o JSX
-// (ou null quando a seção está oculta / não deve renderizar).
-const RENDERERS = {
-  hero: () => <Hero />,
-  disclaimer: (v) => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
-  seoIntro: () => <HomeSeoIntro />,
-  audience: () => <AudienceCards heading="Para quem atendo" />,
-  approach: () => <HomeApproach />,
-  about: (v) => (v.about ? <About /> : null),
-  prelude: (v) => (v.prelude ? <Prelude /> : null),
-  trilhas: (v) => (v.trilhas ? <StudyPaths /> : null),
-  jungQuote: () => <JungQuote />,
-  materials: (v) => (v.materiais ? <MaterialsPreview /> : null),
-  blog: (v) => (v.blog ? <BlogPreview /> : null),
-  cursos: (v) => (v.cursos ? <CoursesPreview /> : null),
-  cartografia: (v) => (v.cartografia ? <Cartography /> : null),
-  depoimentos: (v) => (v.depoimentos ? <Testimonials /> : null),
-  faq: (v) => (v.faq ? <FAQ /> : null),
-  contato: (v) => (v.contato ? <ContactCTA /> : null),
-};
+// Lê posts publicados do localStorage (mesmo padrão do BlogPreview)
+function usePublishedBlogCount() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const load = () => {
+      try {
+        const raw = localStorage.getItem('angelo_admin_blog');
+        if (!raw) return setCount(0);
+        const all = JSON.parse(raw);
+        setCount(all.filter((p) => p?.status === 'published').length);
+      } catch { setCount(0); }
+    };
+    load();
+    const onChanged = (e) => {
+      if (!e.detail?.key || e.detail.key === 'angelo_admin_blog') load();
+    };
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('sitedata:bootstrap', load);
+    window.addEventListener('storage', load);
+    return () => {
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('sitedata:bootstrap', load);
+      window.removeEventListener('storage', load);
+    };
+  }, []);
+  return count;
+}
+
+function useCoursesCount() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const load = () => {
+      try {
+        const raw = localStorage.getItem('angelo_admin_courses');
+        if (!raw) return setCount(0);
+        const all = JSON.parse(raw);
+        setCount(Array.isArray(all) ? all.length : 0);
+      } catch { setCount(0); }
+    };
+    load();
+    const onChanged = (e) => {
+      if (!e.detail?.key || e.detail.key === 'angelo_admin_courses') load();
+    };
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('sitedata:bootstrap', load);
+    window.addEventListener('storage', load);
+    return () => {
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('sitedata:bootstrap', load);
+      window.removeEventListener('storage', load);
+    };
+  }, []);
+  return count;
+}
 
 export default function HomePage() {
   const { visibility: v } = useVisibility();
   const sections = useHomeSections();
 
-  // Monta a lista de nodes ativos (filtra nulls de visibilidade)
+  // Dados reais — usados pra decidir o que tem conteúdo e o que retorna null
+  const materials    = useSitedata(getMaterials,     [], SITEDATA_KEYS.materials);
+  const trilhas      = useSitedata(getTrilhas,       [], SITEDATA_KEYS.trilhas);
+  const testimonials = useSitedata(getTestimonials,  DEFAULT_TESTIMONIALS, SITEDATA_KEYS.testimonials);
+  const faqs         = useSitedata(getFaqs,          DEFAULT_FAQS,         SITEDATA_KEYS.faqs);
+  const blogCount    = usePublishedBlogCount();
+  const coursesCount = useCoursesCount();
+
+  const has = useMemo(() => ({
+    materials:    (materials || []).some((m) => m.available),
+    trilhas:      (trilhas || []).length > 0,
+    blog:         blogCount > 0,
+    cursos:       coursesCount > 0,
+    depoimentos:  (testimonials || []).length > 0,
+    faq:          (faqs || []).length > 0,
+  }), [materials, trilhas, testimonials, faqs, blogCount, coursesCount]);
+
+  // RENDERERS data-aware: só "rende­riza" (vira item de rendered) se visibility
+  // estiver on AND se existe conteúdo de fato — evita wrapper div vazio
+  // carregando divider órfão, que é o que dava "buraco" na home.
+  const RENDERERS = {
+    hero:        () => <Hero />,
+    disclaimer:  () => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
+    seoIntro:    () => <HomeSeoIntro />,
+    audience:    () => <AudienceCards heading="Para quem atendo" />,
+    approach:    () => <HomeApproach />,
+    about:       () => (v.about ? <About /> : null),
+    prelude:     () => (v.prelude ? <Prelude /> : null),
+    trilhas:     () => (v.trilhas && has.trilhas ? <StudyPaths /> : null),
+    jungQuote:   () => <JungQuote />,
+    materials:   () => (v.materiais && has.materials ? <MaterialsPreview /> : null),
+    blog:        () => (v.blog && has.blog ? <BlogPreview /> : null),
+    cursos:      () => (v.cursos && has.cursos ? <CoursesPreview /> : null),
+    cartografia: () => (v.cartografia ? <Cartography /> : null),
+    depoimentos: () => (v.depoimentos && has.depoimentos ? <Testimonials /> : null),
+    faq:         () => (v.faq && has.faq ? <FAQ /> : null),
+    contato:     () => (v.contato ? <ContactCTA /> : null),
+  };
+
   const rendered = sections
     .map((id) => {
       const fn = RENDERERS[id];
       if (!fn) return null;
-      const node = fn(v);
+      const node = fn();
       return node ? { id, node } : null;
     })
     .filter(Boolean);
 
-  // Divisores contextuais — só aparecem se os vizinhos certos existiram
+  // Divisores contextuais — só aparecem se os vizinhos certos existem de verdade
   const renderedIds = new Set(rendered.map((r) => r.id));
   const showAboutPreludeDivider = renderedIds.has('about') || renderedIds.has('prelude');
   const showMaterialsDivider =
@@ -80,16 +163,13 @@ export default function HomePage() {
       <main>
         {rendered.map(({ id, node }, i) => {
           const next = rendered[i + 1]?.id;
-          // Divisor mandala: logo após about ou prelude se o próximo não for o par
           const afterAboutPrelude =
             showAboutPreludeDivider &&
             (id === 'prelude' || (id === 'about' && next !== 'prelude'));
-          // Divisor diamond chain: entre materials e (blog|cursos)
           const afterMaterials =
             showMaterialsDivider &&
             id === 'materials' &&
             (next === 'blog' || next === 'cursos');
-          // Divisor alchemy: logo após cartografia
           const afterCartografia = showCartografiaDivider && id === 'cartografia';
           return (
             <div key={id}>

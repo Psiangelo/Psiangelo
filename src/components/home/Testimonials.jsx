@@ -86,7 +86,7 @@ export default function Testimonials() {
   if (!testimonials || testimonials.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-32 px-5 sm:px-6 md:px-12 relative overflow-hidden" ref={ref}>
+    <section className="py-12 md:py-20 px-5 sm:px-6 md:px-12 relative overflow-hidden" ref={ref}>
       <VesicaPiscis
         className="absolute top-10 -right-12 pointer-events-none hidden md:block"
         size={220}
