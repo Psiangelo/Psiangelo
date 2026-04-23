@@ -7,19 +7,33 @@ import JungQuote from '@/components/JungQuote';
 import { LogoMarkFull } from '@/components/ui/LogoMark';
 import { getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useVisibility } from '@/lib/useVisibility';
 
 export default function Footer({ showMaterialsCta = false }) {
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const { visibility: v } = useVisibility();
   const socials = [
     settings.instagramLink && { label: 'Instagram', href: settings.instagramLink },
     settings.youtubeLink   && { label: 'YouTube',   href: settings.youtubeLink },
     settings.emailAddress  && { label: 'E-mail',    href: `mailto:${settings.emailAddress}` },
   ].filter(Boolean);
 
+  const navLinks = [
+    { href: '/',          label: 'Home',      key: null },
+    { href: '/#sobre',    label: 'Sobre',     key: 'about' },
+    { href: '/materiais', label: 'Materiais', key: 'materiais' },
+    { href: '/trilhas',   label: 'Trilhas',   key: 'trilhas' },
+    { href: '/cursos',    label: 'Cursos',    key: 'cursos' },
+    { href: '/blog',      label: 'Blog',      key: 'blog' },
+    { href: '/atlas',     label: 'Atlas',     key: 'atlas' },
+    { href: '/glossario', label: 'Glossário', key: 'glossario' },
+    { href: '/feed.xml',  label: 'RSS',       key: 'blog' },
+  ].filter((l) => l.key == null || v[l.key] !== false);
+
   return (
     <footer className="border-t border-border-subtle">
       {/* Optional CTA band */}
-      {showMaterialsCta && (
+      {showMaterialsCta && v.materiais !== false && (
         <div className="py-16 flex flex-col items-center text-center px-6 border-b border-border-subtle">
           <p className="font-mono text-[0.65rem] text-accent tracking-[0.35em] uppercase mb-4">
             Pronto para estudar?
@@ -52,11 +66,15 @@ export default function Footer({ showMaterialsCta = false }) {
               Navegação
             </h4>
             <div className="flex flex-col gap-2">
-              <Link href="/" className="text-sm text-text-dim hover:text-text-bright transition-colors">Home</Link>
-              <Link href="/#sobre" className="text-sm text-text-dim hover:text-text-bright transition-colors">Sobre</Link>
-              <Link href="/materiais" className="text-sm text-text-dim hover:text-text-bright transition-colors">Materiais</Link>
-              <Link href="/glossario" className="text-sm text-text-dim hover:text-text-bright transition-colors">Glossário</Link>
-              <Link href="/feed.xml" className="text-sm text-text-dim hover:text-text-bright transition-colors">RSS</Link>
+              {navLinks.map((l) => (
+                <Link
+                  key={l.href + l.label}
+                  href={l.href}
+                  className="text-sm text-text-dim hover:text-text-bright transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
           <div>

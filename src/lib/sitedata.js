@@ -19,17 +19,18 @@ import {
 } from '@/data/materials';
 
 export const SITEDATA_KEYS = {
-  trilhas:      'angelo_admin_trilhas',
-  cartoNodes:   'angelo_admin_cartography_nodes',
-  cartoEdges:   'angelo_admin_cartography_edges',
-  homepage:     'angelo_admin_homepage',
-  bio:          'angelo_admin_bio',
-  visibility:   'angelo_admin_visibility',
-  materials:    'angelo_admin_materials',
-  comingSoon:   'angelo_admin_coming_soon',
-  testimonials: 'angelo_admin_testimonials',
-  faqs:         'angelo_admin_faqs',
-  settings:     'angelo_admin_settings',
+  trilhas:        'angelo_admin_trilhas',
+  cartoNodes:     'angelo_admin_cartography_nodes',
+  cartoEdges:     'angelo_admin_cartography_edges',
+  homepage:       'angelo_admin_homepage',
+  bio:            'angelo_admin_bio',
+  visibility:     'angelo_admin_visibility',
+  materials:      'angelo_admin_materials',
+  comingSoon:     'angelo_admin_coming_soon',
+  testimonials:   'angelo_admin_testimonials',
+  faqs:           'angelo_admin_faqs',
+  settings:       'angelo_admin_settings',
+  atlasOverrides: 'angelo_admin_atlas_overrides',
 };
 
 /* ===================================================================
@@ -104,6 +105,22 @@ export const DEFAULT_HOMEPAGE = {
       { year: 'UNICAP', label: 'Liga',            detail: 'Psicologia Analítica' },
       { year: 'Hoje',   label: 'Clínica',         detail: 'Atendimento e ensino' },
     ],
+  },
+  contact: {
+    sectionLabel: 'Contato',
+    title: 'Pronto para aprofundar seus estudos?',
+    lead: 'Dê o próximo passo na sua formação em psicologia analítica. Entre em contato pelo WhatsApp — é o canal mais rápido para conversarmos.',
+    primaryLabel: 'Canal principal',
+    primaryHeadingPrefix: 'Fale comigo no',
+    primaryHeadingEmphasis: 'WhatsApp',
+    primaryText: 'Tire dúvidas sobre os materiais, monte um pacote, ou apenas converse sobre psicologia analítica.',
+    primaryButton: 'Abrir conversa',
+    whatsappNumber: '5581987349114',
+    instagramLabel: 'Instagram',
+    instagramValue: '@psiangelo',
+    instagramUrl: 'https://instagram.com/psiangelo',
+    emailLabel: 'E-mail',
+    emailValue: 'contato@angelopsicologia.com',
   },
 };
 
@@ -189,6 +206,7 @@ export const getHomepage   = () => {
     hero:    { ...DEFAULT_HOMEPAGE.hero,    ...(stored.hero    || {}) },
     prelude: { ...DEFAULT_HOMEPAGE.prelude, ...(stored.prelude || {}) },
     about:   { ...DEFAULT_HOMEPAGE.about,   ...(stored.about   || {}) },
+    contact: { ...DEFAULT_HOMEPAGE.contact, ...(stored.contact || {}) },
   };
 };
 export const setHomepage = (v) => writeJson(SITEDATA_KEYS.homepage, v);
@@ -254,6 +272,22 @@ export const isVisible = (key) => {
   if (typeof window === 'undefined') return DEFAULT_VISIBILITY[key] ?? true;
   return getSiteVisibility()[key] ?? true;
 };
+
+/* ===================================================================
+   ATLAS OVERRIDES — curadoria de publicação por nota/pasta
+=================================================================== */
+
+export const DEFAULT_ATLAS_OVERRIDES = {
+  hiddenNotes: [],   // array de "section/slug"
+  hiddenFolders: [], // array de "section/raw1/raw2/..." (path completo desde a seção)
+};
+
+export const getAtlasOverrides = () => {
+  const stored = readJson(SITEDATA_KEYS.atlasOverrides, null);
+  if (!stored) return DEFAULT_ATLAS_OVERRIDES;
+  return { ...DEFAULT_ATLAS_OVERRIDES, ...stored };
+};
+export const setAtlasOverrides = (v) => writeJson(SITEDATA_KEYS.atlasOverrides, v);
 
 /* ===================================================================
    MATERIALS · COMING SOON

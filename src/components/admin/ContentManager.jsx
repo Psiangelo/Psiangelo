@@ -84,6 +84,7 @@ export default function ContentManager({ addToast, addLogEntry }) {
     { id: 'hero', label: 'Hero' },
     { id: 'prelude', label: 'Prelúdio' },
     { id: 'about', label: 'Sobre' },
+    { id: 'contact', label: 'Contato' },
   ];
 
   return (
@@ -224,6 +225,140 @@ export default function ContentManager({ addToast, addLogEntry }) {
             ))}
           </div>
         </>
+      )}
+
+      {/* CONTACT */}
+      {activeBlock === 'contact' && (
+        <div className={CARD + ' space-y-4'}>
+          <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">
+            Contato (seção final da home)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL}>Label da seção</label>
+              <input
+                value={data.contact?.sectionLabel ?? ''}
+                onChange={(e) => updateBlock('contact', 'sectionLabel', e.target.value)}
+                className={INPUT}
+              />
+            </div>
+            <div>
+              <label className={LABEL}>Número WhatsApp (só dígitos)</label>
+              <input
+                value={data.contact?.whatsappNumber ?? ''}
+                onChange={(e) => updateBlock('contact', 'whatsappNumber', e.target.value.replace(/\D/g, ''))}
+                className={INPUT}
+                placeholder="5581987349114"
+              />
+            </div>
+          </div>
+          <div>
+            <label className={LABEL}>Título (italic)</label>
+            <input
+              value={data.contact?.title ?? ''}
+              onChange={(e) => updateBlock('contact', 'title', e.target.value)}
+              className={INPUT}
+            />
+          </div>
+          <div>
+            <label className={LABEL}>Subtítulo (lead)</label>
+            <textarea
+              value={data.contact?.lead ?? ''}
+              rows={3}
+              onChange={(e) => updateBlock('contact', 'lead', e.target.value)}
+              className={TEXTAREA}
+            />
+          </div>
+
+          <div className="border-t border-[rgba(180,140,80,0.1)] pt-3">
+            <h4 className="text-xs uppercase tracking-widest text-[#6E6458] font-sans mb-3">Card principal (WhatsApp)</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className={LABEL}>Label (caps acima do título)</label>
+                <input
+                  value={data.contact?.primaryLabel ?? ''}
+                  onChange={(e) => updateBlock('contact', 'primaryLabel', e.target.value)}
+                  className={INPUT}
+                />
+              </div>
+              <div>
+                <label className={LABEL}>Texto do botão</label>
+                <input
+                  value={data.contact?.primaryButton ?? ''}
+                  onChange={(e) => updateBlock('contact', 'primaryButton', e.target.value)}
+                  className={INPUT}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 mt-3">
+              <div>
+                <label className={LABEL}>Título — prefixo regular</label>
+                <input
+                  value={data.contact?.primaryHeadingPrefix ?? ''}
+                  onChange={(e) => updateBlock('contact', 'primaryHeadingPrefix', e.target.value)}
+                  className={INPUT}
+                />
+              </div>
+              <div>
+                <label className={LABEL}>Título — ênfase (italic)</label>
+                <input
+                  value={data.contact?.primaryHeadingEmphasis ?? ''}
+                  onChange={(e) => updateBlock('contact', 'primaryHeadingEmphasis', e.target.value)}
+                  className={INPUT}
+                />
+              </div>
+            </div>
+            <div className="mt-3">
+              <label className={LABEL}>Parágrafo do card</label>
+              <textarea
+                value={data.contact?.primaryText ?? ''}
+                rows={3}
+                onChange={(e) => updateBlock('contact', 'primaryText', e.target.value)}
+                className={TEXTAREA}
+              />
+            </div>
+          </div>
+
+          <div className="border-t border-[rgba(180,140,80,0.1)] pt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <h4 className="text-xs uppercase tracking-widest text-[#6E6458] font-sans">Instagram</h4>
+              <input
+                value={data.contact?.instagramLabel ?? ''}
+                onChange={(e) => updateBlock('contact', 'instagramLabel', e.target.value)}
+                className={INPUT}
+                placeholder="Label (Instagram)"
+              />
+              <input
+                value={data.contact?.instagramValue ?? ''}
+                onChange={(e) => updateBlock('contact', 'instagramValue', e.target.value)}
+                className={INPUT}
+                placeholder="@usuario"
+              />
+              <input
+                value={data.contact?.instagramUrl ?? ''}
+                onChange={(e) => updateBlock('contact', 'instagramUrl', e.target.value)}
+                className={INPUT}
+                placeholder="https://instagram.com/..."
+              />
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-xs uppercase tracking-widest text-[#6E6458] font-sans">E-mail</h4>
+              <input
+                value={data.contact?.emailLabel ?? ''}
+                onChange={(e) => updateBlock('contact', 'emailLabel', e.target.value)}
+                className={INPUT}
+                placeholder="Label (E-mail)"
+              />
+              <input
+                value={data.contact?.emailValue ?? ''}
+                onChange={(e) => updateBlock('contact', 'emailValue', e.target.value)}
+                className={INPUT}
+                placeholder="contato@..."
+              />
+              <p className="text-[10px] text-[#6E6458] font-sans italic mt-1">Deixe vazio pra esconder o card.</p>
+            </div>
+          </div>
+        </div>
       )}
 
       {dirty && (

@@ -1,12 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useAtlasOverrides } from '@/lib/useAtlasOverrides';
 
 // Profundidade até a qual pastas começam expandidas.
 const DEFAULT_EXPANDED_DEPTH = 1;
 
-export default function AtlasTree({ tree }) {
+export default function AtlasTree({ tree, sectionSlug }) {
+  const { isNoteHidden, isFolderHidden, ready } = useAtlasOverrides();
+
+  // Filtra recursivamente — pastas sem notas visíveis somem também
+  const visibleTree = useMemo(() => {
+    if (!ready) return tree;
+    const prune = (node, parentPath) => {
+      const currentPath = node.type === 'root' ? sectionSlug : parentPath + '/' + node.raw;
+      if (node.type !== 'root' && isFolderHidden(currentPath)) return null;
+      const notes = node.notes.filter((n) => !isNoteHidden(n));
+      const children = node.children
+        .map((f) => prune(f, currentPath))
+        .filter(Boolean);
+      if (node.type !== 'root' && notes.length === 0 && children.length === 0) return null;
+      const totalNotes =
+        notes.length + children.reduce((a, c) => a + c.totalNotes, 0);
+      return { ...node, notes, children, totalNotes };
+    };
+    return prune(tree, sectionSlug);
+  }, [tree, ready, isNoteHidden, isFolderHidden, sectionSlug]);
+
+  const effectiveTree = visibleTree || { type: 'root', children: [], notes: [], totalNotes: 0 };
+
   // caminho completo "A / B / C" → boolean
   const [open, setOpen] = useState(() => {
     const init = {};
@@ -55,20 +78,26 @@ export default function AtlasTree({ tree }) {
       </div>
 
       {/* Notas soltas na raiz da seção (sem subpasta) */}
-      {tree.notes.length > 0 && (
+      {effectiveTree.notes.length > 0 && (
         <ul className="mb-6 divide-y divide-border-subtle/30">
-          {tree.notes.map((n) => (
+          {effectiveTree.notes.map((n) => (
             <NoteRow key={`${n.section}/${n.slug}`} note={n} />
           ))}
         </ul>
       )}
 
       {/* Árvore de pastas */}
-      <ul>
-        {tree.children.map((f) => (
-          <TreeFolder key={f.raw} folder={f} path={f.raw} depth={0} open={open} setOpen={setOpen} />
-        ))}
-      </ul>
+      {effectiveTree.children.length > 0 ? (
+        <ul>
+          {effectiveTree.children.map((f) => (
+            <TreeFolder key={f.raw} folder={f} path={f.raw} depth={0} open={open} setOpen={setOpen} />
+          ))}
+        </ul>
+      ) : effectiveTree.notes.length === 0 ? (
+        <p className="font-serif italic text-text-dim py-6 text-center">
+          Nenhuma nota publicada nesta seção no momento.
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { materials } from '@/data/materials';
 import { trilhas } from '@/data/trilhas';
 import { atlasNotes, atlasSections } from '@/lib/atlas';
 import { useVisibility } from '@/lib/useVisibility';
+import { useAtlasOverrides } from '@/lib/useAtlasOverrides';
 
 const STATIC_PAGES = [
   { id: 'home',       title: 'Home',       href: '/',          hint: 'Página inicial' },
@@ -88,6 +89,7 @@ function buildIndex() {
       hint: n.subpath?.map((s) => s.clean).join(' › ') || '',
       href: `/atlas/${n.section}/${n.slug}`,
       haystack: normalize(`${n.title} ${(n.tags || []).join(' ')} ${sectionLabels.get(n.section) || ''}`),
+      _note: n,
     });
   }
 
@@ -130,6 +132,7 @@ export default function CommandPalette() {
   const router = useRouter();
 
   const { visibility } = useVisibility();
+  const { isNoteHidden } = useAtlasOverrides();
   const index = useMemo(() => buildIndex(), []);
   const filteredIndex = useMemo(() => {
     return index.filter((item) => {
@@ -140,9 +143,11 @@ export default function CommandPalette() {
       if (visibility.materiais === false && (item.href || '').startsWith('/materiais')) return false;
       if (visibility.trilhas === false && (item.href || '').startsWith('/trilhas')) return false;
       if (visibility.bio === false && item.href === '/bio') return false;
+      // Filtro de notas individuais do Atlas (admin curadoria)
+      if (item.type === 'atlas' && item._note && isNoteHidden(item._note)) return false;
       return true;
     });
-  }, [index, visibility]);
+  }, [index, visibility, isNoteHidden]);
   const results = useMemo(() => searchIndex(filteredIndex, query), [filteredIndex, query]);
 
   const close = useCallback(() => {

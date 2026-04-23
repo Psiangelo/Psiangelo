@@ -7,6 +7,7 @@ import CursorGlow from '@/components/ui/CursorGlow';
 import { PortraitHero } from '@/components/ui/Portrait';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useVisibility } from '@/lib/useVisibility';
 import { useIsMobile, useReducedMotion } from '@/lib/useMediaQuery';
 import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
 
@@ -113,6 +114,7 @@ export default function Hero() {
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
   const showRichFX = !isMobile && !reducedMotion;
+  const { visibility: v } = useVisibility();
 
   const letterAnim = {
     hidden: { opacity: 0, y: 50 },
@@ -297,12 +299,14 @@ export default function Hero() {
                 transition={{ duration: 0.3 }}
               />
             </Link>
-            <Link
-              href="/blog"
-              className="font-sans text-[0.7rem] font-medium tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors link-underline"
-            >
-              Ler ensaios
-            </Link>
+            {v.blog !== false && (
+              <Link
+                href="/blog"
+                className="font-sans text-[0.7rem] font-medium tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors link-underline"
+              >
+                Ler ensaios
+              </Link>
+            )}
           </motion.div>
         </div>
 

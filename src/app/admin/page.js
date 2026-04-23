@@ -32,6 +32,10 @@ const CartographyManager = dynamic(() => import('@/components/admin/CartographyM
   ssr: false,
   loading: DynamicFallback,
 });
+const AtlasManager = dynamic(() => import('@/components/admin/AtlasManager'), {
+  ssr: false,
+  loading: DynamicFallback,
+});
 
 // ─── Constants ───────────────────────────────────────────────────────
 const STORAGE_KEYS = {
@@ -2753,6 +2757,7 @@ function AdminPanel() {
     { id: 'materials', label: 'Materiais', badge: materialsList.length },
     { id: 'trilhas', label: 'Trilhas', badge: null },
     { id: 'cartography', label: 'Cartografia', badge: null },
+    { id: 'atlas', label: 'Atlas', badge: null },
     { id: 'content', label: 'Conteúdo', badge: null },
     { id: 'bio', label: 'Bio / Linktree', badge: null },
     { id: 'blog', label: 'Blog', badge: null },
@@ -2921,6 +2926,13 @@ function AdminPanel() {
               key="faqs"
               faqsList={faqsList}
               setFaqsList={setFaqsList}
+              addToast={addToast}
+              addLogEntry={addLogEntry}
+            />
+          )}
+          {activeTab === 'atlas' && (
+            <AtlasManager
+              key="atlas"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

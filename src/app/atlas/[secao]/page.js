@@ -46,7 +46,7 @@ export default function SecaoPage({ params }) {
 
         <section className="py-8 md:py-12 px-5 sm:px-6 md:px-12">
           <div className="max-w-[1100px] mx-auto">
-            <AtlasTree tree={tree} />
+            <AtlasTree tree={tree} sectionSlug={section.slug} />
           </div>
         </section>
       </main>

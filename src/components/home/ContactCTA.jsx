@@ -5,8 +5,8 @@ import { motion, useInView } from 'framer-motion';
 import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { QuaternioSigil, BranchOrnament, StarField, NebulaField, ShootingStars } from '@/components/illustrations';
-
-const WHATSAPP_URL = 'https://wa.me/5581987349114';
+import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 
 // QR Code SVG hardcoded — gerado via qrserver/api offline.
 // Para produção definitiva, substituir por SVG real do número.
@@ -103,6 +103,35 @@ const SECONDARY_CONTACTS = [
 export default function ContactCTA() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
+  const homepage = useSitedata(getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS.homepage);
+  const c = homepage.contact || DEFAULT_HOMEPAGE.contact;
+
+  const whatsappUrl = `https://wa.me/${(c.whatsappNumber || '').replace(/\D/g, '')}`;
+  const secondary = [
+    c.instagramValue && c.instagramUrl && {
+      label: c.instagramLabel || 'Instagram',
+      value: c.instagramValue,
+      href: c.instagramUrl,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" />
+          <circle cx="12" cy="12" r="5" />
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      ),
+    },
+    c.emailValue && {
+      label: c.emailLabel || 'E-mail',
+      value: c.emailValue,
+      href: `mailto:${c.emailValue}`,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="M22 4L12 13 2 4" />
+        </svg>
+      ),
+    },
+  ].filter(Boolean);
 
   return (
     <section
@@ -127,19 +156,18 @@ export default function ContactCTA() {
           <div className="flex justify-center mb-4">
             <QuaternioSigil size={56} opacity={0.4} animated={true} />
           </div>
-          <SectionLabel label="Contato" />
+          <SectionLabel label={c.sectionLabel || 'Contato'} />
           <motion.h2
             variants={fadeUp}
             className="font-serif italic text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.1] mt-3 mb-4"
           >
-            Pronto para aprofundar seus estudos?
+            {c.title}
           </motion.h2>
           <motion.p
             variants={fadeUp}
             className="text-[0.95rem] text-text leading-[1.85] max-w-[540px] mx-auto"
           >
-            Dê o próximo passo na sua formação em psicologia analítica. Entre em
-            contato pelo WhatsApp — é o canal mais rápido para conversarmos.
+            {c.lead}
           </motion.p>
         </div>
 
@@ -150,26 +178,26 @@ export default function ContactCTA() {
         >
           {/* Bloco WhatsApp primário */}
           <a
-            href={WHATSAPP_URL}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative bg-bg-card border border-accent/30 hover:border-accent/60 transition-colors p-8 md:p-10 flex flex-col md:flex-row items-center gap-8"
           >
             {/* Coluna texto + botão */}
             <div className="flex-1 text-center md:text-left">
-              <p className="meta-caps-accent mb-3">Canal principal</p>
+              <p className="meta-caps-accent mb-3">{c.primaryLabel}</p>
               <h3 className="font-serif text-2xl md:text-3xl text-text-bright leading-tight mb-3">
-                Fale comigo no <em className="italic text-accent">WhatsApp</em>
+                {c.primaryHeadingPrefix}{' '}
+                <em className="italic text-accent">{c.primaryHeadingEmphasis}</em>
               </h3>
               <p className="text-[0.92rem] text-text-dim leading-relaxed mb-6 max-w-md mx-auto md:mx-0">
-                Tire dúvidas sobre os materiais, monte um pacote, ou apenas
-                converse sobre psicologia analítica.
+                {c.primaryText}
               </p>
               <span className="inline-flex items-center gap-3 bg-accent text-bg px-7 py-3.5 font-sans text-[0.74rem] font-semibold tracking-[0.18em] uppercase group-hover:bg-text-bright transition-colors">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                   <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
                 </svg>
-                Abrir conversa
+                {c.primaryButton}
               </span>
             </div>
 
@@ -186,7 +214,7 @@ export default function ContactCTA() {
 
           {/* Coluna secundária — Instagram + Email empilhados */}
           <div className="flex flex-col gap-4">
-            {SECONDARY_CONTACTS.map((c) => (
+            {secondary.map((c) => (
               <a
                 key={c.label}
                 href={c.href}
