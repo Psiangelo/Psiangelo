@@ -162,14 +162,24 @@ function composeSvg({ imageUri, title, eyebrow, date, seed }) {
   const lineHeight = 62;
   const titleStartY = HEIGHT - 100 - (titleLines.length - 1) * lineHeight;
 
+  // Dessatura + escurece levemente via filter SVG — harmoniza a imagem
   const imageLayer = imageUri
-    ? `<image href="${imageUri}" x="0" y="0" width="${WIDTH}" height="${HEIGHT}" preserveAspectRatio="xMidYMid slice" />`
+    ? `<image href="${imageUri}" x="0" y="0" width="${WIDTH}" height="${HEIGHT}" preserveAspectRatio="xMidYMid slice" filter="url(#desat)" />`
     : `<rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="${BG}" />`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
      width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
   <defs>
+    <!-- Dessatura + escurecimento sutil da imagem -->
+    <filter id="desat" x="0" y="0" width="100%" height="100%">
+      <feColorMatrix type="saturate" values="0.55" />
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="0.9" />
+        <feFuncG type="linear" slope="0.9" />
+        <feFuncB type="linear" slope="0.9" />
+      </feComponentTransfer>
+    </filter>
     <!-- Tint dourado diagonal -->
     <linearGradient id="tint" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"  stop-color="${GOLD}" stop-opacity="0.28" />
@@ -183,10 +193,11 @@ function composeSvg({ imageUri, title, eyebrow, date, seed }) {
       <stop offset="80%" stop-color="${BG}" stop-opacity="0.10" />
       <stop offset="100%" stop-color="${BG}" stop-opacity="0.35" />
     </linearGradient>
-    <!-- Vignette radial -->
+    <!-- Vignette radial forte (escurece cantos) -->
     <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
-      <stop offset="50%"  stop-color="${BG}" stop-opacity="0" />
-      <stop offset="100%" stop-color="${BG}" stop-opacity="0.60" />
+      <stop offset="30%"  stop-color="${BG}" stop-opacity="0" />
+      <stop offset="80%"  stop-color="${BG}" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="${BG}" stop-opacity="0.92" />
     </radialGradient>
   </defs>
 

@@ -117,6 +117,12 @@ export default function PosterCover({
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
+          // Dessatura + leve contraste reduzido pra imagem não brigar com a paleta
+          style={{
+            filter: intensity >= 2 ? 'saturate(0.55) contrast(0.92) brightness(0.88)'
+                  : intensity === 1 ? 'saturate(0.8) brightness(0.95)'
+                  : 'none',
+          }}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${
             hoverZoom ? 'group-hover:scale-[1.04]' : ''
           }`}
@@ -149,16 +155,27 @@ export default function PosterCover({
         />
       )}
 
-      {/* 2. Vignette radial — derrete as bordas */}
+      {/* 2. Vignette radial reforçada — escurece fortemente os cantos */}
       {intensity > 0 && (
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(ellipse at center, rgba(14,12,10,0) 45%, rgba(14,12,10,0.55) 100%)',
-          }}
-        />
+        <>
+          {/* 2a. Vignette principal (oval suave, bordas escuras) */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(14,12,10,0) 30%, rgba(14,12,10,0.55) 80%, rgba(14,12,10,0.92) 100%)',
+            }}
+          />
+          {/* 2b. Vignette de canto (quadrada, reforça as 4 quinas) */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              boxShadow: 'inset 0 0 120px 40px rgba(14,12,10,0.75)',
+            }}
+          />
+        </>
       )}
 
       {/* 3. Ornamento geométrico + linha dourada */}
