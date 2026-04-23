@@ -81,6 +81,10 @@ export default function Testimonials() {
     return testimonials.filter((t) => t.audience === tab);
   }, [tab, testimonials]);
 
+  // Sem depoimentos cadastrados a seção inteira some — evita seção gigante
+  // vazia na home (mesmo comportamento de BlogPreview/CoursesPreview/etc)
+  if (!testimonials || testimonials.length === 0) return null;
+
   return (
     <section className="py-16 md:py-32 px-5 sm:px-6 md:px-12 relative overflow-hidden" ref={ref}>
       <VesicaPiscis
