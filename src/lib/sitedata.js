@@ -250,7 +250,7 @@ export const DEFAULT_VISIBILITY = {
   bio:        true,
   atlas:      true,
   glossario:  true,
-  psicoterapia: false, // oculta por padrão — ativa no admin quando começar a atender
+  psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
   prelude:      true,
   about:        true,
@@ -335,7 +335,7 @@ export const DEFAULT_THERAPY = {
       {
         title: 'O processo',
         body:
-          'Se fizer sentido, começamos. Uma ou duas sessões por semana, conforme combinarmos. Online ou presencial, em Recife.',
+          'Se fizer sentido, começamos. Uma ou duas sessões por semana, conforme combinarmos. Atendimento 100% online, em todo o Brasil.',
       },
       {
         title: 'O tempo é seu',
@@ -347,7 +347,7 @@ export const DEFAULT_THERAPY = {
   format: {
     sectionLabel: 'Formato',
     modalityLabel: 'Modalidade',
-    modalities: ['Online', 'Presencial · Recife'],
+    modalities: ['Online · Brasil inteiro'],
     durationLabel: 'Duração',
     duration: '50 minutos',
     frequencyLabel: 'Frequência',
@@ -363,24 +363,36 @@ export const DEFAULT_THERAPY = {
   },
   faq: [
     {
+      q: 'Você atende online em todo o Brasil?',
+      a: 'Sim. Todo o atendimento é online — basta uma conexão estável e um lugar tranquilo. Atendo pessoas em qualquer estado do país e brasileiros vivendo no exterior.',
+    },
+    {
+      q: 'Para quais públicos você atende?',
+      a: 'Adolescentes (a partir de 14 anos, com consentimento dos responsáveis), adultos e idosos. Cada faixa etária tem suas particularidades, e ajusto o trabalho a quem está comigo.',
+    },
+    {
+      q: 'Atendimento online funciona tão bem quanto presencial?',
+      a: 'Sim. O vínculo clínico se estabelece pela palavra e pela continuidade — o essencial é a presença e o cuidado, não o espaço físico. A literatura clínica recente confirma a eficácia da psicoterapia online.',
+    },
+    {
       q: 'Quanto tempo dura o processo?',
       a: 'Depende do momento e do que aparece no trabalho. Pode ser meses, pode ser anos. O tempo é acompanhado, não prescrito.',
     },
     {
-      q: 'Atendimento online funciona tão bem quanto presencial?',
-      a: 'Sim. O vínculo clínico se estabelece pela palavra — o essencial é a presença e a continuidade, não o espaço físico.',
+      q: 'Quais são as demandas mais comuns que você atende?',
+      a: 'Ansiedade, questões de sentido, relacionamentos, sonhos recorrentes, crises de transição (adolescência, meia-idade, aposentadoria), luto, busca de autoconhecimento. Na primeira conversa avaliamos juntos se faz sentido para a abordagem.',
+    },
+    {
+      q: 'O que é a abordagem junguiana?',
+      a: 'É a psicologia analítica desenvolvida por Carl Gustav Jung. Trabalha com símbolos, sonhos, complexos e o processo de individuação — o caminho de tornar-se quem você verdadeiramente é. É uma escuta que valoriza o singular de cada vida.',
     },
     {
       q: 'E se eu precisar faltar?',
       a: 'Combinamos na primeira conversa. Há uma política simples de ausência, explicada antes de começarmos.',
     },
     {
-      q: 'Sigilo',
-      a: 'Absoluto, conforme o Código de Ética da profissão. Nada do que você trazer sai daqui.',
-    },
-    {
-      q: 'Você atende quais demandas?',
-      a: 'Demandas adultas — ansiedade, questões de sentido, relacionamentos, sonhos, crises. Na primeira conversa avaliamos se é pertinente para a minha abordagem.',
+      q: 'Como funciona o sigilo?',
+      a: 'Absoluto, conforme o Código de Ética da profissão. Nada do que você trouxer sai daqui. Em casos de adolescente, o sigilo também é resguardado — converso com a família apenas o necessário e sempre com transparência prévia.',
     },
   ],
   schedule: {
@@ -411,11 +423,11 @@ export const DEFAULT_THERAPY = {
       'Autoconhecimento',
       'Não tenho certeza ainda',
     ],
-    modalTitleStep2: 'Como você prefere?',
-    formats: ['Online', 'Presencial em Recife'],
+    modalTitleStep2: 'Para qual público?',
+    formats: ['Para mim (adulto)', 'Para um(a) adolescente', 'Para um(a) idoso(a)'],
     modalTitleStep3: 'Mensagem',
     messageTemplate:
-      'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa.\n\nMotivação: {{motivation}}\nFormato: {{format}}{{slot}}\n\nAguardo retorno.',
+      'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.\n\nMotivação: {{motivation}}\nPúblico: {{format}}{{slot}}\n\nAguardo retorno.',
   },
   deontology: {
     show: true,

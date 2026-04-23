@@ -11,16 +11,20 @@ export default function StructuredData() {
         givenName: 'Ângelo',
         jobTitle: 'Estagiário clínico em Psicologia',
         description:
-          'Estudante de psicologia e estagiário clínico em abordagem junguiana. Conduz grupos de estudo, atende em clínica e escreve sobre psicologia analítica.',
+          'Estagiário clínico em psicoterapia analítica de abordagem junguiana. Atendimento online para adolescentes, adultos e idosos em todo o Brasil.',
         url: BASE,
         image: `${BASE}/images/angelo-portrait.png`,
         knowsAbout: [
           'Psicologia Analítica',
           'Carl Gustav Jung',
-          'Psicoterapia',
+          'Psicoterapia Junguiana',
+          'Análise de Sonhos',
           'Individuação',
           'Arquétipos',
           'Sombra',
+          'Segunda Metade da Vida',
+          'Psicologia do Adolescente',
+          'Psicologia do Idoso',
         ],
         affiliation: [
           { '@type': 'Organization', name: 'Associação Allos' },
@@ -30,13 +34,59 @@ export default function StructuredData() {
       {
         '@type': 'ProfessionalService',
         '@id': `${BASE}#service`,
-        name: 'Psiangelo — Psicologia Analítica',
+        name: 'Psiangelo — Psicoterapia Analítica Online',
         description:
-          'Atendimento clínico em psicologia analítica, grupos de estudo, materiais e cursos em abordagem junguiana.',
-        url: BASE,
+          'Atendimento clínico em psicoterapia analítica de abordagem junguiana, 100% online, para adolescentes, adultos e idosos em todo o Brasil.',
+        url: `${BASE}/psicoterapia-analitica`,
         provider: { '@id': `${BASE}#person` },
-        serviceType: 'Psicoterapia de abordagem junguiana',
+        serviceType: 'Psicoterapia analítica online',
         areaServed: { '@type': 'Country', name: 'Brasil' },
+        availableChannel: {
+          '@type': 'ServiceChannel',
+          serviceUrl: `${BASE}/psicoterapia-analitica`,
+          availableLanguage: ['pt-BR'],
+          serviceLocation: {
+            '@type': 'VirtualLocation',
+            url: `${BASE}/psicoterapia-analitica`,
+          },
+        },
+        audience: [
+          {
+            '@type': 'PeopleAudience',
+            name: 'Adolescentes',
+            suggestedMinAge: 14,
+            suggestedMaxAge: 18,
+          },
+          {
+            '@type': 'PeopleAudience',
+            name: 'Adultos',
+            suggestedMinAge: 18,
+            suggestedMaxAge: 60,
+          },
+          {
+            '@type': 'PeopleAudience',
+            name: 'Idosos',
+            suggestedMinAge: 60,
+          },
+        ],
+        availableService: [
+          {
+            '@type': 'MedicalTherapy',
+            name: 'Psicoterapia analítica online para adultos',
+          },
+          {
+            '@type': 'MedicalTherapy',
+            name: 'Psicoterapia analítica online para adolescentes',
+          },
+          {
+            '@type': 'MedicalTherapy',
+            name: 'Psicoterapia analítica online para idosos',
+          },
+          {
+            '@type': 'MedicalTherapy',
+            name: 'Análise de sonhos em psicoterapia junguiana',
+          },
+        ],
       },
       {
         '@type': 'WebSite',
@@ -44,7 +94,7 @@ export default function StructuredData() {
         url: BASE,
         name: 'Psiangelo',
         description:
-          'Psicologia analítica, prática clínica e materiais de estudo em Jung.',
+          'Psicoterapia analítica online em abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil.',
         publisher: { '@id': `${BASE}#person` },
         inLanguage: 'pt-BR',
       },

@@ -26,13 +26,13 @@ export default function Navbar() {
   const { visibility: v } = useVisibility();
   const allLinks = [
     { href: '/', label: 'Home', key: null },
+    { href: '/psicoterapia-analitica', label: 'Psicoterapia', key: 'psicoterapia' },
     { href: '/#sobre', label: 'Sobre', key: 'about' },
+    { href: '/blog', label: 'Blog', key: 'blog' },
     { href: '/trilhas', label: 'Trilhas', key: 'trilhas' },
     { href: '/materiais', label: 'Materiais', key: 'materiais' },
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
-    { href: '/blog', label: 'Blog', key: 'blog' },
     { href: '/atlas', label: 'Atlas', key: 'atlas' },
-    { href: '/psicoterapia-analitica', label: 'Atendimento', key: 'psicoterapia' },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 

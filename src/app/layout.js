@@ -11,21 +11,23 @@ const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Psiangelo — Psicologia Analítica & Prática Clínica',
+    default: 'Psicólogo Junguiano Online · Adolescentes, Adultos e Idosos · Psiangelo',
     template: '%s · Psiangelo',
   },
   description:
-    'Estudante de psicologia e estagiário clínico em abordagem junguiana. Resumos, mapas mentais, trilhas de estudo e prática clínica em psicologia analítica.',
+    'Psicoterapia analítica online de abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil. Marque uma conversa inicial sem compromisso.',
   keywords: [
-    'psicologia analítica',
-    'Jung',
-    'mapas mentais',
-    'resumos',
-    'psicoterapia',
-    'formação clínica',
+    'psicoterapia analítica',
+    'psicólogo junguiano online',
+    'terapia online junguiana',
+    'psicologia analítica online',
+    'análise junguiana',
+    'psicólogo para adolescente online',
+    'psicólogo para idoso',
+    'terapia para idoso online',
+    'análise de sonhos online',
+    'crise de meia idade psicólogo',
     'individuação',
-    'arquétipos',
-    'sombra',
     'Psiangelo',
   ],
   authors: [{ name: 'Psiangelo' }],
@@ -35,8 +37,9 @@ export const metadata = {
     locale: 'pt_BR',
     url: SITE_URL,
     siteName: 'Psiangelo',
-    title: 'Psiangelo — Psicologia Analítica & Prática Clínica',
-    description: 'Resumos, mapas mentais e materiais de estudo com experiência clínica junguiana.',
+    title: 'Psicólogo Junguiano Online · Psiangelo',
+    description:
+      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
     images: [
       // Quadrado primeiro — WhatsApp/iMessage dão preferência à primeira imagem
       { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo', type: 'image/png' },
@@ -45,8 +48,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Psiangelo — Psicologia Analítica & Prática Clínica',
-    description: 'Resumos, mapas mentais e materiais de estudo com experiência clínica junguiana.',
+    title: 'Psicólogo Junguiano Online · Psiangelo',
+    description:
+      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
     images: [`${SITE_URL}/og.png`],
   },
   robots: {
