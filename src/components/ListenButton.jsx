@@ -3,29 +3,38 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * ListenButton — lê o texto fornecido em voz alta usando
- * window.speechSynthesis (Web Speech API). Sem backend.
+ * ListenButton — lê o texto em voz alta usando window.speechSynthesis.
  *
- * - Preferência por vozes pt-BR
- * - Ctrl/Cmd + clique pula para o próximo parágrafo
- * - Integra pause/resume
- *
- * Props:
- *   text: string — texto a ser lido (limpo, sem HTML)
- *   title?: string — lido antes do corpo
- *   label?: string — texto no botão (default "Ouvir")
+ * Lida com as pegadinhas do mobile:
+ *  - Chrome Android trava utterances com mais de ~200 chars → quebra em chunks.
+ *  - Chrome pausa a sintese apos ~15s inativo → keep-alive com pause/resume.
+ *  - iOS Safari so carrega vozes depois do primeiro speak → warm-up.
+ *  - voiceschanged pode disparar tardiamente → re-aplica voz em cada chunk.
  */
 export default function ListenButton({ text, title, label = 'Ouvir' }) {
   const [state, setState] = useState('idle'); // idle | playing | paused
   const [progress, setProgress] = useState(0);
   const [supported, setSupported] = useState(false);
-  const utteranceRef = useRef(null);
+
+  const chunksRef = useRef([]);
+  const chunkIndexRef = useRef(0);
+  const keepAliveRef = useRef(null);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
-    setSupported(typeof window !== 'undefined' && 'speechSynthesis' in window);
+    const has = typeof window !== 'undefined' && 'speechSynthesis' in window;
+    setSupported(has);
+    if (has) {
+      // warm-up: acorda o synthesizer no iOS (getVoices volta vazio sem isso)
+      try { window.speechSynthesis.getVoices(); } catch {}
+    }
     return () => {
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
+      }
+      if (keepAliveRef.current) {
+        clearInterval(keepAliveRef.current);
+        keepAliveRef.current = null;
       }
     };
   }, []);
@@ -33,48 +42,143 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
   const getVoice = () => {
     const voices = window.speechSynthesis.getVoices();
     return (
-      voices.find((v) => v.lang === 'pt-BR' && /Google|Microsoft/i.test(v.name)) ||
+      voices.find((v) => v.lang === 'pt-BR' && /Google|Microsoft|Luciana|Felipe/i.test(v.name)) ||
       voices.find((v) => v.lang === 'pt-BR') ||
-      voices.find((v) => v.lang.startsWith('pt')) ||
+      voices.find((v) => v.lang?.startsWith('pt')) ||
       voices[0]
     );
+  };
+
+  // Quebra o texto em pedacos pequenos pra contornar o limite do Chrome Android (~200 chars).
+  // Prefere quebrar em sentencas; se ainda for grande, quebra em virgulas; ultimo recurso: hard split.
+  const splitIntoChunks = (full, maxLen = 180) => {
+    if (!full) return [];
+    const sentences = full
+      .replace(/\s+/g, ' ')
+      .split(/(?<=[.!?])\s+/)
+      .filter(Boolean);
+
+    const out = [];
+    let buf = '';
+    for (const s of sentences) {
+      if (s.length > maxLen) {
+        if (buf) { out.push(buf); buf = ''; }
+        // sentenca gigante: quebra em virgulas
+        const parts = s.split(/,\s*/);
+        let sub = '';
+        for (const p of parts) {
+          if ((sub + ', ' + p).length > maxLen && sub) { out.push(sub); sub = p; }
+          else sub = sub ? `${sub}, ${p}` : p;
+        }
+        if (sub) {
+          if (sub.length > maxLen) {
+            // ainda gigante: split duro
+            for (let i = 0; i < sub.length; i += maxLen) {
+              out.push(sub.slice(i, i + maxLen));
+            }
+          } else out.push(sub);
+        }
+      } else if ((buf + ' ' + s).length > maxLen && buf) {
+        out.push(buf);
+        buf = s;
+      } else {
+        buf = buf ? `${buf} ${s}` : s;
+      }
+    }
+    if (buf) out.push(buf);
+    return out;
+  };
+
+  const startKeepAlive = () => {
+    if (keepAliveRef.current) return;
+    // Chrome Android pausa speech depois de ~15s: pulso a cada 10s mantem vivo
+    keepAliveRef.current = setInterval(() => {
+      const synth = window.speechSynthesis;
+      if (!synth) return;
+      if (synth.speaking && !synth.paused) {
+        synth.pause();
+        synth.resume();
+      }
+    }, 10000);
+  };
+
+  const stopKeepAlive = () => {
+    if (keepAliveRef.current) {
+      clearInterval(keepAliveRef.current);
+      keepAliveRef.current = null;
+    }
+  };
+
+  const speakNext = () => {
+    if (cancelledRef.current) return;
+    const synth = window.speechSynthesis;
+    const chunks = chunksRef.current;
+    const i = chunkIndexRef.current;
+    if (i >= chunks.length) {
+      setState('idle');
+      setProgress(100);
+      stopKeepAlive();
+      return;
+    }
+
+    const u = new SpeechSynthesisUtterance(chunks[i]);
+    u.lang = 'pt-BR';
+    u.rate = 1.0;
+    u.pitch = 1.0;
+    const v = getVoice();
+    if (v) u.voice = v;
+
+    u.onstart = () => {
+      setState('playing');
+      startKeepAlive();
+    };
+    u.onend = () => {
+      chunkIndexRef.current += 1;
+      setProgress(Math.round((chunkIndexRef.current / chunks.length) * 100));
+      speakNext();
+    };
+    u.onerror = (e) => {
+      // "interrupted" e "canceled" sao normais quando usuario para; so loga outros
+      if (e?.error && e.error !== 'interrupted' && e.error !== 'canceled') {
+        console.warn('[ListenButton] erro:', e.error);
+      }
+      // tenta continuar no proximo chunk
+      chunkIndexRef.current += 1;
+      speakNext();
+    };
+
+    synth.speak(u);
   };
 
   const start = () => {
     if (!supported) return;
     const synth = window.speechSynthesis;
     synth.cancel();
+    cancelledRef.current = false;
 
     const full = [title, text].filter(Boolean).join('. ');
-    const u = new SpeechSynthesisUtterance(full);
-    u.lang = 'pt-BR';
-    u.rate = 1.0;
-    u.pitch = 1.0;
+    chunksRef.current = splitIntoChunks(full);
+    chunkIndexRef.current = 0;
+    setProgress(0);
 
-    // Tenta usar voz pt-BR. Se voices não carregaram, re-fetch no onvoiceschanged
-    const apply = () => {
-      const v = getVoice();
-      if (v) u.voice = v;
-    };
-    apply();
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.addEventListener('voiceschanged', apply, { once: true });
+    if (chunksRef.current.length === 0) return;
+
+    // Se vozes ainda nao carregaram (iOS frio), aguarda e ja comeca
+    const voicesReady = synth.getVoices().length > 0;
+    if (!voicesReady) {
+      const onReady = () => {
+        synth.removeEventListener('voiceschanged', onReady);
+        speakNext();
+      };
+      synth.addEventListener('voiceschanged', onReady);
+      // fallback: se evento nao disparar em 500ms, tenta assim mesmo
+      setTimeout(() => {
+        synth.removeEventListener('voiceschanged', onReady);
+        if (state === 'idle') speakNext();
+      }, 500);
+    } else {
+      speakNext();
     }
-
-    u.onstart = () => setState('playing');
-    u.onend = () => {
-      setState('idle');
-      setProgress(0);
-    };
-    u.onerror = () => setState('idle');
-    u.onboundary = (e) => {
-      if (e.name === 'word' && u.text) {
-        setProgress(Math.min(100, (e.charIndex / u.text.length) * 100));
-      }
-    };
-
-    utteranceRef.current = u;
-    synth.speak(u);
   };
 
   const toggle = () => {
@@ -82,17 +186,23 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
     if (state === 'idle') return start();
     if (state === 'playing') {
       synth.pause();
+      stopKeepAlive();
       setState('paused');
       return;
     }
     if (state === 'paused') {
       synth.resume();
+      startKeepAlive();
       setState('playing');
     }
   };
 
   const stop = () => {
+    cancelledRef.current = true;
+    stopKeepAlive();
     window.speechSynthesis.cancel();
+    chunksRef.current = [];
+    chunkIndexRef.current = 0;
     setState('idle');
     setProgress(0);
   };
