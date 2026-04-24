@@ -18,7 +18,8 @@ module.exports = {
         },
         text: {
           DEFAULT: '#B8AD9E',
-          dim: '#6E6458',
+          // #8C8378 passa WCAG AA (5.2:1 sobre #0E0C0A); #6E6458 antigo dava só ~3.4:1
+          dim: '#8C8378',
           bright: '#E8DDD0',
         },
         accent: {

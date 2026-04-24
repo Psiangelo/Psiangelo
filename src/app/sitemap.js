@@ -1,30 +1,56 @@
+import siteContent from '@/data/site-content.json';
+
 const BASE = 'https://psiangelo.github.io/Psiangelo';
 
+function getPublishedPosts() {
+  const posts = siteContent?.data?.angelo_admin_blog;
+  if (!Array.isArray(posts)) return [];
+  return posts.filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
+}
+
+function toAbsolute(path, priority, changeFrequency, lastModified) {
+  // trailingSlash:true no next.config — URL canônica sempre termina em /
+  const normalized = path === '' ? '/' : path.endsWith('/') ? path : `${path}/`;
+  return {
+    url: `${BASE}${normalized}`,
+    lastModified: lastModified || new Date(),
+    changeFrequency,
+    priority,
+  };
+}
+
 export default function sitemap() {
-  const now = new Date();
-  const routes = [
+  const staticRoutes = [
     // Captação clínica — prioridade máxima
-    { path: '',                                   priority: 1.0,  changeFrequency: 'weekly'  },
-    { path: '/psicoterapia-analitica',            priority: 1.0,  changeFrequency: 'weekly'  },
-    { path: '/psicoterapia-analitica/adultos',    priority: 0.95, changeFrequency: 'monthly' },
-    { path: '/psicoterapia-analitica/adolescentes', priority: 0.95, changeFrequency: 'monthly' },
-    { path: '/psicoterapia-analitica/idosos',     priority: 0.95, changeFrequency: 'monthly' },
+    toAbsolute('',                                   1.0,  'weekly'),
+    toAbsolute('/psicoterapia-analitica',            1.0,  'weekly'),
+    toAbsolute('/psicoterapia-analitica/adultos',    0.95, 'monthly'),
+    toAbsolute('/psicoterapia-analitica/adolescentes', 0.95, 'monthly'),
+    toAbsolute('/psicoterapia-analitica/idosos',     0.95, 'monthly'),
 
     // Autoridade / E-E-A-T
-    { path: '/bio',        priority: 0.85, changeFrequency: 'monthly' },
+    toAbsolute('/bio',        0.85, 'monthly'),
 
     // Conteúdo e estudo
-    { path: '/blog',       priority: 0.8, changeFrequency: 'weekly'  },
-    { path: '/materiais',  priority: 0.7, changeFrequency: 'weekly'  },
-    { path: '/cursos',     priority: 0.7, changeFrequency: 'monthly' },
-    { path: '/trilhas',    priority: 0.7, changeFrequency: 'monthly' },
-    { path: '/glossario',  priority: 0.6, changeFrequency: 'monthly' },
+    toAbsolute('/blog',       0.8, 'weekly'),
+    toAbsolute('/materiais',  0.7, 'weekly'),
+    toAbsolute('/cursos',     0.7, 'monthly'),
+    toAbsolute('/trilhas',    0.7, 'monthly'),
+    toAbsolute('/atlas',      0.65, 'monthly'),
+    toAbsolute('/glossario',  0.6, 'monthly'),
   ];
 
-  return routes.map((r) => ({
-    url: `${BASE}${r.path}`,
-    lastModified: now,
-    changeFrequency: r.changeFrequency,
-    priority: r.priority,
-  }));
+  // Posts do blog — um entry por post publicado com lastModified real
+  const postRoutes = getPublishedPosts().map((p) => {
+    const slug = p.slug || p.id;
+    const lm = p.updated_at || p.created_at;
+    return toAbsolute(
+      `/blog/${slug}`,
+      0.75,
+      'monthly',
+      lm ? new Date(lm) : new Date(),
+    );
+  });
+
+  return [...staticRoutes, ...postRoutes];
 }

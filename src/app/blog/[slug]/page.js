@@ -68,7 +68,7 @@ export function generateMetadata({ params }) {
       description,
       images: [
         // Vertical primeiro — scrapers do WhatsApp costumam pegar o primeiro
-        { url: ogImageV, width: 1080, height: 1920, alt: title, type: 'image/png' },
+        { url: ogImageV, width: 720,  height: 1280, alt: title, type: 'image/png' },
         { url: ogImage,  width: 1200, height: 630,  alt: title, type: 'image/png' },
         // Fallback global, caso a imagem gerada não exista
         { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo' },
@@ -87,6 +87,70 @@ export function generateMetadata({ params }) {
   };
 }
 
+function stripHtml(s) {
+  return typeof s === 'string' ? s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+}
+
+function buildBlogPostingSchema(post) {
+  if (!post) return null;
+  const slug = post.slug || post.id;
+  const url = `${SITE_URL}/blog/${slug}/`;
+  const title = stripHighlights(post.title) || 'Publicação';
+  const description =
+    stripHighlights(post.excerpt) ||
+    stripHtml(post.content_html).slice(0, 280) ||
+    'Ensaio de psicologia analítica — Psiangelo.';
+  const body = stripHtml(post.content_html);
+  const wordCount = body ? body.split(/\s+/).filter(Boolean).length : undefined;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#blogposting`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    headline: title,
+    description,
+    image: [
+      `${SITE_URL}/og/posts-v/${slug}.png`,
+      `${SITE_URL}/og/posts/${slug}.png`,
+    ],
+    datePublished: post.created_at || post.updated_at,
+    dateModified: post.updated_at || post.created_at,
+    author: {
+      '@type': 'Person',
+      '@id': `${SITE_URL}#person`,
+      name: post.author || 'Angelo',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Psiangelo',
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/og-square.png`,
+      },
+    },
+    keywords: (post.tags || []).join(', ') || undefined,
+    wordCount,
+    inLanguage: 'pt-BR',
+    url,
+  };
+}
+
 export default function BlogSlugPage({ params }) {
-  return <BlogSlugClient slug={params.slug} />;
+  const post = getPosts().find((p) => String(p.slug || p.id) === params.slug);
+  const schema = buildBlogPostingSchema(post);
+
+  return (
+    <>
+      {schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      )}
+      <BlogSlugClient slug={params.slug} />
+    </>
+  );
 }

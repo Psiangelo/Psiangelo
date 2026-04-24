@@ -27,9 +27,10 @@ const out  = resolve(pub, 'og', 'posts');
 const WIDTH  = 1200;
 const HEIGHT = 630;
 
-// OG vertical (WhatsApp portrait preview)
-const V_WIDTH  = 1080;
-const V_HEIGHT = 1920;
+// OG vertical (WhatsApp portrait preview) — HD vertical (9:16)
+// 720x1280 suficiente pra preview mobile e corta ~55% do peso de 1080x1920
+const V_WIDTH  = 720;
+const V_HEIGHT = 1280;
 
 // Paleta do site
 const GOLD = '#B48C50';

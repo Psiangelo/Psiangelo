@@ -33,15 +33,19 @@ export function GET() {
 
   const items = posts
     .map((p) => {
-      const link = `${BASE}/blog?post=${encodeURIComponent(p.slug || p.id)}`;
+      const slug = p.slug || p.id;
+      // Aponta pra rota estática SSG com OG pre-renderizada, não pro SPA
+      const link = `${BASE}/blog/${encodeURIComponent(slug)}/`;
       const pub = new Date(p.updated_at || Date.now()).toUTCString();
       const excerpt = p.excerpt || stripHtml(p.content_html).slice(0, 280);
+      const ogImage = `${BASE}/og/posts/${slug}.png`;
       return `<item>
 <title>${escapeXml(p.title || 'Sem título')}</title>
 <link>${escapeXml(link)}</link>
-<guid isPermaLink="false">${escapeXml(p.id || p.slug)}</guid>
+<guid isPermaLink="true">${escapeXml(link)}</guid>
 <pubDate>${pub}</pubDate>
 <description>${escapeXml(excerpt)}</description>
+<enclosure url="${escapeXml(ogImage)}" type="image/png" />
 ${(p.tags || []).map((t) => `<category>${escapeXml(t)}</category>`).join('')}
 </item>`;
     })
@@ -51,7 +55,7 @@ ${(p.tags || []).map((t) => `<category>${escapeXml(t)}</category>`).join('')}
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>Psiangelo — Blog</title>
-<link>${BASE}/blog</link>
+<link>${BASE}/blog/</link>
 <atom:link href="${BASE}/feed.xml" rel="self" type="application/rss+xml" />
 <description>Ensaios sobre psicologia analítica, clínica junguiana e prática de estudo.</description>
 <language>pt-BR</language>
