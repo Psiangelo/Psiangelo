@@ -2,6 +2,7 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Blockquote from '@tiptap/extension-blockquote';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
@@ -152,6 +153,14 @@ const icons = {
   quote: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
       <path d="M10 11H6.101c.001-.009.002-.018.003-.027.094-.656.397-1.36.876-1.948C7.567 8.364 8.407 7.7 9.7 7.23l-.6-1.46c-1.607.582-2.753 1.46-3.456 2.413C4.928 9.263 4.5 10.478 4.5 11.7V17h5.5v-6zm9.5 0h-3.899c.001-.009.002-.018.003-.027.094-.656.397-1.36.876-1.948C17.067 8.364 17.907 7.7 19.2 7.23l-.6-1.46c-1.607.582-2.753 1.46-3.456 2.413C14.428 9.263 14 10.478 14 11.7V17h5.5v-6z" />
+    </svg>
+  ),
+  pullquote: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="4" y1="7" x2="20" y2="7" />
+      <line x1="4" y1="17" x2="20" y2="17" />
+      <path d="M7 11h2a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2" />
+      <path d="M14 11h2a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2" />
     </svg>
   ),
   ul: (
@@ -394,6 +403,22 @@ function CalloutDropdown({ editor }) {
   );
 }
 
+// Blockquote extendido com atributo `pullquote` (boolean) — quando true,
+// adiciona class="pullquote" no HTML pro CSS editorial em globals.css
+// aplicar o visual de destaque.
+const PullquoteBlockquote = Blockquote.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      pullquote: {
+        default: false,
+        parseHTML: (el) => el.classList.contains('pullquote'),
+        renderHTML: (attrs) => (attrs.pullquote ? { class: 'pullquote' } : {}),
+      },
+    };
+  },
+});
+
 // ─── Main Editor Component ──────────────────────────────────────────
 export default function BlogEditor({ content, onChange, placeholder = 'Comece a escrever...' }) {
   const [showLinkPopover, setShowLinkPopover] = useState(false);
@@ -403,7 +428,10 @@ export default function BlogEditor({ content, onChange, placeholder = 'Comece a 
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4] },
+        // Desabilita blockquote padrao pra usar a versao custom com pullquote
+        blockquote: false,
       }),
+      PullquoteBlockquote,
       Underline,
       Link.configure({
         openOnClick: false,
@@ -545,6 +573,21 @@ export default function BlogEditor({ content, onChange, placeholder = 'Comece a 
 
         {/* Block elements */}
         <ToolbarBtn icon={icons.quote} label="Citacao" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()} />
+        <ToolbarBtn
+          icon={icons.pullquote || icons.quote}
+          label="Destaque"
+          active={editor.isActive('blockquote', { pullquote: true })}
+          onClick={() => {
+            const inBlockquote = editor.isActive('blockquote');
+            const current = editor.getAttributes('blockquote').pullquote;
+            if (!inBlockquote) {
+              // Primeiro vira blockquote, dps marca como pullquote
+              editor.chain().focus().toggleBlockquote().updateAttributes('blockquote', { pullquote: true }).run();
+            } else {
+              editor.chain().focus().updateAttributes('blockquote', { pullquote: !current }).run();
+            }
+          }}
+        />
         <ToolbarBtn icon={icons.hr} label="Separador" onClick={() => editor.chain().focus().setHorizontalRule().run()} />
         <CalloutDropdown editor={editor} />
         <ToolbarBtn icon={icons.toggle} label="Conteudo expansivel" onClick={() => editor.chain().focus().insertDetails().run()} />

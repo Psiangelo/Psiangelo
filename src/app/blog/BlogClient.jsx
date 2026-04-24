@@ -23,6 +23,7 @@ import ShareButtons from '@/components/blog/ShareButtons';
 import RelatedPosts from '@/components/blog/RelatedPosts';
 import PrevNextPost from '@/components/blog/PrevNextPost';
 import GlossaryLinker from '@/components/blog/GlossaryLinker';
+import { slugifyTag } from '@/lib/tagSlug';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 
@@ -344,9 +345,13 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
                   {readTime} min
                 </span>
                 {post.tags && post.tags.map((tag) => (
-                  <span key={tag} className="font-mono text-[0.55rem] tracking-[0.2em] uppercase px-2 py-1 border border-accent/30 text-accent bg-accent/[0.08]">
+                  <Link
+                    key={tag}
+                    href={`/blog/tag/${slugifyTag(tag)}/`}
+                    className="font-mono text-[0.55rem] tracking-[0.2em] uppercase px-2 py-1 border border-accent/30 text-accent bg-accent/[0.08] hover:border-accent hover:text-text-bright transition-colors"
+                  >
                     {tag}
-                  </span>
+                  </Link>
                 ))}
               </div>
               <h1 className="font-serif text-[clamp(2.2rem,5.5vw,4.6rem)] text-text-bright leading-[1] tracking-[-0.015em] max-w-4xl">
@@ -378,9 +383,13 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
               <time className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-accent">{formatDate(post.updated_at)}</time>
               <span className="font-mono text-[0.6rem] text-text-dim tracking-[0.2em] uppercase">{readTime} min</span>
               {post.tags && post.tags.map((tag) => (
-                <span key={tag} className="font-mono text-[0.55rem] tracking-[0.2em] uppercase px-2 py-1 border border-accent/30 text-accent bg-accent/[0.08]">
+                <Link
+                  key={tag}
+                  href={`/blog/tag/${slugifyTag(tag)}/`}
+                  className="font-mono text-[0.55rem] tracking-[0.2em] uppercase px-2 py-1 border border-accent/30 text-accent bg-accent/[0.08] hover:border-accent hover:text-text-bright transition-colors"
+                >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
             <h1 className="font-serif text-[clamp(2.2rem,5.5vw,4.6rem)] text-text-bright leading-[1] tracking-[-0.015em] max-w-4xl">

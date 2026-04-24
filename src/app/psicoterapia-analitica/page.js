@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
@@ -95,6 +96,7 @@ export default function PsicoterapiaPage() {
         <TherapyHeroSection />
         <SeoIntro />
         <AudienceCards heading="Para quem atendo" />
+        <TemasClinicosBridge />
         <TherapyContent />
       </main>
       <Footer />
@@ -110,6 +112,40 @@ function TherapyHeroSection() {
       emphasis={HERO_DEFAULT.emphasis}
       lead={HERO_DEFAULT.lead}
     />
+  );
+}
+
+// Ponte enxuta entre AudienceCards (segmentação por idade) e TherapyContent
+// (copy estendido). Leva quem quer saber "e meu caso específico?" pra /atendo/.
+function TemasClinicosBridge() {
+  return (
+    <section className="relative py-12 md:py-16 px-5 sm:px-6 md:px-12 section-border-t">
+      <div className="max-w-[820px] mx-auto text-center">
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <span className="block w-10 h-px bg-accent/50" />
+          <p className="font-mono text-[0.62rem] text-accent tracking-[0.32em] uppercase">
+            Temas clínicos
+          </p>
+          <span className="block w-10 h-px bg-accent/50" />
+        </div>
+        <h2 className="font-serif text-[clamp(1.5rem,3vw,2.2rem)] text-text-bright leading-[1.2] mb-5 tracking-[-0.01em]">
+          E a sua <em className="italic text-accent">queixa específica?</em>
+        </h2>
+        <p className="font-serif text-[1rem] text-text leading-[1.85] mb-7 max-w-xl mx-auto">
+          Ansiedade, luto, crise de meia-idade, sonhos recorrentes, conflitos
+          familiares, busca de sentido. Reuni uma lista não-exaustiva dos
+          temas mais frequentes na clínica analítica — pra você reconhecer
+          se o que vive pode encontrar escuta aqui.
+        </p>
+        <Link
+          href="/atendo/"
+          className="inline-flex items-center gap-3 px-7 py-3.5 font-sans text-[0.72rem] font-medium tracking-[0.18em] uppercase text-text border border-border-hover hover:border-accent hover:text-accent transition-all focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent focus-visible:outline-offset-2"
+        >
+          Ver todos os temas
+          <span aria-hidden>→</span>
+        </Link>
+      </div>
+    </section>
   );
 }
 
