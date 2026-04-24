@@ -1,0 +1,27 @@
+{
+  "name": "Psiangelo — Psicoterapia Analítica Online",
+  "short_name": "Psiangelo",
+  "description": "Psicoterapia analítica online em abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil.",
+  "start_url": "/Psiangelo/",
+  "scope": "/Psiangelo/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0E0C0A",
+  "theme_color": "#0E0C0A",
+  "lang": "pt-BR",
+  "categories": ["health", "education", "lifestyle"],
+  "icons": [
+    {
+      "src": "/Psiangelo/og-square.png",
+      "sizes": "1200x1200",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Psiangelo/og-square.png",
+      "sizes": "1200x1200",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

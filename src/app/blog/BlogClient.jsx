@@ -21,6 +21,8 @@ import ListenButton from '@/components/ListenButton';
 import ReadingMode from '@/components/ReadingMode';
 import ShareButtons from '@/components/blog/ShareButtons';
 import RelatedPosts from '@/components/blog/RelatedPosts';
+import PrevNextPost from '@/components/blog/PrevNextPost';
+import GlossaryLinker from '@/components/blog/GlossaryLinker';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 
@@ -269,6 +271,43 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
   const plainText = useMemo(() => stripHtmlToText(post.content_html), [post.content_html]);
   const articleRef = useRef(null);
 
+  // Pullquote: detecta blockquotes curtas (<=220 chars) ou explicitas e
+  // adiciona botao 'compartilhar trecho' que copia a URL
+  useEffect(() => {
+    const root = articleRef.current;
+    if (!root) return;
+    const quotes = root.querySelectorAll('.blog-content blockquote');
+    quotes.forEach((q, i) => {
+      const text = q.textContent.trim();
+      const hasMarker = q.classList.contains('pullquote') || q.dataset.pullquote === 'true';
+      const short = text.length > 20 && text.length <= 220;
+      if (!hasMarker && !short) return;
+      q.classList.add('pullquote');
+      if (!q.id) q.id = `pq-${i}`;
+      if (q.querySelector('.quote-share')) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'quote-share';
+      btn.setAttribute('aria-label', 'Compartilhar este trecho');
+      btn.textContent = 'Compartilhar';
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const url = `${window.location.origin}${window.location.pathname}#${q.id}`;
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: post.title, text: `"${text}"`, url });
+          } else {
+            await navigator.clipboard.writeText(`"${text}"\n${url}`);
+            btn.textContent = 'Copiado';
+            setTimeout(() => { btn.textContent = 'Compartilhar'; }, 1800);
+          }
+        } catch { /* user cancel */ }
+      });
+      q.style.position = 'relative';
+      q.appendChild(btn);
+    });
+  }, [post.content_html, post.title]);
+
   return (
     <>
       <ReadingProgressBar targetRef={articleRef} />
@@ -374,10 +413,17 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
               className="blog-content blog-post-body"
               dangerouslySetInnerHTML={{ __html: htmlWithIds }}
             />
+            <GlossaryLinker articleRef={articleRef} contentKey={post.id} />
 
             <div className="mt-12 pt-6 border-t border-border-subtle" data-reading-hide="true">
               <ShareButtons title={post.title} />
             </div>
+
+            <PrevNextPost
+              currentPost={post}
+              allPosts={allPosts}
+              onNavigate={onNavigate}
+            />
 
             <RelatedPosts
               currentPost={post}
@@ -726,10 +772,20 @@ export default function BlogPage() {
     return filteredPosts.filter((p) => p !== pinnedPost);
   }, [filteredPosts, pinnedPost]);
 
+  const withViewTransition = (fn) => {
+    if (typeof document !== 'undefined' && document.startViewTransition) {
+      document.startViewTransition(fn);
+    } else {
+      fn();
+    }
+  };
+
   const handleBack = () => {
-    setSelectedPost(null);
-    const basePath = window.location.pathname.replace(/\/blog\/.+$/, '/blog');
-    window.history.pushState({}, '', basePath);
+    withViewTransition(() => {
+      setSelectedPost(null);
+      const basePath = window.location.pathname.replace(/\/blog\/.+$/, '/blog');
+      window.history.pushState({}, '', basePath);
+    });
   };
 
   const handleSelectPost = (post) => {
@@ -741,10 +797,12 @@ export default function BlogPage() {
       sessionStorage.setItem(SCROLL_KEY, JSON.stringify({ x: scrollX, y: scrollY }));
     } catch {}
 
-    setSelectedPost(post);
-    const slug = post.slug || post.id;
-    window.history.pushState({}, '', `${window.location.pathname.replace(/\/blog.*/, '/blog')}/${slug}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    withViewTransition(() => {
+      setSelectedPost(post);
+      const slug = post.slug || post.id;
+      window.history.pushState({}, '', `${window.location.pathname.replace(/\/blog.*/, '/blog')}/${slug}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
 
   // Restaura scroll ao voltar pra listagem (selectedPost === null)

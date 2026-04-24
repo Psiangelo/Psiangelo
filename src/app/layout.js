@@ -1,6 +1,7 @@
 import './globals.css';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import BackToTop from '@/components/BackToTop';
+import SkipLink from '@/components/SkipLink';
 import AmbientPsi from '@/components/ui/AmbientPsi';
 import ContentBootstrap from '@/components/ContentBootstrap';
 import StructuredData from '@/components/StructuredData';
@@ -60,6 +61,13 @@ export const metadata = {
     index: true,
     follow: true,
   },
+  manifest: `${SITE_URL}/manifest.json`,
+  themeColor: '#0E0C0A',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Psiangelo',
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -69,6 +77,7 @@ export default function RootLayout({ children }) {
         <Analytics />
       </head>
       <body>
+        <SkipLink />
         <StructuredData />
         <ContentBootstrap />
         <CommandPalette />

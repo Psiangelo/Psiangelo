@@ -8,6 +8,26 @@ function getPublishedPosts() {
   return posts.filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
 }
 
+function slugifyTag(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getUniqueTags() {
+  const seen = new Set();
+  for (const p of getPublishedPosts()) {
+    for (const t of p.tags || []) {
+      const slug = slugifyTag(t);
+      if (slug) seen.add(slug);
+    }
+  }
+  return Array.from(seen);
+}
+
 function toAbsolute(path, priority, changeFrequency, lastModified) {
   // trailingSlash:true no next.config — URL canônica sempre termina em /
   const normalized = path === '' ? '/' : path.endsWith('/') ? path : `${path}/`;
@@ -27,6 +47,7 @@ export default function sitemap() {
     toAbsolute('/psicoterapia-analitica/adultos',    0.95, 'monthly'),
     toAbsolute('/psicoterapia-analitica/adolescentes', 0.95, 'monthly'),
     toAbsolute('/psicoterapia-analitica/idosos',     0.95, 'monthly'),
+    toAbsolute('/atendo',                            0.9,  'monthly'),
 
     // Autoridade / E-E-A-T
     toAbsolute('/bio',        0.85, 'monthly'),
@@ -52,5 +73,10 @@ export default function sitemap() {
     );
   });
 
-  return [...staticRoutes, ...postRoutes];
+  // Categorias do blog — um entry por tag única
+  const tagRoutes = getUniqueTags().map((tag) =>
+    toAbsolute(`/blog/tag/${tag}`, 0.6, 'weekly'),
+  );
+
+  return [...staticRoutes, ...postRoutes, ...tagRoutes];
 }

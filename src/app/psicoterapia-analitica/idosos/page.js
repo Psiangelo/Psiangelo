@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import TherapyGate from '@/components/therapy/TherapyGate';
 import TherapySchema from '@/components/therapy/TherapySchema';
+import { CLINICAL_FAQ } from '@/data/clinical-faq';
 
 const FAQ = [
   {
@@ -75,7 +76,7 @@ export default function PsicoterapiaIdososPage() {
         serviceName="Psicoterapia analítica online para idosos"
         description="Atendimento clínico de idosos (60+) em psicoterapia analítica de abordagem junguiana, online, em todo o Brasil. A segunda metade da vida segundo Jung — sentido, memória, reconciliação, novos começos."
         audience={{ name: 'Idosos', suggestedMinAge: 60 }}
-        faq={FAQ}
+        faq={[...FAQ, ...CLINICAL_FAQ]}
         breadcrumb={[
           { name: 'Psicoterapia Analítica', path: '/psicoterapia-analitica' },
         ]}
@@ -265,7 +266,7 @@ function FAQSection() {
           Antes de <em className="italic text-accent">marcar.</em>
         </h2>
         <dl className="space-y-8">
-          {FAQ.map((f, i) => (
+          {[...FAQ, ...CLINICAL_FAQ].map((f, i) => (
             <div
               key={i}
               className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-3 md:gap-10 pb-6 border-b border-border-subtle/50"
