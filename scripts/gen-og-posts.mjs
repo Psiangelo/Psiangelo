@@ -59,10 +59,25 @@ function fileToDataUri(filePath) {
   return `data:${mime};base64,${buf.toString('base64')}`;
 }
 
-function resolveImageDataUri(src) {
+async function resolveImageDataUri(src) {
   if (!src) return null;
   if (src.startsWith('data:')) return src;
-  if (src.startsWith('http')) return null; // resvg não fetch
+  if (src.startsWith('http')) {
+    // Fetch remoto (Supabase Storage, CDN etc) -> data URI
+    try {
+      const res = await fetch(src);
+      if (!res.ok) {
+        console.warn(`[og-posts] fetch ${src} -> ${res.status}`);
+        return null;
+      }
+      const buf = Buffer.from(await res.arrayBuffer());
+      const mime = res.headers.get('content-type') || 'image/jpeg';
+      return `data:${mime};base64,${buf.toString('base64')}`;
+    } catch (e) {
+      console.warn(`[og-posts] fetch falhou ${src}: ${e.message}`);
+      return null;
+    }
+  }
   // Path: remove basePath /Psiangelo se existir, resolve em public/
   const clean = src.replace(/^\/Psiangelo\//, '/').replace(/^\//, '');
   return fileToDataUri(resolve(pub, clean));
@@ -299,9 +314,9 @@ async function main() {
     const outFile  = resolve(out,  `${slug}.png`);
     const outFileV = resolve(outV, `${slug}.png`);
     try {
-      const imageUri  = resolveImageDataUri(post.featured_image);
+      const imageUri  = await resolveImageDataUri(post.featured_image);
       // Vertical prefere featured_cover (já 9:16); fallback pra featured_image
-      const imageUriV = resolveImageDataUri(post.featured_cover) || imageUri;
+      const imageUriV = (await resolveImageDataUri(post.featured_cover)) || imageUri;
 
       const baseOpts = {
         title: stripHighlights(post.title) || 'Sem título',

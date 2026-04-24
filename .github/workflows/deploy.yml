@@ -20,6 +20,10 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_SUPABASE_SERVICE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_SERVICE_KEY }}
+          # Plausible Analytics — defina a repo variable PLAUSIBLE_DOMAIN (ex: psiangelo.github.io)
+          # pra ativar o script. Se vazio, Analytics.jsx renderiza null (sem tracking).
+          NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ vars.PLAUSIBLE_DOMAIN }}
+          NEXT_PUBLIC_PLAUSIBLE_HOST: ${{ vars.PLAUSIBLE_HOST }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out

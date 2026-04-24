@@ -642,6 +642,8 @@ function FeaturedCover({ post, onClick }) {
 }
 
 /* ====== BLOG PAGE ====== */
+const SCROLL_KEY = 'angelo_blog_list_scroll';
+
 export default function BlogPage() {
   const { visibility, ready } = useVisibility();
   const [allPosts, setAllPosts] = useState([]);
@@ -649,6 +651,7 @@ export default function BlogPage() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
+  const listRef = useRef(null);
 
   useEffect(() => {
     const load = () => {
@@ -730,13 +733,35 @@ export default function BlogPage() {
   };
 
   const handleSelectPost = (post) => {
+    // Persiste posição do carrossel/página antes de trocar pro post view,
+    // pra restaurar quando o usuário voltar
+    try {
+      const scrollX = listRef.current?.scrollLeft ?? 0;
+      const scrollY = window.scrollY || 0;
+      sessionStorage.setItem(SCROLL_KEY, JSON.stringify({ x: scrollX, y: scrollY }));
+    } catch {}
+
     setSelectedPost(post);
-    // URL canônico "bonito" pra compartilhamento — /blog/{slug} aponta
-    // pra rota estática que tem OG image gerada com o filtro de identidade
     const slug = post.slug || post.id;
     window.history.pushState({}, '', `${window.location.pathname.replace(/\/blog.*/, '/blog')}/${slug}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Restaura scroll ao voltar pra listagem (selectedPost === null)
+  useEffect(() => {
+    if (selectedPost) return;
+    let raf = 0;
+    raf = requestAnimationFrame(() => {
+      try {
+        const raw = sessionStorage.getItem(SCROLL_KEY);
+        if (!raw) return;
+        const { x = 0, y = 0 } = JSON.parse(raw);
+        if (listRef.current && x) listRef.current.scrollLeft = x;
+        if (y) window.scrollTo({ top: y, behavior: 'instant' in window ? 'instant' : 'auto' });
+      } catch {}
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [selectedPost]);
 
   if (ready && !visibility.blog) {
     return <HiddenPlaceholder title="Blog indisponível" />;
@@ -878,7 +903,7 @@ export default function BlogPage() {
                       </span>
                     </div>
                   )}
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 -mx-5 px-5 pb-6 scrollbar-hide sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none sm:mx-0 sm:px-0 sm:pb-0 lg:grid-cols-6 lg:gap-6 lg:auto-rows-min">
+                  <div ref={listRef} className="flex overflow-x-auto snap-x snap-mandatory gap-5 -mx-5 px-5 pb-6 scrollbar-hide sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none sm:mx-0 sm:px-0 sm:pb-0 lg:grid-cols-6 lg:gap-6 lg:auto-rows-min">
                     {restPosts.map((post, i) => {
                       const mod = i % 7;
                       let span = 'lg:col-span-2';

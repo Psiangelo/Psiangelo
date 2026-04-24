@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function ShareButtons({ title }) {
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
     if (typeof window !== 'undefined') setUrl(window.location.href);
@@ -15,13 +17,32 @@ export default function ShareButtons({ title }) {
     title: encodeURIComponent(title || ''),
   };
 
+  const flashToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 2200);
+  };
+
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Fallback iOS antigo / contexto não-seguro
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
       setCopied(true);
+      flashToast('Link copiado');
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      /* ignore */
+      flashToast('Não foi possível copiar');
     }
   };
 
@@ -56,40 +77,63 @@ export default function ShareButtons({ title }) {
   ];
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-text-dim mr-1">
-        Compartilhar
-      </span>
-      {items.map((it) => (
-        <a
-          key={it.label}
-          href={it.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Compartilhar no ${it.label}`}
-          className="w-9 h-9 inline-flex items-center justify-center border border-border-subtle hover:border-accent/50 text-text-dim hover:text-accent transition-colors"
-          title={it.label}
+    <>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-text-dim mr-1">
+          Compartilhar
+        </span>
+        {items.map((it) => (
+          <a
+            key={it.label}
+            href={it.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Compartilhar no ${it.label}`}
+            className="w-9 h-9 inline-flex items-center justify-center border border-border-subtle hover:border-accent/50 text-text-dim hover:text-accent transition-colors focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent focus-visible:outline-offset-2"
+            title={it.label}
+          >
+            {it.icon}
+          </a>
+        ))}
+        <button
+          onClick={copy}
+          aria-label="Copiar link"
+          title="Copiar link"
+          className="w-9 h-9 inline-flex items-center justify-center border border-border-subtle hover:border-accent/50 text-text-dim hover:text-accent transition-colors focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent focus-visible:outline-offset-2"
         >
-          {it.icon}
-        </a>
-      ))}
-      <button
-        onClick={copy}
-        aria-label="Copiar link"
-        title="Copiar link"
-        className="w-9 h-9 inline-flex items-center justify-center border border-border-subtle hover:border-accent/50 text-text-dim hover:text-accent transition-colors"
+          {copied ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Toast flutuante — feedback visual pro mobile onde o tick some facil */}
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="fixed left-1/2 -translate-x-1/2 bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] z-[200] pointer-events-none"
       >
-        {copied ? (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        ) : (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
-          </svg>
-        )}
-      </button>
-    </div>
+        <AnimatePresence>
+          {toastMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.2 }}
+              className="bg-bg-card border border-accent/40 text-text-bright font-mono text-[0.62rem] tracking-[0.22em] uppercase px-4 py-2.5 rounded shadow-lg shadow-black/40"
+            >
+              {toastMsg}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
