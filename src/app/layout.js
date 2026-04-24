@@ -1,5 +1,6 @@
 import './globals.css';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import BackToTop from '@/components/BackToTop';
 import AmbientPsi from '@/components/ui/AmbientPsi';
 import ContentBootstrap from '@/components/ContentBootstrap';
 import StructuredData from '@/components/StructuredData';
@@ -74,6 +75,7 @@ export default function RootLayout({ children }) {
         {children}
         <AmbientPsi />
         <WhatsAppButton />
+        <BackToTop />
       </body>
     </html>
   );

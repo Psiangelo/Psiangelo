@@ -80,6 +80,10 @@ export default function PsicoterapiaAdolescentesPage() {
       <Navbar />
       <main>
         <PageHero
+          breadcrumbs={[
+            { name: 'Psicoterapia Analítica', href: '/psicoterapia-analitica/' },
+            { name: 'Adolescentes' },
+          ]}
           eyebrow="Adolescentes · 14 a 18 anos · 100% online"
           title="Um espaço próprio"
           emphasis="para o que está em formação"

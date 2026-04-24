@@ -34,12 +34,15 @@ function groupFaqs(faqs) {
   }));
 }
 
-function FAQItem({ item, isOpen, onToggle }) {
+function FAQItem({ item, isOpen, onToggle, panelId, buttonId }) {
   return (
     <div className="border-b border-border-subtle">
       <button
+        id={buttonId}
         onClick={onToggle}
-        className="w-full flex items-start justify-between py-5 text-left group cursor-pointer gap-4"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        className="w-full flex items-start justify-between py-5 text-left group cursor-pointer gap-4 focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent focus-visible:outline-offset-2"
       >
         <span
           className={`font-serif text-[0.98rem] md:text-[1.05rem] leading-snug pr-2 transition-colors duration-300 flex-1 ${
@@ -49,6 +52,7 @@ function FAQItem({ item, isOpen, onToggle }) {
           {item.question}
         </span>
         <span
+          aria-hidden="true"
           className={`flex-shrink-0 w-7 h-7 flex items-center justify-center border transition-all duration-300 ${
             isOpen
               ? 'border-accent/40 text-accent rotate-45'
@@ -64,6 +68,9 @@ function FAQItem({ item, isOpen, onToggle }) {
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
+            id={panelId}
+            role="region"
+            aria-labelledby={buttonId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -152,6 +159,8 @@ export default function FAQ() {
                       item={item}
                       isOpen={openKey === key}
                       onToggle={() => setOpenKey(openKey === key ? null : key)}
+                      buttonId={`faq-btn-${group.id}-${i}`}
+                      panelId={`faq-panel-${group.id}-${i}`}
                     />
                   );
                 })}

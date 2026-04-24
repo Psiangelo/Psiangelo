@@ -17,6 +17,8 @@ import CursorGlow from './CursorGlow';
  *  - lead: parágrafo de introdução
  *  - actions: ReactNode opcional (CTAs)
  */
+import Breadcrumbs from './Breadcrumbs';
+
 export default function PageHero({
   meta = [],
   eyebrow,
@@ -25,6 +27,7 @@ export default function PageHero({
   kicker,
   lead,
   actions,
+  breadcrumbs,
 }) {
   return (
     <section className="relative pt-28 md:pt-40 pb-12 md:pb-20 px-5 sm:px-6 md:px-12 overflow-hidden">
@@ -70,6 +73,18 @@ export default function PageHero({
         <div className="relative pl-0 md:pl-10 max-w-3xl">
           {/* Espinha vertical âmbar */}
           <span className="vertical-spine hidden md:block left-0" aria-hidden />
+
+          {/* Breadcrumbs — trilha de navegação */}
+          {Array.isArray(breadcrumbs) && breadcrumbs.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-6"
+            >
+              <Breadcrumbs items={breadcrumbs} />
+            </motion.div>
+          )}
 
           {/* Ficha técnica mono */}
           {meta.length > 0 && (

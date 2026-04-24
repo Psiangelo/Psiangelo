@@ -83,6 +83,10 @@ export default function PsicoterapiaIdososPage() {
       <Navbar />
       <main>
         <PageHero
+          breadcrumbs={[
+            { name: 'Psicoterapia Analítica', href: '/psicoterapia-analitica/' },
+            { name: 'Idosos' },
+          ]}
           eyebrow="Idosos · 60+ · 100% online"
           title="A segunda metade da vida"
           emphasis="também pede escuta"

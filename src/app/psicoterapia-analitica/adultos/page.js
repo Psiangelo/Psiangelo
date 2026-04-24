@@ -86,6 +86,10 @@ export default function PsicoterapiaAdultosPage() {
       <Navbar />
       <main>
         <PageHero
+          breadcrumbs={[
+            { name: 'Psicoterapia Analítica', href: '/psicoterapia-analitica/' },
+            { name: 'Adultos' },
+          ]}
           eyebrow="Adultos · 18 a 60 · 100% online"
           title="Uma escuta sem"
           emphasis="fórmulas prontas"
