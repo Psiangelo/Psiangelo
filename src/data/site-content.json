@@ -1,6 +1,6 @@
 {
-  "version": 1776993635669,
-  "publishedAt": "2026-04-24T01:20:37.308773+00:00",
+  "version": 1777082441828,
+  "publishedAt": "2026-04-25T02:00:43.116863+00:00",
   "note": "Publicado via banner",
   "data": {
     "angelo_admin_bio": {
@@ -3204,7 +3204,7 @@
             "last_sign_in_at": "2026-04-12T01:33:16.149862Z"
           }
         ],
-        "updated_at": "2026-04-24T01:04:42.595335Z",
+        "updated_at": "2026-04-25T01:56:34.77686Z",
         "app_metadata": {
           "provider": "email",
           "providers": [
@@ -3218,14 +3218,14 @@
           "nome_completo": "Gabriel",
           "email_verified": true
         },
-        "last_sign_in_at": "2026-04-24T01:04:42.558926499Z",
+        "last_sign_in_at": "2026-04-25T01:56:34.767223556Z",
         "email_confirmed_at": "2026-04-23T12:08:13.624564Z"
       },
-      "expires_at": 1776996282,
+      "expires_at": 1777085794,
       "expires_in": 3600,
       "token_type": "bearer",
-      "access_token": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjZjYjc3MTc3LTdkOGQtNGU1OS1iNjdlLTVlNGQ1ZWI4MzY3NCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3FuaXlxbXN6cW1xZXRpbWZybGpmLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiZDkyNmMyOS0yODk4LTRlNjQtOGY5ZS03MmI0NTE2ZmNkZjMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzc2OTk2MjgyLCJpYXQiOjE3NzY5OTI2ODIsImVtYWlsIjoiZ2FicmllbF8yMGFuZ2Vsb0Bob3RtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5vbWVfY29tcGxldG8iOiJHYWJyaWVsIiwidXNlcm5hbWUiOiJnYWJyaWVsIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NzY5OTI2ODJ9XSwic2Vzc2lvbl9pZCI6ImI5MTE2ZTU5LTFkMDItNDM2ZC04NmQ2LTM4MTg4MzYzZWM3MyIsImlzX2Fub255bW91cyI6ZmFsc2V9.G5hoqYS8WhWSrvVdnPNh02t8jGxcm9yHqZpdmVJWvUWfo8oQ02-0g8FPeyX5I4Ewy7Bt6AM2wRyBkpAA6-qnag",
-      "refresh_token": "nevel6eb335b",
+      "access_token": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjZjYjc3MTc3LTdkOGQtNGU1OS1iNjdlLTVlNGQ1ZWI4MzY3NCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3FuaXlxbXN6cW1xZXRpbWZybGpmLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiZDkyNmMyOS0yODk4LTRlNjQtOGY5ZS03MmI0NTE2ZmNkZjMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzc3MDg1Nzk0LCJpYXQiOjE3NzcwODIxOTQsImVtYWlsIjoiZ2FicmllbF8yMGFuZ2Vsb0Bob3RtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5vbWVfY29tcGxldG8iOiJHYWJyaWVsIiwidXNlcm5hbWUiOiJnYWJyaWVsIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NzcwODIxOTR9XSwic2Vzc2lvbl9pZCI6IjYyNjQ4OGE3LTEyNDUtNDFjNy05YmI3LTk1NDcyNDAyNDM0MCIsImlzX2Fub255bW91cyI6ZmFsc2V9.F6vicLZV_ofh_C7PtHkojmnPUYr97JZGRFO4D3yFqcm-A_YQ_0Tgq5n3TapYiTCJH43oVCuqN3ylRu6ERW9ryA",
+      "refresh_token": "esqsdntpxi3h",
       "weak_password": null
     },
     "angelo_admin_home_sections": [
