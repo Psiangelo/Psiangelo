@@ -7,6 +7,7 @@ import Hero from '@/components/home/Hero';
 import HomeDisclaimer from '@/components/home/HomeDisclaimer';
 import HomeSeoIntro from '@/components/home/HomeSeoIntro';
 import HomeApproach from '@/components/home/HomeApproach';
+import HomeBussola from '@/components/home/HomeBussola';
 import AudienceCards from '@/components/therapy/AudienceCards';
 import Prelude from '@/components/home/Prelude';
 import About from '@/components/home/About';
@@ -126,8 +127,9 @@ export default function HomePage() {
     hero:        () => <Hero />,
     disclaimer:  () => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
     seoIntro:    () => <HomeSeoIntro />,
-    audience:    () => <AudienceCards heading="Para quem atendo" />,
-    approach:    () => <HomeApproach />,
+    bussola:     () => (v.bussola !== false ? <HomeBussola /> : null),
+    audience:    () => (v.audience ? <AudienceCards heading="Para quem atendo" /> : null),
+    approach:    () => (v.approach ? <HomeApproach /> : null),
     about:       () => (v.about ? <About /> : null),
     prelude:     () => (v.prelude ? <Prelude /> : null),
     trilhas:     () => (v.trilhas && has.trilhas ? <StudyPaths /> : null),

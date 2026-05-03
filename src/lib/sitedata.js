@@ -78,11 +78,26 @@ export const CARTO_TONES = ['accent', 'bright', 'citrinit', 'rubedo'];
 
 export const DEFAULT_HOMEPAGE = {
   hero: {
-    eyebrow: 'Psicoterapia Analítica · Abordagem Junguiana · 100% Online',
+    eyebrow: 'Clínica · Estudo · Escrita · Psicologia Analítica',
     titlePrefix: 'Psi',
     titleEmphasis: 'angelo',
     tagline: 'Uma escuta para a sua vida.',
-    lead: 'Atendimento clínico em psicoterapia analítica, online, para adolescentes, adultos e idosos em todo o Brasil. Não parto de pressupostos sobre você — o trabalho começa do que você me conta e do que ressoa entre nós.',
+    lead: 'A casa de Ângelo: clínica junguiana online em todo o Brasil, e um trabalho público de estudo e escrita sobre a obra de Jung. Aqui você encontra a porta de entrada para tudo isso.',
+  },
+  bussola: {
+    eyebrow: 'Por onde começar',
+    title: 'Seis portas',
+    emphasis: 'desta clínica e da casa.',
+    lead:
+      'A clínica e o trabalho público caminham juntos aqui. Esta é a entrada — escolha por onde começar.',
+    portals: [
+      { id: 'atendo',    visKey: 'psicoterapia', href: '/psicoterapia-analitica', glyph: '◈', eyebrow: 'Clínica',     title: 'Atendo',    body: 'Psicoterapia analítica online, em todo o Brasil — adolescentes, adultos e idosos.', cta: 'Conhecer o atendimento' },
+      { id: 'blog',      visKey: 'blog',         href: '/blog',                   glyph: '✶', eyebrow: 'Ensaios',     title: 'Escrevo',   body: 'Textos sobre clínica, sonhos e símbolos — publicados periodicamente.',          cta: 'Ler os ensaios' },
+      { id: 'trilhas',   visKey: 'trilhas',      href: '/trilhas',                glyph: '✦', eyebrow: 'Estudo',      title: 'Trilhas',   body: 'Percursos guiados de leitura para entrar na obra de Jung pela porta certa.',     cta: 'Começar uma trilha' },
+      { id: 'atlas',     visKey: 'atlas',        href: '/atlas',                  glyph: '◇', eyebrow: 'Vault aberto',title: 'Atlas',     body: 'O caderno de notas e mapas conceituais que mantenho em estudo contínuo.',         cta: 'Explorar o Atlas' },
+      { id: 'materiais', visKey: 'materiais',    href: '/materiais',              glyph: '◆', eyebrow: 'Sínteses',    title: 'Materiais', body: 'Resumos e mapas mentais para estudar e revisitar conceitos junguianos.',          cta: 'Ver materiais' },
+      { id: 'glossario', visKey: 'glossario',    href: '/glossario',              glyph: '※', eyebrow: 'Léxico',      title: 'Glossário', body: 'Verbetes vivos da abordagem — definições curtas e remissões cruzadas.',          cta: 'Abrir o glossário' },
+    ],
   },
   prelude: {
     body: 'Atendo adolescentes, adultos e idosos em psicoterapia analítica, 100% online, em todo o Brasil. Aqui você conhece a abordagem, a minha trajetória e o que publico sobre psicologia junguiana.',
@@ -218,6 +233,9 @@ const HOMEPAGE_LEGACY_MARKERS = {
   hero: [
     'nosce te ipsum',
     'estudante de psicologia, estagiário clínico e futuro psicólogo',
+    // 2026-05-03: hero pré-reposicionamento "casa" repetia copy da landing clínica
+    'psicoterapia analítica · abordagem junguiana · 100% online',
+    'atendimento clínico em psicoterapia analítica, online, para adolescentes',
   ],
   contact: [
     'aprofundar seus estudos',
@@ -255,6 +273,15 @@ export const getHomepage = () => {
     ? DEFAULT_HOMEPAGE.contact
     : { ...DEFAULT_HOMEPAGE.contact, ...(stored.contact || {}) };
   const about = { ...DEFAULT_HOMEPAGE.about, ...(stored.about || {}) };
+  // bussola: merge raso, mas mantém portals do default quando o admin não tocou
+  const storedBussola = stored.bussola || {};
+  const bussola = {
+    ...DEFAULT_HOMEPAGE.bussola,
+    ...storedBussola,
+    portals: Array.isArray(storedBussola.portals) && storedBussola.portals.length
+      ? storedBussola.portals
+      : DEFAULT_HOMEPAGE.bussola.portals,
+  };
 
   // Se houve migração, persiste uma vez por sessão pra que o snapshot publicado
   // no Supabase reflita a copy nova (e não volte o legacy quando outros devices sincronizam).
@@ -265,7 +292,7 @@ export const getHomepage = () => {
     if (migratedHero || migratedContact || migratedPrelude) {
       _homepageMigrated = true;
       try {
-        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, prelude, about, contact }));
+        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, bussola, prelude, about, contact }));
         // não dispara evento aqui pra evitar loop de re-render; o resultado retornado já tem a copy correta
       } catch {
         /* quota cheia — migração só em memória */
@@ -275,7 +302,7 @@ export const getHomepage = () => {
     }
   }
 
-  return { hero, prelude, about, contact };
+  return { hero, bussola, prelude, about, contact };
 };
 export const setHomepage = (v) => writeJson(SITEDATA_KEYS.homepage, v);
 
@@ -321,10 +348,13 @@ export const DEFAULT_VISIBILITY = {
   // Seções só da home
   prelude:           true,
   about:             true,
+  bussola:           true,  // 2026-05-03: nova porta de entrada da home (substitui audience+approach+faq)
+  audience:          false, // 2026-05-03: público canônico vai pra /psicoterapia-analitica/ (anti-canibalização SEO)
+  approach:          false, // idem — princípios canônicos vivem na landing clínica
   cartografia:       false, // rebaixada na home clínica (fica acessível via /trilhas e nav)
   depoimentos:       false, // vedado publicar depoimentos de pacientes (CFP) — mantém oculto na home
   disclaimerEstagio: true,  // faixa "estagiário + supervisão" logo abaixo do hero
-  faq:               true,
+  faq:               false, // 2026-05-03: FAQ canônico vive na landing clínica (anti-canibalização)
   contato:           true,
   // Extras
   whatsappFlutuante: true,
@@ -337,9 +367,10 @@ export const DEFAULT_VISIBILITY = {
 export const HOME_SECTION_META = [
   { id: 'hero',         label: 'Hero (topo)',                           fixed: true  },
   { id: 'disclaimer',   label: 'Faixa de status (estagiário)',          visKey: 'disclaimerEstagio' },
-  { id: 'seoIntro',     label: 'Intro SEO (texto clínico)' },
-  { id: 'audience',     label: 'Para quem atendo (3 públicos)' },
-  { id: 'approach',     label: 'Como trabalho (3 princípios)' },
+  { id: 'seoIntro',     label: 'Manifesto (texto editorial)' },
+  { id: 'bussola',      label: 'Bússola (mapa das portas)',             visKey: 'bussola' },
+  { id: 'audience',     label: 'Para quem atendo (3 públicos)',         visKey: 'audience' },
+  { id: 'approach',     label: 'Como trabalho (3 princípios)',          visKey: 'approach' },
   { id: 'about',        label: 'Sobre mim',                             visKey: 'about' },
   { id: 'prelude',      label: 'Prelúdio (editorial)',                  visKey: 'prelude' },
   { id: 'trilhas',      label: 'Trilhas de estudo',                     visKey: 'trilhas' },
@@ -367,8 +398,21 @@ export const getHomeSections = () => {
       seen.add(id);
     }
   }
-  // Concat seções do default que ainda não estão salvas (futuras adições)
-  DEFAULT_HOME_SECTIONS.forEach((id) => { if (!seen.has(id)) valid.push(id); });
+  // Insere seções novas do default na posição relativa correta (e não no final),
+  // pra que adições futuras (ex.: bussola em 2026-05-03) entrem onde fazem
+  // sentido editorialmente, sem bagunçar a ordem que o admin já salvou.
+  DEFAULT_HOME_SECTIONS.forEach((id, defaultIdx) => {
+    if (seen.has(id)) return;
+    // próxima seção do default que JÁ está em valid → ancora a inserção antes dela
+    let insertAt = valid.length;
+    for (let j = defaultIdx + 1; j < DEFAULT_HOME_SECTIONS.length; j++) {
+      const nextId = DEFAULT_HOME_SECTIONS[j];
+      const k = valid.indexOf(nextId);
+      if (k !== -1) { insertAt = k; break; }
+    }
+    valid.splice(insertAt, 0, id);
+    seen.add(id);
+  });
   return valid;
 };
 export const setHomeSections = (v) => writeJson(SITEDATA_KEYS.homeSections, v);

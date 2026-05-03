@@ -2,21 +2,25 @@ import HomeClient from './HomeClient';
 
 const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 
+// Title da home foca em brand + visão da casa (clínica + estudo + escrita).
+// O long-tail clínico ("psicoterapia analítica online", públicos, "primeira
+// conversa") fica reservado pra /psicoterapia-analitica/ pra evitar
+// canibalização — a home aponta pra ela via bússola e manifesto.
 export const metadata = {
   title: {
-    absolute: 'Psicoterapia Junguiana Online · Adolescentes, Adultos e Idosos · Psiangelo',
+    absolute: 'Psiangelo · Psicologia Analítica · Clínica, Estudo e Escrita',
   },
   description:
-    'Psicoterapia analítica online em abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil. Escuta clínica da tradição de Jung, por videochamada. Marque uma conversa inicial sem compromisso.',
+    'A casa do Psiangelo — clínica junguiana online em todo o Brasil, trilhas de estudo, ensaios e o vault aberto de notas sobre psicologia analítica. Por onde começar.',
   alternates: { canonical: `${SITE_URL}/` },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
     url: `${SITE_URL}/`,
     siteName: 'Psiangelo',
-    title: 'Psicoterapia Junguiana Online · Psiangelo',
+    title: 'Psiangelo · Psicologia Analítica · Clínica, Estudo e Escrita',
     description:
-      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil. Marque uma conversa inicial sem compromisso.',
+      'Clínica junguiana online no Brasil, trilhas de estudo, ensaios e o vault aberto de notas sobre psicologia analítica.',
     images: [
       { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo', type: 'image/png' },
       { url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: 'Psiangelo', type: 'image/png' },
@@ -24,9 +28,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Psicoterapia Junguiana Online · Psiangelo',
+    title: 'Psiangelo · Psicologia Analítica · Clínica, Estudo e Escrita',
     description:
-      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
+      'Clínica junguiana online no Brasil, trilhas de estudo, ensaios e o vault aberto de notas sobre psicologia analítica.',
     images: [`${SITE_URL}/og.png`],
   },
 };

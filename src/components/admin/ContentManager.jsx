@@ -102,6 +102,40 @@ export default function ContentManager({ addToast, addLogEntry }) {
     reader.readAsDataURL(file);
   };
 
+  // ─── BÚSSOLA — handlers de portas ──────────────────────────────────
+  const getBussola = () => data.bussola || DEFAULT_HOMEPAGE.bussola;
+  const updateBussolaPortal = (idx, key, value) => {
+    const b = getBussola();
+    const portals = [...(b.portals || [])];
+    portals[idx] = { ...portals[idx], [key]: value };
+    setData((prev) => ({ ...prev, bussola: { ...b, portals } }));
+    setDirty(true);
+  };
+  const addBussolaPortal = () => {
+    const b = getBussola();
+    const portals = [
+      ...(b.portals || []),
+      { id: `porta-${Date.now()}`, visKey: '', href: '/', glyph: '◆', eyebrow: 'Nova', title: 'Nova porta', body: '', cta: 'Abrir' },
+    ];
+    setData((prev) => ({ ...prev, bussola: { ...b, portals } }));
+    setDirty(true);
+  };
+  const removeBussolaPortal = (idx) => {
+    const b = getBussola();
+    const portals = (b.portals || []).filter((_, i) => i !== idx);
+    setData((prev) => ({ ...prev, bussola: { ...b, portals } }));
+    setDirty(true);
+  };
+  const moveBussolaPortal = (idx, dir) => {
+    const b = getBussola();
+    const portals = [...(b.portals || [])];
+    const target = idx + dir;
+    if (target < 0 || target >= portals.length) return;
+    [portals[idx], portals[target]] = [portals[target], portals[idx]];
+    setData((prev) => ({ ...prev, bussola: { ...b, portals } }));
+    setDirty(true);
+  };
+
   const persist = () => {
     setHomepage(data);
     setDirty(false);
@@ -124,9 +158,10 @@ export default function ContentManager({ addToast, addLogEntry }) {
   };
 
   const blocks = [
-    { id: 'hero', label: 'Hero' },
+    { id: 'hero',    label: 'Hero' },
+    { id: 'bussola', label: 'Bússola' },
     { id: 'prelude', label: 'Prelúdio' },
-    { id: 'about', label: 'Sobre' },
+    { id: 'about',   label: 'Sobre' },
     { id: 'contact', label: 'Contato' },
   ];
 
@@ -200,6 +235,77 @@ export default function ContentManager({ addToast, addLogEntry }) {
             <textarea value={data.hero.lead} rows={4} onChange={(e) => updateBlock('hero', 'lead', e.target.value)} className={TEXTAREA} />
           </div>
         </div>
+      )}
+
+      {/* BÚSSOLA */}
+      {activeBlock === 'bussola' && (
+        <>
+          <div className={CARD + ' space-y-4'}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">Bússola — cabeçalho</h3>
+              <button
+                onClick={() => resetBlock('bussola')}
+                className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+                title="Substitui o cabeçalho e as portas pela versão padrão."
+              >
+                ↺ Restaurar
+              </button>
+            </div>
+            <p className="text-[11px] text-[#6E6458] font-sans italic">
+              A bússola é a porta de entrada da home — substitui a duplicação que existia entre a home e a /psicoterapia-analitica/. Cada porta leva pra uma seção do site.
+            </p>
+            <div>
+              <label className={LABEL}>Eyebrow (linha mono pequena)</label>
+              <input value={data.bussola?.eyebrow ?? ''} onChange={(e) => updateBlock('bussola', 'eyebrow', e.target.value)} className={INPUT} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className={LABEL}>Título — prefixo</label>
+                <input value={data.bussola?.title ?? ''} onChange={(e) => updateBlock('bussola', 'title', e.target.value)} className={INPUT} />
+              </div>
+              <div>
+                <label className={LABEL}>Título — ênfase (italic dourado)</label>
+                <input value={data.bussola?.emphasis ?? ''} onChange={(e) => updateBlock('bussola', 'emphasis', e.target.value)} className={INPUT} />
+              </div>
+            </div>
+            <div>
+              <label className={LABEL}>Lead (parágrafo italic abaixo do título — opcional)</label>
+              <textarea value={data.bussola?.lead ?? ''} rows={2} onChange={(e) => updateBlock('bussola', 'lead', e.target.value)} className={TEXTAREA} />
+            </div>
+          </div>
+
+          <div className={CARD + ' space-y-3'}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">
+                Portas ({(data.bussola?.portals || []).length})
+              </h3>
+              <button onClick={addBussolaPortal} className={BTN_SECONDARY}>+ Adicionar porta</button>
+            </div>
+            <p className="text-[11px] text-[#6E6458] font-sans italic">
+              Cada porta vira um card clicável. <strong>visKey</strong> liga a porta a um toggle de Visibilidade — quando o módulo correspondente estiver oculto, a porta some sem precisar editar aqui.
+            </p>
+            {(data.bussola?.portals || []).map((p, i) => (
+              <div key={i} className="bg-[#0E0C0A] border border-[rgba(180,140,80,0.1)] rounded-lg p-3 space-y-2">
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <input value={p.glyph || ''} onChange={(e) => updateBussolaPortal(i, 'glyph', e.target.value)} placeholder="◈" className={INPUT + ' col-span-1 text-center text-base'} maxLength={2} />
+                  <input value={p.eyebrow || ''} onChange={(e) => updateBussolaPortal(i, 'eyebrow', e.target.value)} placeholder="Eyebrow" className={INPUT + ' col-span-3 text-xs'} />
+                  <input value={p.title || ''} onChange={(e) => updateBussolaPortal(i, 'title', e.target.value)} placeholder="Título" className={INPUT + ' col-span-4 text-xs'} />
+                  <input value={p.cta || ''} onChange={(e) => updateBussolaPortal(i, 'cta', e.target.value)} placeholder="CTA" className={INPUT + ' col-span-3 text-xs'} />
+                  <button onClick={() => removeBussolaPortal(i)} className={BTN_DANGER_INLINE + ' col-span-1 text-center'}>×</button>
+                </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <input value={p.href || ''} onChange={(e) => updateBussolaPortal(i, 'href', e.target.value)} placeholder="/destino" className={INPUT + ' col-span-5 text-xs font-mono'} />
+                  <input value={p.visKey || ''} onChange={(e) => updateBussolaPortal(i, 'visKey', e.target.value)} placeholder="visKey (opcional)" className={INPUT + ' col-span-4 text-xs font-mono'} />
+                  <div className="col-span-3 flex items-center gap-1 justify-end">
+                    <button onClick={() => moveBussolaPortal(i, -1)} className={BTN_SECONDARY} disabled={i === 0}>↑</button>
+                    <button onClick={() => moveBussolaPortal(i, 1)} className={BTN_SECONDARY} disabled={i === (data.bussola?.portals || []).length - 1}>↓</button>
+                  </div>
+                </div>
+                <textarea value={p.body || ''} rows={2} onChange={(e) => updateBussolaPortal(i, 'body', e.target.value)} placeholder="Frase curta (1 linha) — o que essa porta entrega" className={TEXTAREA + ' text-xs'} />
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* PRELUDE */}
