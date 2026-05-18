@@ -37,6 +37,7 @@ const EMPTY_TRILHA = () => ({
   slug: '',
   name: '',
   subtitle: '',
+  description: '',
   coverImage: '',
   archetype: '',
   duration: '',
@@ -457,6 +458,16 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
             </div>
           )}
         </div>
+      </div>
+
+      <div>
+        <label className={LABEL}>Descrição longa (opcional, markdown — aparece abaixo do hero)</label>
+        <MarkdownTextarea
+          value={draft.description || ''}
+          onChange={(v) => update('description', v)}
+          rows={4}
+          placeholder="Apresentação curta da trilha — quem é o público, o que esperar, qual o resultado esperado."
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

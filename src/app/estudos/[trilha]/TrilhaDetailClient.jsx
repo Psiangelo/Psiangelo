@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { marked } from 'marked';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -96,6 +97,13 @@ export default function TrilhaDetailClient({ initialTrilha }) {
             <p className="font-serif italic text-text-dim text-[1.1rem] md:text-[1.2rem] leading-snug max-w-[700px] mb-5">
               {trilha.subtitle}
             </p>
+          )}
+
+          {trilha.description && (
+            <div
+              className="estudos-text-block max-w-[700px] mb-5 text-[0.95rem]"
+              dangerouslySetInnerHTML={{ __html: marked.parse(String(trilha.description || '')) }}
+            />
           )}
 
           {/* Barra de progresso */}
