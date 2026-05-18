@@ -171,6 +171,7 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
               <button
                 onClick={() => toggleStage(trilha.id, stage.title)}
                 aria-pressed={done}
+                aria-label={done ? 'Desmarcar etapa como concluída' : 'Marcar etapa como concluída'}
                 className={`ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 border font-mono text-[0.55rem] tracking-[0.18em] uppercase transition-colors ${
                   done
                     ? 'border-accent bg-accent/15 text-accent'
