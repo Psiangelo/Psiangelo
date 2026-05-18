@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   getEstudosPage, setEstudosPage, DEFAULT_ESTUDOS_PAGE, ESTUDOS_BLOCK_TYPES,
-  getTrilhas, getGlossario, getMaterials,
+  getTrilhas, getGlossario, getMaterials, getCartographies,
 } from '@/lib/sitedata';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
@@ -100,9 +100,21 @@ function BlockEditor({ block, idx, total, onChange, onMove, lists }) {
       )}
 
       {block.id === 'cartografia' && (
-        <p className="text-[11px] text-[#6E6458] italic">
-          Usa a mesma cartografia do site (editada em "Cartografia"). Aqui você apenas decide se ela aparece e em que posição.
-        </p>
+        <div>
+          <label className={LABEL}>Qual cartografia exibir</label>
+          <select
+            value={cfg.cartographyId || 'home'}
+            onChange={(e) => updateConfig('cartographyId', e.target.value)}
+            className={INPUT}
+          >
+            {lists.cartographies.map((c) => (
+              <option key={c.slug} value={c.slug}>{c.name} · {c.source}</option>
+            ))}
+          </select>
+          <p className="text-[10px] text-[#6E6458] italic mt-2">
+            Crie/edite cartografias na aba "Cartografia" do admin.
+          </p>
+        </div>
       )}
 
       {block.id === 'manifesto' && (
@@ -198,7 +210,7 @@ function BlockEditor({ block, idx, total, onChange, onMove, lists }) {
 export default function EstudosHubManager({ addToast, addLogEntry }) {
   const [data, setData] = useState(DEFAULT_ESTUDOS_PAGE);
   const [dirty, setDirty] = useState(false);
-  const [lists, setLists] = useState({ trilhas: [], glossario: [], materials: [], courses: [], posts: [] });
+  const [lists, setLists] = useState({ trilhas: [], glossario: [], materials: [], courses: [], posts: [], cartographies: [] });
 
   useEffect(() => {
     setData(getEstudosPage());
@@ -212,6 +224,7 @@ export default function EstudosHubManager({ addToast, addLogEntry }) {
         materials: getMaterials() || [],
         courses: readJsonSafe('angelo_admin_courses', []),
         posts: readJsonSafe('angelo_admin_blog', []),
+        cartographies: getCartographies() || [],
       });
     };
     sync();

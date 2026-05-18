@@ -257,10 +257,9 @@ function BlogBlock({ config, posts }) {
   );
 }
 
-function CartografiaBlock() {
-  // Cartography já vem com seu próprio <section> + título "Cartografia · Conceitos junguianos".
-  // O título/subtítulo do bloco no admin é informativo (legendinha no admin), não renderizado aqui.
-  return <Cartography />;
+function CartografiaBlock({ config }) {
+  // Admin pode escolher qual cartografia mostrar via config.cartographyId
+  return <Cartography slug={config?.cartographyId || 'home'} />;
 }
 
 function ManifestoBlock({ config }) {

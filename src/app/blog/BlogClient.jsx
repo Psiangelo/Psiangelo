@@ -23,6 +23,7 @@ import ShareButtons from '@/components/blog/ShareButtons';
 import RelatedPosts from '@/components/blog/RelatedPosts';
 import PrevNextPost from '@/components/blog/PrevNextPost';
 import GlossaryLinker from '@/components/blog/GlossaryLinker';
+import BlogPostBody from '@/components/blog/BlogPostBody';
 import { slugifyTag } from '@/lib/tagSlug';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
@@ -418,10 +419,7 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
               </div>
             )}
 
-            <div
-              className="blog-content blog-post-body"
-              dangerouslySetInnerHTML={{ __html: htmlWithIds }}
-            />
+            <BlogPostBody html={htmlWithIds} />
             <GlossaryLinker articleRef={articleRef} contentKey={post.id} />
 
             <div className="mt-12 pt-6 border-t border-border-subtle" data-reading-hide="true">

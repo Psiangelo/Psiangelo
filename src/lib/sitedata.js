@@ -39,6 +39,7 @@ export const SITEDATA_KEYS = {
   glossarioCategories: 'angelo_admin_glossario_categories',
   glossarioPage:  'angelo_admin_glossario_page',
   estudosPage:    'angelo_admin_estudos_page',
+  cartographies:  'angelo_admin_cartographies',
 };
 
 /* ===================================================================
@@ -227,10 +228,101 @@ function writeJson(key, value) {
 
 export const getTrilhas    = () => readJson(SITEDATA_KEYS.trilhas, TRILHAS_DEFAULT);
 export const setTrilhas    = (v) => writeJson(SITEDATA_KEYS.trilhas, v);
-export const getCartoNodes = () => readJson(SITEDATA_KEYS.cartoNodes, DEFAULT_CARTO_NODES);
-export const setCartoNodes = (v) => writeJson(SITEDATA_KEYS.cartoNodes, v);
-export const getCartoEdges = () => readJson(SITEDATA_KEYS.cartoEdges, DEFAULT_CARTO_EDGES);
-export const setCartoEdges = (v) => writeJson(SITEDATA_KEYS.cartoEdges, v);
+/* ===================================================================
+   CARTOGRAFIAS — multi (admin gerencia N cartografias, cada uma com slug)
+   - Cartografia "home" é a padrão (substitui o singular antigo)
+   - source: 'manual' | 'blog' | 'glossario' (nodes/edges são auto-gerados quando != 'manual')
+   - layout: 'manual' (posições x/y fixas) | 'force' (d3-force calcula)
+   - Retrocompat: getCartoNodes/setCartoNodes etc. continuam funcionando
+     lendo/escrevendo a cartografia 'home'
+=================================================================== */
+
+export const DEFAULT_CARTOGRAPHIES = [
+  {
+    id: 'home',
+    name: 'Cartografia (home)',
+    slug: 'home',
+    source: 'manual',
+    layout: 'manual',
+    title: 'Conceitos',
+    titleEmphasis: 'junguianos',
+    description: 'Um mapa vivo dos conceitos junguianos. Passe o mouse sobre cada nó para ler o axioma, e veja como as ideias se conectam.',
+    viewBox: { w: 800, h: 520 },
+    nodes: DEFAULT_CARTO_NODES,
+    edges: DEFAULT_CARTO_EDGES,
+  },
+];
+
+function normalizeCartography(c, i = 0) {
+  const slug = c?.slug || c?.id || `carto-${i}`;
+  return {
+    id: c?.id || slug,
+    slug,
+    name: c?.name || 'Cartografia',
+    source: ['manual', 'blog', 'glossario'].includes(c?.source) ? c.source : 'manual',
+    layout: ['manual', 'force', 'radial'].includes(c?.layout) ? c.layout : 'manual',
+    title: c?.title || '',
+    titleEmphasis: c?.titleEmphasis || '',
+    description: c?.description || '',
+    viewBox: c?.viewBox || { w: 800, h: 520 },
+    nodes: Array.isArray(c?.nodes) ? c.nodes : [],
+    edges: Array.isArray(c?.edges) ? c.edges : [],
+  };
+}
+
+export function getCartographies() {
+  // Tenta ler a estrutura nova primeiro
+  const stored = readJson(SITEDATA_KEYS.cartographies, null);
+  if (Array.isArray(stored) && stored.length > 0) {
+    return stored.map(normalizeCartography);
+  }
+  // Migração: lê do singular antigo e retorna como cartografia 'home'
+  const oldNodes = readJson(SITEDATA_KEYS.cartoNodes, null);
+  const oldEdges = readJson(SITEDATA_KEYS.cartoEdges, null);
+  if (oldNodes || oldEdges) {
+    return [{
+      ...DEFAULT_CARTOGRAPHIES[0],
+      nodes: Array.isArray(oldNodes) ? oldNodes : DEFAULT_CARTO_NODES,
+      edges: Array.isArray(oldEdges) ? oldEdges : DEFAULT_CARTO_EDGES,
+    }];
+  }
+  return DEFAULT_CARTOGRAPHIES;
+}
+export const setCartographies = (v) => writeJson(SITEDATA_KEYS.cartographies, v);
+
+export function getCartographyBySlug(slug) {
+  return getCartographies().find((c) => c.slug === slug) || null;
+}
+
+/* Facade pra retrocompat — operam na cartografia 'home' */
+export const getCartoNodes = () => {
+  const home = getCartographyBySlug('home');
+  return home?.nodes || DEFAULT_CARTO_NODES;
+};
+export const setCartoNodes = (v) => {
+  const list = getCartographies();
+  const idx = list.findIndex((c) => c.slug === 'home');
+  if (idx < 0) {
+    setCartographies([{ ...DEFAULT_CARTOGRAPHIES[0], nodes: v }, ...list]);
+  } else {
+    list[idx] = { ...list[idx], nodes: v };
+    setCartographies(list);
+  }
+};
+export const getCartoEdges = () => {
+  const home = getCartographyBySlug('home');
+  return home?.edges || DEFAULT_CARTO_EDGES;
+};
+export const setCartoEdges = (v) => {
+  const list = getCartographies();
+  const idx = list.findIndex((c) => c.slug === 'home');
+  if (idx < 0) {
+    setCartographies([{ ...DEFAULT_CARTOGRAPHIES[0], edges: v }, ...list]);
+  } else {
+    list[idx] = { ...list[idx], edges: v };
+    setCartographies(list);
+  }
+};
 // Markers de copy legada (anterior ao reposicionamento clínico de 2026-04-23).
 // Quando detectados, a seção é migrada pro default novo e re-persistida no
 // localStorage — caso contrário o "Publicar" levaria a copy antiga pro Supabase.
