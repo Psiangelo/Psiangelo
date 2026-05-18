@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import siteContent from '@/data/site-content.json';
 import { trilhas as TRILHAS_DEFAULT } from '@/data/trilhas';
+import { materials as MATERIALS_DEFAULT } from '@/data/materials';
+import { DEFAULT_AREAS } from '@/lib/areas';
 import { migrateTrilhaBlocks } from '@/lib/linkResolver';
 import EtapaClient from './EtapaClient';
 
@@ -8,6 +10,16 @@ function getList() {
   const stored = siteContent?.data?.angelo_admin_trilhas;
   const raw = Array.isArray(stored) && stored.length > 0 ? stored : TRILHAS_DEFAULT;
   return raw.map(migrateTrilhaBlocks);
+}
+
+function getInitialAreas() {
+  const stored = siteContent?.data?.angelo_admin_areas;
+  return Array.isArray(stored) && stored.length > 0 ? stored : DEFAULT_AREAS;
+}
+
+function getInitialMaterials() {
+  const stored = siteContent?.data?.angelo_admin_materials;
+  return Array.isArray(stored) && stored.length > 0 ? stored : MATERIALS_DEFAULT;
 }
 
 export function generateStaticParams() {
@@ -67,6 +79,8 @@ export default function EtapaPage({ params }) {
       initialEtapaIdx={idx}
       initialPosts={getPosts()}
       initialCourses={getCourses()}
+      initialMaterials={getInitialMaterials()}
+      initialAreas={getInitialAreas()}
     />
   );
 }

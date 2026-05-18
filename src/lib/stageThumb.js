@@ -10,7 +10,7 @@
  *  3. null (caller deve renderizar fallback gráfico)
  */
 
-function extractYouTubeId(url) {
+export function extractYouTubeId(url) {
   if (!url) return null;
   try {
     const u = new URL(url);
@@ -33,24 +33,34 @@ export function deriveStageThumb(stage, { posts = [], materials = [] } = {}) {
 
   for (const b of stage.blocks || []) {
     if (b?.type !== 'link' || !b.link) continue;
-    const { kind, value } = b.link;
-    if (!kind || !value) continue;
+    const t = deriveLinkThumb(b.link, { posts, materials });
+    if (t) return t;
+  }
+  return null;
+}
 
-    if (kind === 'blog') {
-      const post = posts.find((p) => (p.slug || p.id) === value);
-      if (post?.featured_cover) return post.featured_cover;
-      if (post?.cover) return post.cover;
-      if (post?.image) return post.image;
-    }
-    if (kind === 'material') {
-      const m = materials.find((x) => x.id === value);
-      if (m?.cover) return m.cover;
-      if (m?.image) return m.image;
-    }
-    if (kind === 'youtube') {
-      const id = extractYouTubeId(value);
-      if (id) return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-    }
+/**
+ * Deriva thumbnail pra um `link` block individual.
+ * Cascata: post.featured_cover → material.cover → YouTube thumbnail → null.
+ */
+export function deriveLinkThumb(link, { posts = [], materials = [] } = {}) {
+  if (!link?.kind || !link?.value) return null;
+  const { kind, value } = link;
+
+  if (kind === 'blog') {
+    const post = posts.find((p) => (p.slug || p.id) === value);
+    if (post?.featured_cover) return post.featured_cover;
+    if (post?.cover) return post.cover;
+    if (post?.image) return post.image;
+  }
+  if (kind === 'material') {
+    const m = materials.find((x) => x.id === value);
+    if (m?.cover) return m.cover;
+    if (m?.image) return m.image;
+  }
+  if (kind === 'youtube') {
+    const id = extractYouTubeId(value);
+    if (id) return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
   }
   return null;
 }

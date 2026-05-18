@@ -3,14 +3,19 @@
 /**
  * BlockRenderer — renderiza um único bloco de etapa conforme `type`.
  * Tipos: text, link, media, embed, cartography, quote.
+ *
+ * Cada bloco aceita prop opcional `accent` (cor da área da trilha) pra
+ * herdar a paleta visual da página. Link block enriquecido com capa
+ * automática puxada do alvo (post.featured_cover, material.cover,
+ * thumbnail YouTube) — fallback gracioso quando não há.
  */
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { marked } from 'marked';
 import { resolveLink } from '@/lib/linkResolver';
+import { deriveLinkThumb } from '@/lib/stageThumb';
 
-// CartographyView carrega d3-force pesado — só importa quando bloco cartografia aparece
 const CartographyView = dynamic(() => import('@/components/cartography/CartographyView'), {
   ssr: false,
   loading: () => (
@@ -20,7 +25,6 @@ const CartographyView = dynamic(() => import('@/components/cartography/Cartograp
   ),
 });
 
-// Configura marked com defaults seguros
 marked.setOptions({ gfm: true, breaks: false });
 
 function ytEmbed(url) {
@@ -34,7 +38,7 @@ function ytEmbed(url) {
       if (u.pathname.startsWith('/embed/')) return url;
       if (u.pathname.startsWith('/shorts/')) return `https://www.youtube.com/embed/${u.pathname.replace('/shorts/', '').split('/')[0]}`;
     }
-  } catch {}
+  } catch { /* not a URL */ }
   return null;
 }
 
@@ -45,12 +49,11 @@ function driveEmbed(url) {
     if (!u.hostname.includes('drive.google.com')) return null;
     const m = u.pathname.match(/\/file\/d\/([^/]+)/);
     if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
-  } catch {}
+  } catch { /* not a URL */ }
   return null;
 }
 
 function renderText(body) {
-  // Parse markdown completo via marked (GFM): bold, italic, links, listas, quotes, code, headers
   const html = marked.parse(String(body || ''));
   return (
     <div
@@ -60,39 +63,103 @@ function renderText(body) {
   );
 }
 
-function LinkBlock({ block, lists }) {
+function LinkBlock({ block, lists, accent }) {
   const resolved = resolveLink(block.link, lists);
+  const thumb = deriveLinkThumb(block.link, lists);
+  const tone = accent || '#B48C50';
+
   if (!resolved.href) {
     return (
-      <div className="my-6 border border-border-subtle p-4 bg-bg-card">
-        <p className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-accent/70 mb-1">
+      <div
+        className="my-6 border p-4 rounded-sm"
+        style={{ borderColor: `${tone}33`, background: 'rgba(0,0,0,0.18)' }}
+      >
+        <p className="font-mono text-[0.55rem] tracking-[0.22em] uppercase mb-1" style={{ color: `${tone}b3` }}>
           {resolved.kindLabel}
         </p>
         <p className="font-serif italic text-text-dim">{resolved.label || 'Sem link'}</p>
       </div>
     );
   }
+
   const inner = (
-    <article className="group flex items-center justify-between gap-4 px-5 py-4 bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors">
-      <div className="min-w-0">
-        <p className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-accent/80 mb-1">
+    <article
+      className="group flex flex-col sm:flex-row items-stretch overflow-hidden bg-bg-card border rounded-sm transition-colors"
+      style={{
+        borderColor: `${tone}1f`,
+      }}
+    >
+      <div
+        className="relative sm:w-44 sm:flex-shrink-0 h-32 sm:h-auto sm:min-h-[112px] overflow-hidden order-first"
+        style={{ background: `linear-gradient(135deg, ${tone}1a, transparent)` }}
+      >
+        {thumb ? (
+          <>
+            <img
+              src={thumb}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+              referrerPolicy="no-referrer"
+              loading="lazy"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(135deg, transparent, ${tone}0d 70%, ${tone}1a)`,
+              }}
+            />
+          </>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center" style={{ color: `${tone}aa` }}>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <path d="M10 14L21 3M5 12l7 7 7-7" />
+            </svg>
+          </div>
+        )}
+        {/* Tag de kind no canto */}
+        <span
+          className="absolute top-2 left-2 inline-flex items-center font-mono text-[0.5rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded backdrop-blur-sm"
+          style={{
+            color: tone,
+            background: `${tone}26`,
+            border: `1px solid ${tone}66`,
+          }}
+        >
           {resolved.kindLabel}
-        </p>
-        <p className="font-serif text-lg text-text-bright group-hover:text-accent transition-colors leading-tight">
-          {resolved.label}
-        </p>
+        </span>
       </div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent flex-shrink-0">
-        <path d="M5 12h14M12 5l7 7-7 7" />
-      </svg>
+
+      <div className="flex-1 p-5 flex items-center justify-between gap-3 min-w-0">
+        <div className="min-w-0 flex-1">
+          <p
+            className="font-serif text-[1.05rem] md:text-[1.15rem] text-text-bright group-hover:[color:var(--link-accent)] transition-colors leading-tight"
+            style={{ '--link-accent': tone }}
+          >
+            {resolved.label}
+          </p>
+        </div>
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={tone}
+          strokeWidth="1.6"
+          className="flex-shrink-0 transition-transform group-hover:translate-x-1"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </div>
     </article>
   );
+
   return (
     <div className="my-6">
       {resolved.isExternal ? (
-        <a href={resolved.href} target="_blank" rel="noopener noreferrer">{inner}</a>
+        <a href={resolved.href} target="_blank" rel="noopener noreferrer" className="block">{inner}</a>
       ) : (
-        <Link href={resolved.href}>{inner}</Link>
+        <Link href={resolved.href} className="block">{inner}</Link>
       )}
     </div>
   );
@@ -112,7 +179,7 @@ function MediaBlock({ block }) {
   }
   return (
     <div className="my-8">
-      <div className="aspect-video bg-bg-card border border-border-subtle overflow-hidden">
+      <div className="aspect-video bg-bg-card border border-border-subtle overflow-hidden rounded-sm">
         <iframe
           src={src}
           title={block.caption || 'Vídeo'}
@@ -132,7 +199,7 @@ function EmbedBlock({ block }) {
   return (
     <div className="my-8">
       <div
-        className="bg-bg-card border border-border-subtle p-4"
+        className="bg-bg-card border border-border-subtle p-4 rounded-sm"
         dangerouslySetInnerHTML={{ __html: block.html || '' }}
       />
       {block.caption && (
@@ -153,14 +220,36 @@ function CartographyBlock({ block }) {
   );
 }
 
-function QuoteBlock({ block }) {
+function QuoteBlock({ block, accent }) {
+  const tone = accent || '#B48C50';
   return (
-    <blockquote className="my-8 pl-6 border-l-2 border-accent">
-      <p className="font-serif italic text-[1.15rem] text-text-bright leading-[1.7] mb-2">
-        “{block.body}”
+    <blockquote
+      className="relative my-10 px-6 md:px-10 py-6 rounded-sm overflow-hidden"
+      style={{
+        background: `linear-gradient(135deg, ${tone}0d, transparent 70%)`,
+        borderLeft: `2px solid ${tone}`,
+      }}
+    >
+      {/* Glyph decorativo gigante atrás */}
+      <span
+        aria-hidden
+        className="absolute -top-4 right-3 font-serif italic select-none pointer-events-none"
+        style={{
+          color: `${tone}1a`,
+          fontSize: 'clamp(6rem, 12vw, 9rem)',
+          lineHeight: 1,
+        }}
+      >
+        ❝
+      </span>
+      <p className="relative font-serif italic text-[1.15rem] md:text-[1.25rem] text-text-bright leading-[1.7] mb-3 max-w-prose">
+        {block.body}
       </p>
       {block.cite && (
-        <cite className="font-mono text-[0.6rem] not-italic text-accent tracking-[0.22em] uppercase">
+        <cite
+          className="relative font-mono text-[0.6rem] not-italic tracking-[0.22em] uppercase"
+          style={{ color: tone }}
+        >
           — {block.cite}
         </cite>
       )}
@@ -168,15 +257,15 @@ function QuoteBlock({ block }) {
   );
 }
 
-export default function BlockRenderer({ block, lists }) {
+export default function BlockRenderer({ block, lists, accent }) {
   if (!block || !block.type) return null;
   switch (block.type) {
     case 'text':        return renderText(block.body);
-    case 'link':        return <LinkBlock block={block} lists={lists} />;
+    case 'link':        return <LinkBlock block={block} lists={lists} accent={accent} />;
     case 'media':       return <MediaBlock block={block} />;
     case 'embed':       return <EmbedBlock block={block} />;
     case 'cartography': return <CartographyBlock block={block} />;
-    case 'quote':       return <QuoteBlock block={block} />;
+    case 'quote':       return <QuoteBlock block={block} accent={accent} />;
     default:            return null;
   }
 }
