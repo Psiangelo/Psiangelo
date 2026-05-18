@@ -35,6 +35,10 @@ export const SITEDATA_KEYS = {
   categories:     'angelo_admin_categories',
   contentTypes:   'angelo_admin_content_types',
   materiaisPage:  'angelo_admin_materiais_page',
+  glossario:      'angelo_admin_glossario',
+  glossarioCategories: 'angelo_admin_glossario_categories',
+  glossarioPage:  'angelo_admin_glossario_page',
+  estudosPage:    'angelo_admin_estudos_page',
 };
 
 /* ===================================================================
@@ -343,6 +347,7 @@ export const DEFAULT_VISIBILITY = {
   materiais:  true,
   trilhas:    true,
   bio:        true,
+  estudos:    true,
   glossario:  true,
   psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
@@ -804,3 +809,147 @@ export const getSettings = () => {
   return { ...DEFAULT_SETTINGS, ...stored };
 };
 export const setSettings = (v) => writeJson(SITEDATA_KEYS.settings, v);
+
+/* ===================================================================
+   GLOSSÁRIO — verbetes, categorias e textos da página /glossario
+   Defaults: importados de src/data/glossario.js (mantém SSG do build)
+=================================================================== */
+
+import { glossario as GLOSSARIO_DEFAULT, CATEGORIES as GLOSSARIO_CATEGORIES_DEFAULT } from '@/data/glossario';
+
+// Categorias do glossário viram lista gerenciável (label + slug + ordem)
+export const DEFAULT_GLOSSARIO_CATEGORIES = Object.entries(GLOSSARIO_CATEGORIES_DEFAULT).map(([slug, info], i) => ({
+  slug,
+  label: info.label,
+  tone: info.tone,
+  ordem: i,
+}));
+
+function normalizeGlossarioCategories(stored) {
+  if (!Array.isArray(stored) || stored.length === 0) return DEFAULT_GLOSSARIO_CATEGORIES;
+  return stored.map((c, i) => ({
+    slug: c.slug ?? `cat-${i}`,
+    label: c.label ?? 'Categoria',
+    tone: c.tone ?? 'accent',
+    ordem: typeof c.ordem === 'number' ? c.ordem : i,
+  })).sort((a, b) => a.ordem - b.ordem);
+}
+
+export const getGlossarioCategories = () =>
+  normalizeGlossarioCategories(readJson(SITEDATA_KEYS.glossarioCategories, null));
+export const setGlossarioCategories = (v) => writeJson(SITEDATA_KEYS.glossarioCategories, v);
+
+// Verbete: defaults + campos novos opcionais (`links`, `hidden`).
+function normalizeGlossario(stored) {
+  const base = Array.isArray(stored) && stored.length > 0 ? stored : GLOSSARIO_DEFAULT;
+  return base.map((g, i) => ({
+    slug: g.slug ?? `verbete-${i}`,
+    term: g.term ?? 'Verbete',
+    aliases: Array.isArray(g.aliases) ? g.aliases : [],
+    category: g.category ?? 'estrutura',
+    short: g.short ?? '',
+    full: g.full ?? '',
+    related: {
+      terms: g.related?.terms ?? [],
+      materials: g.related?.materials ?? [],
+    },
+    links: Array.isArray(g.links) ? g.links : [],  // [{kind, value, label}]
+    hidden: !!g.hidden,
+    ordem: typeof g.ordem === 'number' ? g.ordem : i,
+  }));
+}
+
+export const getGlossario = () => normalizeGlossario(readJson(SITEDATA_KEYS.glossario, null));
+export const setGlossario = (v) => writeJson(SITEDATA_KEYS.glossario, v);
+
+// Textos da página /glossario (hero + intro)
+export const DEFAULT_GLOSSARIO_PAGE = {
+  hero: {
+    eyebrow: 'Vocabulário · Psicologia Analítica',
+    title: 'Glossário',
+    emphasis: 'junguiano',
+    kicker: 'Conceitos essenciais, interligados',
+    lead: 'Termos fundamentais — Self, Sombra, Individuação, Arquétipo, Sincronicidade — com definições claras e links entre ideias.',
+  },
+  empty: {
+    sectionLabel: 'Categorias',
+    emptyMessage: 'Nenhum verbete ainda.',
+  },
+};
+
+export const getGlossarioPage = () => {
+  const stored = readJson(SITEDATA_KEYS.glossarioPage, null);
+  if (!stored) return DEFAULT_GLOSSARIO_PAGE;
+  return {
+    hero: { ...DEFAULT_GLOSSARIO_PAGE.hero, ...(stored.hero || {}) },
+    empty: { ...DEFAULT_GLOSSARIO_PAGE.empty, ...(stored.empty || {}) },
+  };
+};
+export const setGlossarioPage = (v) => writeJson(SITEDATA_KEYS.glossarioPage, v);
+
+/* ===================================================================
+   /ESTUDOS — hub editorial (segunda home para quem quer estudar)
+   Estrutura por blocos reordenáveis, com seleção de conteúdo por bloco.
+=================================================================== */
+
+export const ESTUDOS_BLOCK_TYPES = [
+  { id: 'hero',       label: 'Hero (topo)' },
+  { id: 'trilhas',    label: 'Trilhas em destaque' },
+  { id: 'glossario',  label: 'Glossário em destaque' },
+  { id: 'materiais',  label: 'Materiais recomendados' },
+  { id: 'cursos',     label: 'Cursos recomendados' },
+  { id: 'blog',       label: 'Posts do blog selecionados' },
+  { id: 'manifesto',  label: 'Bússola de estudos (texto livre)' },
+];
+
+export const DEFAULT_ESTUDOS_PAGE = {
+  hero: {
+    eyebrow: 'Sala de estudos',
+    title: 'Estudos',
+    emphasis: 'em psicologia analítica',
+    kicker: 'Por onde começar, o que ler, em que ordem',
+    lead: 'Curadoria do que publico aqui — trilhas, verbetes, materiais e ensaios — pensada para quem está chegando ou para quem quer aprofundar.',
+    primaryCtaLabel: 'Começar uma trilha',
+    primaryCtaHref: '#trilhas',
+    secondaryCtaLabel: 'Ver glossário',
+    secondaryCtaHref: '/glossario',
+  },
+  blocks: [
+    { id: 'hero',      visible: true,  config: {} },
+    { id: 'manifesto', visible: false, config: { title: 'Como estudar Jung', body: '' } },
+    { id: 'trilhas',   visible: true,  config: { title: 'Trilhas', subtitle: 'Sequências curadas — por onde começar.', selected: [] } },
+    { id: 'glossario', visible: true,  config: { title: 'Glossário em foco', subtitle: 'Verbetes-chave para começar.', selected: [], limit: 8 } },
+    { id: 'materiais', visible: true,  config: { title: 'Materiais', subtitle: 'Resumos, mapas e ensaios.', selected: [], limit: 6 } },
+    { id: 'cursos',    visible: false, config: { title: 'Cursos', subtitle: 'Formação aprofundada.', selected: [] } },
+    { id: 'blog',      visible: true,  config: { title: 'Ensaios', subtitle: 'Textos sobre clínica e símbolos.', selected: [], limit: 4 } },
+  ],
+};
+
+function normalizeEstudosPage(stored) {
+  if (!stored) return DEFAULT_ESTUDOS_PAGE;
+  const hero = { ...DEFAULT_ESTUDOS_PAGE.hero, ...(stored.hero || {}) };
+  const knownIds = new Set(ESTUDOS_BLOCK_TYPES.map((b) => b.id));
+  const storedBlocks = Array.isArray(stored.blocks) ? stored.blocks : [];
+  const seen = new Set();
+  const blocks = [];
+  // 1) preserva ordem do admin
+  for (const b of storedBlocks) {
+    if (!b?.id || !knownIds.has(b.id) || seen.has(b.id)) continue;
+    seen.add(b.id);
+    const def = DEFAULT_ESTUDOS_PAGE.blocks.find((d) => d.id === b.id);
+    blocks.push({
+      id: b.id,
+      visible: typeof b.visible === 'boolean' ? b.visible : (def?.visible ?? true),
+      config: { ...(def?.config || {}), ...(b.config || {}) },
+    });
+  }
+  // 2) adiciona blocos novos do default que ainda não estavam salvos
+  for (const def of DEFAULT_ESTUDOS_PAGE.blocks) {
+    if (seen.has(def.id)) continue;
+    blocks.push({ ...def });
+  }
+  return { hero, blocks };
+}
+
+export const getEstudosPage = () => normalizeEstudosPage(readJson(SITEDATA_KEYS.estudosPage, null));
+export const setEstudosPage = (v) => writeJson(SITEDATA_KEYS.estudosPage, v);

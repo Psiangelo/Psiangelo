@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getTrilhas, setTrilhas } from '@/lib/sitedata';
-import { materials as MATERIALS } from '@/data/materials';
+import { getTrilhas, setTrilhas, getMaterials, getGlossario } from '@/lib/sitedata';
+import { LINK_KINDS, migrateStageLink } from '@/lib/linkResolver';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const LABEL = 'block text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-2';
@@ -13,16 +13,26 @@ const BTN_SECONDARY = 'px-3 py-1.5 border border-[rgba(180,140,80,0.2)] text-[#B
 const BTN_DANGER = 'px-3 py-1.5 border border-red-500/30 text-red-400 text-xs font-sans rounded-lg hover:bg-red-500/10 transition-colors';
 
 const ARCHETYPES = ['Persona', 'Self', 'Anima', 'Animus', 'Sombra'];
-const STAGE_KINDS = ['livro', 'leitura', 'mapa', 'curso', 'ensaio', 'extra'];
+const STAGE_KINDS = ['livro', 'leitura', 'mapa', 'curso', 'ensaio', 'video', 'extra'];
 const LEVELS = ['Introdutório', 'Intermediário', 'Avançado'];
+
+function readJsonSafe(key, fallback) {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 const EMPTY_TRILHA = () => ({
   id: `trilha-${Date.now().toString(36)}`,
   name: '',
   subtitle: '',
-  archetype: 'Self',
+  archetype: '',
   duration: '',
-  level: 'Introdutório',
+  level: '',
   stages: [],
 });
 
@@ -30,11 +40,123 @@ const EMPTY_STAGE = () => ({
   title: '',
   kind: 'leitura',
   detail: '',
-  material: '',
-  href: '',
+  link: { kind: 'none', value: '', label: '' },
 });
 
-function StageEditor({ stage, idx, onChange, onRemove, onMove }) {
+/* ───────────────────── LinkPicker ─────────────────────
+   Componente compartilhado: seletor de tipo de link + valor apropriado.
+   Recebe `link={kind, value, label}` e `onChange(link)`.
+*/
+function LinkPicker({ link, onChange, lists }) {
+  const safeLink = link && link.kind ? link : { kind: 'none', value: '', label: '' };
+  const update = (k, v) => onChange({ ...safeLink, [k]: v });
+
+  const renderValue = () => {
+    switch (safeLink.kind) {
+      case 'material':
+        return (
+          <select value={safeLink.value || ''} onChange={(e) => update('value', e.target.value)} className={INPUT}>
+            <option value="">— escolher material —</option>
+            {lists.materials.map((m) => (
+              <option key={m.id} value={m.id}>{m.title}</option>
+            ))}
+          </select>
+        );
+      case 'blog':
+        return (
+          <select value={safeLink.value || ''} onChange={(e) => update('value', e.target.value)} className={INPUT}>
+            <option value="">— escolher post —</option>
+            {lists.posts.map((p) => (
+              <option key={p.slug || p.id} value={p.slug || p.id}>{p.title}</option>
+            ))}
+          </select>
+        );
+      case 'course':
+        return (
+          <select value={safeLink.value || ''} onChange={(e) => update('value', e.target.value)} className={INPUT}>
+            <option value="">— escolher curso —</option>
+            {lists.courses.map((c) => (
+              <option key={c.slug || c.id} value={c.slug || c.id}>{c.title}</option>
+            ))}
+          </select>
+        );
+      case 'glossario':
+        return (
+          <select value={safeLink.value || ''} onChange={(e) => update('value', e.target.value)} className={INPUT}>
+            <option value="">— escolher verbete —</option>
+            {lists.glossario.map((g) => (
+              <option key={g.slug} value={g.slug}>{g.term}</option>
+            ))}
+          </select>
+        );
+      case 'youtube':
+        return (
+          <input
+            value={safeLink.value || ''}
+            onChange={(e) => update('value', e.target.value)}
+            placeholder="https://www.youtube.com/watch?v=..."
+            className={INPUT + ' font-mono text-xs'}
+          />
+        );
+      case 'drive':
+        return (
+          <input
+            value={safeLink.value || ''}
+            onChange={(e) => update('value', e.target.value)}
+            placeholder="https://drive.google.com/file/d/.../view"
+            className={INPUT + ' font-mono text-xs'}
+          />
+        );
+      case 'embed':
+        return (
+          <textarea
+            value={safeLink.value || ''}
+            onChange={(e) => update('value', e.target.value)}
+            placeholder='<iframe src="..." ...></iframe>'
+            rows={3}
+            className={INPUT + ' font-mono text-xs resize-y'}
+          />
+        );
+      case 'url':
+        return (
+          <input
+            value={safeLink.value || ''}
+            onChange={(e) => update('value', e.target.value)}
+            placeholder="https://..."
+            className={INPUT + ' font-mono text-xs'}
+          />
+        );
+      case 'none':
+      default:
+        return (
+          <p className="text-xs text-[#6E6458] italic font-sans py-2">Sem link — etapa só exibe o texto descritivo.</p>
+        );
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-2">
+        <select value={safeLink.kind} onChange={(e) => update('kind', e.target.value)} className={INPUT}>
+          {LINK_KINDS.map((k) => (
+            <option key={k.value} value={k.value}>{k.label}</option>
+          ))}
+        </select>
+        {renderValue()}
+      </div>
+      {safeLink.kind !== 'none' && (
+        <input
+          value={safeLink.label || ''}
+          onChange={(e) => update('label', e.target.value)}
+          placeholder="Texto do botão (opcional — usa o título do item por padrão)"
+          className={INPUT + ' text-xs'}
+        />
+      )}
+    </div>
+  );
+}
+
+function StageEditor({ stage, idx, onChange, onRemove, onMove, lists }) {
   const update = (k, v) => onChange({ ...stage, [k]: v });
   return (
     <div className="bg-[#0E0C0A] border border-[rgba(180,140,80,0.12)] rounded-lg p-4 space-y-3">
@@ -51,7 +173,7 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label className={LABEL}>Título</label>
+          <label className={LABEL}>Título da etapa</label>
           <input
             value={stage.title}
             onChange={(e) => update('title', e.target.value)}
@@ -60,9 +182,9 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove }) {
           />
         </div>
         <div>
-          <label className={LABEL}>Tipo</label>
+          <label className={LABEL}>Tipo (rótulo visual)</label>
           <select
-            value={stage.kind}
+            value={stage.kind || 'leitura'}
             onChange={(e) => update('kind', e.target.value)}
             className={INPUT}
           >
@@ -82,35 +204,19 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove }) {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div>
-          <label className={LABEL}>Material vinculado</label>
-          <select
-            value={stage.material || ''}
-            onChange={(e) => update('material', e.target.value || undefined)}
-            className={INPUT}
-          >
-            <option value="">— sem material —</option>
-            {MATERIALS.map((m) => (
-              <option key={m.id} value={m.id}>{m.title}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={LABEL}>Link externo (se sem material)</label>
-          <input
-            value={stage.href || ''}
-            onChange={(e) => update('href', e.target.value)}
-            placeholder="https://..."
-            className={INPUT}
-          />
-        </div>
+      <div>
+        <label className={LABEL}>Material/Link vinculado</label>
+        <LinkPicker
+          link={stage.link}
+          onChange={(link) => update('link', link)}
+          lists={lists}
+        />
       </div>
     </div>
   );
 }
 
-function TrilhaEditor({ trilha, onChange, onCancel, onDelete }) {
+function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
   const [draft, setDraft] = useState(trilha);
 
   useEffect(() => setDraft(trilha), [trilha.id]);
@@ -166,23 +272,25 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete }) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className={LABEL}>Nível</label>
-          <select value={draft.level} onChange={(e) => update('level', e.target.value)} className={INPUT}>
+          <label className={LABEL}>Nível (opcional)</label>
+          <select value={draft.level || ''} onChange={(e) => update('level', e.target.value)} className={INPUT}>
+            <option value="">— sem nível —</option>
             {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
         <div>
-          <label className={LABEL}>Duração</label>
+          <label className={LABEL}>Duração (opcional)</label>
           <input
-            value={draft.duration}
+            value={draft.duration || ''}
             onChange={(e) => update('duration', e.target.value)}
-            placeholder="4 a 6 semanas"
+            placeholder="4 a 6 semanas (vazio = oculto)"
             className={INPUT}
           />
         </div>
         <div>
-          <label className={LABEL}>Arquétipo (tom)</label>
-          <select value={draft.archetype} onChange={(e) => update('archetype', e.target.value)} className={INPUT}>
+          <label className={LABEL}>Arquétipo / tom (opcional)</label>
+          <select value={draft.archetype || ''} onChange={(e) => update('archetype', e.target.value)} className={INPUT}>
+            <option value="">— sem tom —</option>
             {ARCHETYPES.map((a) => <option key={a} value={a}>{a}</option>)}
           </select>
         </div>
@@ -198,11 +306,12 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete }) {
           {draft.stages.map((stage, i) => (
             <StageEditor
               key={i}
-              stage={stage}
+              stage={migrateStageLink(stage)}
               idx={i}
               onChange={(s) => updateStage(i, s)}
               onRemove={() => removeStage(i)}
               onMove={(delta) => moveStage(i, delta)}
+              lists={lists}
             />
           ))}
           {draft.stages.length === 0 && (
@@ -224,10 +333,30 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete }) {
 
 export default function TrilhasManager({ addToast, addLogEntry }) {
   const [list, setList] = useState([]);
-  const [editing, setEditing] = useState(null); // id or 'new'
+  const [editing, setEditing] = useState(null);
 
   useEffect(() => {
     setList(getTrilhas());
+  }, []);
+
+  // Listas para o LinkPicker — carregadas no mount, com sync por evento
+  const [lists, setLists] = useState({ materials: [], posts: [], courses: [], glossario: [] });
+  useEffect(() => {
+    const sync = () => {
+      setLists({
+        materials: getMaterials() || [],
+        posts: readJsonSafe('angelo_admin_blog', []),
+        courses: readJsonSafe('angelo_admin_courses', []),
+        glossario: getGlossario() || [],
+      });
+    };
+    sync();
+    window.addEventListener('storage', sync);
+    window.addEventListener('sitedata:changed', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('sitedata:changed', sync);
+    };
   }, []);
 
   const persist = (newList) => {
@@ -274,7 +403,7 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
         <div>
           <h2 className="text-xl font-serif text-[#E8DDD0]">Trilhas de estudo</h2>
           <p className="text-xs text-[#6E6458] font-sans mt-1">
-            Sequências curadas que aparecem na home e em /trilhas
+            Sequências curadas que aparecem na home, em /trilhas e em /estudos
           </p>
         </div>
         {!editing && (
@@ -297,6 +426,7 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
               onChange={handleSave}
               onCancel={() => setEditing(null)}
               onDelete={editing !== 'new' ? () => handleDelete(editing) : null}
+              lists={lists}
             />
           </motion.div>
         ) : (
@@ -307,40 +437,42 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
                 <button onClick={() => setEditing('new')} className={BTN_PRIMARY}>+ Criar primeira trilha</button>
               </div>
             )}
-            {list.map((t, i) => (
-              <div key={t.id} className={CARD + ' flex items-start justify-between gap-4'}>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">
-                      {t.level} · {t.archetype}
-                    </span>
-                    <span className="font-mono text-[10px] text-[#6E6458] tracking-widest uppercase">
-                      {t.duration}
-                    </span>
-                    <span className="font-mono text-[10px] text-[#6E6458] tracking-widest uppercase">
-                      {t.stages?.length || 0} etapas
-                    </span>
+            {list.map((t, i) => {
+              const tagParts = [t.level, t.archetype, t.duration].filter(Boolean);
+              return (
+                <div key={t.id} className={CARD + ' flex items-start justify-between gap-4'}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {tagParts.length > 0 && (
+                        <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">
+                          {tagParts.join(' · ')}
+                        </span>
+                      )}
+                      <span className="font-mono text-[10px] text-[#6E6458] tracking-widest uppercase">
+                        {t.stages?.length || 0} etapas
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-lg text-[#E8DDD0] leading-tight">{t.name}</h3>
+                    <p className="text-xs text-[#B8AD9E] mt-1 italic">{t.subtitle}</p>
                   </div>
-                  <h3 className="font-serif text-lg text-[#E8DDD0] leading-tight">{t.name}</h3>
-                  <p className="text-xs text-[#B8AD9E] mt-1 italic">{t.subtitle}</p>
-                </div>
-                <div className="flex flex-col gap-1.5 shrink-0">
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => handleMove(t.id, -1)}
-                      disabled={i === 0}
-                      className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50] transition-colors disabled:opacity-30"
-                    >↑</button>
-                    <button
-                      onClick={() => handleMove(t.id, 1)}
-                      disabled={i === list.length - 1}
-                      className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50] transition-colors disabled:opacity-30"
-                    >↓</button>
+                  <div className="flex flex-col gap-1.5 shrink-0">
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleMove(t.id, -1)}
+                        disabled={i === 0}
+                        className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50] transition-colors disabled:opacity-30"
+                      >↑</button>
+                      <button
+                        onClick={() => handleMove(t.id, 1)}
+                        disabled={i === list.length - 1}
+                        className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50] transition-colors disabled:opacity-30"
+                      >↓</button>
+                    </div>
+                    <button onClick={() => setEditing(t.id)} className={BTN_SECONDARY}>Editar</button>
                   </div>
-                  <button onClick={() => setEditing(t.id)} className={BTN_SECONDARY}>Editar</button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>

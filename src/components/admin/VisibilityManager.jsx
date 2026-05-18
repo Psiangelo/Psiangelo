@@ -18,6 +18,7 @@ const GROUPS = [
       { key: 'cursos',       label: 'Cursos',                          url: '/cursos' },
       { key: 'materiais',    label: 'Materiais',                       url: '/materiais' },
       { key: 'trilhas',      label: 'Trilhas de estudo',               url: '/trilhas' },
+      { key: 'estudos',      label: 'Estudos (hub)',                   url: '/estudos' },
       { key: 'glossario',    label: 'Glossário junguiano (curado)',    url: '/glossario' },
       { key: 'psicoterapia', label: 'Psicoterapia (landing consultório)', url: '/psicoterapia-analitica' },
       { key: 'bio',          label: 'Bio / Linktree',                  url: '/bio' },

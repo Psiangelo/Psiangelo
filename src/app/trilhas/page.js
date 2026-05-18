@@ -8,10 +8,11 @@ import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import MandalaDivider from '@/components/ui/MandalaDivider';
 import { trilhas as TRILHAS_DEFAULT, TRILHA_TONE, STAGE_KIND_LABEL } from '@/data/trilhas';
-import { materials } from '@/data/materials';
+import { materials as MATERIALS_DEFAULT } from '@/data/materials';
 import { fadeUp, stagger } from '@/lib/constants';
 import { img } from '@/lib/basepath';
-import { getTrilhas } from '@/lib/sitedata';
+import { getTrilhas, getMaterials, getGlossario, DEFAULT_GLOSSARIO_CATEGORIES } from '@/lib/sitedata';
+import { resolveLink, migrateStageLink } from '@/lib/linkResolver';
 import {
   OrbitalAccent,
   AlchemyDivider,
@@ -25,25 +26,26 @@ import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
 import { useTrilhaProgress } from '@/lib/useTrilhaProgress';
 
-const materialMap = Object.fromEntries(materials.map((m) => [m.id, m]));
-
-function StageCard({ stage, idx, trilhaId }) {
+function StageCard({ stage, idx, trilhaId, lists }) {
   const { isStageDone, toggleStage } = useTrilhaProgress();
   const done = isStageDone(trilhaId, stage.title);
-  const linkedMaterial = stage.material ? materialMap[stage.material] : null;
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind;
   const number = String(idx + 1).padStart(2, '0');
+
+  const migrated = migrateStageLink(stage);
+  const resolved = resolveLink(migrated.link, lists);
+
+  // Tenta puxar imagem do material vinculado quando aplicável
+  const linkedMaterial = migrated.link?.kind === 'material'
+    ? lists.materials.find((m) => m.id === migrated.link.value)
+    : null;
   const image = linkedMaterial?.image
     ? (linkedMaterial.image.startsWith('http') ? linkedMaterial.image : img(linkedMaterial.image))
     : null;
 
-  // Determina destino do link
-  let href = stage.href || '#';
-  if (linkedMaterial) {
-    href = `/materiais#${linkedMaterial.id}`;
-  }
-
-  const external = stage.href && stage.href.startsWith('http');
+  const hasLink = !!resolved.href;
+  const showCta = hasLink || resolved.embed;
+  const ctaLabel = resolved.kindLabel === 'Sem link' ? null : (resolved.label || 'Acessar');
 
   const inner = (
     <article className={`group relative bg-bg-card border hover:border-border-hover transition-all duration-300 overflow-hidden grid grid-cols-1 md:grid-cols-[180px_1fr] min-h-[180px] ${done ? 'border-accent/50' : 'border-border-subtle'}`}>
@@ -73,13 +75,18 @@ function StageCard({ stage, idx, trilhaId }) {
 
       {/* Coluna conteúdo */}
       <div className="p-6 md:p-7 flex flex-col">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
           <span className="font-mono text-[0.55rem] tracking-[0.2em] uppercase px-2 py-1 border border-accent/30 text-accent bg-accent/[0.08]">
             {kindLabel}
           </span>
           <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.18em] uppercase">
             Etapa {idx + 1}
           </span>
+          {resolved.kindLabel !== 'Sem link' && (
+            <span className="font-mono text-[0.5rem] text-text-dim/50 tracking-[0.18em] uppercase">
+              · {resolved.kindLabel}
+            </span>
+          )}
           <button
             type="button"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleStage(trilhaId, stage.title); }}
@@ -106,9 +113,9 @@ function StageCard({ stage, idx, trilhaId }) {
           {stage.title}
         </h3>
 
-        {linkedMaterial && (
+        {ctaLabel && migrated.link?.kind !== 'none' && (
           <p className="font-serif italic text-text-dim text-[0.88rem] mb-3">
-            {linkedMaterial.title}
+            {ctaLabel}
           </p>
         )}
 
@@ -116,30 +123,35 @@ function StageCard({ stage, idx, trilhaId }) {
           {stage.detail}
         </p>
 
-        <div className="mt-auto pt-3 inline-flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase opacity-70 group-hover:opacity-100 transition-opacity">
-          {linkedMaterial ? 'Ver material' : (external ? 'Abrir' : 'Acessar')}
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="group-hover:translate-x-1 transition-transform">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </div>
+        {showCta && (
+          <div className="mt-auto pt-3 inline-flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase opacity-70 group-hover:opacity-100 transition-opacity">
+            {resolved.isExternal ? 'Abrir' : 'Acessar'}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="group-hover:translate-x-1 transition-transform">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        )}
       </div>
     </article>
   );
 
-  if (external) {
+  if (!hasLink) {
+    return <div className="block">{inner}</div>;
+  }
+  if (resolved.isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className="block">
+      <a href={resolved.href} target="_blank" rel="noopener noreferrer" className="block">
         {inner}
       </a>
     );
   }
-  return <Link href={href} className="block">{inner}</Link>;
+  return <Link href={resolved.href} className="block">{inner}</Link>;
 }
 
-function TrilhaSection({ trilha, index }) {
+function TrilhaSection({ trilha, index, lists }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
-  const tone = TRILHA_TONE[trilha.archetype] || TRILHA_TONE.Self;
+  const tone = trilha.archetype ? (TRILHA_TONE[trilha.archetype] || TRILHA_TONE.Self) : TRILHA_TONE.Self;
   const roman = ['I', 'II', 'III', 'IV', 'V'][index] || (index + 1);
   const { percentOf, resetTrilha, progress } = useTrilhaProgress();
   const pct = percentOf(trilha);
@@ -182,15 +194,19 @@ function TrilhaSection({ trilha, index }) {
 
           <motion.div variants={fadeUp}>
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span
-                className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1"
-                style={{ background: tone.bg, color: tone.color, border: `1px solid ${tone.border}` }}
-              >
-                {trilha.level}
-              </span>
-              <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
-                {trilha.duration}
-              </span>
+              {trilha.level && (
+                <span
+                  className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1"
+                  style={{ background: tone.bg, color: tone.color, border: `1px solid ${tone.border}` }}
+                >
+                  {trilha.level}
+                </span>
+              )}
+              {trilha.duration && (
+                <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
+                  {trilha.duration}
+                </span>
+              )}
               <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
                 {trilha.stages.length} etapas
               </span>
@@ -243,7 +259,7 @@ function TrilhaSection({ trilha, index }) {
               <motion.div key={i} variants={fadeUp} className="relative">
                 {/* Marker no eixo no desktop */}
                 <span className="hidden lg:block absolute left-[84px] top-7 w-2 h-2 bg-accent rounded-full ring-4 ring-bg z-10" />
-                <StageCard stage={stage} idx={i} trilhaId={trilha.id} />
+                <StageCard stage={stage} idx={i} trilhaId={trilha.id} lists={lists} />
               </motion.div>
             ))}
           </div>
@@ -256,9 +272,26 @@ function TrilhaSection({ trilha, index }) {
 export default function TrilhasPage() {
   const { visibility, ready } = useVisibility();
   const [trilhas, setTrilhasList] = useState(TRILHAS_DEFAULT);
+  const [lists, setLists] = useState({
+    materials: MATERIALS_DEFAULT,
+    posts: [],
+    courses: [],
+    glossario: [],
+  });
 
   useEffect(() => {
-    const reload = () => setTrilhasList(getTrilhas());
+    const readJsonSafe = (key) => {
+      try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch { return null; }
+    };
+    const reload = () => {
+      setTrilhasList(getTrilhas());
+      setLists({
+        materials: getMaterials() || MATERIALS_DEFAULT,
+        posts: readJsonSafe('angelo_admin_blog') || [],
+        courses: readJsonSafe('angelo_admin_courses') || [],
+        glossario: getGlossario() || [],
+      });
+    };
     reload();
     window.addEventListener('storage', reload);
     window.addEventListener('sitedata:changed', reload);
@@ -306,7 +339,7 @@ export default function TrilhasPage() {
 
         {trilhas.map((t, i) => (
           <div key={t.id}>
-            <TrilhaSection trilha={t} index={i} />
+            <TrilhaSection trilha={t} index={i} lists={lists} />
             {i < trilhas.length - 1 && (
               <div className="max-w-[1180px] mx-auto px-5 sm:px-6 md:px-12 py-2">
                 <AlchemyDivider opacity={0.45} />

@@ -1,17 +1,38 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import VisibilityGate from '@/components/VisibilityGate';
-import { glossario, getGlossarioBySlug, CATEGORIES } from '@/data/glossario';
-import { materials } from '@/data/materials';
+import siteContent from '@/data/site-content.json';
+import { glossario as GLOSSARIO_DEFAULT, CATEGORIES as CATEGORIES_DEFAULT } from '@/data/glossario';
+import TermoClient from './TermoClient';
+
+function getList() {
+  const list = siteContent?.data?.angelo_admin_glossario;
+  return Array.isArray(list) && list.length > 0
+    ? list
+    : GLOSSARIO_DEFAULT.map((g, i) => ({ ...g, links: [], hidden: false, ordem: i }));
+}
+
+function getCategories() {
+  const cats = siteContent?.data?.angelo_admin_glossario_categories;
+  return Array.isArray(cats) && cats.length > 0
+    ? cats
+    : Object.entries(CATEGORIES_DEFAULT).map(([slug, info], i) => ({ slug, label: info.label, tone: info.tone, ordem: i }));
+}
+
+function getPosts() {
+  const posts = siteContent?.data?.angelo_admin_blog;
+  return Array.isArray(posts) ? posts : [];
+}
+
+function getCourses() {
+  const courses = siteContent?.data?.angelo_admin_courses;
+  return Array.isArray(courses) ? courses : [];
+}
 
 export function generateStaticParams() {
-  return glossario.map((g) => ({ slug: g.slug }));
+  return getList().map((g) => ({ slug: g.slug }));
 }
 
 export function generateMetadata({ params }) {
-  const term = getGlossarioBySlug(params.slug);
+  const term = getList().find((t) => t.slug === params.slug);
   if (!term) return {};
   return {
     title: term.term,
@@ -24,101 +45,18 @@ export function generateMetadata({ params }) {
   };
 }
 
-function formatFull(text) {
-  return text.split(/\n\n+/).filter(Boolean);
-}
-
 export default function TermoPage({ params }) {
-  const term = getGlossarioBySlug(params.slug);
-  if (!term) return notFound();
-
-  const cat = CATEGORIES[term.category];
-  const relatedTerms = (term.related?.terms || [])
-    .map((slug) => glossario.find((g) => g.slug === slug))
-    .filter(Boolean);
-  const relatedMaterials = (term.related?.materials || [])
-    .map((id) => materials.find((m) => m.id === id))
-    .filter(Boolean);
-
-  const paragraphs = formatFull(term.full);
-
+  const list = getList();
+  const termo = list.find((t) => t.slug === params.slug);
+  if (!termo) return notFound();
+  const categories = getCategories();
   return (
-    <VisibilityGate visibilityKey="glossario" title="Glossário indisponível">
-      <Navbar />
-      <main className="pt-28 md:pt-40 pb-16 px-5 sm:px-6 md:px-12">
-        <article className="max-w-[760px] mx-auto">
-          <nav className="mb-6 flex items-center gap-2 font-mono text-[0.6rem] tracking-[0.22em] uppercase">
-            <Link href="/glossario" className="text-accent hover:text-text-bright transition-colors">
-              ← Glossário
-            </Link>
-            <span className="text-text-dim/40">/</span>
-            <span className="text-text-dim/70">{cat?.label || 'Termo'}</span>
-          </nav>
-
-          <header className="mb-8">
-            <h1 className="font-serif text-[clamp(2.4rem,5vw,3.6rem)] leading-[1.02] tracking-[-0.01em] text-text-bright mb-4">
-              {term.term}
-            </h1>
-            <p className="font-serif italic text-accent-soft text-[1.1rem] md:text-[1.2rem] leading-snug max-w-[640px]">
-              {term.short}
-            </p>
-          </header>
-
-          <div className="prose-glossario">
-            {paragraphs.map((p, i) => (
-              <p
-                key={i}
-                className="font-serif text-[1.02rem] text-text leading-[1.85] mb-5"
-              >
-                {p}
-              </p>
-            ))}
-          </div>
-
-          {/* Relações */}
-          {(relatedTerms.length > 0 || relatedMaterials.length > 0) && (
-            <aside className="mt-14 pt-8 border-t border-border-subtle grid gap-8 md:grid-cols-2">
-              {relatedTerms.length > 0 && (
-                <div>
-                  <p className="meta-caps-accent mb-3">Termos relacionados</p>
-                  <ul className="space-y-1.5">
-                    {relatedTerms.map((t) => (
-                      <li key={t.slug}>
-                        <Link
-                          href={`/glossario/${t.slug}`}
-                          className="font-serif text-text hover:text-accent transition-colors"
-                        >
-                          {t.term}
-                          <span className="text-text-dim/60 text-[0.85rem] ml-2">— {t.short}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {relatedMaterials.length > 0 && (
-                <div>
-                  <p className="meta-caps-accent mb-3">Materiais</p>
-                  <ul className="space-y-1.5">
-                    {relatedMaterials.map((m) => (
-                      <li key={m.id}>
-                        <Link
-                          href={`/materiais#${m.id}`}
-                          className="font-serif text-text hover:text-accent transition-colors"
-                        >
-                          {m.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </aside>
-          )}
-        </article>
-      </main>
-      <Footer />
-    </VisibilityGate>
+    <TermoClient
+      initialTermo={termo}
+      initialList={list}
+      initialCategories={categories}
+      initialPosts={getPosts()}
+      initialCourses={getCourses()}
+    />
   );
 }
