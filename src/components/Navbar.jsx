@@ -27,7 +27,6 @@ export default function Navbar() {
   const allLinks = [
     { href: '/', label: 'Home', key: null },
     { href: '/psicoterapia-analitica', label: 'Psicoterapia', key: 'psicoterapia' },
-    { href: '/#sobre', label: 'Sobre', key: 'about' },
     { href: '/blog', label: 'Blog', key: 'blog' },
     { href: '/estudos', label: 'Estudos', key: 'estudos' },
     { href: '/materiais', label: 'Materiais', key: 'materiais' },
