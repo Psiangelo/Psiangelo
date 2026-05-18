@@ -1,5 +1,6 @@
 import siteContent from '@/data/site-content.json';
 import { trilhas as TRILHAS_DEFAULT } from '@/data/trilhas';
+import { DEFAULT_AREAS } from '@/lib/areas';
 import EstudosListingClient from './EstudosListingClient';
 
 const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
@@ -24,6 +25,16 @@ function getInitialTrilhas() {
   return Array.isArray(stored) && stored.length > 0 ? stored : TRILHAS_DEFAULT;
 }
 
+function getInitialAreas() {
+  const stored = siteContent?.data?.angelo_admin_areas;
+  return Array.isArray(stored) && stored.length > 0 ? stored : DEFAULT_AREAS;
+}
+
 export default function EstudosPage() {
-  return <EstudosListingClient initialTrilhas={getInitialTrilhas()} />;
+  return (
+    <EstudosListingClient
+      initialTrilhas={getInitialTrilhas()}
+      initialAreas={getInitialAreas()}
+    />
+  );
 }
