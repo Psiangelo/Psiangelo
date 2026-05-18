@@ -39,6 +39,10 @@ export default function TrilhaDetailClient({ initialTrilha }) {
   const { percentOf, resetTrilha, progress, isStageDone, toggleStage } = useTrilhaProgress();
   const pct = percentOf(trilha);
   const doneCount = progress[trilha.id]?.completedStages?.length || 0;
+  const nextUnfinished = useMemo(() => {
+    const done = progress[trilha.id]?.completedStages || [];
+    return trilha.stages.find((s) => !done.includes(s.title));
+  }, [trilha, progress]);
 
   return (
     <VisibilityGate visibilityKey="estudos" title="Estudos indisponível">
@@ -126,6 +130,27 @@ export default function TrilhaDetailClient({ initialTrilha }) {
               <div className="h-full bg-accent transition-all duration-500" style={{ width: `${pct}%` }} />
             </div>
           </div>
+
+          {/* CTA continuar de onde parou */}
+          {pct > 0 && pct < 100 && nextUnfinished && (
+            <div className="mt-6">
+              <Link
+                href={`/estudos/${trilhaSlug}/${nextUnfinished.slug}`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-text-bright text-bg font-sans text-[0.65rem] font-semibold tracking-[0.2em] uppercase transition-colors"
+              >
+                Continuar: {nextUnfinished.title}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          )}
+
+          {pct === 100 && (
+            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-accent/40 bg-accent/[0.08] text-accent font-mono text-[0.6rem] tracking-[0.22em] uppercase">
+              ✦ Trilha concluída
+            </div>
+          )}
         </header>
 
         {/* Lista de etapas */}
