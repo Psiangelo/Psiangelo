@@ -23,9 +23,11 @@ import { toRoman } from '@/lib/stageThumb';
  *   onToggle: () => void
  *   thumb: string | null  (deriveStageThumb já calculado)
  */
-export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', done, onToggle, thumb }) {
+export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', done, onToggle, thumb, trilhaCover }) {
   const prefersReduced = useReducedMotion();
   const stageHref = `/estudos/${trilhaSlug}/${stage.slug || stage.title}`;
+  // Cascata: thumb da etapa → capa da trilha → null (cai no fallback gráfico)
+  const displayImage = thumb || trilhaCover || null;
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
   const iconName = stage.icon || defaultIconForKind(stage.kind);
   const number = toRoman(idx + 1);
@@ -138,10 +140,10 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
 
           {/* Thumb */}
           <div className="relative order-first md:order-last h-32 md:h-auto md:min-h-[180px] overflow-hidden">
-            {thumb ? (
+            {displayImage ? (
               <>
                 <img
-                  src={thumb}
+                  src={displayImage}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                   referrerPolicy="no-referrer"
@@ -153,13 +155,29 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
               </>
             ) : (
               <div
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center overflow-hidden"
                 style={{
-                  background: `radial-gradient(circle at 70% 50%, ${accent}26 0%, transparent 70%), linear-gradient(135deg, ${accent}10, transparent)`,
+                  background: `radial-gradient(circle at 65% 45%, ${accent}40 0%, ${accent}14 45%, transparent 75%), linear-gradient(135deg, ${accent}22 0%, transparent 80%)`,
                 }}
               >
-                <span style={{ color: `${accent}66` }}>
-                  <TrilhaIcon name={iconName} size={96} strokeWidth={0.8} />
+                {/* Linhas guia decorativas, bem sutis */}
+                <svg
+                  aria-hidden
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  style={{ opacity: 0.5 }}
+                >
+                  <line x1="0" y1="22" x2="100" y2="22" stroke={accent} strokeWidth="0.25" strokeDasharray="1.5 4" />
+                  <line x1="0" y1="78" x2="100" y2="78" stroke={accent} strokeWidth="0.25" strokeDasharray="1.5 4" />
+                </svg>
+                {/* Ícone gigante CENTRAL — agora bem visível */}
+                <span
+                  className="relative transition-transform duration-500 group-hover:scale-105"
+                  style={{ color: `${accent}d9` }}
+                  aria-hidden
+                >
+                  <TrilhaIcon name={iconName} size={92} strokeWidth={1.4} />
                 </span>
               </div>
             )}
@@ -169,7 +187,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
               className="absolute top-3 right-3 inline-flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-sm"
               style={{
                 color: done ? '#0E0C0A' : accent,
-                background: done ? accent : `${accent}1a`,
+                background: done ? accent : `${accent}26`,
                 border: `1px solid ${accent}66`,
               }}
               aria-hidden

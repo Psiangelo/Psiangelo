@@ -143,6 +143,7 @@ export default function TrilhaDetailClient({
                     done={item.done}
                     onToggle={() => toggleStage(trilha.id, item.stage.title)}
                     thumb={deriveStageThumb(item.stage, { posts, materials })}
+                    trilhaCover={trilha.coverImage}
                   />
                 )}
               />

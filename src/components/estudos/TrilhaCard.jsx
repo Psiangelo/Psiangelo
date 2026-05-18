@@ -201,15 +201,25 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
                 />
               </>
             ) : (
-              // Sem capa: gradiente cerimonial + ícone gigante translúcido
+              // Sem capa: gradiente cerimonial + ícone gigante visível
               <div
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center overflow-hidden"
                 style={{
-                  background: `radial-gradient(circle at 70% 50%, ${tone}26 0%, transparent 70%), linear-gradient(135deg, ${tone}0d, transparent)`,
+                  background: `radial-gradient(circle at 65% 45%, ${tone}40 0%, ${tone}14 50%, transparent 80%), linear-gradient(135deg, ${tone}22 0%, transparent 80%)`,
                 }}
               >
-                <span style={{ color: `${tone}55` }}>
-                  <TrilhaIcon name={trilha.icon || 'compass'} size={160} strokeWidth={0.8} />
+                <svg
+                  aria-hidden
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  style={{ opacity: 0.5 }}
+                >
+                  <line x1="0" y1="22" x2="100" y2="22" stroke={tone} strokeWidth="0.25" strokeDasharray="1.5 4" />
+                  <line x1="0" y1="78" x2="100" y2="78" stroke={tone} strokeWidth="0.25" strokeDasharray="1.5 4" />
+                </svg>
+                <span className="relative" style={{ color: `${tone}cc` }} aria-hidden>
+                  <TrilhaIcon name={trilha.icon || 'compass'} size={140} strokeWidth={1.2} />
                 </span>
               </div>
             )}
