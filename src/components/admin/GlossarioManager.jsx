@@ -9,6 +9,7 @@ import {
   getMaterials,
 } from '@/lib/sitedata';
 import { LINK_KINDS } from '@/lib/linkResolver';
+import MarkdownTextarea from './MarkdownTextarea';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y';
@@ -208,8 +209,13 @@ function TermoEditor({ termo, categories, onChange, onCancel, onDelete, lists })
       </div>
 
       <div>
-        <label className={LABEL}>Definição completa (parágrafos separados por linha em branco)</label>
-        <textarea value={draft.full || ''} onChange={(e) => update('full', e.target.value)} rows={8} className={TEXTAREA} />
+        <label className={LABEL}>Definição completa (markdown — bold, itálico, links, listas, citações)</label>
+        <MarkdownTextarea
+          value={draft.full || ''}
+          onChange={(v) => update('full', v)}
+          rows={8}
+          placeholder="**Self** é, para *Jung*, o arquétipo da totalidade. Suporta [links](https://...) e listas."
+        />
       </div>
 
       <div>

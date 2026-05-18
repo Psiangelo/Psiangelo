@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { marked } from 'marked';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import VisibilityGate from '@/components/VisibilityGate';
@@ -12,8 +13,8 @@ import {
 } from '@/lib/sitedata';
 import { resolveLink } from '@/lib/linkResolver';
 
-function formatFull(text) {
-  return (text || '').split(/\n\n+/).filter(Boolean);
+function renderFullMarkdown(text) {
+  return marked.parse(String(text || ''));
 }
 
 export default function TermoClient({ initialTermo, initialList, initialCategories, initialPosts = [], initialCourses = [] }) {
@@ -33,7 +34,7 @@ export default function TermoClient({ initialTermo, initialList, initialCategori
   const relatedMaterials = (term.related?.materials || [])
     .map((id) => materials.find((m) => m.id === id))
     .filter(Boolean);
-  const paragraphs = formatFull(term.full);
+  const fullHtml = renderFullMarkdown(term.full);
 
   const lists = { materials, posts: initialPosts, courses: initialCourses, glossario: list };
   const resolvedLinks = (term.links || []).map((l) => resolveLink(l, lists));
@@ -60,13 +61,10 @@ export default function TermoClient({ initialTermo, initialList, initialCategori
             </p>
           </header>
 
-          <div className="prose-glossario">
-            {paragraphs.map((p, i) => (
-              <p key={i} className="font-serif text-[1.02rem] text-text leading-[1.85] mb-5">
-                {p}
-              </p>
-            ))}
-          </div>
+          <div
+            className="prose-glossario estudos-text-block"
+            dangerouslySetInnerHTML={{ __html: fullHtml }}
+          />
 
           {/* Embeds inline (YouTube/Drive) */}
           {resolvedLinks.some((r) => r.embed && r.embed.provider !== 'raw') && (
