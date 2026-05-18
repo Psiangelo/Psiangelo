@@ -379,6 +379,8 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
     }
   };
 
+  const isSubstage = block.type === 'substage';
+
   return (
     <div
       draggable
@@ -386,15 +388,48 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
       onDragOver={(e) => { e.preventDefault(); onDragOver?.(idx); }}
       onDragEnd={() => onDragOver?.(null)}
       onDrop={(e) => { e.preventDefault(); onDrop?.(idx); }}
-      className={`bg-[#0E0C0A] border rounded-lg p-4 space-y-3 transition-all ${
+      className={`border-l-2 rounded-lg p-4 space-y-3 transition-all ${
         isDragging ? 'opacity-40' : ''
-      } ${isOver ? 'border-[#B48C50] border-2' : 'border-[rgba(180,140,80,0.12)]'}`}
+      } ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
+      style={{
+        background: isSubstage ? 'rgba(180,140,80,0.06)' : '#0E0C0A',
+        borderLeftColor: isSubstage ? '#B48C50' : 'rgba(180,140,80,0.2)',
+        borderTopColor: 'rgba(180,140,80,0.12)',
+        borderRightColor: 'rgba(180,140,80,0.12)',
+        borderBottomColor: 'rgba(180,140,80,0.12)',
+        borderTopWidth: 1,
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
+        borderTopStyle: 'solid',
+        borderRightStyle: 'solid',
+        borderBottomStyle: 'solid',
+      }}
     >
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
-          <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Bloco {idx + 1}</span>
-          <select value={block.type} onChange={(e) => onChange(EMPTY_BLOCK(e.target.value))} className={INPUT + ' text-xs max-w-[280px]'}>
+          {isSubstage ? (
+            <span
+              className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+              style={{
+                color: '#0E0C0A',
+                background: '#B48C50',
+              }}
+              title="Esta é uma sub-etapa concluível"
+            >
+              ◆ Sub-etapa
+            </span>
+          ) : (
+            <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Bloco {idx + 1}</span>
+          )}
+          <select
+            value={block.type}
+            onChange={(e) => {
+              if (!confirm(`Trocar tipo do ${isSubstage ? 'sub-etapa' : 'bloco'}? O conteúdo atual será descartado.`)) return;
+              onChange(EMPTY_BLOCK(e.target.value));
+            }}
+            className={INPUT + ' text-xs max-w-[320px]'}
+          >
             {kinds.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
           </select>
         </div>
@@ -413,7 +448,8 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
 function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDragOver, onDrop, isDragging, isOver, lists }) {
   const update = (k, v) => onChange({ ...stage, [k]: v });
 
-  const addBlock = () => onChange({ ...stage, blocks: [...(stage.blocks || []), EMPTY_BLOCK('text')] });
+  const addBlock = (type = 'text') => onChange({ ...stage, blocks: [...(stage.blocks || []), EMPTY_BLOCK(type)] });
+  const addSubstage = () => addBlock('substage');
   const updateBlock = (i, b) => onChange({ ...stage, blocks: stage.blocks.map((x, j) => j === i ? b : x) });
   const removeBlock = (i) => onChange({ ...stage, blocks: stage.blocks.filter((_, j) => j !== i) });
   const moveBlock = (i, delta) => {
@@ -563,12 +599,31 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <label className={LABEL + ' mb-0'}>
-            Conteúdo da etapa ({(stage.blocks || []).length} {(stage.blocks || []).length === 1 ? 'bloco' : 'blocos'})
+            Conteúdo da etapa ({(stage.blocks || []).length} {(stage.blocks || []).length === 1 ? 'item' : 'itens'})
           </label>
-          <button onClick={addBlock} className={BTN_SECONDARY}>+ Bloco</button>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => addBlock('text')} className={BTN_SECONDARY}>+ Bloco</button>
+            <button
+              type="button"
+              onClick={addSubstage}
+              className="px-3 py-1.5 border text-xs font-sans rounded-lg transition-colors"
+              style={{
+                borderColor: 'rgba(180,140,80,0.4)',
+                background: 'rgba(180,140,80,0.08)',
+                color: '#B48C50',
+              }}
+              title="Adiciona uma sub-etapa concluível com título, descrição e conteúdo próprio"
+            >
+              + Sub-etapa
+            </button>
+          </div>
         </div>
+        <p className="text-[10px] text-[#6E6458] font-sans italic mb-3 -mt-1">
+          Bloco = texto, link, vídeo, citação, etc. · Sub-etapa = caixa numerada e concluível
+          (com título + descrição + blocos dentro), aparece com I, II, III na página.
+        </p>
         <div className="space-y-3">
           {(stage.blocks || []).map((b, i) => (
             <BlockEditor
@@ -588,7 +643,7 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
           ))}
           {(stage.blocks || []).length === 0 && (
             <p className="text-xs text-[#6E6458] italic text-center py-6 border border-dashed border-[rgba(180,140,80,0.15)] rounded-lg">
-              Sem blocos. Clique em "+ Bloco" para adicionar texto, vídeo, link, cartografia…
+              Sem conteúdo. Use <span className="text-[#B48C50]">+ Bloco</span> para texto, vídeo, link, citação… ou <span className="text-[#B48C50]">+ Sub-etapa</span> para uma caixa numerada concluível.
             </p>
           )}
         </div>
