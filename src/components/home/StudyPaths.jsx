@@ -126,16 +126,20 @@ export default function StudyPaths() {
                   </span>
 
                   {/* Header */}
-                  <div className="flex items-center gap-2 mb-5">
-                    <span
-                      className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1"
-                      style={{ background: tone.bg, color: tone.color, border: `1px solid ${tone.border}` }}
-                    >
-                      {t.level}
-                    </span>
-                    <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
-                      {t.duration}
-                    </span>
+                  <div className="flex items-center gap-2 mb-5 flex-wrap">
+                    {t.level && (
+                      <span
+                        className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1"
+                        style={{ background: tone.bg, color: tone.color, border: `1px solid ${tone.border}` }}
+                      >
+                        {t.level}
+                      </span>
+                    )}
+                    {t.duration && (
+                      <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
+                        {t.duration}
+                      </span>
+                    )}
                   </div>
 
                   <h3 className="font-serif text-2xl text-text-bright leading-tight mb-2 group-hover:text-accent transition-colors">
