@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import TrilhaIcon, { IconSeal } from './icons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { toRoman } from '@/lib/stageThumb';
@@ -38,12 +38,13 @@ export default function EtapaHero({
   accent = '#B48C50',
 }) {
   const ref = useRef(null);
+  const prefersReduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
   });
-  const coverY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
-  const coverOpacity = useTransform(scrollYProgress, [0, 1], [0.4, 0.1]);
+  const coverY = useTransform(scrollYProgress, [0, 1], prefersReduced ? ['0%', '0%'] : ['0%', '25%']);
+  const coverOpacity = useTransform(scrollYProgress, [0, 1], prefersReduced ? [0.3, 0.3] : [0.4, 0.1]);
 
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
   const blockCount = (stage.blocks || []).length;
@@ -142,8 +143,8 @@ export default function EtapaHero({
           <div className="relative">
             <motion.div
               aria-hidden
-              animate={{ rotate: 360 }}
-              transition={{ duration: 180, repeat: Infinity, ease: 'linear' }}
+              animate={prefersReduced ? undefined : { rotate: 360 }}
+              transition={prefersReduced ? undefined : { duration: 180, repeat: Infinity, ease: 'linear' }}
               className="absolute -inset-3 rounded-full border opacity-30"
               style={{ borderColor: `${accent}66`, borderStyle: 'dashed' }}
             />

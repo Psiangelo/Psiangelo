@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { IconSeal } from './icons';
 
 /**
@@ -25,6 +25,7 @@ export default function EstudosHero({
   accent = '#B48C50',
   meta = [],
 }) {
+  const prefersReduced = useReducedMotion();
   return (
     <section className="relative pt-28 md:pt-40 pb-12 md:pb-20 px-5 sm:px-6 md:px-12 overflow-hidden">
       {/* Glow ambiente sutil */}
@@ -49,11 +50,15 @@ export default function EstudosHero({
             className="flex-shrink-0 mx-auto lg:mx-0"
           >
             <div className="relative">
-              {/* Anel externo girando, decorativo */}
+              {/* Anel externo girando, decorativo (pausa se prefers-reduced-motion) */}
               <motion.div
                 aria-hidden
-                animate={{ rotate: 360 }}
-                transition={{ duration: 180, repeat: Infinity, ease: 'linear' }}
+                animate={prefersReduced ? undefined : { rotate: 360 }}
+                transition={
+                  prefersReduced
+                    ? undefined
+                    : { duration: 180, repeat: Infinity, ease: 'linear' }
+                }
                 className="absolute -inset-3 rounded-full border opacity-30"
                 style={{ borderColor: `${accent}40`, borderStyle: 'dashed' }}
               />

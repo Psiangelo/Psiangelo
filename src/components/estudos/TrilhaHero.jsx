@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import TrilhaIcon, { IconSeal } from './icons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 
@@ -24,12 +24,14 @@ import { renderHighlightedTitle } from '@/lib/highlightTitle';
  */
 export default function TrilhaHero({ trilha, area, pct, nextStage, onReset, accent }) {
   const ref = useRef(null);
+  const prefersReduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
   });
-  const coverY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-  const coverOpacity = useTransform(scrollYProgress, [0, 1], [0.5, 0.15]);
+  // Parallax: vazio quando prefers-reduced-motion (transform fixo)
+  const coverY = useTransform(scrollYProgress, [0, 1], prefersReduced ? ['0%', '0%'] : ['0%', '20%']);
+  const coverOpacity = useTransform(scrollYProgress, [0, 1], prefersReduced ? [0.35, 0.35] : [0.5, 0.15]);
 
   const trilhaSlug = trilha.slug || trilha.id;
   const stages = trilha.stages || [];
@@ -222,18 +224,18 @@ export default function TrilhaHero({ trilha, area, pct, nextStage, onReset, acce
             className="hidden lg:flex flex-shrink-0 items-start justify-end pt-4"
           >
             <div className="relative">
-              {/* Anel decorativo girando */}
+              {/* Anéis decorativos girando (pausam se prefers-reduced-motion) */}
               <motion.div
                 aria-hidden
-                animate={{ rotate: 360 }}
-                transition={{ duration: 200, repeat: Infinity, ease: 'linear' }}
+                animate={prefersReduced ? undefined : { rotate: 360 }}
+                transition={prefersReduced ? undefined : { duration: 200, repeat: Infinity, ease: 'linear' }}
                 className="absolute -inset-4 rounded-full border opacity-25"
                 style={{ borderColor: `${accent}66`, borderStyle: 'dashed' }}
               />
               <motion.div
                 aria-hidden
-                animate={{ rotate: -360 }}
-                transition={{ duration: 320, repeat: Infinity, ease: 'linear' }}
+                animate={prefersReduced ? undefined : { rotate: -360 }}
+                transition={prefersReduced ? undefined : { duration: 320, repeat: Infinity, ease: 'linear' }}
                 className="absolute -inset-10 rounded-full border opacity-15"
                 style={{ borderColor: `${accent}88`, borderStyle: 'dotted' }}
               />

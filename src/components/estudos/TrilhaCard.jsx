@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import TrilhaIcon from './icons';
 import { iconLabel } from '@/lib/trilhaIcons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
@@ -25,6 +25,7 @@ import { renderHighlightedTitle } from '@/lib/highlightTitle';
  *   trilha (já migrated), area (resolved), pct, completedTitles, accent
  */
 export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = [], accent }) {
+  const prefersReduced = useReducedMotion();
   const slug = trilha.slug || trilha.id;
   const fallbackAccent = '#B48C50';
   const tone = accent || area?.color || fallbackAccent;
@@ -38,7 +39,7 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
 
   return (
     <motion.div
-      whileHover={{ y: -2 }}
+      whileHover={prefersReduced ? undefined : { y: -2 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link

@@ -23,6 +23,38 @@ body {
   color: #0E0C0A;
 }
 
+/* ====================== ACCESSIBILITY ====================== */
+/* Focus ring consistente em links/buttons interativos do site.
+   Usa accent dourado, deslocado pra não cortar o conteúdo. */
+:where(a, button, [role="button"], summary, [role="tab"]):focus-visible {
+  outline: 2px solid rgba(180, 140, 80, 0.85);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Inputs/selects mantêm outline próprio mais discreto */
+:where(input, textarea, select):focus-visible {
+  outline: 1px solid rgba(180, 140, 80, 0.7);
+  outline-offset: 1px;
+}
+
+/* Reduced motion: desativa smooth scroll, anéis girando, parallax e
+   loops infinitos. Componentes em React também respeitam via
+   useReducedMotion(), mas esse fallback CSS cuida de tudo que escapa. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ====================== GRAIN OVERLAY ====================== */
 /* Grain global — fixo, levíssimo, garante a textura editorial em qualquer página */
 body::after {

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import TrilhaIcon from './icons';
 import { iconLabel, defaultIconForKind } from '@/lib/trilhaIcons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
@@ -24,6 +24,7 @@ import { toRoman } from '@/lib/stageThumb';
  *   thumb: string | null  (deriveStageThumb já calculado)
  */
 export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', done, onToggle, thumb }) {
+  const prefersReduced = useReducedMotion();
   const stageHref = `/estudos/${trilhaSlug}/${stage.slug || stage.title}`;
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
   const iconName = stage.icon || defaultIconForKind(stage.kind);
@@ -32,7 +33,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
 
   return (
     <motion.article
-      whileHover={{ y: -2 }}
+      whileHover={prefersReduced ? undefined : { y: -2 }}
       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
       className="relative"
     >
