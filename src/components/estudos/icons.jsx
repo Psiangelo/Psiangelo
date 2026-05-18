@@ -13,94 +13,146 @@
  *   <IconSeal name="vessel" size={72} color="#B48C50" />
  */
 
-/* ---------- Trilhas (passagem / arquétipo do caminho) ---------- */
+/* ---------- Trilhas (passagem / arquétipo do caminho) ----------
+   Reescritos no estilo Lucide/Feather: traços simples, formas
+   reconhecíveis mesmo em 12px, mistura controlada de fill/stroke
+   pra dar peso onde faz sentido.
+*/
 
 const COMPASS = (
   <>
     <circle cx="12" cy="12" r="9" />
-    <path d="M12 4 L13.6 12 L12 13.5 L10.4 12 Z" fill="currentColor" />
-    <path d="M10.4 12 L12 20 L13.6 12 L12 10.5 Z" />
-    <circle cx="12" cy="12" r="0.8" fill="currentColor" />
+    {/* Agulha bicolor: ponteiro N preenchido, S vazado */}
+    <polygon points="12,5 14,12 12,13 10,12" fill="currentColor" />
+    <polygon points="12,13 14,12 12,19 10,12" />
+    <circle cx="12" cy="12" r="0.9" fill="currentColor" />
   </>
 );
 
 const SPIRAL = (
-  <path d="M19 12 a7 7 0 1 0 -7 7 m0 -2 a5 5 0 1 1 5 -5 m-2 0 a3 3 0 1 0 -3 3 m0 -2 a1.1 1.1 0 1 1 1.1 -1.1" />
+  <>
+    {/* Espiral de 3 voltas usando arcs sucessivos */}
+    <path d="M12 12
+             A 1 1 0 1 0 11 13
+             M 11 13
+             A 3 3 0 1 1 15 12
+             M 15 12
+             A 5 5 0 1 0 8 14
+             M 8 14
+             A 7 7 0 1 1 18 8" />
+  </>
 );
 
 const FLAME = (
   <>
-    <path d="M12 21.5 c-4 0 -6 -3 -6 -6.2 c0 -2.6 1.8 -4 2.7 -6.3 c0.4 1.4 1.6 2 2 3.2 c1 -2.3 0.6 -4.4 -0.4 -6.2 c4.4 1.2 6.5 5.8 6.5 9.3 c0 3.2 -1.8 6.2 -4.8 6.2 z" />
-    <path d="M12 18.5 c-1.5 0 -2.3 -1.2 -2.3 -2.4 c0 -1 0.7 -1.5 1 -2.4 c0.2 0.5 0.6 0.8 0.7 1.2 c0.4 -0.9 0.2 -1.7 -0.1 -2.4 c1.6 0.5 2.4 2.2 2.4 3.6 c0 1.3 -0.7 2.4 -1.7 2.4 z" />
+    {/* Chama exterior */}
+    <path d="M12 22
+             c -4.5 0 -6.5 -3 -6.5 -6.5
+             c 0 -3 2 -4.5 3 -6.5
+             c 0.3 1.4 1.3 2.2 1.7 3
+             c 1.5 -2 1 -4.2 0 -6
+             c 4.5 1.3 6 5.3 6 9
+             c 0 4 -2.5 7 -4.2 7 z" />
+    {/* Chama interna preenchida */}
+    <path
+      d="M12 19
+         c -1.5 0 -2.3 -1.2 -2.3 -2.4
+         c 0 -0.9 0.5 -1.5 1 -2.2
+         c 0.2 0.5 0.6 0.8 0.8 1.1
+         c 0.3 -0.7 0.2 -1.5 -0.1 -2.1
+         c 1.5 0.4 2.3 1.8 2.3 3.2
+         c 0 1.3 -0.7 2.4 -1.7 2.4 z"
+      fill="currentColor"
+      fillOpacity="0.35"
+    />
   </>
 );
 
 const EYE = (
   <>
-    <path d="M2.5 12 c3.5 -6.5 16 -6.5 19 0 c-3.5 6.5 -16 6.5 -19 0 z" />
+    <path d="M2 12 c4 -7 16 -7 20 0 c-4 7 -16 7 -20 0 z" />
     <circle cx="12" cy="12" r="3" />
-    <circle cx="12" cy="12" r="1" fill="currentColor" />
+    <circle cx="12" cy="12" r="1.3" fill="currentColor" />
   </>
 );
 
 const KEY = (
   <>
     <circle cx="8" cy="12" r="4" />
-    <circle cx="8" cy="12" r="1.2" fill="currentColor" />
-    <path d="M12 12 L21 12 M21 12 L21 15 M18 12 L18 14.5" />
+    <circle cx="8" cy="12" r="1.3" fill="currentColor" />
+    <path d="M12 12 L21 12" />
+    <path d="M18 12 L18 15" />
+    <path d="M21 12 L21 16" />
   </>
 );
 
 const MOUNTAIN = (
   <>
-    <path d="M2.5 19.5 L8.5 9 L13 15 L17 7 L21.5 19.5 Z" />
-    <path d="M7 13 L8.5 11.5 L10 13" />
-    <circle cx="17" cy="7" r="0" fill="currentColor" />
+    <path d="M3 20 L9 9 L13 15 L17 7 L21 20 Z" />
+    <path d="M7.5 14 L9 12.5 L10.5 14" strokeOpacity="0.7" />
+    <circle cx="17" cy="9" r="1" fill="currentColor" />
   </>
 );
 
 const BRIDGE = (
   <>
-    <path d="M3 13.5 c3 -8 15 -8 18 0" />
-    <path d="M3 13.5 L3 20 M21 13.5 L21 20" />
+    {/* Arco do alto */}
+    <path d="M3 13 c3 -7 15 -7 18 0" />
+    {/* Pilares */}
+    <path d="M4 13 L4 20 M20 13 L20 20" />
+    {/* Plataforma */}
     <path d="M3 20 L21 20" />
-    <path d="M9 11 L9 16 M15 11 L15 16 M12 9.5 L12 16" />
+    {/* Cabos */}
+    <path d="M7 13.5 L7 17 M12 8 L12 17 M17 13.5 L17 17" strokeOpacity="0.6" />
   </>
 );
 
 const VESSEL = (
   <>
-    <path d="M7.5 4 L16.5 4 L15.5 9.5 c0 3.5 -2 5.5 -3.5 5.5 c-1.5 0 -3.5 -2 -3.5 -5.5 Z" />
-    <path d="M12 15 L12 20" />
-    <path d="M9 20 L15 20" />
-    <path d="M10 7 L14 7" strokeOpacity="0.5" />
+    {/* Taça: copa + haste + base */}
+    <path d="M7 4 L17 4 L15.5 10 c0 3 -1.5 4.5 -3.5 4.5 c-2 0 -3.5 -1.5 -3.5 -4.5 Z" />
+    <path d="M12 14.5 L12 20" />
+    <path d="M8.5 20 L15.5 20" />
+    <path d="M9.5 7 L14.5 7" strokeOpacity="0.5" />
   </>
 );
 
 const LABYRINTH = (
   <>
-    <rect x="3" y="3" width="18" height="18" rx="1" />
-    <path d="M3 12 L9 12 L9 6 L15 6 L15 18 L6 18" />
-    <path d="M21 12 L13 12 L13 9 L17 9 L17 21" strokeOpacity="0.7" />
+    {/* 3 retângulos concêntricos com aberturas (entrada do labirinto) */}
+    <path d="M3 3 L21 3 L21 21 L3 21 Z" />
+    <path d="M6 6 L6 18 L18 18 L18 6 L13 6" />
+    <path d="M9 9 L9 15 L15 15" />
+    <circle cx="12" cy="12" r="0.8" fill="currentColor" />
   </>
 );
 
 const SUN = (
   <>
     <circle cx="12" cy="12" r="4" />
-    <path d="M12 2.5 L12 5 M12 19 L12 21.5 M2.5 12 L5 12 M19 12 L21.5 12" />
-    <path d="M5.3 5.3 L7 7 M17 17 L18.7 18.7 M18.7 5.3 L17 7 M7 17 L5.3 18.7" />
+    <path d="M12 2 L12 5 M12 19 L12 22" />
+    <path d="M2 12 L5 12 M19 12 L22 12" />
+    <path d="M5 5 L7.2 7.2 M16.8 16.8 L19 19" />
+    <path d="M19 5 L16.8 7.2 M7.2 16.8 L5 19" />
   </>
 );
 
 const MOON = (
-  <path d="M20 13.5 A8 8 0 1 1 10.5 4 A6.2 6.2 0 0 0 20 13.5 z" />
+  <>
+    <path d="M20 14
+             A 8 8 0 1 1 10 4
+             A 6 6 0 0 0 20 14 z" fill="currentColor" fillOpacity="0.12" />
+    <path d="M20 14 A 8 8 0 1 1 10 4 A 6 6 0 0 0 20 14 z" />
+  </>
 );
 
 const TREE = (
   <>
-    <path d="M12 22 L12 14" />
-    <path d="M12 15 c-5.2 0 -6.5 -4.5 -3.5 -7.5 c0.5 -3.5 6 -3.5 7 0 c3 3 1.7 7.5 -3.5 7.5 z" />
+    {/* Copa em 3 bolas + tronco */}
+    <circle cx="12" cy="6" r="3" />
+    <circle cx="8.5" cy="10" r="3" />
+    <circle cx="15.5" cy="10" r="3" />
+    <path d="M12 13 L12 22" />
     <path d="M9 22 L15 22" />
   </>
 );
@@ -108,9 +160,10 @@ const TREE = (
 const ANCHOR = (
   <>
     <circle cx="12" cy="5" r="2" />
-    <path d="M12 7 L12 20" />
-    <path d="M8 11 L16 11" />
-    <path d="M5 16 c0 3.5 3.5 4.5 7 4.5 c3.5 0 7 -1 7 -4.5" />
+    <path d="M12 7 L12 21" />
+    <path d="M8 10 L16 10" />
+    <path d="M5 16 c0 4 4 5.5 7 5.5 c3 0 7 -1.5 7 -5.5" />
+    <path d="M5 16 L3 14 M19 16 L21 14" />
   </>
 );
 
@@ -120,19 +173,25 @@ const STAR = (
 
 const GATE = (
   <>
-    <path d="M5 21 L5 12 A7 7 0 0 1 19 12 L19 21" />
-    <path d="M3.5 21 L20.5 21" />
-    <path d="M12 5 L12 21" />
-    <path d="M8.5 12 L8.5 13.5 M15.5 12 L15.5 13.5" />
+    {/* Arco gótico */}
+    <path d="M5 21 L5 11 A 7 7 0 0 1 19 11 L19 21" />
+    <path d="M3 21 L21 21" />
+    {/* Divisória central da porta */}
+    <path d="M12 4.5 L12 21" />
+    {/* Maçanetas */}
+    <circle cx="9.5" cy="13" r="0.5" fill="currentColor" />
+    <circle cx="14.5" cy="13" r="0.5" fill="currentColor" />
   </>
 );
 
 const MIRROR = (
   <>
-    <circle cx="12" cy="9" r="6" />
-    <circle cx="12" cy="9" r="3.5" strokeOpacity="0.4" />
-    <path d="M9 14.5 L7 21 M15 14.5 L17 21" />
-    <path d="M6.5 21 L17.5 21" />
+    {/* Espelho oval com base */}
+    <ellipse cx="12" cy="9" rx="5.5" ry="6.5" />
+    <ellipse cx="12" cy="9" rx="3" ry="4" strokeOpacity="0.4" />
+    {/* Haste */}
+    <path d="M12 15.5 L12 20" />
+    <path d="M8 20 L16 20" />
   </>
 );
 
@@ -140,88 +199,144 @@ const MIRROR = (
 
 const BOOK = (
   <>
-    <path d="M3 5 c3 0 6 1 9 3 c3 -2 6 -3 9 -3 L21 19 c-3 0 -6 1 -9 3 c-3 -2 -6 -3 -9 -3 Z" />
-    <path d="M12 8 L12 22" />
+    {/* Livro fechado vertical com lombada */}
+    <path d="M6 3 L18 3 L18 21 L6 21 Z" />
+    <path d="M8 3 L8 21" />
+    <path d="M11 7 L15 7 M11 11 L15 11" strokeOpacity="0.6" />
   </>
 );
 
 const MAP = (
   <>
-    <path d="M3 6 L9 4 L15 6 L21 4 L21 18 L15 20 L9 18 L3 20 Z" />
-    <path d="M9 4 L9 18 M15 6 L15 20" />
+    {/* Pin de localização — drop shape com círculo */}
+    <path d="M12 22
+             c -4 -5 -7 -9 -7 -12
+             a 7 7 0 1 1 14 0
+             c 0 3 -3 7 -7 12 z" />
+    <circle cx="12" cy="10" r="2.5" />
   </>
 );
 
 const VIDEO = (
   <>
     <circle cx="12" cy="12" r="9" />
-    <polygon points="10,8 16.5,12 10,16" fill="currentColor" />
+    <polygon points="10.5,8 16.5,12 10.5,16" fill="currentColor" />
   </>
 );
 
 const ESSAY = (
   <>
-    <rect x="5" y="3" width="14" height="18" rx="0.5" />
-    <path d="M8 8 L16 8 M8 12 L16 12 M8 16 L13 16" />
+    {/* Folha A4 com dobra superior direita */}
+    <path d="M5 3 L15 3 L19 7 L19 21 L5 21 Z" />
+    <path d="M15 3 L15 7 L19 7" />
+    <path d="M8 12 L16 12 M8 15 L16 15 M8 18 L13 18" strokeOpacity="0.7" />
   </>
 );
 
 const QUOTE = (
   <>
-    <path d="M5 14 L5 11 c0 -2.2 1.8 -3.5 4 -3.5 L9 9.5 c-1.2 0 -2 0.7 -2 1.5 L9 11 L9 14 Z" />
-    <path d="M14 14 L14 11 c0 -2.2 1.8 -3.5 4 -3.5 L18 9.5 c-1.2 0 -2 0.7 -2 1.5 L18 11 L18 14 Z" />
+    {/* Aspas tipográficas duplas, ambas preenchidas */}
+    <path
+      d="M5.5 7
+         L9.5 7
+         L9.5 12
+         c 0 2.5 -1.5 4 -3.5 4
+         L6 14.5
+         c 1 0 1.5 -0.8 1.5 -1.8
+         L5.5 12.7
+         L5.5 7 z"
+      fill="currentColor"
+    />
+    <path
+      d="M14.5 7
+         L18.5 7
+         L18.5 12
+         c 0 2.5 -1.5 4 -3.5 4
+         L15 14.5
+         c 1 0 1.5 -0.8 1.5 -1.8
+         L14.5 12.7
+         L14.5 7 z"
+      fill="currentColor"
+    />
   </>
 );
 
 const HEADPHONES = (
   <>
-    <path d="M4 14 L4 12 a8 8 0 0 1 16 0 L20 14" />
-    <rect x="3" y="14" width="4" height="6" rx="1" />
-    <rect x="17" y="14" width="4" height="6" rx="1" />
+    {/* Arco superior */}
+    <path d="M4 14 L4 12 a 8 8 0 0 1 16 0 L20 14" />
+    {/* Earcups */}
+    <path d="M3 14 L7 14 L7 20 L3 20 Z" />
+    <path d="M17 14 L21 14 L21 20 L17 20 Z" />
   </>
 );
 
 const CARTOGRAPHY = (
   <>
-    <circle cx="12" cy="12" r="2.2" />
-    <circle cx="5" cy="6" r="1.5" />
-    <circle cx="19" cy="7" r="1.5" />
-    <circle cx="6" cy="18.5" r="1.5" />
-    <circle cx="18.5" cy="17.5" r="1.5" />
-    <path d="M6.2 7 L10.2 10.8 M17.7 8 L13.8 10.8 M7 17 L10.5 13.2 M17 16.5 L13.6 13.2" strokeOpacity="0.6" />
+    {/* Nó central preenchido + 4 satélites + arestas */}
+    <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+    <circle cx="5" cy="6" r="1.8" />
+    <circle cx="19" cy="6" r="1.8" />
+    <circle cx="5" cy="18" r="1.8" />
+    <circle cx="19" cy="18" r="1.8" />
+    <path
+      d="M6.5 7 L10.2 10.5
+         M17.5 7 L13.8 10.5
+         M6.5 17 L10.2 13.5
+         M17.5 17 L13.8 13.5"
+      strokeOpacity="0.6"
+    />
   </>
 );
 
 const RITUAL = (
   <>
-    <circle cx="12" cy="12" r="8.5" />
-    <circle cx="12" cy="12" r="3.5" />
-    <path d="M12 2 L12 5 M12 19 L12 22 M2 12 L5 12 M19 12 L22 12" />
+    {/* Círculo grande + 4 cruzes nos pontos cardeais + círculo interno */}
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 1.5 L12 4.5 M12 19.5 L12 22.5" />
+    <path d="M1.5 12 L4.5 12 M19.5 12 L22.5 12" />
+    <circle cx="12" cy="12" r="0.8" fill="currentColor" />
   </>
 );
 
 const SCROLL = (
   <>
-    <path d="M6 3 c-2 0 -2 4 0 4 L17 7 c2 0 2 -4 0 -4 Z" />
-    <path d="M6 7 L6 19 c0 1.5 1.5 3 3 3 L18 22 c-2 0 -3 -1.5 -3 -3 L15 7" />
-    <path d="M9 11 L13 11 M9 15 L13 15" strokeOpacity="0.6" />
+    {/* Pergaminho com 2 enrolamentos (topo e base) */}
+    <path d="M5 5 c0 -1.5 1 -2 2 -2 L17 3 c1 0 2 0.5 2 2" />
+    <path d="M5 5 L5 17" />
+    <path d="M19 5 L19 17" />
+    {/* Topo enrolado */}
+    <path d="M3 5 L5 5 M3 5 c 0 -1.5 1 -2 2 -2" />
+    {/* Base enrolada */}
+    <path d="M5 17 c 0 1.5 1 2 2 2 L17 19 c 1 0 2 -0.5 2 -2" />
+    {/* Texto */}
+    <path d="M8 9 L16 9 M8 13 L14 13" strokeOpacity="0.5" />
   </>
 );
 
 const LANTERN = (
   <>
-    <rect x="6.5" y="6.5" width="11" height="13" rx="5.5" />
-    <path d="M6.5 11 L17.5 11 M6.5 15.5 L17.5 15.5" strokeOpacity="0.7" />
-    <path d="M12 3 L12 6.5 M12 19.5 L12 22" />
+    {/* Corpo da lanterna em barril */}
+    <path d="M8 5 L16 5 L16 8 c 2 1 2 6 0 7 c 0 3 -2 5 -4 5 c -2 0 -4 -2 -4 -5 c -2 -1 -2 -6 0 -7 z" />
+    {/* Linhas horizontais */}
+    <path d="M8 8 L16 8 M8 15 L16 15" strokeOpacity="0.7" />
+    {/* Alça superior + base */}
+    <path d="M11 5 L11 3 L13 3 L13 5" />
+    <path d="M11 20 L13 20" />
   </>
 );
 
 const THRESHOLD = (
   <>
-    <path d="M5 3 L5 21 L11 19.5 L11 4.5 Z" />
-    <path d="M14 4.5 L20 3 L20 21 L14 19.5 Z" />
-    <circle cx="9.5" cy="12" r="0.6" fill="currentColor" />
-    <circle cx="15.5" cy="12" r="0.6" fill="currentColor" />
+    {/* Porta entreaberta: moldura + porta inclinada */}
+    <path d="M4 3 L20 3 L20 21 L4 21 Z" />
+    {/* Linha da porta (entreaberta) */}
+    <path d="M12 5 L12 20" />
+    {/* "Espaço" entre porta e batente */}
+    <path d="M14 6 L18 4 M14 19 L18 21" strokeOpacity="0.6" />
+    {/* Maçaneta */}
+    <circle cx="14" cy="12" r="0.5" fill="currentColor" />
   </>
 );
 
