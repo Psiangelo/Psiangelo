@@ -55,17 +55,6 @@ const DEFAULT_PORTALS = [
     cta: 'Começar uma trilha',
   },
   {
-    id: 'atlas',
-    visKey: 'atlas',
-    href: '/atlas',
-    glyph: '◇',
-    eyebrow: 'Vault aberto',
-    title: 'Atlas',
-    body:
-      'O caderno de notas e mapas conceituais que mantenho em estudo contínuo.',
-    cta: 'Explorar o Atlas',
-  },
-  {
     id: 'materiais',
     visKey: 'materiais',
     href: '/materiais',
@@ -91,7 +80,7 @@ const DEFAULT_PORTALS = [
 
 export const DEFAULT_HOME_BUSSOLA = {
   eyebrow: 'Por onde começar',
-  title: 'Seis portas',
+  title: 'Cinco portas',
   emphasis: 'desta clínica e da casa.',
   lead:
     'A clínica e o trabalho público caminham juntos aqui. Esta é a entrada — escolha por onde começar.',

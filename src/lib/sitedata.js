@@ -30,7 +30,6 @@ export const SITEDATA_KEYS = {
   testimonials:   'angelo_admin_testimonials',
   faqs:           'angelo_admin_faqs',
   settings:       'angelo_admin_settings',
-  atlasOverrides: 'angelo_admin_atlas_overrides',
   therapy:        'angelo_admin_therapy',
   homeSections:   'angelo_admin_home_sections',
 };
@@ -86,7 +85,7 @@ export const DEFAULT_HOMEPAGE = {
   },
   bussola: {
     eyebrow: 'Por onde começar',
-    title: 'Seis portas',
+    title: 'Cinco portas',
     emphasis: 'desta clínica e da casa.',
     lead:
       'A clínica e o trabalho público caminham juntos aqui. Esta é a entrada — escolha por onde começar.',
@@ -94,7 +93,6 @@ export const DEFAULT_HOMEPAGE = {
       { id: 'atendo',    visKey: 'psicoterapia', href: '/psicoterapia-analitica', glyph: '◈', eyebrow: 'Clínica',     title: 'Atendo',    body: 'Psicoterapia analítica online, em todo o Brasil — adolescentes, adultos e idosos.', cta: 'Conhecer o atendimento' },
       { id: 'blog',      visKey: 'blog',         href: '/blog',                   glyph: '✶', eyebrow: 'Ensaios',     title: 'Escrevo',   body: 'Textos sobre clínica, sonhos e símbolos — publicados periodicamente.',          cta: 'Ler os ensaios' },
       { id: 'trilhas',   visKey: 'trilhas',      href: '/trilhas',                glyph: '✦', eyebrow: 'Estudo',      title: 'Trilhas',   body: 'Percursos guiados de leitura para entrar na obra de Jung pela porta certa.',     cta: 'Começar uma trilha' },
-      { id: 'atlas',     visKey: 'atlas',        href: '/atlas',                  glyph: '◇', eyebrow: 'Vault aberto',title: 'Atlas',     body: 'O caderno de notas e mapas conceituais que mantenho em estudo contínuo.',         cta: 'Explorar o Atlas' },
       { id: 'materiais', visKey: 'materiais',    href: '/materiais',              glyph: '◆', eyebrow: 'Sínteses',    title: 'Materiais', body: 'Resumos e mapas mentais para estudar e revisitar conceitos junguianos.',          cta: 'Ver materiais' },
       { id: 'glossario', visKey: 'glossario',    href: '/glossario',              glyph: '※', eyebrow: 'Léxico',      title: 'Glossário', body: 'Verbetes vivos da abordagem — definições curtas e remissões cruzadas.',          cta: 'Abrir o glossário' },
     ],
@@ -342,7 +340,6 @@ export const DEFAULT_VISIBILITY = {
   materiais:  true,
   trilhas:    true,
   bio:        true,
-  atlas:      true,
   glossario:  true,
   psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
@@ -429,22 +426,6 @@ export const isVisible = (key) => {
   if (typeof window === 'undefined') return DEFAULT_VISIBILITY[key] ?? true;
   return getSiteVisibility()[key] ?? true;
 };
-
-/* ===================================================================
-   ATLAS OVERRIDES — curadoria de publicação por nota/pasta
-=================================================================== */
-
-export const DEFAULT_ATLAS_OVERRIDES = {
-  hiddenNotes: [],   // array de "section/slug"
-  hiddenFolders: [], // array de "section/raw1/raw2/..." (path completo desde a seção)
-};
-
-export const getAtlasOverrides = () => {
-  const stored = readJson(SITEDATA_KEYS.atlasOverrides, null);
-  if (!stored) return DEFAULT_ATLAS_OVERRIDES;
-  return { ...DEFAULT_ATLAS_OVERRIDES, ...stored };
-};
-export const setAtlasOverrides = (v) => writeJson(SITEDATA_KEYS.atlasOverrides, v);
 
 /* ===================================================================
    THERAPY — configuração da landing /psicoterapia-analitica

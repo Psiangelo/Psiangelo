@@ -7,9 +7,7 @@ import { useRouter } from 'next/navigation';
 import { glossario } from '@/data/glossario';
 import { materials } from '@/data/materials';
 import { trilhas } from '@/data/trilhas';
-import { atlasNotes, atlasSections } from '@/lib/atlas';
 import { useVisibility } from '@/lib/useVisibility';
-import { useAtlasOverrides } from '@/lib/useAtlasOverrides';
 
 const STATIC_PAGES = [
   { id: 'home',       title: 'Home',       href: '/',          hint: 'Página inicial' },
@@ -19,9 +17,6 @@ const STATIC_PAGES = [
   { id: 'trilhas',    title: 'Trilhas',    href: '/trilhas',   hint: 'Rotas de estudo' },
   { id: 'cursos',     title: 'Cursos',     href: '/cursos',    hint: 'Formação' },
   { id: 'blog',       title: 'Blog',       href: '/blog',      hint: 'Ensaios' },
-  { id: 'atlas',      title: 'Atlas',      href: '/atlas',     hint: 'Cartografia editorial' },
-  { id: 'atlas-grafo', title: 'Atlas · Grafo', href: '/atlas/grafo', hint: 'Grafo de conexões entre notas' },
-  { id: 'atlas-indice', title: 'Atlas · Índice A–Z', href: '/atlas/indice', hint: 'Todas as notas em ordem alfabética' },
   { id: 'atender',    title: 'Atendimento', href: '/psicoterapia-analitica', hint: 'Psicoterapia analítica · agendar primeira conversa' },
   { id: 'glossario',  title: 'Glossário',  href: '/glossario', hint: 'Termos junguianos (curadoria)' },
   { id: 'bio',        title: 'Bio · Links',href: '/bio',       hint: 'Linktree' },
@@ -81,19 +76,6 @@ function buildIndex() {
     });
   }
 
-  const sectionLabels = new Map(atlasSections.map((s) => [s.slug, s.label]));
-  for (const n of atlasNotes) {
-    idx.push({
-      type: 'atlas',
-      typeLabel: sectionLabels.get(n.section) || 'Atlas',
-      title: n.title,
-      hint: n.subpath?.map((s) => s.clean).join(' › ') || '',
-      href: `/atlas/${n.section}/${n.slug}`,
-      haystack: normalize(`${n.title} ${(n.tags || []).join(' ')} ${sectionLabels.get(n.section) || ''}`),
-      _note: n,
-    });
-  }
-
   return idx;
 }
 
@@ -121,7 +103,6 @@ const TYPE_TONE = {
   glossario: 'text-accent',
   material: 'text-text-bright',
   trilha: 'text-accent/80',
-  atlas: 'text-accent',
 };
 
 export default function CommandPalette() {
@@ -133,11 +114,9 @@ export default function CommandPalette() {
   const router = useRouter();
 
   const { visibility } = useVisibility();
-  const { isNoteHidden } = useAtlasOverrides();
   const index = useMemo(() => buildIndex(), []);
   const filteredIndex = useMemo(() => {
     return index.filter((item) => {
-      if (visibility.atlas === false && (item.type === 'atlas' || (item.href || '').startsWith('/atlas'))) return false;
       if (visibility.glossario === false && (item.type === 'glossario' || (item.href || '').startsWith('/glossario'))) return false;
       if (visibility.blog === false && (item.href || '').startsWith('/blog')) return false;
       if (visibility.cursos === false && (item.href || '').startsWith('/cursos')) return false;
@@ -145,11 +124,9 @@ export default function CommandPalette() {
       if (visibility.trilhas === false && (item.href || '').startsWith('/trilhas')) return false;
       if (visibility.bio === false && item.href === '/bio') return false;
       if (visibility.psicoterapia === false && (item.href || '').startsWith('/psicoterapia')) return false;
-      // Filtro de notas individuais do Atlas (admin curadoria)
-      if (item.type === 'atlas' && item._note && isNoteHidden(item._note)) return false;
       return true;
     });
-  }, [index, visibility, isNoteHidden]);
+  }, [index, visibility]);
   const results = useMemo(() => searchIndex(filteredIndex, query), [filteredIndex, query]);
 
   const close = useCallback(() => {

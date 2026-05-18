@@ -25,7 +25,6 @@ export default function Footer({ showMaterialsCta = false }) {
     { href: '/trilhas',   label: 'Trilhas',   key: 'trilhas' },
     { href: '/cursos',    label: 'Cursos',    key: 'cursos' },
     { href: '/blog',      label: 'Blog',      key: 'blog' },
-    { href: '/atlas',     label: 'Atlas',     key: 'atlas' },
     { href: '/glossario', label: 'Glossário', key: 'glossario' },
     { href: '/psicoterapia-analitica', label: 'Atendimento', key: 'psicoterapia' },
     { href: '/feed.xml',  label: 'RSS',       key: 'blog' },

@@ -57,7 +57,6 @@ export default function sitemap() {
     toAbsolute('/materiais',  0.7, 'weekly'),
     toAbsolute('/cursos',     0.7, 'monthly'),
     toAbsolute('/trilhas',    0.7, 'monthly'),
-    toAbsolute('/atlas',      0.65, 'monthly'),
     toAbsolute('/glossario',  0.6, 'monthly'),
   ];
 

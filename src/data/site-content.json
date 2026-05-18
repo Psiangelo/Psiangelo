@@ -3126,7 +3126,6 @@
       "faq": false,
       "blog": true,
       "about": false,
-      "atlas": false,
       "cursos": false,
       "contato": true,
       "prelude": false,
@@ -3246,17 +3245,6 @@
       "contato",
       "blog"
     ],
-    "angelo_admin_atlas_overrides": {
-      "hiddenNotes": [],
-      "hiddenFolders": [
-        "psicologia-complexa",
-        "allos",
-        "psicologia-geral",
-        "mitologia-humanidades",
-        "humanistas",
-        "conceitos"
-      ]
-    },
     "angelo_admin_course_categories": []
   }
 }

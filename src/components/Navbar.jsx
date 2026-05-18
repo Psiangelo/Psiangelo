@@ -32,7 +32,6 @@ export default function Navbar() {
     { href: '/trilhas', label: 'Trilhas', key: 'trilhas' },
     { href: '/materiais', label: 'Materiais', key: 'materiais' },
     { href: '/cursos', label: 'Cursos', key: 'cursos' },
-    { href: '/atlas', label: 'Atlas', key: 'atlas' },
   ];
   const links = allLinks.filter((l) => l.key == null || v[l.key]);
 

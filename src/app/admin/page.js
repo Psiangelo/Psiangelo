@@ -11,7 +11,6 @@ import SectionOrderManager from '@/components/admin/SectionOrderManager';
 import PublishManager from '@/components/admin/PublishManager';
 import UnpublishedBanner from '@/components/admin/UnpublishedBanner';
 import AdminSidebar from '@/components/admin/AdminSidebar';
-import atlasData from '@/data/atlas.json';
 import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
 
 // Managers pesados: code-split pra não carregar tudo de uma vez
@@ -33,10 +32,6 @@ const TrilhasManager = dynamic(() => import('@/components/admin/TrilhasManager')
   loading: DynamicFallback,
 });
 const CartographyManager = dynamic(() => import('@/components/admin/CartographyManager'), {
-  ssr: false,
-  loading: DynamicFallback,
-});
-const AtlasManager = dynamic(() => import('@/components/admin/AtlasManager'), {
   ssr: false,
   loading: DynamicFallback,
 });
@@ -831,7 +826,7 @@ function MobileBottomNav({ activeTab, setActiveTab, groups, counts }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // 4 atalhos primários representativos (cobrem fluxo diário)
-  const primaryIds = ['dashboard', 'atlas', 'content', 'visibility'];
+  const primaryIds = ['dashboard', 'content', 'blog', 'visibility'];
   const allItems = groups.flatMap((g) => g.items);
   const primaryTabs = primaryIds
     .map((id) => allItems.find((t) => t.id === id))
@@ -973,15 +968,11 @@ function AutoSaveIndicator({ show }) {
 function DashboardTab({ materialsList, testimonialsList, faqsList, comingSoonList, setComingSoonList, activityLog, addToast, addLogEntry, onNavigateToMaterials }) {
   const [newComingSoon, setNewComingSoon] = useState('');
 
-  // Stats extras (atlas/blog/cursos) pra dashboard completo
-  const atlasTotal = (atlasData.stats?.published) || 0;
-  const [atlasHidden, setAtlasHidden] = useState(0);
+  // Stats extras (blog/cursos) pra dashboard completo
   const [blogTotal, setBlogTotal] = useState(0);
   const [coursesTotal, setCoursesTotal] = useState(0);
   useEffect(() => {
     try {
-      const ov = JSON.parse(localStorage.getItem('angelo_admin_atlas_overrides') || '{}');
-      setAtlasHidden((ov.hiddenNotes?.length || 0) + (ov.hiddenFolders?.length || 0));
       const blog = JSON.parse(localStorage.getItem('angelo_admin_blog') || '[]');
       setBlogTotal(Array.isArray(blog) ? blog.length : 0);
       const courses = JSON.parse(localStorage.getItem('angelo_admin_courses') || '[]');
@@ -1049,10 +1040,8 @@ function DashboardTab({ materialsList, testimonialsList, faqsList, comingSoonLis
       </div>
 
       {/* Stats principais — site todo */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-        <StatCard label="Atlas · notas" value={atlasTotal} accent />
-        <StatCard label="Atlas ocultas" value={atlasHidden} />
-        <StatCard label="Blog · posts" value={blogTotal} />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <StatCard label="Blog · posts" value={blogTotal} accent />
         <StatCard label="Cursos" value={coursesTotal} />
         <StatCard label="Materiais" value={total} />
         <StatCard label="Capítulos" value={`${availableChapters}/${totalChapters}`} />
@@ -2784,7 +2773,6 @@ function AdminPanel() {
     { id: 'materials', label: 'Materiais', badge: materialsList.length },
     { id: 'trilhas', label: 'Trilhas', badge: null },
     { id: 'cartography', label: 'Cartografia', badge: null },
-    { id: 'atlas', label: 'Atlas', badge: null },
     { id: 'content', label: 'Conteúdo', badge: null },
     { id: 'sectionOrder', label: 'Ordem das seções', badge: null },
     { id: 'bio', label: 'Bio / Linktree', badge: null },
@@ -2813,7 +2801,6 @@ function AdminPanel() {
         { id: 'blog',        label: 'Blog',        icon: IconPen },
         { id: 'courses',     label: 'Cursos',      icon: IconVideo },
         { id: 'trilhas',     label: 'Trilhas',     icon: IconBook },
-        { id: 'atlas',       label: 'Atlas',       icon: IconGrid },
         { id: 'cartography', label: 'Cartografia', icon: IconGrid },
       ],
     },
@@ -3048,13 +3035,6 @@ function AdminPanel() {
               key="faqs"
               faqsList={faqsList}
               setFaqsList={setFaqsList}
-              addToast={addToast}
-              addLogEntry={addLogEntry}
-            />
-          )}
-          {activeTab === 'atlas' && (
-            <AtlasManager
-              key="atlas"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

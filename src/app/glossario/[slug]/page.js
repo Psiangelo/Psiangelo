@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import AtlasGate from '@/components/atlas/AtlasGate';
+import VisibilityGate from '@/components/VisibilityGate';
 import { glossario, getGlossarioBySlug, CATEGORIES } from '@/data/glossario';
 import { materials } from '@/data/materials';
 
@@ -43,7 +43,7 @@ export default function TermoPage({ params }) {
   const paragraphs = formatFull(term.full);
 
   return (
-    <AtlasGate visibilityKey="glossario" title="Glossário indisponível">
+    <VisibilityGate visibilityKey="glossario" title="Glossário indisponível">
       <Navbar />
       <main className="pt-28 md:pt-40 pb-16 px-5 sm:px-6 md:px-12">
         <article className="max-w-[760px] mx-auto">
@@ -119,6 +119,6 @@ export default function TermoPage({ params }) {
         </article>
       </main>
       <Footer />
-    </AtlasGate>
+    </VisibilityGate>
   );
 }
