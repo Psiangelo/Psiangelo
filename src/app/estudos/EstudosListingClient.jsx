@@ -155,6 +155,7 @@ export default function EstudosListingClient({ initialTrilhas }) {
                 const t = migrateTrilhaBlocks(rawTrilha);
                 const tone = t.archetype ? (TRILHA_TONE[t.archetype] || TRILHA_TONE.Self) : TRILHA_TONE.Self;
                 const slug = trilhaSlug(t);
+                const trilhaPct = percentOf(t);
                 return (
                   <motion.div key={t.id || slug} variants={fadeUp}>
                     <Link
@@ -204,11 +205,16 @@ export default function EstudosListingClient({ initialTrilhas }) {
                           </p>
                         )}
 
-                        <div className="mt-auto pt-4 border-t border-border-subtle/50 inline-flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">
-                          Começar
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
+                        <div className="mt-auto pt-4 border-t border-border-subtle/50 flex items-center justify-between gap-2">
+                          <span className="inline-flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">
+                            {trilhaPct > 0 ? 'Continuar' : 'Começar'}
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform">
+                              <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                          {trilhaPct > 0 && (
+                            <span className="font-mono text-[0.55rem] text-accent/80 tracking-[0.22em]">{trilhaPct}%</span>
+                          )}
                         </div>
                       </div>
                     </Link>

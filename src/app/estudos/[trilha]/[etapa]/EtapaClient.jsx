@@ -48,6 +48,20 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
   const total = trilha.stages.length;
   const pct = Math.round(((initialEtapaIdx + 1) / total) * 100);
 
+  // Tempo de leitura estimado (~220 palavras/min, conta texto + quote + summary)
+  const readingTime = useMemo(() => {
+    if (!stage) return 0;
+    let words = 0;
+    const summary = stage.summary || '';
+    words += summary.split(/\s+/).filter(Boolean).length;
+    for (const b of stage.blocks || []) {
+      if (b.type === 'text') words += String(b.body || '').split(/\s+/).filter(Boolean).length;
+      else if (b.type === 'quote') words += String(b.body || '').split(/\s+/).filter(Boolean).length;
+    }
+    const mins = Math.max(1, Math.round(words / 220));
+    return mins;
+  }, [stage]);
+
   const { isStageDone, toggleStage } = useTrilhaProgress();
   const done = isStageDone(trilha.id, stage?.title);
 
@@ -149,6 +163,11 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
               <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.18em] uppercase">
                 Etapa {initialEtapaIdx + 1} de {total}
               </span>
+              {readingTime > 0 && (
+                <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.18em] uppercase">
+                  · {readingTime} min de leitura
+                </span>
+              )}
               <button
                 onClick={() => toggleStage(trilha.id, stage.title)}
                 aria-pressed={done}
