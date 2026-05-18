@@ -127,6 +127,12 @@ export default function TrilhaDetailClient({ initialTrilha }) {
           variants={stagger}
           className="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12"
         >
+          {trilha.stages.length === 0 && (
+            <div className="text-center py-16 border border-dashed border-border-subtle">
+              <p className="font-serif italic text-text-dim">Esta trilha ainda não tem etapas publicadas.</p>
+            </div>
+          )}
+
           <div className="space-y-4">
             {trilha.stages.map((stage, idx) => {
               const done = isStageDone(trilha.id, stage.title);
@@ -139,9 +145,21 @@ export default function TrilhaDetailClient({ initialTrilha }) {
                     href={stageHref}
                     className={`group flex items-stretch gap-5 bg-bg-card border hover:border-border-hover transition-all overflow-hidden ${done ? 'border-accent/50' : 'border-border-subtle'}`}
                   >
-                    {/* Coluna número */}
-                    <div className="relative w-[100px] sm:w-[140px] flex-shrink-0 bg-bg-warm border-r border-border-subtle flex items-center justify-center">
-                      <span className="font-serif italic text-[3rem] sm:text-[4rem] leading-none text-accent opacity-50 group-hover:opacity-90 transition-opacity">
+                    {/* Coluna número (com cover image se houver) */}
+                    <div className="relative w-[100px] sm:w-[140px] flex-shrink-0 bg-bg-warm border-r border-border-subtle flex items-center justify-center overflow-hidden">
+                      {stage.coverImage && (
+                        <>
+                          <img
+                            src={stage.coverImage}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
+                            referrerPolicy="no-referrer"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-bg-warm/40 to-bg-warm/70" />
+                        </>
+                      )}
+                      <span className="relative font-serif italic text-[3rem] sm:text-[4rem] leading-none text-accent opacity-50 group-hover:opacity-90 transition-opacity">
                         {number}
                       </span>
                     </div>

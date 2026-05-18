@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -11,7 +12,11 @@ import { fadeUp, stagger } from '@/lib/constants';
 import { getTrilhas, SITEDATA_KEYS } from '@/lib/sitedata';
 import { TRILHA_TONE } from '@/data/trilhas';
 import { migrateTrilhaBlocks } from '@/lib/linkResolver';
-import { renderHighlightedTitle } from '@/lib/highlightTitle';
+import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
+
+function normalize(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 function trilhaSlug(t) {
   return t.slug || t.id;
@@ -19,6 +24,26 @@ function trilhaSlug(t) {
 
 export default function EstudosListingClient({ initialTrilhas }) {
   const trilhas = useSitedata(getTrilhas, initialTrilhas, SITEDATA_KEYS.trilhas);
+  const [search, setSearch] = useState('');
+  const [filterLevel, setFilterLevel] = useState(null);
+
+  const filtered = useMemo(() => {
+    return (trilhas || []).filter((t) => {
+      if (filterLevel && t.level !== filterLevel) return false;
+      if (search) {
+        const q = normalize(search);
+        const hay = normalize(`${stripHighlights(t.name)} ${t.subtitle || ''} ${(t.stages || []).map((s) => s.title).join(' ')}`);
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [trilhas, search, filterLevel]);
+
+  const levels = useMemo(() => {
+    const set = new Set();
+    (trilhas || []).forEach((t) => { if (t.level) set.add(t.level); });
+    return Array.from(set);
+  }, [trilhas]);
 
   return (
     <VisibilityGate visibilityKey="estudos" title="Estudos indisponível">
@@ -40,8 +65,53 @@ export default function EstudosListingClient({ initialTrilhas }) {
           className="py-12 md:py-20 px-5 sm:px-6 md:px-12"
         >
           <div className="max-w-[1180px] mx-auto">
+            {/* Filtros: busca + nível */}
+            {(trilhas.length > 2 || search) && (
+              <div className="mb-8 flex items-center gap-3 flex-wrap">
+                <div className="flex-1 min-w-[200px] relative border-b border-border-subtle focus-within:border-accent/50 transition-colors">
+                  <svg className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Buscar trilha ou etapa…"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 bg-transparent text-text-bright placeholder:text-text-dim/50 focus:outline-none font-serif italic text-[0.95rem]"
+                  />
+                </div>
+                {levels.length > 1 && (
+                  <div className="flex gap-1 flex-wrap">
+                    <button
+                      onClick={() => setFilterLevel(null)}
+                      className={`px-3 py-1.5 font-mono text-[0.55rem] tracking-[0.18em] uppercase transition-colors ${
+                        !filterLevel
+                          ? 'bg-accent text-bg'
+                          : 'border border-border-subtle text-text-dim hover:text-accent'
+                      }`}
+                    >
+                      Todos
+                    </button>
+                    {levels.map((l) => (
+                      <button
+                        key={l}
+                        onClick={() => setFilterLevel(filterLevel === l ? null : l)}
+                        className={`px-3 py-1.5 font-mono text-[0.55rem] tracking-[0.18em] uppercase transition-colors ${
+                          filterLevel === l
+                            ? 'bg-accent text-bg'
+                            : 'border border-border-subtle text-text-dim hover:text-accent'
+                        }`}
+                      >
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {trilhas.map((rawTrilha, i) => {
+              {filtered.map((rawTrilha, i) => {
                 const t = migrateTrilhaBlocks(rawTrilha);
                 const tone = t.archetype ? (TRILHA_TONE[t.archetype] || TRILHA_TONE.Self) : TRILHA_TONE.Self;
                 const slug = trilhaSlug(t);
@@ -110,6 +180,18 @@ export default function EstudosListingClient({ initialTrilhas }) {
             {trilhas.length === 0 && (
               <div className="text-center py-16 border border-dashed border-border-subtle">
                 <p className="font-serif italic text-text-dim">Nenhuma trilha publicada ainda.</p>
+              </div>
+            )}
+
+            {trilhas.length > 0 && filtered.length === 0 && (
+              <div className="text-center py-12 border border-dashed border-border-subtle">
+                <p className="font-serif italic text-text-dim mb-3">Nenhuma trilha com esses filtros.</p>
+                <button
+                  onClick={() => { setSearch(''); setFilterLevel(null); }}
+                  className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase hover:text-text-bright transition-colors"
+                >
+                  Limpar filtros
+                </button>
               </div>
             )}
           </div>
