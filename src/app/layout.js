@@ -62,12 +62,16 @@ export const metadata = {
     follow: true,
   },
   manifest: `${SITE_URL}/manifest.json`,
-  themeColor: '#0E0C0A',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Psiangelo',
   },
+};
+
+// Next.js 14: themeColor migrou de `metadata` para `viewport` export
+export const viewport = {
+  themeColor: '#0E0C0A',
 };
 
 export default function RootLayout({ children }) {

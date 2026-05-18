@@ -659,15 +659,15 @@ function CommandPalette({ open, onClose, materialsList, testimonialsList, faqsLi
   }, [open]);
 
   const actions = useMemo(() => [
-    { id: 'action-export', label: 'Exportar backup', category: 'Acoes', icon: 'zap', tab: 'actions' },
-    { id: 'action-site', label: 'Ver site', category: 'Acoes', icon: 'zap', handler: () => window.open('/', '_blank') },
-    { id: 'action-new-material', label: 'Novo material', category: 'Acoes', icon: 'zap', tab: 'materials' },
-    { id: 'action-dashboard', label: 'Ir para Dashboard', category: 'Acoes', icon: 'grid', tab: 'dashboard' },
-    { id: 'action-settings', label: 'Ir para Configuracoes', category: 'Acoes', icon: 'gear', tab: 'settings' },
-    { id: 'action-blog', label: 'Ir para Blog', category: 'Acoes', icon: 'pen', tab: 'blog' },
-    { id: 'action-courses', label: 'Ir para Cursos', category: 'Acoes', icon: 'pen', tab: 'courses' },
-    { id: 'action-faq', label: 'Ir para FAQ', category: 'Acoes', icon: 'help', tab: 'faqs' },
-    { id: 'action-testimonials', label: 'Ir para Depoimentos', category: 'Acoes', icon: 'chat', tab: 'testimonials' },
+    { id: 'action-export', label: 'Exportar backup', category: 'Ações', icon: 'zap', tab: 'actions' },
+    { id: 'action-site', label: 'Ver site', category: 'Ações', icon: 'zap', handler: () => window.open('/', '_blank') },
+    { id: 'action-new-material', label: 'Novo material', category: 'Ações', icon: 'zap', tab: 'materials' },
+    { id: 'action-dashboard', label: 'Ir para Dashboard', category: 'Ações', icon: 'grid', tab: 'dashboard' },
+    { id: 'action-settings', label: 'Ir para Configurações', category: 'Ações', icon: 'gear', tab: 'settings' },
+    { id: 'action-blog', label: 'Ir para Blog', category: 'Ações', icon: 'pen', tab: 'blog' },
+    { id: 'action-courses', label: 'Ir para Cursos', category: 'Ações', icon: 'pen', tab: 'courses' },
+    { id: 'action-faq', label: 'Ir para FAQ', category: 'Ações', icon: 'help', tab: 'faqs' },
+    { id: 'action-testimonials', label: 'Ir para Depoimentos', category: 'Ações', icon: 'chat', tab: 'testimonials' },
   ], []);
 
   const results = useMemo(() => {
@@ -1432,7 +1432,7 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
 
   const addNewMaterial = () => {
     if (!newMaterial.title.trim()) {
-      addToast('Titulo e obrigatorio', 'error');
+      addToast('Título é obrigatório', 'error');
       return;
     }
     const material = {
@@ -1498,11 +1498,11 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
   const MaterialFormFields = ({ data, setData, isNew = false }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div>
-        <label className={LABEL_CLASS}>Titulo *</label>
+        <label className={LABEL_CLASS}>Título *</label>
         <input value={data.title} onChange={(e) => setData({ ...data, title: e.target.value })} className={INPUT_CLASS} />
       </div>
       <div>
-        <label className={LABEL_CLASS}>Subtitulo</label>
+        <label className={LABEL_CLASS}>Subtítulo</label>
         <input value={data.subtitle} onChange={(e) => setData({ ...data, subtitle: e.target.value })} className={INPUT_CLASS} />
       </div>
       <div>
@@ -1547,7 +1547,7 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
         <input value={data.whatsappLink} onChange={(e) => setData({ ...data, whatsappLink: e.target.value })} className={INPUT_CLASS} />
       </div>
       <div className="sm:col-span-2">
-        <label className={LABEL_CLASS}>Descricao</label>
+        <label className={LABEL_CLASS}>Descrição</label>
         <textarea value={data.description} onChange={(e) => setData({ ...data, description: e.target.value })} rows={3} className={INPUT_CLASS + ' resize-y'} />
       </div>
       <div className="sm:col-span-2">
@@ -2163,7 +2163,7 @@ function _OldBlogTabRemoved() {
 
   const addNew = () => {
     if (!newPost.title.trim()) {
-      addToast('Titulo e obrigatorio', 'error');
+      addToast('Título é obrigatório', 'error');
       return;
     }
     const post = {
@@ -2410,18 +2410,18 @@ function SettingsTab({ settings, setSettings, addToast, addLogEntry }) {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <h2 className="text-xl font-serif text-[#E8DDD0] mb-6">Configuracoes do Site</h2>
+      <h2 className="text-xl font-serif text-[#E8DDD0] mb-6">Configurações do Site</h2>
 
       {/* SEO */}
       <div className={`${CARD_CLASS} mb-4`}>
         <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans mb-4">SEO e Identidade</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className={LABEL_CLASS}>Titulo do site</label>
+            <label className={LABEL_CLASS}>Título do site</label>
             <input value={settings.siteTitle || ''} onChange={(e) => updateSetting('siteTitle', e.target.value)} className={INPUT_CLASS} />
           </div>
           <div>
-            <label className={LABEL_CLASS}>Descricao (SEO)</label>
+            <label className={LABEL_CLASS}>Descrição (SEO)</label>
             <input value={settings.siteDescription || ''} onChange={(e) => updateSetting('siteDescription', e.target.value)} className={INPUT_CLASS} />
           </div>
         </div>
@@ -2598,7 +2598,7 @@ function ActionsTab({ materialsList, testimonialsList, faqsList, comingSoonList,
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <h2 className="text-xl font-serif text-[#E8DDD0] mb-6">Acoes Rapidas</h2>
+      <h2 className="text-xl font-serif text-[#E8DDD0] mb-6">Ações Rápidas</h2>
 
       <div className="space-y-3">
         <button onClick={() => copyToClipboard(whatsappTemplate, 'whatsapp')} className={actionBtn}>
