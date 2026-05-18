@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import siteContent from '@/data/site-content.json';
 import { trilhas as TRILHAS_DEFAULT } from '@/data/trilhas';
+import { materials as MATERIALS_DEFAULT } from '@/data/materials';
+import { DEFAULT_AREAS } from '@/lib/areas';
 import { migrateTrilhaBlocks } from '@/lib/linkResolver';
 import TrilhaDetailClient from './TrilhaDetailClient';
 
@@ -11,6 +13,21 @@ function getList() {
 
 function bySlug(slug) {
   return getList().find((t) => (t.slug || t.id) === slug);
+}
+
+function getInitialAreas() {
+  const stored = siteContent?.data?.angelo_admin_areas;
+  return Array.isArray(stored) && stored.length > 0 ? stored : DEFAULT_AREAS;
+}
+
+function getInitialPosts() {
+  const stored = siteContent?.data?.angelo_admin_blog;
+  return Array.isArray(stored) ? stored : [];
+}
+
+function getInitialMaterials() {
+  const stored = siteContent?.data?.angelo_admin_materials;
+  return Array.isArray(stored) && stored.length > 0 ? stored : MATERIALS_DEFAULT;
 }
 
 export function generateStaticParams() {
@@ -37,5 +54,14 @@ export default function TrilhaDetailPage({ params }) {
   const raw = bySlug(params.trilha);
   if (!raw) return notFound();
   const trilha = migrateTrilhaBlocks(raw);
-  return <TrilhaDetailClient initialTrilha={trilha} />;
+  const allTrilhas = getList().map(migrateTrilhaBlocks);
+  return (
+    <TrilhaDetailClient
+      initialTrilha={trilha}
+      initialAreas={getInitialAreas()}
+      initialPosts={getInitialPosts()}
+      initialMaterials={getInitialMaterials()}
+      initialAllTrilhas={allTrilhas}
+    />
+  );
 }
