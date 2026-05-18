@@ -8,7 +8,6 @@ import Footer from '@/components/Footer';
 import SectionLabel from '@/components/SectionLabel';
 import PageHero from '@/components/ui/PageHero';
 import { MaterialCardFull } from '@/components/materiais/MaterialCard';
-import { contentTypeLabels } from '@/data/materials';
 import { fadeUp, stagger } from '@/lib/constants';
 import { img } from '@/lib/basepath';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
@@ -17,37 +16,47 @@ import { useSitedata } from '@/lib/useSitedata';
 import {
   getMaterials,
   getComingSoon,
+  getCategories,
+  getContentTypes,
+  getMateriaisPage,
+  DEFAULT_MATERIAIS_PAGE,
+  DEFAULT_CATEGORIES,
+  DEFAULT_CONTENT_TYPES,
   SITEDATA_KEYS,
 } from '@/lib/sitedata';
 
 /* ========================================
-   HERO
+   HERO — props vêm do admin
 ======================================== */
-function MateriaisHero() {
+function MateriaisHero({ hero }) {
   return (
     <PageHero
-      eyebrow="Catálogo · Resumos & Mapas Mentais"
-      title="Materiais"
-      emphasis="de estudo"
-      kicker="Resumos e mapas no Obsidian"
-      lead="Materiais que uso para estudar e ensinar — resumos, mapas e diagramas. Cada item indica seu formato."
+      eyebrow={hero.eyebrow}
+      title={hero.title}
+      emphasis={hero.emphasis}
+      kicker={hero.kicker}
+      lead={hero.lead}
       actions={
         <>
-          <a
-            href="#catalogo"
-            className="group relative inline-flex items-center gap-3 px-7 py-3.5 font-sans text-[0.74rem] font-semibold tracking-[0.18em] uppercase text-bg bg-accent hover:bg-text-bright transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/15"
-          >
-            Ir ao catálogo
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </a>
-          <Link
-            href="/#cartografia"
-            className="font-sans text-[0.7rem] font-medium tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors link-underline"
-          >
-            Ver cartografia
-          </Link>
+          {hero.primaryCtaLabel && (
+            <a
+              href={hero.primaryCtaHref || '#catalogo'}
+              className="group relative inline-flex items-center gap-3 px-7 py-3.5 font-sans text-[0.74rem] font-semibold tracking-[0.18em] uppercase text-bg bg-accent hover:bg-text-bright transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/15"
+            >
+              {hero.primaryCtaLabel}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          )}
+          {hero.secondaryCtaLabel && (
+            <Link
+              href={hero.secondaryCtaHref || '/#cartografia'}
+              className="font-sans text-[0.7rem] font-medium tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors link-underline"
+            >
+              {hero.secondaryCtaLabel}
+            </Link>
+          )}
         </>
       }
     />
@@ -55,10 +64,9 @@ function MateriaisHero() {
 }
 
 /* ========================================
-   EXPLANATION — compacta, com ícones SVG
+   ÍCONES — registry para o admin escolher
 ======================================== */
 function IconGraph() {
-  // Grafo de conhecimento (Obsidian) — nós conectados
   return (
     <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
       <line x1="20" y1="20" x2="8"  y2="10" opacity="0.5" />
@@ -77,7 +85,6 @@ function IconGraph() {
 }
 
 function IconMindmap() {
-  // Mapa mental — nó central com 6 raios
   return (
     <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
       {Array.from({ length: 6 }).map((_, i) => {
@@ -102,7 +109,6 @@ function IconMindmap() {
 }
 
 function IconEye() {
-  // Olho — percepção clínica
   return (
     <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 20 Q 20 6, 36 20 Q 20 34, 4 20 Z" opacity="0.7" />
@@ -113,15 +119,70 @@ function IconEye() {
   );
 }
 
-function Explanation() {
+function IconBook() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 8 L6 32 L20 30 L34 32 L34 8 L20 10 Z" />
+      <line x1="20" y1="10" x2="20" y2="30" opacity="0.5" />
+      <line x1="10" y1="15" x2="17" y2="14" opacity="0.4" />
+      <line x1="10" y1="19" x2="17" y2="18" opacity="0.4" />
+      <line x1="23" y1="14" x2="30" y2="15" opacity="0.4" />
+      <line x1="23" y1="18" x2="30" y2="19" opacity="0.4" />
+    </svg>
+  );
+}
+
+function IconVideo() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="11" width="22" height="18" rx="2" />
+      <path d="M27 17 L34 13 L34 27 L27 23 Z" />
+      <polygon points="13,16 20,20 13,24" fill="currentColor" fillOpacity="0.5" stroke="none" />
+    </svg>
+  );
+}
+
+function IconPen() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 34 L10 24 L26 8 L32 14 L16 30 Z" />
+      <line x1="22" y1="12" x2="28" y2="18" opacity="0.5" />
+      <line x1="10" y1="24" x2="16" y2="30" opacity="0.5" />
+    </svg>
+  );
+}
+
+function IconSpark() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 4 L23 17 L36 20 L23 23 L20 36 L17 23 L4 20 L17 17 Z" />
+    </svg>
+  );
+}
+
+const ICON_REGISTRY = {
+  graph:   IconGraph,
+  mindmap: IconMindmap,
+  eye:     IconEye,
+  book:    IconBook,
+  video:   IconVideo,
+  pen:     IconPen,
+  spark:   IconSpark,
+};
+
+function IconFor({ name }) {
+  const Comp = ICON_REGISTRY[name] || IconGraph;
+  return <Comp />;
+}
+
+/* ========================================
+   EXPLANATION — features dinâmicas
+======================================== */
+function Explanation({ features }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  const features = [
-    { icon: <IconGraph />,   title: 'Feitos no Obsidian',      desc: 'Resumos interconectados com links entre conceitos.' },
-    { icon: <IconMindmap />, title: 'Mapas mentais completos', desc: 'Diagramas detalhados — alguns bastam por si só.' },
-    { icon: <IconEye />,     title: 'Percepção clínica',       desc: 'Misturados com experiência de atendimento.' },
-  ];
+  if (!features || features.length === 0) return null;
 
   return (
     <section ref={ref} className="py-12 md:py-16 px-5 sm:px-6 md:px-12 bg-bg-warm section-border-t section-border-b">
@@ -132,12 +193,12 @@ function Explanation() {
         className="max-w-[1280px] mx-auto"
       >
         <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-          {features.map((feat) => (
-            <motion.div key={feat.title} variants={fadeUp} className="flex items-start gap-4">
-              <div className="flex-shrink-0 text-accent mt-0.5">{feat.icon}</div>
+          {features.map((feat, i) => (
+            <motion.div key={feat.title + i} variants={fadeUp} className="flex items-start gap-4">
+              <div className="flex-shrink-0 text-accent mt-0.5"><IconFor name={feat.icon} /></div>
               <div className="min-w-0">
                 <h3 className="font-serif text-base text-text-bright leading-tight mb-1.5">{feat.title}</h3>
-                <p className="text-[0.85rem] text-text-dim leading-[1.7]">{feat.desc}</p>
+                <p className="text-[0.85rem] text-text-dim leading-[1.7]">{feat.body}</p>
               </div>
             </motion.div>
           ))}
@@ -148,18 +209,8 @@ function Explanation() {
 }
 
 /* ========================================
-   CATALOG — sidebar 240px + grid bento
+   FILTER PANEL
 ======================================== */
-const ALL_FORMATS = Object.keys(contentTypeLabels);
-
-// Filtro multi-seleção: arrays vazios = "todos"
-const initialFilters = {
-  category: [],   // ['livro','tema']
-  format:   [],   // ['resumo','mapa','resumo-mapa']
-  author:   [],   // string[]
-  tags:     [],   // string[]
-};
-
 function FilterSection({ title, options, selected, onToggle, counts }) {
   return (
     <div className="border-b border-border-subtle py-5 first:pt-0">
@@ -208,7 +259,7 @@ function FilterSection({ title, options, selected, onToggle, counts }) {
   );
 }
 
-function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideHeader, materials }) {
+function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideHeader, materials, categories, contentTypes, labels }) {
   const toggle = (key, value) => {
     setFilters((prev) => ({
       ...prev,
@@ -256,26 +307,23 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
       )}
 
       <FilterSection
-        title="Categoria"
+        title={labels.category}
         selected={filters.category}
         counts={counts.category}
         onToggle={(v) => toggle('category', v)}
-        options={[
-          { value: 'livro', label: 'Livros' },
-          { value: 'tema',  label: 'Temas' },
-        ]}
+        options={categories.map((c) => ({ value: c.slug, label: c.label }))}
       />
 
       <FilterSection
-        title="Formato"
+        title={labels.format}
         selected={filters.format}
         counts={counts.format}
         onToggle={(v) => toggle('format', v)}
-        options={ALL_FORMATS.map((f) => ({ value: f, label: contentTypeLabels[f].label }))}
+        options={contentTypes.map((t) => ({ value: t.slug, label: t.label }))}
       />
 
       <FilterSection
-        title="Autor"
+        title={labels.author}
         selected={filters.author}
         counts={counts.author}
         onToggle={(v) => toggle('author', v)}
@@ -283,7 +331,7 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
       />
 
       <FilterSection
-        title="Tags"
+        title={labels.tags}
         selected={filters.tags}
         counts={counts.tags}
         onToggle={(v) => toggle('tags', v)}
@@ -293,7 +341,7 @@ function FilterPanel({ filters, setFilters, onClear, total, filteredCount, hideH
   );
 }
 
-function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filteredCount, materials }) {
+function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filteredCount, materials, categories, contentTypes, labels }) {
   const totalActive = Object.values(filters).reduce((s, arr) => s + arr.length, 0);
 
   return (
@@ -351,6 +399,9 @@ function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filt
                 filteredCount={filteredCount}
                 hideHeader
                 materials={materials}
+                categories={categories}
+                contentTypes={contentTypes}
+                labels={labels}
               />
             </div>
 
@@ -369,9 +420,11 @@ function FilterDrawer({ open, onClose, filters, setFilters, onClear, total, filt
   );
 }
 
-/* ============== TILE TEMA — compacto uniforme ============== */
-function TemaTile({ material }) {
-  const typeInfo = contentTypeLabels[material.contentType];
+/* ========================================
+   TILES — compacto (TemaTile)
+======================================== */
+function TemaTile({ material, contentTypes }) {
+  const typeInfo = contentTypes.find((t) => t.slug === material.contentType);
   const image = material.image
     ? (material.image.startsWith('http') ? material.image : img(material.image))
     : null;
@@ -398,7 +451,7 @@ function TemaTile({ material }) {
 
       <div className="relative z-10 p-4 flex flex-col h-full gap-2">
         {typeInfo && (
-          <span className="self-start font-mono text-[0.5rem] tracking-[0.18em] uppercase px-1.5 py-0.5 text-accent/80">
+          <span className="self-start font-mono text-[0.5rem] tracking-[0.18em] uppercase px-1.5 py-0.5" style={{ color: typeInfo.color || '#B48C50' }}>
             {typeInfo.label}
           </span>
         )}
@@ -424,7 +477,12 @@ function TemaTile({ material }) {
   );
 }
 
-function Catalog() {
+/* ========================================
+   CATALOG — grupos por categoria dinâmica
+======================================== */
+const initialFilters = { category: [], format: [], author: [], tags: [] };
+
+function Catalog({ catalogText, categories, contentTypes }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   const [filters, setFilters] = useState(initialFilters);
@@ -451,8 +509,17 @@ function Catalog() {
     });
   }, [filters, search, materials]);
 
-  const livros = filtered.filter((m) => m.category === 'livro');
-  const temas  = filtered.filter((m) => m.category === 'tema');
+  // Agrupar por categoria, na ordem definida pelo admin
+  const grouped = useMemo(() => {
+    const map = new Map(categories.map((c) => [c.slug, []]));
+    const orphans = [];
+    for (const m of filtered) {
+      if (map.has(m.category)) map.get(m.category).push(m);
+      else orphans.push(m);
+    }
+    return { byCategory: Array.from(map.entries()), orphans };
+  }, [filtered, categories]);
+
   const totalActiveFilters = Object.values(filters).reduce((s, arr) => s + arr.length, 0);
 
   return (
@@ -464,7 +531,7 @@ function Catalog() {
         className="max-w-[1100px] mx-auto"
       >
         <div className="mb-6">
-          <SectionLabel label="Catálogo" />
+          <SectionLabel label={catalogText.sectionLabel} />
         </div>
 
         <FilterDrawer
@@ -476,6 +543,9 @@ function Catalog() {
           total={(materials || []).length}
           filteredCount={filtered.length}
           materials={materials}
+          categories={categories}
+          contentTypes={contentTypes}
+          labels={catalogText.filterLabels}
         />
 
         {/* Barra de busca + botão Filtros */}
@@ -491,7 +561,7 @@ function Catalog() {
             </svg>
             <input
               type="text"
-              placeholder="Buscar…"
+              placeholder={catalogText.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 bg-transparent text-text-bright placeholder:text-text-dim/50 focus:outline-none font-serif italic text-[0.95rem]"
@@ -516,7 +586,7 @@ function Catalog() {
 
         {filtered.length === 0 && (
           <div className="text-center py-16 border border-border-subtle border-dashed">
-            <p className="font-serif italic text-text-dim mb-4">Nenhum material com esses filtros.</p>
+            <p className="font-serif italic text-text-dim mb-4">{catalogText.emptyMessage}</p>
             <button
               onClick={() => { setFilters(initialFilters); setSearch(''); }}
               className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase hover:text-text-bright transition-colors"
@@ -526,39 +596,62 @@ function Catalog() {
           </div>
         )}
 
-        {/* LIVROS */}
-        {livros.length > 0 && (
+        {/* Grupos por categoria, na ordem do admin */}
+        {grouped.byCategory.map(([slug, items]) => {
+          if (items.length === 0) return null;
+          const cat = categories.find((c) => c.slug === slug);
+          if (!cat) return null;
+
+          if (cat.displayMode === 'compact') {
+            return (
+              <div key={slug} className="mb-12">
+                <header className="flex items-baseline gap-4 mb-4">
+                  <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">{cat.label}</span>
+                  <span className="flex-1 h-px bg-border-subtle" />
+                  <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{items.length}</span>
+                </header>
+                <motion.div
+                  layout
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {items.map((mat) => (
+                      <TemaTile key={mat.id} material={mat} contentTypes={contentTypes} />
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+            );
+          }
+
+          return (
+            <div key={slug} className="mb-12">
+              <header className="flex items-baseline gap-4 mb-4">
+                <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">{cat.label}</span>
+                <span className="flex-1 h-px bg-border-subtle" />
+                <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{items.length}</span>
+              </header>
+              <div className="flex flex-col gap-3">
+                {items.map((mat) => (
+                  <MaterialCardFull key={mat.id} material={mat} contentTypes={contentTypes} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Órfãos: materiais com category slug que não existe na lista atual */}
+        {grouped.orphans.length > 0 && (
           <div className="mb-12">
             <header className="flex items-baseline gap-4 mb-4">
-              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Livros</span>
+              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Outros</span>
               <span className="flex-1 h-px bg-border-subtle" />
-              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{livros.length}</span>
+              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{grouped.orphans.length}</span>
             </header>
-            <div className="flex flex-col gap-3">
-              {livros.map((mat) => (
-                <MaterialCardFull key={mat.id} material={mat} />
+            <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {grouped.orphans.map((mat) => (
+                <TemaTile key={mat.id} material={mat} contentTypes={contentTypes} />
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* TEMAS — grid uniforme */}
-        {temas.length > 0 && (
-          <div>
-            <header className="flex items-baseline gap-4 mb-4">
-              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Temas</span>
-              <span className="flex-1 h-px bg-border-subtle" />
-              <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{temas.length}</span>
-            </header>
-            <motion.div
-              layout
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
-            >
-              <AnimatePresence mode="popLayout">
-                {temas.map((mat) => (
-                  <TemaTile key={mat.id} material={mat} />
-                ))}
-              </AnimatePresence>
             </motion.div>
           </div>
         )}
@@ -567,7 +660,7 @@ function Catalog() {
         {comingSoon.length > 0 && (
           <motion.div variants={fadeUp} className="mt-14">
             <header className="flex items-baseline gap-4 mb-4">
-              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">Em breve</span>
+              <span className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">{catalogText.comingSoonLabel}</span>
               <span className="flex-1 h-px bg-border-subtle" />
               <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.2em]">{comingSoon.length}</span>
             </header>
@@ -590,6 +683,10 @@ function Catalog() {
 ======================================== */
 export default function MateriaisPage() {
   const { visibility, ready } = useVisibility();
+  const page       = useSitedata(getMateriaisPage,  DEFAULT_MATERIAIS_PAGE,  SITEDATA_KEYS.materiaisPage);
+  const categories = useSitedata(getCategories,     DEFAULT_CATEGORIES,      SITEDATA_KEYS.categories);
+  const contentTypes = useSitedata(getContentTypes, DEFAULT_CONTENT_TYPES,   SITEDATA_KEYS.contentTypes);
+
   if (ready && !visibility.materiais) {
     return <HiddenPlaceholder title="Materiais indisponíveis" />;
   }
@@ -597,9 +694,11 @@ export default function MateriaisPage() {
     <>
       <Navbar />
       <main>
-        <MateriaisHero />
-        <Explanation />
-        <Catalog />
+        <MateriaisHero hero={page.hero} />
+        {page.explanation?.show !== false && (
+          <Explanation features={page.explanation.features} />
+        )}
+        <Catalog catalogText={page.catalog} categories={categories} contentTypes={contentTypes} />
       </main>
       <Footer />
     </>

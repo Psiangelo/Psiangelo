@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { materials as defaultMaterials, comingSoon as defaultComingSoon, contentTypeLabels } from '@/data/materials';
+import { materials as defaultMaterials, comingSoon as defaultComingSoon } from '@/data/materials';
 import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
@@ -11,6 +11,10 @@ import SectionOrderManager from '@/components/admin/SectionOrderManager';
 import PublishManager from '@/components/admin/PublishManager';
 import UnpublishedBanner from '@/components/admin/UnpublishedBanner';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import CategoriesManager from '@/components/admin/CategoriesManager';
+import ContentTypesManager from '@/components/admin/ContentTypesManager';
+import MateriaisPageManager from '@/components/admin/MateriaisPageManager';
+import { getCategories, getContentTypes } from '@/lib/sitedata';
 import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
 
 // Managers pesados: code-split pra não carregar tudo de uma vez
@@ -1213,6 +1217,7 @@ function DashboardTab({ materialsList, testimonialsList, faqsList, comingSoonLis
 
 // ─── Materials Manager Tab ───────────────────────────────────────────
 function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, editMaterialId, clearEditMaterialId }) {
+  const [subTab, setSubTab] = useState('lista');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('todos');
   const [editingId, setEditingId] = useState(null);
@@ -1221,12 +1226,86 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [batchDeleteConfirm, setBatchDeleteConfirm] = useState(false);
+
+  // Categorias e tipos dinâmicos — lidos do localStorage, atualizam quando admin salva
+  const [categories, setCategoriesState] = useState([]);
+  const [contentTypes, setContentTypesState] = useState([]);
+  useEffect(() => {
+    const sync = () => {
+      setCategoriesState(getCategories());
+      setContentTypesState(getContentTypes());
+    };
+    sync();
+    const onChanged = (e) => {
+      if (!e.detail?.key || ['angelo_admin_categories', 'angelo_admin_content_types'].includes(e.detail.key)) sync();
+    };
+    window.addEventListener('sitedata:changed', onChanged);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('sitedata:changed', onChanged);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  const firstCategorySlug = categories[0]?.slug || 'livro';
+  const firstContentTypeSlug = contentTypes[0]?.slug || 'resumo-mapa';
+
   const [newMaterial, setNewMaterial] = useState({
     title: '', subtitle: '', author: '', description: '',
-    category: 'livro', contentType: 'resumo-mapa',
+    category: firstCategorySlug, contentType: firstContentTypeSlug,
     price: '', chapterPrice: '', whatsappLink: '',
     image: '', tags: '', available: true,
   });
+
+  // Sub-tab nav header
+  const subTabs = [
+    { id: 'lista', label: 'Lista' },
+    { id: 'categorias', label: 'Categorias' },
+    { id: 'tipos', label: 'Tipos' },
+    { id: 'pagina', label: 'Página /materiais' },
+  ];
+  const SubTabNav = () => (
+    <div className="flex flex-wrap gap-1 mb-6 border-b border-[rgba(180,140,80,0.15)]">
+      {subTabs.map((t) => (
+        <button
+          key={t.id}
+          onClick={() => setSubTab(t.id)}
+          className={`px-4 py-2.5 text-xs font-sans uppercase tracking-widest transition-colors border-b-2 -mb-px ${
+            subTab === t.id
+              ? 'border-[#B48C50] text-[#B48C50]'
+              : 'border-transparent text-[#6E6458] hover:text-[#B8AD9E]'
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (subTab === 'categorias') {
+    return (
+      <div>
+        <SubTabNav />
+        <CategoriesManager addToast={addToast} addLogEntry={addLogEntry} />
+      </div>
+    );
+  }
+  if (subTab === 'tipos') {
+    return (
+      <div>
+        <SubTabNav />
+        <ContentTypesManager addToast={addToast} addLogEntry={addLogEntry} />
+      </div>
+    );
+  }
+  if (subTab === 'pagina') {
+    return (
+      <div>
+        <SubTabNav />
+        <MateriaisPageManager addToast={addToast} addLogEntry={addLogEntry} />
+      </div>
+    );
+  }
 
   // Handle external edit request (from command palette)
   useEffect(() => {
@@ -1374,7 +1453,7 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
     setMaterialsList((prev) => [...prev, material]);
     setNewMaterial({
       title: '', subtitle: '', author: '', description: '',
-      category: 'livro', contentType: 'resumo-mapa',
+      category: firstCategorySlug, contentType: firstContentTypeSlug,
       price: '', chapterPrice: '', whatsappLink: '',
       image: '', tags: '', available: true,
     });
@@ -1432,16 +1511,17 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
       <div>
         <label className={LABEL_CLASS}>Categoria</label>
         <select value={data.category} onChange={(e) => setData({ ...data, category: e.target.value })} className={INPUT_CLASS}>
-          <option value="livro">Livro</option>
-          <option value="tema">Tema</option>
+          {categories.map((c) => (
+            <option key={c.slug} value={c.slug}>{c.singular || c.label}</option>
+          ))}
         </select>
       </div>
       <div>
         <label className={LABEL_CLASS}>Tipo de conteudo</label>
         <select value={data.contentType} onChange={(e) => setData({ ...data, contentType: e.target.value })} className={INPUT_CLASS}>
-          <option value="resumo-mapa">Resumo + Mapa Mental</option>
-          <option value="resumo">Apenas Resumo</option>
-          <option value="mapa">Apenas Mapa Mental</option>
+          {contentTypes.map((t) => (
+            <option key={t.slug} value={t.slug}>{t.label}</option>
+          ))}
         </select>
       </div>
       <div>
@@ -1491,6 +1571,7 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+      <SubTabNav />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h2 className="text-xl font-serif text-[#E8DDD0]">Gerenciar Materiais</h2>
         <button onClick={() => setShowAddForm(!showAddForm)} className={BTN_PRIMARY}>
@@ -1527,12 +1608,8 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
           placeholder="Buscar materiais..."
           className={INPUT_CLASS + ' sm:max-w-xs'}
         />
-        <div className="flex gap-2 items-center">
-          {[
-            { key: 'todos', label: 'Todos' },
-            { key: 'livro', label: 'Livros' },
-            { key: 'tema', label: 'Temas' },
-          ].map((f) => (
+        <div className="flex gap-2 items-center flex-wrap">
+          {[{ key: 'todos', label: 'Todos' }, ...categories.map((c) => ({ key: c.slug, label: c.label }))].map((f) => (
             <button
               key={f.key}
               onClick={() => setCategoryFilter(f.key)}
@@ -1565,7 +1642,7 @@ function MaterialsTab({ materialsList, setMaterialsList, addToast, addLogEntry, 
       {/* Materials List */}
       <div className="space-y-4">
         {filteredMaterials.map((material, idx) => {
-          const typeInfo = contentTypeLabels[material.contentType] || {};
+          const typeInfo = contentTypes.find((t) => t.slug === material.contentType) || { label: material.contentType, color: '#B8AD9E' };
           const isEditing = editingId === material.id;
           const globalIdx = materialsList.findIndex((m) => m.id === material.id);
           const isSelected = selectedIds.has(material.id);

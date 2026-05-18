@@ -5,8 +5,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
-import { contentTypeLabels } from '@/data/materials';
-import { getMaterials, SITEDATA_KEYS } from '@/lib/sitedata';
+import { getMaterials, getCategories, getContentTypes, DEFAULT_CATEGORIES, DEFAULT_CONTENT_TYPES, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 import { img } from '@/lib/basepath';
 import { SpiralAccent } from '@/components/illustrations';
@@ -24,23 +23,27 @@ const BENTO_SPANS = [
   'md:col-span-2 md:row-span-1',
 ];
 
-// Mapa de tipo → cor da badge (paleta alquímica)
-const TYPE_TONE = {
-  'resumo':       { bg: 'rgba(212,168,83,0.1)',  border: 'rgba(212,168,83,0.35)', text: '#D4A853' },
-  'mapa':         { bg: 'rgba(180,140,80,0.12)', border: 'rgba(180,140,80,0.45)', text: '#B48C50' },
-  'resumo-mapa':  { bg: 'rgba(232,221,208,0.06)',border: 'rgba(232,221,208,0.35)', text: '#E8DDD0' },
-};
-
 function resolveImg(item) {
   if (!item.image) return null;
   return item.image.startsWith('http') ? item.image : img(item.image);
 }
 
-function Tile({ item, span, index }) {
-  const typeInfo = contentTypeLabels[item.contentType];
-  const tone = TYPE_TONE[item.contentType] || TYPE_TONE.resumo;
+function hexToToneStyle(hex) {
+  const fallback = '#B48C50';
+  const color = (hex && hex.startsWith('#')) ? hex : fallback;
+  return {
+    background: `${color}1A`,
+    border: `1px solid ${color}55`,
+    color,
+  };
+}
+
+function Tile({ item, span, index, categories, contentTypes }) {
+  const typeInfo = contentTypes.find((t) => t.slug === item.contentType);
+  const catInfo  = categories.find((c) => c.slug === item.category);
   const image = resolveImg(item);
   const isFeatured = index === 0;
+  const catTone = hexToToneStyle('#B48C50');
 
   return (
     <motion.article
@@ -71,20 +74,19 @@ function Tile({ item, span, index }) {
       {/* Conteúdo sobre o overlay */}
       <div className={`relative z-10 p-6 md:p-7 flex flex-col h-full ${isFeatured ? 'min-h-[360px]' : 'min-h-[210px]'}`}>
         {/* Badges topo */}
-        <div className="flex items-center gap-2 mb-auto">
-          <span
-            className="font-mono text-[0.55rem] tracking-[0.18em] uppercase px-2 py-1"
-            style={{
-              background: tone.bg,
-              border: `1px solid ${tone.border}`,
-              color: tone.text,
-            }}
-          >
-            {item.category === 'livro' ? 'Livro' : 'Tema'}
-          </span>
+        <div className="flex items-center gap-2 mb-auto flex-wrap">
+          {catInfo && (
+            <span
+              className="font-mono text-[0.55rem] tracking-[0.18em] uppercase px-2 py-1"
+              style={catTone}
+            >
+              {catInfo.singular || catInfo.label}
+            </span>
+          )}
           {typeInfo && (
             <span
-              className="font-mono text-[0.55rem] tracking-[0.15em] uppercase px-2 py-1 border border-border-subtle/60 text-text-dim"
+              className="font-mono text-[0.55rem] tracking-[0.15em] uppercase px-2 py-1 border"
+              style={{ color: typeInfo.color, borderColor: `${typeInfo.color}55` }}
             >
               {typeInfo.label}
             </span>
@@ -118,6 +120,8 @@ export default function MaterialsPreview() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const materials = useSitedata(getMaterials, [], SITEDATA_KEYS.materials);
+  const categories = useSitedata(getCategories, DEFAULT_CATEGORIES, SITEDATA_KEYS.categories);
+  const contentTypes = useSitedata(getContentTypes, DEFAULT_CONTENT_TYPES, SITEDATA_KEYS.contentTypes);
 
   const previewItems = (materials || []).filter((m) => m.available).slice(0, 6);
 
@@ -190,7 +194,7 @@ export default function MaterialsPreview() {
               href={`/materiais#${item.id}`}
               className={`block ${BENTO_SPANS[i] || ''}`}
             >
-              <Tile item={item} span="h-full" index={i} />
+              <Tile item={item} span="h-full" index={i} categories={categories} contentTypes={contentTypes} />
             </Link>
           ))}
         </motion.div>

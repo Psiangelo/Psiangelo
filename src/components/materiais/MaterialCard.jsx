@@ -2,20 +2,16 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { contentTypeLabels } from '@/data/materials';
 import { img } from '@/lib/basepath';
 
-function ContentBadge({ contentType }) {
-  const info = contentTypeLabels[contentType];
+function ContentBadge({ contentType, contentTypes }) {
+  const info = (contentTypes || []).find((t) => t.slug === contentType);
   if (!info) return null;
-  const isGold = contentType === 'resumo-mapa' || contentType === 'mapa';
+  const color = info.color || '#B48C50';
   return (
     <span
-      className={`inline-flex items-center font-mono text-[0.55rem] tracking-[0.18em] uppercase px-2 py-1 ${
-        isGold
-          ? 'text-accent border border-accent/30 bg-accent/[0.08]'
-          : 'text-text border border-border-subtle bg-bg-warm/40'
-      }`}
+      className="inline-flex items-center font-mono text-[0.55rem] tracking-[0.18em] uppercase px-2 py-1 border"
+      style={{ color, borderColor: `${color}55`, background: `${color}14` }}
     >
       {info.label}
     </span>
@@ -57,9 +53,9 @@ function resolveImg(src) {
 /* ================================
    FULL CARD — compacto, capa menor, tipografia enxuta
 ================================ */
-export function MaterialCardFull({ material }) {
+export function MaterialCardFull({ material, contentTypes }) {
   const [expanded, setExpanded] = useState(false);
-  const hasChapters = material.category === 'livro' && material.chapters && material.chapters.length > 0;
+  const hasChapters = material.chapters && material.chapters.length > 0;
   const image = resolveImg(material.image);
 
   return (
@@ -93,7 +89,7 @@ export function MaterialCardFull({ material }) {
         <div className="p-4 md:p-5 flex flex-col gap-3">
           {/* Badge único: tipo do conteúdo */}
           <div className="flex items-center justify-between gap-3">
-            <ContentBadge contentType={material.contentType} />
+            <ContentBadge contentType={material.contentType} contentTypes={contentTypes} />
             {!material.available && <AvailBadge available={false} />}
           </div>
 
@@ -235,7 +231,7 @@ export function MaterialCardFull({ material }) {
 /* ================================
    COMPACT CARD — para temas (mantido pra retrocompat)
 ================================ */
-export function MaterialCardCompact({ material }) {
+export function MaterialCardCompact({ material, contentTypes }) {
   return (
     <div className="bg-bg-card border border-border-subtle flex flex-col hover:border-border-hover hover:-translate-y-0.5 transition-all group overflow-hidden">
       <div className="w-full aspect-[16/9] bg-bg border-b border-border-subtle overflow-hidden">
@@ -257,7 +253,7 @@ export function MaterialCardCompact({ material }) {
 
       <div className="p-5 flex flex-col flex-1">
         <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-          <ContentBadge contentType={material.contentType} />
+          <ContentBadge contentType={material.contentType} contentTypes={contentTypes} />
           <AvailBadge available={material.available} />
         </div>
 

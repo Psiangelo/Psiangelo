@@ -32,6 +32,9 @@ export const SITEDATA_KEYS = {
   settings:       'angelo_admin_settings',
   therapy:        'angelo_admin_therapy',
   homeSections:   'angelo_admin_home_sections',
+  categories:     'angelo_admin_categories',
+  contentTypes:   'angelo_admin_content_types',
+  materiaisPage:  'angelo_admin_materiais_page',
 };
 
 /* ===================================================================
@@ -598,6 +601,100 @@ export const getMaterials  = () => readJson(SITEDATA_KEYS.materials,  MATERIALS_
 export const setMaterials  = (v) => writeJson(SITEDATA_KEYS.materials, v);
 export const getComingSoon = () => readJson(SITEDATA_KEYS.comingSoon, COMING_SOON_DEFAULT);
 export const setComingSoon = (v) => writeJson(SITEDATA_KEYS.comingSoon, v);
+
+/* ===================================================================
+   MATERIAIS · CATEGORIAS · TIPOS · PÁGINA
+   - Categorias e tipos de conteúdo são listas gerenciáveis pelo admin
+   - Defaults reproduzem o estado pré-2026-05-18 (livro/tema, resumo-mapa/resumo/mapa)
+   - Página /materiais ganha textos editáveis (hero, explanation, catalog)
+=================================================================== */
+
+export const DEFAULT_CATEGORIES = [
+  { slug: 'livro', label: 'Livros', singular: 'Livro', displayMode: 'full',    ordem: 0 },
+  { slug: 'tema',  label: 'Temas',  singular: 'Tema',  displayMode: 'compact', ordem: 1 },
+];
+
+export const DEFAULT_CONTENT_TYPES = [
+  { slug: 'resumo-mapa', label: 'Resumo + Mapa Mental', color: '#B48C50', ordem: 0 },
+  { slug: 'resumo',      label: 'Apenas Resumo',         color: '#B8AD9E', ordem: 1 },
+  { slug: 'mapa',        label: 'Mapa Mental',           color: '#B48C50', ordem: 2 },
+];
+
+export const DEFAULT_MATERIAIS_PAGE = {
+  hero: {
+    eyebrow: 'Catálogo · Resumos & Mapas Mentais',
+    title: 'Materiais',
+    emphasis: 'de estudo',
+    kicker: 'Resumos e mapas no Obsidian',
+    lead: 'Materiais que uso para estudar e ensinar — resumos, mapas e diagramas. Cada item indica seu formato.',
+    primaryCtaLabel: 'Ir ao catálogo',
+    primaryCtaHref: '#catalogo',
+    secondaryCtaLabel: 'Ver cartografia',
+    secondaryCtaHref: '/#cartografia',
+  },
+  explanation: {
+    show: true,
+    features: [
+      { icon: 'graph',    title: 'Feitos no Obsidian',      body: 'Resumos interconectados com links entre conceitos.' },
+      { icon: 'mindmap',  title: 'Mapas mentais completos', body: 'Diagramas detalhados — alguns bastam por si só.' },
+      { icon: 'eye',      title: 'Percepção clínica',       body: 'Misturados com experiência de atendimento.' },
+    ],
+  },
+  catalog: {
+    sectionLabel: 'Catálogo',
+    searchPlaceholder: 'Buscar…',
+    emptyMessage: 'Nenhum material com esses filtros.',
+    comingSoonLabel: 'Em breve',
+    filterLabels: { category: 'Categoria', format: 'Formato', author: 'Autor', tags: 'Tags' },
+  },
+};
+
+function normalizeCategories(stored) {
+  if (!Array.isArray(stored) || stored.length === 0) return DEFAULT_CATEGORIES;
+  return stored.map((c, i) => ({
+    slug: c.slug ?? `cat-${i}`,
+    label: c.label ?? 'Categoria',
+    singular: c.singular ?? c.label ?? 'Item',
+    displayMode: c.displayMode === 'full' ? 'full' : 'compact',
+    ordem: typeof c.ordem === 'number' ? c.ordem : i,
+  })).sort((a, b) => a.ordem - b.ordem);
+}
+
+function normalizeContentTypes(stored) {
+  if (!Array.isArray(stored) || stored.length === 0) return DEFAULT_CONTENT_TYPES;
+  return stored.map((t, i) => ({
+    slug: t.slug ?? `tipo-${i}`,
+    label: t.label ?? 'Tipo',
+    color: t.color ?? '#B48C50',
+    ordem: typeof t.ordem === 'number' ? t.ordem : i,
+  })).sort((a, b) => a.ordem - b.ordem);
+}
+
+export const getCategories = () => normalizeCategories(readJson(SITEDATA_KEYS.categories, null));
+export const setCategories = (v) => writeJson(SITEDATA_KEYS.categories, v);
+
+export const getContentTypes = () => normalizeContentTypes(readJson(SITEDATA_KEYS.contentTypes, null));
+export const setContentTypes = (v) => writeJson(SITEDATA_KEYS.contentTypes, v);
+
+export const getMateriaisPage = () => {
+  const stored = readJson(SITEDATA_KEYS.materiaisPage, null);
+  if (!stored) return DEFAULT_MATERIAIS_PAGE;
+  const hero = { ...DEFAULT_MATERIAIS_PAGE.hero, ...(stored.hero || {}) };
+  const explanation = {
+    ...DEFAULT_MATERIAIS_PAGE.explanation,
+    ...(stored.explanation || {}),
+    features: Array.isArray(stored.explanation?.features) && stored.explanation.features.length
+      ? stored.explanation.features
+      : DEFAULT_MATERIAIS_PAGE.explanation.features,
+  };
+  const catalog = {
+    ...DEFAULT_MATERIAIS_PAGE.catalog,
+    ...(stored.catalog || {}),
+    filterLabels: { ...DEFAULT_MATERIAIS_PAGE.catalog.filterLabels, ...(stored.catalog?.filterLabels || {}) },
+  };
+  return { hero, explanation, catalog };
+};
+export const setMateriaisPage = (v) => writeJson(SITEDATA_KEYS.materiaisPage, v);
 
 /* ===================================================================
    TESTIMONIALS · FAQS
