@@ -31,15 +31,11 @@ const COMPASS = (
 
 const SPIRAL = (
   <>
-    {/* Espiral de 3 voltas usando arcs sucessivos */}
-    <path d="M12 12
-             A 1 1 0 1 0 11 13
-             M 11 13
-             A 3 3 0 1 1 15 12
-             M 15 12
-             A 5 5 0 1 0 8 14
-             M 8 14
-             A 7 7 0 1 1 18 8" />
+    {/* Espiral aberta: núcleo + 3 arcos crescentes (visível mesmo em 11px) */}
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+    <path d="M 13.5 12 A 3 3 0 0 1 9 14" />
+    <path d="M 9 14 A 5.5 5.5 0 0 0 17.5 12" strokeOpacity="0.75" />
+    <path d="M 17.5 12 A 8 8 0 0 1 8 5" strokeOpacity="0.5" />
   </>
 );
 
@@ -173,14 +169,9 @@ const STAR = (
 
 const GATE = (
   <>
-    {/* Arco gótico */}
-    <path d="M5 21 L5 11 A 7 7 0 0 1 19 11 L19 21" />
-    <path d="M3 21 L21 21" />
-    {/* Divisória central da porta */}
-    <path d="M12 4.5 L12 21" />
-    {/* Maçanetas */}
-    <circle cx="9.5" cy="13" r="0.5" fill="currentColor" />
-    <circle cx="14.5" cy="13" r="0.5" fill="currentColor" />
+    {/* Portal: silhueta única em path fechado, sem detalhes que somem em 11px */}
+    <path d="M5 21 L5 10 A 7 7 0 0 1 19 10 L19 21 Z" />
+    <path d="M12 3.5 L12 21" />
   </>
 );
 

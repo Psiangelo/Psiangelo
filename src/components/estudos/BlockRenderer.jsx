@@ -15,6 +15,18 @@ import dynamic from 'next/dynamic';
 import { marked } from 'marked';
 import { resolveLink } from '@/lib/linkResolver';
 import { deriveLinkThumb } from '@/lib/stageThumb';
+import TrilhaIcon from '@/components/estudos/icons';
+
+/** Ícone semântico exibido no thumb fallback de cada kind de link block. */
+const KIND_FALLBACK_ICON = {
+  blog:      'essay',
+  material:  'scroll',
+  course:    'ritual',
+  glossario: 'book',
+  youtube:   'video',
+  drive:     'video',
+  url:       'threshold',
+};
 
 const CartographyView = dynamic(() => import('@/components/cartography/CartographyView'), {
   ssr: false,
@@ -67,6 +79,8 @@ function LinkBlock({ block, lists, accent }) {
   const resolved = resolveLink(block.link, lists);
   const thumb = deriveLinkThumb(block.link, lists);
   const tone = accent || '#B48C50';
+  const kind = block.link?.kind;
+  const fallbackIcon = KIND_FALLBACK_ICON[kind] || 'essay';
 
   if (!resolved.href) {
     return (
@@ -85,53 +99,52 @@ function LinkBlock({ block, lists, accent }) {
   const inner = (
     <article
       className="group flex flex-col sm:flex-row items-stretch overflow-hidden bg-bg-card border rounded-sm transition-colors"
-      style={{
-        borderColor: `${tone}1f`,
-      }}
+      style={{ borderColor: `${tone}33` }}
     >
+      {/* Thumb à esquerda */}
       <div
-        className="relative sm:w-44 sm:flex-shrink-0 h-32 sm:h-auto sm:min-h-[112px] overflow-hidden order-first"
-        style={{ background: `linear-gradient(135deg, ${tone}1a, transparent)` }}
+        className="relative sm:w-36 sm:flex-shrink-0 h-32 sm:h-auto sm:min-h-[128px] overflow-hidden order-first flex items-center justify-center"
+        style={{
+          background: thumb
+            ? 'transparent'
+            : `linear-gradient(135deg, ${tone}22, ${tone}0d 60%, transparent)`,
+        }}
       >
         {thumb ? (
           <>
             <img
               src={thumb}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
               referrerPolicy="no-referrer"
               loading="lazy"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
             <div
               className="absolute inset-0"
-              style={{
-                background: `linear-gradient(135deg, transparent, ${tone}0d 70%, ${tone}1a)`,
-              }}
+              style={{ background: `linear-gradient(135deg, transparent 40%, ${tone}26)` }}
             />
           </>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ color: `${tone}aa` }}>
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-              <path d="M10 14L21 3M5 12l7 7 7-7" />
-            </svg>
-          </div>
+          <span
+            className="relative transition-transform duration-500 group-hover:scale-105"
+            style={{ color: `${tone}cc` }}
+            aria-hidden
+          >
+            <TrilhaIcon name={fallbackIcon} size={56} strokeWidth={1.3} />
+          </span>
         )}
-        {/* Tag de kind no canto */}
-        <span
-          className="absolute top-2 left-2 inline-flex items-center font-mono text-[0.5rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded backdrop-blur-sm"
-          style={{
-            color: tone,
-            background: `${tone}26`,
-            border: `1px solid ${tone}66`,
-          }}
-        >
-          {resolved.kindLabel}
-        </span>
       </div>
 
+      {/* Texto à direita */}
       <div className="flex-1 p-5 flex items-center justify-between gap-3 min-w-0">
         <div className="min-w-0 flex-1">
+          <p
+            className="font-mono text-[0.55rem] tracking-[0.22em] uppercase mb-1.5"
+            style={{ color: tone }}
+          >
+            {resolved.kindLabel}
+          </p>
           <p
             className="font-serif text-[1.05rem] md:text-[1.15rem] text-text-bright group-hover:[color:var(--link-accent)] transition-colors leading-tight"
             style={{ '--link-accent': tone }}
