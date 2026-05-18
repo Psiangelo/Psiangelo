@@ -221,6 +221,7 @@ export function migrateSubstage(substage, idx = 0) {
     id: substage.id || `substage-${idx}-${Date.now().toString(36).slice(-4)}`,
     title: substage.title || `Sub-etapa ${idx + 1}`,
     intro: typeof substage.intro === 'string' ? substage.intro : '',
+    extra: substage.extra === true,
     blocks: innerBlocks,
   };
 }
@@ -255,6 +256,7 @@ export function migrateStageToBlocks(stage, idx = 0) {
     summary: migrated.summary || migrated.detail || '',
     coverImage: migrated.coverImage || '',
     thumbMode: migrated.thumbMode === 'icon' ? 'icon' : 'image',
+    extra: migrated.extra === true,
   };
   if (Array.isArray(migrated.blocks) && migrated.blocks.length > 0) {
     // Normaliza substages dentro dos blocks (garante id, filtra aninhamento)
@@ -284,6 +286,7 @@ export function migrateTrilhaBlocks(trilha) {
     area: trilha.area || DEFAULT_AREA_ID,
     icon: trilha.icon || DEFAULT_TRILHA_ICON,
     thumbMode: trilha.thumbMode === 'icon' ? 'icon' : 'image',
+    extra: trilha.extra === true,
     stages: (trilha.stages || []).map((s, i) => migrateStageToBlocks(s, i)),
   };
 }

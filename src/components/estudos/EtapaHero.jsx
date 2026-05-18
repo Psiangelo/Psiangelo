@@ -8,6 +8,7 @@ import { resolveImageSrc } from '@/lib/basepath';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { toRoman } from '@/lib/stageThumb';
 import { STAGE_KIND_LABEL } from '@/data/trilhas';
+import { isExtra, EXTRA_ICON } from '@/lib/extraTone';
 
 /**
  * EtapaHero — abertura cerimonial da página de uma etapa.
@@ -47,7 +48,9 @@ export default function EtapaHero({
   const coverY = useTransform(scrollYProgress, [0, 1], prefersReduced ? ['0%', '0%'] : ['0%', '25%']);
   const coverOpacity = useTransform(scrollYProgress, [0, 1], prefersReduced ? [0.3, 0.3] : [0.4, 0.1]);
 
-  const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
+  const extra = isExtra(stage);
+  const heroIcon = extra ? EXTRA_ICON : (stage.icon || 'book');
+  const kindLabel = extra ? 'Extra' : (STAGE_KIND_LABEL[stage.kind] || stage.kind || '');
   const blockCount = (stage.blocks || []).length;
   const trilhaSlug = trilha.slug || trilha.id;
   const number = toRoman(idx + 1);
@@ -96,6 +99,20 @@ export default function EtapaHero({
           transition={{ duration: 0.5 }}
           className="flex items-center justify-center gap-2 mb-10 flex-wrap"
         >
+          {extra && (
+            <span
+              className="inline-flex items-center gap-1.5 font-mono text-[0.5rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded"
+              style={{
+                color: accent,
+                background: `${accent}1f`,
+                border: `1px solid ${accent}66`,
+              }}
+              title="Etapa extra — opcional"
+            >
+              <TrilhaIcon name={EXTRA_ICON} size={10} />
+              Extra
+            </span>
+          )}
           {area && (
             <Link
               href="/estudos"
@@ -149,7 +166,7 @@ export default function EtapaHero({
               className="absolute -inset-3 rounded-full border opacity-30"
               style={{ borderColor: `${accent}66`, borderStyle: 'dashed' }}
             />
-            <IconSeal name={stage.icon || 'book'} size={88} color={accent} ringWidth={1.5} />
+            <IconSeal name={heroIcon} size={88} color={accent} ringWidth={1.5} />
           </div>
         </motion.div>
 
@@ -183,7 +200,7 @@ export default function EtapaHero({
         >
           {kindLabel && (
             <span className="inline-flex items-center gap-1.5" style={{ color: accent }}>
-              <TrilhaIcon name={stage.icon || 'book'} size={11} />
+              <TrilhaIcon name={heroIcon} size={11} />
               {kindLabel}
             </span>
           )}

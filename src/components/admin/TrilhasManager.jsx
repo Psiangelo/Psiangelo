@@ -6,6 +6,7 @@ import { getTrilhas, setTrilhas, getMaterials, getGlossario, getCartographies, g
 import { LINK_KINDS, BLOCK_KINDS, INNER_BLOCK_KINDS, migrateStageToBlocks, migrateTrilhaBlocks } from '@/lib/linkResolver';
 import { TRILHA_ICON_SLUGS, STAGE_ICON_SLUGS, ALL_ICON_SLUGS, DEFAULT_TRILHA_ICON, DEFAULT_STAGE_ICON, defaultIconForKind, iconLabel } from '@/lib/trilhaIcons';
 import { DEFAULT_AREA_ID, DEFAULT_AREAS, findArea } from '@/lib/areas';
+import { EXTRA_COLOR, EXTRA_ICON, isExtra } from '@/lib/extraTone';
 import TrilhaIcon from '@/components/estudos/icons';
 import IconPicker from './IconPicker';
 import MarkdownTextarea from './MarkdownTextarea';
@@ -90,6 +91,47 @@ const EMPTY_BLOCK = (type = 'text') => {
     default:            return { type: 'text', body: '' };
   }
 };
+
+/* ───────────────────── ExtraToggle ─────────────────────
+   Checkbox cerimonial em roxo que marca trilha/etapa/sub-etapa como "Extra".
+   Quando marcado, força accent roxo no front e estrela como ícone.
+*/
+function ExtraToggle({ value, onChange, label = 'Extra', hint }) {
+  const active = value === true;
+  return (
+    <label
+      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer select-none transition-colors"
+      style={{
+        background: active ? `${EXTRA_COLOR}1a` : 'transparent',
+        borderColor: active ? `${EXTRA_COLOR}66` : 'rgba(180,140,80,0.15)',
+        color: active ? EXTRA_COLOR : '#B8AD9E',
+      }}
+      title={hint || 'Marca como conteúdo extra — accent roxo e ícone de estrela'}
+    >
+      <input
+        type="checkbox"
+        checked={active}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only"
+      />
+      <span
+        className="inline-flex items-center justify-center w-4 h-4 rounded-[3px]"
+        style={{
+          background: active ? EXTRA_COLOR : 'transparent',
+          border: `1px solid ${active ? EXTRA_COLOR : 'rgba(180,140,80,0.3)'}`,
+        }}
+      >
+        {active && (
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0E0C0A" strokeWidth="3.5" className="w-3 h-3">
+            <path d="M5 12l5 5L20 7" />
+          </svg>
+        )}
+      </span>
+      <TrilhaIcon name={EXTRA_ICON} size={13} />
+      <span className="font-mono text-[10px] tracking-widest uppercase">{label}</span>
+    </label>
+  );
+}
 
 /* ───────────────────── ThumbModeToggle ───────────────────── */
 function ThumbModeToggle({ value, onChange }) {
@@ -254,13 +296,21 @@ function SubstageEditor({ block, onChange, lists }) {
 
   return (
     <div className="space-y-3">
-      <div>
-        <label className={LABEL}>Título da sub-etapa</label>
-        <input
-          value={block.title || ''}
-          onChange={(e) => update('title', e.target.value)}
-          placeholder="Ex: Leia o capítulo 1"
-          className={INPUT}
+      <div className="flex items-end justify-between gap-3 flex-wrap">
+        <div className="flex-1 min-w-[220px]">
+          <label className={LABEL}>Título da sub-etapa</label>
+          <input
+            value={block.title || ''}
+            onChange={(e) => update('title', e.target.value)}
+            placeholder="Ex: Leia o capítulo 1"
+            className={INPUT}
+          />
+        </div>
+        <ExtraToggle
+          value={block.extra === true}
+          onChange={(v) => update('extra', v)}
+          label="Sub-etapa extra"
+          hint="Marca como extra — selo roxo + estrela. Útil pra leituras opcionais."
         />
       </div>
 
@@ -380,6 +430,8 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
   };
 
   const isSubstage = block.type === 'substage';
+  const subExtra = isSubstage && isExtra(block);
+  const subAccent = subExtra ? EXTRA_COLOR : '#B48C50';
 
   return (
     <div
@@ -392,11 +444,11 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
         isDragging ? 'opacity-40' : ''
       } ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
       style={{
-        background: isSubstage ? 'rgba(180,140,80,0.06)' : '#0E0C0A',
-        borderLeftColor: isSubstage ? '#B48C50' : 'rgba(180,140,80,0.2)',
-        borderTopColor: 'rgba(180,140,80,0.12)',
-        borderRightColor: 'rgba(180,140,80,0.12)',
-        borderBottomColor: 'rgba(180,140,80,0.12)',
+        background: isSubstage ? (subExtra ? `${EXTRA_COLOR}10` : 'rgba(180,140,80,0.06)') : '#0E0C0A',
+        borderLeftColor: isSubstage ? subAccent : 'rgba(180,140,80,0.2)',
+        borderTopColor: subExtra ? `${EXTRA_COLOR}33` : 'rgba(180,140,80,0.12)',
+        borderRightColor: subExtra ? `${EXTRA_COLOR}33` : 'rgba(180,140,80,0.12)',
+        borderBottomColor: subExtra ? `${EXTRA_COLOR}33` : 'rgba(180,140,80,0.12)',
         borderTopWidth: 1,
         borderRightWidth: 1,
         borderBottomWidth: 1,
@@ -410,14 +462,21 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
           <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
           {isSubstage ? (
             <span
-              className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+              className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded inline-flex items-center gap-1.5"
               style={{
                 color: '#0E0C0A',
-                background: '#B48C50',
+                background: subAccent,
               }}
-              title="Esta é uma sub-etapa concluível"
+              title={subExtra ? 'Sub-etapa extra' : 'Esta é uma sub-etapa concluível'}
             >
-              ◆ Sub-etapa
+              {subExtra ? (
+                <>
+                  <TrilhaIcon name={EXTRA_ICON} size={10} />
+                  Sub-etapa Extra
+                </>
+              ) : (
+                '◆ Sub-etapa'
+              )}
             </span>
           ) : (
             <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Bloco {idx + 1}</span>
@@ -478,6 +537,10 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
     setOverIdx(null);
   };
 
+  const stageExtra = isExtra(stage);
+  const stageHeadColor = stageExtra ? EXTRA_COLOR : '#B48C50';
+  const stageHeadIcon = stageExtra ? EXTRA_ICON : (stage.icon || defaultIconForKind(stage.kind));
+
   return (
     <div
       draggable
@@ -486,17 +549,29 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
       onDragEnd={() => onDragOver?.(null)}
       onDrop={(e) => { e.preventDefault(); e.stopPropagation(); onDrop?.(idx); }}
       className={`${CARD} space-y-4 transition-all ${isDragging ? 'opacity-40' : ''} ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
+      style={stageExtra ? { borderColor: `${EXTRA_COLOR}55`, background: `${EXTRA_COLOR}0a` } : undefined}
     >
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
-          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full border border-[rgba(180,140,80,0.3)] text-[#B48C50]">
-            <TrilhaIcon name={stage.icon || defaultIconForKind(stage.kind)} size={16} />
+          <span
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full border"
+            style={{ borderColor: `${stageHeadColor}55`, color: stageHeadColor }}
+          >
+            <TrilhaIcon name={stageHeadIcon} size={16} />
           </span>
-          <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Etapa {idx + 1}</span>
+          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: stageHeadColor }}>
+            Etapa {idx + 1}{stageExtra ? ' · Extra' : ''}
+          </span>
           {stage.title && (
             <span className="font-serif text-sm text-[#E8DDD0] truncate max-w-[280px]">· {stage.title}</span>
           )}
+          <ExtraToggle
+            value={stageExtra}
+            onChange={(v) => update('extra', v)}
+            label="Etapa extra"
+            hint="Marca como etapa extra — accent roxo, ícone de estrela e badge no front."
+          />
         </div>
         <div className="flex gap-1">
           <button onClick={() => onMove(-1)} className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50]">↑</button>
@@ -684,10 +759,25 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
     setStageOverIdx(null);
   };
 
+  const trilhaExtra = isExtra(draft);
+
   return (
-    <div className={CARD + ' space-y-5'}>
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-serif text-[#E8DDD0]">{draft.name ? `Editar: ${draft.name}` : 'Nova trilha'}</h3>
+    <div
+      className={CARD + ' space-y-5'}
+      style={trilhaExtra ? { borderColor: `${EXTRA_COLOR}55`, background: `${EXTRA_COLOR}0a` } : undefined}
+    >
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h3 className="text-lg font-serif text-[#E8DDD0]">
+            {draft.name ? `Editar: ${draft.name}` : 'Nova trilha'}
+          </h3>
+          <ExtraToggle
+            value={trilhaExtra}
+            onChange={(v) => setDraft({ ...draft, extra: v })}
+            label="Trilha extra"
+            hint="Marca toda a trilha como extra — accent roxo, ícone de estrela, badge."
+          />
+        </div>
         <div className="flex gap-2">
           <button onClick={onCancel} className={BTN_SECONDARY}>Cancelar</button>
           <button onClick={() => onChange(draft)} className={BTN_PRIMARY}>Salvar</button>
@@ -1138,6 +1228,9 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
               const slug = migrated.slug || migrated.id;
               const tagParts = [migrated.level, migrated.archetype, migrated.duration].filter(Boolean);
               const area = findArea(lists.areas, migrated.area);
+              const trilhaExtra = isExtra(migrated);
+              const visualColor = trilhaExtra ? EXTRA_COLOR : (area?.color || '#B48C50');
+              const visualIcon = trilhaExtra ? EXTRA_ICON : migrated.icon;
               const isDragging = trilhaDragIdx === i;
               const isOver = trilhaOverIdx === i && trilhaDragIdx !== null && trilhaDragIdx !== i;
               return (
@@ -1151,21 +1244,35 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
                   className={`${CARD} flex items-start justify-between gap-4 transition-all ${
                     isDragging ? 'opacity-40' : ''
                   } ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
+                  style={trilhaExtra ? { borderColor: `${EXTRA_COLOR}55`, background: `${EXTRA_COLOR}0a` } : undefined}
                 >
                   <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none pt-1 text-lg" title="Arraste para reordenar">⋮⋮</span>
                   <span
                     className="inline-flex items-center justify-center w-12 h-12 rounded-full border shrink-0 mt-0.5"
                     style={{
-                      color: area?.color || '#B48C50',
-                      borderColor: `${area?.color || '#B48C50'}55`,
-                      background: `${area?.color || '#B48C50'}0d`,
+                      color: visualColor,
+                      borderColor: `${visualColor}55`,
+                      background: `${visualColor}0d`,
                     }}
-                    title={iconLabel(migrated.icon)}
+                    title={trilhaExtra ? 'Trilha extra' : iconLabel(migrated.icon)}
                   >
-                    <TrilhaIcon name={migrated.icon} size={26} />
+                    <TrilhaIcon name={visualIcon} size={26} />
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {trilhaExtra && (
+                        <span
+                          className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+                          style={{
+                            color: EXTRA_COLOR,
+                            background: `${EXTRA_COLOR}1a`,
+                            border: `1px solid ${EXTRA_COLOR}55`,
+                          }}
+                        >
+                          <TrilhaIcon name={EXTRA_ICON} size={12} />
+                          Extra
+                        </span>
+                      )}
                       {area && (
                         <span
                           className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"

@@ -8,6 +8,7 @@ import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { STAGE_KIND_LABEL } from '@/data/trilhas';
 import { toRoman } from '@/lib/stageThumb';
 import { resolveImageSrc } from '@/lib/basepath';
+import { isExtra, resolveExtraAccent, EXTRA_ICON } from '@/lib/extraTone';
 
 /**
  * StageCard — card de etapa na timeline da página /estudos/[trilha].
@@ -32,8 +33,10 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
   // Quando stage.thumbMode === 'icon', força o fallback ignorando qualquer imagem.
   const displayImage =
     stage.thumbMode === 'icon' ? null : resolveImageSrc(thumb || trilhaCover);
-  const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
-  const iconName = stage.icon || defaultIconForKind(stage.kind);
+  const extra = isExtra(stage);
+  const tone = resolveExtraAccent(stage, accent);
+  const kindLabel = extra ? 'Extra' : (STAGE_KIND_LABEL[stage.kind] || stage.kind || '');
+  const iconName = extra ? EXTRA_ICON : (stage.icon || defaultIconForKind(stage.kind));
   const number = toRoman(idx + 1);
   const blockCount = (stage.blocks || []).length;
 
@@ -47,7 +50,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
         href={stageHref}
         className="group block bg-bg-card border rounded-sm overflow-hidden transition-colors"
         style={{
-          borderColor: done ? `${accent}66` : 'rgba(180,140,80,0.18)',
+          borderColor: done ? `${tone}66` : extra ? `${tone}33` : 'rgba(180,140,80,0.18)',
         }}
       >
         <div className="grid grid-cols-1 md:grid-cols-[1fr_220px]">
@@ -56,7 +59,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               <span
                 className="font-serif italic text-[1.6rem] leading-none"
-                style={{ color: `${accent}cc` }}
+                style={{ color: `${tone}cc` }}
               >
                 {number}
               </span>
@@ -64,10 +67,11 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
                 <span
                   className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded"
                   style={{
-                    color: accent,
-                    background: `${accent}10`,
-                    border: `1px solid ${accent}33`,
+                    color: tone,
+                    background: `${tone}10`,
+                    border: `1px solid ${tone}33`,
                   }}
+                  title={extra ? 'Etapa extra' : undefined}
                 >
                   <span className="inline-flex items-center gap-1.5">
                     <TrilhaIcon name={iconName} size={11} />
@@ -88,15 +92,15 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
                 aria-label={done ? 'Desmarcar como concluída' : 'Marcar como concluída'}
                 className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 font-mono text-[0.55rem] tracking-[0.18em] uppercase rounded transition-colors"
                 style={{
-                  color: done ? accent : '#B8AD9E',
-                  background: done ? `${accent}1a` : 'transparent',
-                  border: `1px solid ${done ? accent : 'rgba(180,140,80,0.2)'}`,
+                  color: done ? tone : '#B8AD9E',
+                  background: done ? `${tone}1a` : 'transparent',
+                  border: `1px solid ${done ? tone : 'rgba(180,140,80,0.2)'}`,
                 }}
               >
                 <span
                   className="w-3 h-3 inline-flex items-center justify-center rounded-[2px]"
                   style={{
-                    background: done ? accent : 'transparent',
+                    background: done ? tone : 'transparent',
                     border: done ? 'none' : '1px solid rgba(180,140,80,0.3)',
                   }}
                 >
@@ -112,7 +116,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
 
             <h3
               className="font-serif text-[1.4rem] md:text-[1.55rem] leading-tight mb-2 text-text-bright transition-colors group-hover:[color:var(--stage-accent)]"
-              style={{ '--stage-accent': accent }}
+              style={{ '--stage-accent': tone }}
             >
               {renderHighlightedTitle(stage.title)}
             </h3>
@@ -125,7 +129,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
 
             <span
               className="inline-flex items-center gap-2 font-mono text-[0.6rem] tracking-[0.22em] uppercase mt-2 opacity-80 group-hover:opacity-100 transition-opacity"
-              style={{ color: accent }}
+              style={{ color: tone }}
             >
               Abrir etapa
               <svg
@@ -161,7 +165,7 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
               <div
                 className="absolute inset-0 flex items-center justify-center overflow-hidden"
                 style={{
-                  background: `radial-gradient(circle at 65% 45%, ${accent}40 0%, ${accent}14 45%, transparent 75%), linear-gradient(135deg, ${accent}22 0%, transparent 80%)`,
+                  background: `radial-gradient(circle at 65% 45%, ${tone}40 0%, ${tone}14 45%, transparent 75%), linear-gradient(135deg, ${tone}22 0%, transparent 80%)`,
                 }}
               >
                 {/* Linhas guia decorativas, bem sutis */}
@@ -172,13 +176,13 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
                   preserveAspectRatio="none"
                   style={{ opacity: 0.5 }}
                 >
-                  <line x1="0" y1="22" x2="100" y2="22" stroke={accent} strokeWidth="0.25" strokeDasharray="1.5 4" />
-                  <line x1="0" y1="78" x2="100" y2="78" stroke={accent} strokeWidth="0.25" strokeDasharray="1.5 4" />
+                  <line x1="0" y1="22" x2="100" y2="22" stroke={tone} strokeWidth="0.25" strokeDasharray="1.5 4" />
+                  <line x1="0" y1="78" x2="100" y2="78" stroke={tone} strokeWidth="0.25" strokeDasharray="1.5 4" />
                 </svg>
                 {/* Ícone gigante CENTRAL — agora bem visível */}
                 <span
                   className="relative transition-transform duration-500 group-hover:scale-105"
-                  style={{ color: `${accent}d9` }}
+                  style={{ color: `${tone}d9` }}
                   aria-hidden
                 >
                   <TrilhaIcon name={iconName} size={92} strokeWidth={1.4} />
@@ -190,12 +194,12 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
             <span
               className="absolute top-3 right-3 inline-flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-sm"
               style={{
-                color: done ? '#0E0C0A' : accent,
-                background: done ? accent : `${accent}26`,
-                border: `1px solid ${accent}66`,
+                color: done ? '#0E0C0A' : tone,
+                background: done ? tone : `${tone}26`,
+                border: `1px solid ${tone}66`,
               }}
               aria-hidden
-              title={iconLabel(iconName)}
+              title={extra ? 'Etapa extra' : iconLabel(iconName)}
             >
               {done ? (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">

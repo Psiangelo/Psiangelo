@@ -6,6 +6,7 @@ import TrilhaIcon from './icons';
 import { resolveImageSrc } from '@/lib/basepath';
 import { iconLabel } from '@/lib/trilhaIcons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
+import { isExtra, resolveExtraAccent, EXTRA_ICON } from '@/lib/extraTone';
 
 /**
  * TrilhaCard — card vertical cerimonial de uma trilha no listing /estudos.
@@ -29,7 +30,10 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
   const prefersReduced = useReducedMotion();
   const slug = trilha.slug || trilha.id;
   const fallbackAccent = '#B48C50';
-  const tone = accent || area?.color || fallbackAccent;
+  const baseAccent = accent || area?.color || fallbackAccent;
+  const extra = isExtra(trilha);
+  const tone = resolveExtraAccent(trilha, baseAccent);
+  const trilhaIcon = extra ? EXTRA_ICON : (trilha.icon || 'compass');
   const stages = trilha.stages || [];
   const totalStages = stages.length;
   const ctaLabel = pct > 0 ? 'Continuar' : 'Começar';
@@ -53,6 +57,20 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
           <div className="p-6 md:p-8 flex flex-col">
             {/* Linha de meta */}
             <div className="flex items-center gap-2 flex-wrap mb-5">
+              {extra && (
+                <span
+                  className="inline-flex items-center gap-1.5 font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2.5 py-1 rounded"
+                  style={{
+                    color: tone,
+                    background: `${tone}1a`,
+                    border: `1px solid ${tone}55`,
+                  }}
+                  title="Trilha extra — fora do caminho principal"
+                >
+                  <TrilhaIcon name={EXTRA_ICON} size={11} />
+                  Extra
+                </span>
+              )}
               {area && (
                 <span
                   className="inline-flex items-center gap-1.5 font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2.5 py-1 rounded"
@@ -220,7 +238,7 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
                   <line x1="0" y1="78" x2="100" y2="78" stroke={tone} strokeWidth="0.25" strokeDasharray="1.5 4" />
                 </svg>
                 <span className="relative" style={{ color: `${tone}cc` }} aria-hidden>
-                  <TrilhaIcon name={trilha.icon || 'compass'} size={140} strokeWidth={1.2} />
+                  <TrilhaIcon name={trilhaIcon} size={140} strokeWidth={1.2} />
                 </span>
               </div>
             )}
@@ -234,9 +252,9 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
                 background: `${tone}1a`,
               }}
               aria-hidden
-              title={iconLabel(trilha.icon)}
+              title={extra ? 'Trilha extra' : iconLabel(trilha.icon)}
             >
-              <TrilhaIcon name={trilha.icon || 'compass'} size={18} />
+              <TrilhaIcon name={trilhaIcon} size={18} />
             </span>
           </div>
         </div>

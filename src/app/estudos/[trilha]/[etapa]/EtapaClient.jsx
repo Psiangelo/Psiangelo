@@ -22,6 +22,7 @@ import {
 import { findArea, DEFAULT_AREAS } from '@/lib/areas';
 import { defaultIconForKind } from '@/lib/trilhaIcons';
 import { migrateTrilhaBlocks } from '@/lib/linkResolver';
+import { resolveExtraAccent, isExtra } from '@/lib/extraTone';
 
 const DEFAULT_ACCENT = '#B48C50';
 
@@ -67,9 +68,17 @@ export default function EtapaClient({
   const total = trilha.stages.length;
   const pct = Math.round(((initialEtapaIdx + 1) / total) * 100);
 
-  // Accent dinâmico da área
+  // Accent dinâmico:
+  //  - área define o accent base (ouro/terra)
+  //  - se a trilha for extra OU a etapa for extra → vira roxo cerimonial
+  //  - sub-etapas resolvem seu próprio accent dentro de SubstageBlock
   const area = findArea(areas, trilha.area);
-  const accent = area?.color || DEFAULT_ACCENT;
+  const areaAccent = area?.color || DEFAULT_ACCENT;
+  const trilhaExtra = isExtra(trilha);
+  const stageExtra = isExtra(stage);
+  const accent = (trilhaExtra || stageExtra)
+    ? resolveExtraAccent({ extra: true }, areaAccent)
+    : areaAccent;
 
   // Tempo de leitura estimado
   const readingTime = useMemo(() => {

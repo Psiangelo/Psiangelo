@@ -11,6 +11,7 @@ import { getTrilhas, getAreas, SITEDATA_KEYS } from '@/lib/sitedata';
 import { migrateTrilhaBlocks } from '@/lib/linkResolver';
 import { findArea, DEFAULT_AREAS } from '@/lib/areas';
 import { stripHighlights } from '@/lib/highlightTitle';
+import { resolveExtraAccent } from '@/lib/extraTone';
 import EstudosHero from '@/components/estudos/EstudosHero';
 import AreaTabs from '@/components/estudos/AreaTabs';
 import ContinueBanner from '@/components/estudos/ContinueBanner';
@@ -99,11 +100,12 @@ export default function EstudosListingClient({ initialTrilhas, initialAreas }) {
     return filtered.map((t) => {
       const area = findArea(areas, t.area);
       const pct = percentOf(t);
+      const itemAccent = resolveExtraAccent(t, area?.color || DEFAULT_ACCENT);
       return {
         id: t.id || t.slug,
         icon: t.icon,
         pct,
-        accent: area?.color || DEFAULT_ACCENT,
+        accent: itemAccent,
         trilha: t,
         area,
       };

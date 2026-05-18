@@ -10,6 +10,7 @@ import { getTrilhas, getAreas, getMaterials, SITEDATA_KEYS } from '@/lib/sitedat
 import { findArea, DEFAULT_AREAS } from '@/lib/areas';
 import { defaultIconForKind } from '@/lib/trilhaIcons';
 import { migrateTrilhaBlocks } from '@/lib/linkResolver';
+import { resolveExtraAccent, isExtra } from '@/lib/extraTone';
 import { deriveStageThumb } from '@/lib/stageThumb';
 import TrilhaHero from '@/components/estudos/TrilhaHero';
 import TrilhaIntro from '@/components/estudos/TrilhaIntro';
@@ -57,7 +58,9 @@ export default function TrilhaDetailClient({
   }, [allTrilhas, initialTrilha, targetSlug]);
 
   const area = findArea(areas, trilha.area);
-  const accent = area?.color || DEFAULT_ACCENT;
+  const areaAccent = area?.color || DEFAULT_ACCENT;
+  const accent = resolveExtraAccent(trilha, areaAccent);
+  const trilhaExtra = isExtra(trilha);
 
   const { percentOf, resetTrilha, progress, toggleStage } = useTrilhaProgress();
   const pct = percentOf(trilha);
@@ -68,20 +71,25 @@ export default function TrilhaDetailClient({
   }, [trilha, completedTitles]);
 
   // Items pra Timeline (etapas binárias: 0 ou 100)
+  // Cada etapa pode ter seu próprio accent (roxo se .extra), mas se a trilha
+  // inteira é extra, todas herdam roxo automaticamente.
   const items = useMemo(() => {
     return (trilha.stages || []).map((stage, idx) => {
       const done = completedTitles.includes(stage.title);
+      const stageAccent = trilhaExtra
+        ? accent
+        : resolveExtraAccent(stage, areaAccent);
       return {
         id: stage.id || `stage-${idx}`,
         icon: stage.icon || defaultIconForKind(stage.kind),
         pct: done ? 100 : 0,
-        accent,
+        accent: stageAccent,
         stage,
         idx,
         done,
       };
     });
-  }, [trilha, completedTitles, accent]);
+  }, [trilha, completedTitles, accent, areaAccent, trilhaExtra]);
 
   // Prev/Next trilhas
   const migratedAll = useMemo(
@@ -139,7 +147,7 @@ export default function TrilhaDetailClient({
                     stage={item.stage}
                     idx={item.idx}
                     trilhaSlug={trilha.slug || trilha.id}
-                    accent={accent}
+                    accent={item.accent}
                     done={item.done}
                     onToggle={() => toggleStage(trilha.id, item.stage.title)}
                     thumb={deriveStageThumb(item.stage, { posts, materials })}

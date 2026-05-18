@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 import TrilhaIcon, { IconSeal } from './icons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { resolveImageSrc } from '@/lib/basepath';
+import { isExtra, EXTRA_ICON } from '@/lib/extraTone';
 
 /**
  * TrilhaHero — hero cerimonial da página /estudos/[trilha].
@@ -26,6 +27,8 @@ import { resolveImageSrc } from '@/lib/basepath';
 export default function TrilhaHero({ trilha, area, pct, nextStage, onReset, accent }) {
   const ref = useRef(null);
   const prefersReduced = useReducedMotion();
+  const extra = isExtra(trilha);
+  const heroIcon = extra ? EXTRA_ICON : (trilha.icon || 'compass');
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -85,6 +88,20 @@ export default function TrilhaHero({ trilha, area, pct, nextStage, onReset, acce
           {/* Coluna texto */}
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-6">
+              {extra && (
+                <span
+                  className="inline-flex items-center gap-1.5 font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2.5 py-1 rounded"
+                  style={{
+                    color: accent,
+                    background: `${accent}1f`,
+                    border: `1px solid ${accent}66`,
+                  }}
+                  title="Trilha extra — fora do caminho principal"
+                >
+                  <TrilhaIcon name={EXTRA_ICON} size={11} />
+                  Extra
+                </span>
+              )}
               {area && (
                 <Link
                   href="/estudos"
@@ -240,7 +257,7 @@ export default function TrilhaHero({ trilha, area, pct, nextStage, onReset, acce
                 className="absolute -inset-10 rounded-full border opacity-15"
                 style={{ borderColor: `${accent}88`, borderStyle: 'dotted' }}
               />
-              <IconSeal name={trilha.icon || 'compass'} size={128} color={accent} ringWidth={1.5} />
+              <IconSeal name={heroIcon} size={128} color={accent} ringWidth={1.5} />
             </div>
           </motion.div>
         </div>

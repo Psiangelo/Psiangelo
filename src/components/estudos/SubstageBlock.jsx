@@ -4,7 +4,9 @@ import { useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { marked } from 'marked';
 import BlockRenderer from './BlockRenderer';
+import TrilhaIcon from './icons';
 import { toRoman } from '@/lib/stageThumb';
+import { isExtra, resolveExtraAccent, EXTRA_ICON } from '@/lib/extraTone';
 
 /**
  * SubstageBlock — renderiza um bloco type='substage' na página da etapa.
@@ -28,6 +30,8 @@ import { toRoman } from '@/lib/stageThumb';
 export default function SubstageBlock({ substage, idx, done, onToggle, accent = '#B48C50', lists }) {
   const prefersReduced = useReducedMotion();
   const number = toRoman(idx);
+  const extra = isExtra(substage);
+  const tone = resolveExtraAccent(substage, accent);
   const introHtml = useMemo(
     () => (substage?.intro ? marked.parse(String(substage.intro)) : ''),
     [substage?.intro]
@@ -35,11 +39,11 @@ export default function SubstageBlock({ substage, idx, done, onToggle, accent = 
   const innerBlocks = (substage?.blocks || []).filter((b) => b?.type !== 'substage');
 
   const headerDividerStyle = {
-    background: `linear-gradient(to right, transparent 0%, ${done ? accent : `${accent}66`} 20%, ${done ? accent : `${accent}66`} 80%, transparent 100%)`,
+    background: `linear-gradient(to right, transparent 0%, ${done ? tone : `${tone}66`} 20%, ${done ? tone : `${tone}66`} 80%, transparent 100%)`,
     height: done ? 1.5 : 1,
   };
   const footerDividerStyle = {
-    background: `linear-gradient(to right, transparent 0%, ${accent}33 50%, transparent 100%)`,
+    background: `linear-gradient(to right, transparent 0%, ${tone}33 50%, transparent 100%)`,
     height: 1,
   };
 
@@ -61,7 +65,7 @@ export default function SubstageBlock({ substage, idx, done, onToggle, accent = 
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="font-serif italic leading-none flex-shrink-0"
             style={{
-              color: done ? accent : `${accent}bb`,
+              color: done ? tone : `${tone}bb`,
               fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
               letterSpacing: '0.05em',
             }}
@@ -69,9 +73,25 @@ export default function SubstageBlock({ substage, idx, done, onToggle, accent = 
           >
             {number}
           </motion.span>
-          <h3 className="font-serif text-text-bright text-[clamp(1.1rem,2vw,1.4rem)] leading-tight">
-            {substage?.title}
-          </h3>
+          <div className="min-w-0">
+            {extra && (
+              <span
+                className="inline-flex items-center gap-1.5 font-mono text-[0.5rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded mb-1.5"
+                style={{
+                  color: tone,
+                  background: `${tone}1a`,
+                  border: `1px solid ${tone}55`,
+                }}
+                title="Sub-etapa extra — opcional"
+              >
+                <TrilhaIcon name={EXTRA_ICON} size={10} />
+                Extra
+              </span>
+            )}
+            <h3 className="font-serif text-text-bright text-[clamp(1.1rem,2vw,1.4rem)] leading-tight">
+              {substage?.title}
+            </h3>
+          </div>
         </div>
 
         <motion.button
@@ -83,16 +103,16 @@ export default function SubstageBlock({ substage, idx, done, onToggle, accent = 
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full font-mono text-[0.55rem] tracking-[0.22em] uppercase transition-colors flex-shrink-0"
           style={
             done
-              ? { background: accent, color: '#0E0C0A', border: `1px solid ${accent}` }
-              : { background: `${accent}0d`, color: accent, border: `1px solid ${accent}55` }
+              ? { background: tone, color: '#0E0C0A', border: `1px solid ${tone}` }
+              : { background: `${tone}0d`, color: tone, border: `1px solid ${tone}55` }
           }
         >
           <span
             className="inline-flex items-center justify-center w-4 h-4 rounded-full"
             style={
               done
-                ? { background: '#0E0C0A', color: accent }
-                : { background: 'transparent', color: accent, border: `1px solid ${accent}88` }
+                ? { background: '#0E0C0A', color: tone }
+                : { background: 'transparent', color: tone, border: `1px solid ${tone}88` }
             }
           >
             {done ? (
@@ -109,7 +129,7 @@ export default function SubstageBlock({ substage, idx, done, onToggle, accent = 
                 <path d="M5 12l5 5L20 7" />
               </motion.svg>
             ) : (
-              <span className="w-1 h-1 rounded-full" style={{ background: `${accent}aa` }} />
+              <span className="w-1 h-1 rounded-full" style={{ background: `${tone}aa` }} />
             )}
           </span>
           {done ? 'Concluída' : 'Marcar'}
@@ -128,7 +148,7 @@ export default function SubstageBlock({ substage, idx, done, onToggle, accent = 
       {innerBlocks.length > 0 && (
         <div className="pb-8">
           {innerBlocks.map((b, i) => (
-            <BlockRenderer key={i} block={b} lists={lists} accent={accent} />
+            <BlockRenderer key={i} block={b} lists={lists} accent={tone} />
           ))}
         </div>
       )}
