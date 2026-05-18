@@ -15,11 +15,14 @@ import {
   SITEDATA_KEYS,
 } from '@/lib/sitedata';
 import { img } from '@/lib/basepath';
+import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
+import Cartography from '@/components/home/Cartography';
 
 function pickByIds(list, selected, keyAccessor = (x) => x.id || x.slug) {
   if (!Array.isArray(selected) || selected.length === 0) return list;
-  const set = new Set(selected);
-  return list.filter((x) => set.has(keyAccessor(x)));
+  // Preserva a ordem do array `selected` (não a ordem original da lista)
+  const indexBy = new Map(list.map((x) => [keyAccessor(x), x]));
+  return selected.map((id) => indexBy.get(id)).filter(Boolean);
 }
 
 function HeroBlock({ hero }) {
@@ -92,7 +95,7 @@ function TrilhasBlock({ config, trilhas }) {
                 </span>
               </div>
               <h3 className="font-serif text-xl text-text-bright group-hover:text-accent transition-colors leading-tight mb-2">
-                {t.name}
+                {renderHighlightedTitle(t.name)}
               </h3>
               {t.subtitle && <p className="font-serif italic text-text-dim text-[0.88rem]">{t.subtitle}</p>}
             </Link>
@@ -119,9 +122,9 @@ function GlossarioBlock({ config, glossario }) {
               className="group block bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors p-4"
             >
               <h3 className="font-serif text-base text-text-bright group-hover:text-accent transition-colors mb-1.5">
-                {t.term}
+                {renderHighlightedTitle(t.term)}
               </h3>
-              <p className="text-[0.78rem] text-text-dim leading-[1.55] line-clamp-3">{t.short}</p>
+              <p className="text-[0.78rem] text-text-dim leading-[1.55] line-clamp-3">{stripHighlights(t.short)}</p>
             </Link>
           ))}
         </div>
@@ -153,14 +156,14 @@ function MateriaisBlock({ config, materials }) {
               >
                 {image && (
                   <div className="absolute inset-0">
-                    <img src={image} alt={m.title} className="w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-opacity" referrerPolicy="no-referrer" loading="lazy" />
+                    <img src={image} alt={stripHighlights(m.title)} className="w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-opacity" referrerPolicy="no-referrer" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/90 to-bg/40" />
                   </div>
                 )}
                 <div className="relative p-4 flex flex-col h-full">
                   <div className="mt-auto">
                     <h3 className="font-serif text-base text-text-bright group-hover:text-accent transition-colors leading-tight">
-                      {m.title}
+                      {renderHighlightedTitle(m.title)}
                     </h3>
                     {m.subtitle && <p className="font-serif italic text-text-dim text-[0.78rem] mt-1">{m.subtitle}</p>}
                   </div>
@@ -213,19 +216,36 @@ function BlogBlock({ config, posts }) {
     <section id="blog" className="py-14 px-5 sm:px-6 md:px-12">
       <div className="max-w-[1180px] mx-auto">
         <SectionHeader title={config.title || 'Ensaios'} subtitle={config.subtitle} count={items.length} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {items.map((p) => (
-            <Link
-              key={p.slug || p.id}
-              href={`/blog/${p.slug || p.id}`}
-              className="group block bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors p-5"
-            >
-              <h3 className="font-serif text-lg text-text-bright group-hover:text-accent transition-colors leading-tight mb-2">
-                {p.title}
-              </h3>
-              {p.excerpt && <p className="text-[0.85rem] text-text-dim leading-[1.65] line-clamp-3">{p.excerpt}</p>}
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {items.map((p) => {
+            const cover = p.featured_cover || p.featured_image;
+            return (
+              <Link
+                key={p.slug || p.id}
+                href={`/blog/${p.slug || p.id}`}
+                className="group block bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors overflow-hidden flex flex-col"
+              >
+                {cover && (
+                  <div className="aspect-[16/9] overflow-hidden bg-bg-warm">
+                    <img
+                      src={cover}
+                      alt={p.featured_cover_alt || p.featured_image_alt || stripHighlights(p.title)}
+                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                )}
+                <div className="p-5 flex-1">
+                  <h3 className="font-serif text-lg text-text-bright group-hover:text-accent transition-colors leading-tight mb-2">
+                    {renderHighlightedTitle(p.title)}
+                  </h3>
+                  {p.excerpt && <p className="text-[0.85rem] text-text-dim leading-[1.65] line-clamp-3">{stripHighlights(p.excerpt)}</p>}
+                </div>
+              </Link>
+            );
+          })}
         </div>
         <div className="mt-6 text-right">
           <Link href="/blog" className="font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase hover:text-text-bright transition-colors">
@@ -235,6 +255,12 @@ function BlogBlock({ config, posts }) {
       </div>
     </section>
   );
+}
+
+function CartografiaBlock() {
+  // Cartography já vem com seu próprio <section> + título "Cartografia · Conceitos junguianos".
+  // O título/subtítulo do bloco no admin é informativo (legendinha no admin), não renderizado aqui.
+  return <Cartography />;
 }
 
 function ManifestoBlock({ config }) {
@@ -256,13 +282,14 @@ function ManifestoBlock({ config }) {
 }
 
 const BLOCK_RENDERERS = {
-  hero:      HeroBlock,
-  trilhas:   TrilhasBlock,
-  glossario: GlossarioBlock,
-  materiais: MateriaisBlock,
-  cursos:    CursosBlock,
-  blog:      BlogBlock,
-  manifesto: ManifestoBlock,
+  hero:        HeroBlock,
+  trilhas:     TrilhasBlock,
+  glossario:   GlossarioBlock,
+  materiais:   MateriaisBlock,
+  cursos:      CursosBlock,
+  blog:        BlogBlock,
+  cartografia: CartografiaBlock,
+  manifesto:   ManifestoBlock,
 };
 
 export default function EstudosClient({ initialPosts = [], initialCourses = [] }) {

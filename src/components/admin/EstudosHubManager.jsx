@@ -99,6 +99,12 @@ function BlockEditor({ block, idx, total, onChange, onMove, lists }) {
         <p className="text-[11px] text-[#6E6458] italic">Edite o hero no card "Hero" acima.</p>
       )}
 
+      {block.id === 'cartografia' && (
+        <p className="text-[11px] text-[#6E6458] italic">
+          Usa a mesma cartografia do site (editada em "Cartografia"). Aqui você apenas decide se ela aparece e em que posição.
+        </p>
+      )}
+
       {block.id === 'manifesto' && (
         <div className="space-y-3">
           <div>

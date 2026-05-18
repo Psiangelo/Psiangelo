@@ -893,13 +893,14 @@ export const setGlossarioPage = (v) => writeJson(SITEDATA_KEYS.glossarioPage, v)
 =================================================================== */
 
 export const ESTUDOS_BLOCK_TYPES = [
-  { id: 'hero',       label: 'Hero (topo)' },
-  { id: 'trilhas',    label: 'Trilhas em destaque' },
-  { id: 'glossario',  label: 'Glossário em destaque' },
-  { id: 'materiais',  label: 'Materiais recomendados' },
-  { id: 'cursos',     label: 'Cursos recomendados' },
-  { id: 'blog',       label: 'Posts do blog selecionados' },
-  { id: 'manifesto',  label: 'Bússola de estudos (texto livre)' },
+  { id: 'hero',        label: 'Hero (topo)' },
+  { id: 'trilhas',     label: 'Trilhas em destaque' },
+  { id: 'glossario',   label: 'Glossário em destaque' },
+  { id: 'materiais',   label: 'Materiais recomendados' },
+  { id: 'cursos',      label: 'Cursos recomendados' },
+  { id: 'blog',        label: 'Posts do blog selecionados' },
+  { id: 'cartografia', label: 'Cartografia de conceitos' },
+  { id: 'manifesto',   label: 'Bússola de estudos (texto livre)' },
 ];
 
 export const DEFAULT_ESTUDOS_PAGE = {
@@ -922,6 +923,7 @@ export const DEFAULT_ESTUDOS_PAGE = {
     { id: 'materiais', visible: true,  config: { title: 'Materiais', subtitle: 'Resumos, mapas e ensaios.', selected: [], limit: 6 } },
     { id: 'cursos',    visible: false, config: { title: 'Cursos', subtitle: 'Formação aprofundada.', selected: [] } },
     { id: 'blog',      visible: true,  config: { title: 'Ensaios', subtitle: 'Textos sobre clínica e símbolos.', selected: [], limit: 4 } },
+    { id: 'cartografia', visible: false, config: { title: 'Cartografia', subtitle: 'Mapa dos conceitos centrais e suas conexões.', source: 'home' } },
   ],
 };
 
