@@ -2860,8 +2860,8 @@ function AdminPanel() {
     { id: 'testimonials', label: 'Depoimentos', badge: testimonialsList.length },
     { id: 'faqs', label: 'FAQ', badge: faqsList.length },
     { id: 'visibility', label: 'Visibilidade', badge: null },
-    { id: 'settings', label: 'Configuracoes', badge: null },
-    { id: 'actions', label: 'Acoes', badge: null },
+    { id: 'settings', label: 'Configurações', badge: null },
+    { id: 'actions', label: 'Ações', badge: null },
     { id: 'publish', label: 'Publicar', badge: null },
   ];
 
