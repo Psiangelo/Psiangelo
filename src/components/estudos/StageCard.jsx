@@ -7,6 +7,7 @@ import { iconLabel, defaultIconForKind } from '@/lib/trilhaIcons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { STAGE_KIND_LABEL } from '@/data/trilhas';
 import { toRoman } from '@/lib/stageThumb';
+import { resolveImageSrc } from '@/lib/basepath';
 
 /**
  * StageCard — card de etapa na timeline da página /estudos/[trilha].
@@ -27,7 +28,8 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
   const prefersReduced = useReducedMotion();
   const stageHref = `/estudos/${trilhaSlug}/${stage.slug || stage.title}`;
   // Cascata: thumb da etapa → capa da trilha → null (cai no fallback gráfico)
-  const displayImage = thumb || trilhaCover || null;
+  // resolveImageSrc prefixa basePath em paths que começam com / (GH Pages)
+  const displayImage = resolveImageSrc(thumb || trilhaCover);
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
   const iconName = stage.icon || defaultIconForKind(stage.kind);
   const number = toRoman(idx + 1);

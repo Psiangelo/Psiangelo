@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import TrilhaIcon, { IconSeal } from './icons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
+import { resolveImageSrc } from '@/lib/basepath';
 
 /**
  * TrilhaHero — hero cerimonial da página /estudos/[trilha].
@@ -55,7 +56,7 @@ export default function TrilhaHero({ trilha, area, pct, nextStage, onReset, acce
           style={{ y: coverY }}
         >
           <motion.img
-            src={trilha.coverImage}
+            src={resolveImageSrc(trilha.coverImage)}
             alt=""
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"

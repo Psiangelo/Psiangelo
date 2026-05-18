@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import TrilhaIcon from './icons';
+import { resolveImageSrc } from '@/lib/basepath';
 import { iconLabel } from '@/lib/trilhaIcons';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 
@@ -184,7 +185,7 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
             {trilha.coverImage ? (
               <>
                 <img
-                  src={trilha.coverImage}
+                  src={resolveImageSrc(trilha.coverImage)}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                   referrerPolicy="no-referrer"

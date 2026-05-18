@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import TrilhaIcon, { IconSeal } from './icons';
+import { resolveImageSrc } from '@/lib/basepath';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { toRoman } from '@/lib/stageThumb';
 import { STAGE_KIND_LABEL } from '@/data/trilhas';
@@ -63,7 +64,7 @@ export default function EtapaHero({
           style={{ y: coverY }}
         >
           <motion.img
-            src={cover}
+            src={resolveImageSrc(cover)}
             alt=""
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"

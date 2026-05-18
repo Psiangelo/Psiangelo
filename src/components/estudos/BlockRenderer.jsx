@@ -15,6 +15,7 @@ import dynamic from 'next/dynamic';
 import { marked } from 'marked';
 import { resolveLink } from '@/lib/linkResolver';
 import { deriveLinkThumb } from '@/lib/stageThumb';
+import { resolveImageSrc } from '@/lib/basepath';
 import TrilhaIcon from '@/components/estudos/icons';
 
 /** Ícone semântico exibido no thumb fallback de cada kind de link block. */
@@ -113,7 +114,7 @@ function LinkBlock({ block, lists, accent }) {
         {thumb ? (
           <>
             <img
-              src={thumb}
+              src={resolveImageSrc(thumb)}
               alt=""
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
               referrerPolicy="no-referrer"
