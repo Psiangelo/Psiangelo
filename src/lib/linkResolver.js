@@ -204,7 +204,26 @@ export const BLOCK_KINDS = [
   { value: 'embed',       label: 'Embed HTML (iframe)' },
   { value: 'cartography', label: 'Cartografia embutida' },
   { value: 'quote',       label: 'Citação destacada' },
+  { value: 'substage',    label: 'Sub-etapa (concluível, com mídia + texto dentro)' },
 ];
+
+/** Tipos permitidos DENTRO de um substage (filtra `substage` aninhado). */
+export const INNER_BLOCK_KINDS = BLOCK_KINDS.filter((k) => k.value !== 'substage');
+
+/** Garante shape consistente de um bloco substage (incluindo blocks internos). */
+export function migrateSubstage(substage, idx = 0) {
+  if (!substage || substage.type !== 'substage') return substage;
+  const innerBlocks = Array.isArray(substage.blocks)
+    ? substage.blocks.filter((b) => b && b.type && b.type !== 'substage')
+    : [];
+  return {
+    type: 'substage',
+    id: substage.id || `substage-${idx}-${Date.now().toString(36).slice(-4)}`,
+    title: substage.title || `Sub-etapa ${idx + 1}`,
+    intro: typeof substage.intro === 'string' ? substage.intro : '',
+    blocks: innerBlocks,
+  };
+}
 
 function slugifyTitle(s) {
   return String(s || '')
@@ -238,7 +257,17 @@ export function migrateStageToBlocks(stage, idx = 0) {
     thumbMode: migrated.thumbMode === 'icon' ? 'icon' : 'image',
   };
   if (Array.isArray(migrated.blocks) && migrated.blocks.length > 0) {
-    return { ...base, blocks: migrated.blocks };
+    // Normaliza substages dentro dos blocks (garante id, filtra aninhamento)
+    let substageIdx = 0;
+    const normalizedBlocks = migrated.blocks.map((b) => {
+      if (b?.type === 'substage') {
+        const m = migrateSubstage(b, substageIdx);
+        substageIdx += 1;
+        return m;
+      }
+      return b;
+    });
+    return { ...base, blocks: normalizedBlocks };
   }
   // Constrói blocks a partir do link antigo
   const blocks = [];

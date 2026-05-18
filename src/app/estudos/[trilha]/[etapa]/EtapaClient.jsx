@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import VisibilityGate from '@/components/VisibilityGate';
 import BlockRenderer from '@/components/estudos/BlockRenderer';
+import SubstageBlock from '@/components/estudos/SubstageBlock';
 import EtapaHero from '@/components/estudos/EtapaHero';
 import StageIntro from '@/components/estudos/StageIntro';
 import EtapaFooterNav from '@/components/estudos/EtapaFooterNav';
@@ -84,8 +85,9 @@ export default function EtapaClient({
     return Math.max(1, Math.round(words / 220));
   }, [stage]);
 
-  const { isStageDone, toggleStage } = useTrilhaProgress();
+  const { isStageDone, toggleStage, isSubstageDone, toggleSubstage, substageStats } = useTrilhaProgress();
   const done = isStageDone(trilha.id, stage?.title);
+  const subStats = stage ? substageStats(trilha.id, stage) : { done: 0, total: 0 };
 
   const [tocOpen, setTocOpen] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
@@ -188,22 +190,61 @@ export default function EtapaClient({
         {/* Intro markdown da etapa */}
         {stage.intro && <StageIntro content={stage.intro} accent={accent} />}
 
-        {/* Corpo: blocks */}
+        {/* Indicador de progresso das sub-etapas (se houver) */}
+        {subStats.total > 0 && (
+          <div className="max-w-[800px] mx-auto px-5 sm:px-6 md:px-12 mb-4">
+            <p
+              className="font-mono text-[0.55rem] tracking-[0.22em] uppercase inline-flex items-center gap-2"
+              style={{ color: accent }}
+            >
+              <span className="inline-block w-2 h-2 rounded-full" style={{ background: accent }} />
+              {subStats.done} de {subStats.total} sub-etapas concluídas
+            </p>
+          </div>
+        )}
+
+        {/* Corpo: blocks (com counter de substages pra numeração romana) */}
         <article className="max-w-[800px] mx-auto px-5 sm:px-6 md:px-12">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
           >
-            {(stage.blocks || []).map((block, i) => (
-              <motion.div
-                key={i}
-                variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.4 }}
-              >
-                <BlockRenderer block={block} lists={lists} accent={accent} />
-              </motion.div>
-            ))}
+            {(() => {
+              let substageIdx = 0;
+              return (stage.blocks || []).map((block, i) => {
+                if (block.type === 'substage') {
+                  substageIdx += 1;
+                  const subDone = isSubstageDone(trilha.id, stage.id, block.id);
+                  const currentIdx = substageIdx;
+                  return (
+                    <motion.div
+                      key={block.id || i}
+                      variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <SubstageBlock
+                        substage={block}
+                        idx={currentIdx}
+                        done={subDone}
+                        onToggle={() => toggleSubstage(trilha.id, stage.id, block.id)}
+                        accent={accent}
+                        lists={lists}
+                      />
+                    </motion.div>
+                  );
+                }
+                return (
+                  <motion.div
+                    key={i}
+                    variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <BlockRenderer block={block} lists={lists} accent={accent} />
+                  </motion.div>
+                );
+              });
+            })()}
 
             {(!stage.blocks || stage.blocks.length === 0) && !stage.intro && (
               <div className="my-8 p-6 border border-dashed border-border-subtle text-center rounded-sm">

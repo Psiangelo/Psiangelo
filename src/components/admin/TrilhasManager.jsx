@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTrilhas, setTrilhas, getMaterials, getGlossario, getCartographies, getAreas, setAreas } from '@/lib/sitedata';
-import { LINK_KINDS, BLOCK_KINDS, migrateStageToBlocks, migrateTrilhaBlocks } from '@/lib/linkResolver';
+import { LINK_KINDS, BLOCK_KINDS, INNER_BLOCK_KINDS, migrateStageToBlocks, migrateTrilhaBlocks } from '@/lib/linkResolver';
 import { TRILHA_ICON_SLUGS, STAGE_ICON_SLUGS, ALL_ICON_SLUGS, DEFAULT_TRILHA_ICON, DEFAULT_STAGE_ICON, defaultIconForKind, iconLabel } from '@/lib/trilhaIcons';
 import { DEFAULT_AREA_ID, DEFAULT_AREAS, findArea } from '@/lib/areas';
 import TrilhaIcon from '@/components/estudos/icons';
@@ -80,6 +80,13 @@ const EMPTY_BLOCK = (type = 'text') => {
     case 'embed':       return { type, html: '', caption: '' };
     case 'cartography': return { type, slug: 'home', caption: '' };
     case 'quote':       return { type, body: '', cite: '' };
+    case 'substage':    return {
+      type,
+      id: `substage-${Date.now().toString(36).slice(-5)}`,
+      title: '',
+      intro: '',
+      blocks: [],
+    };
     default:            return { type: 'text', body: '' };
   }
 };
@@ -208,9 +215,105 @@ function LinkPicker({ link, onChange, lists }) {
   );
 }
 
-/* ───────────────────── BlockEditor (1 bloco) ───────────────────── */
-function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDragOver, onDrop, isDragging, isOver, lists }) {
+/* ───────────────────── SubstageEditor (sub-bloco type='substage') ─────────────────────
+   Edita um bloco substage: título, intro markdown e sub-lista de blocks internos.
+   Os blocks internos usam o próprio BlockEditor com allowedKinds=INNER (sem substage aninhado).
+*/
+function SubstageEditor({ block, onChange, lists }) {
   const update = (k, v) => onChange({ ...block, [k]: v });
+  const innerBlocks = Array.isArray(block.blocks) ? block.blocks : [];
+
+  const addInner = () => onChange({ ...block, blocks: [...innerBlocks, EMPTY_BLOCK('text')] });
+  const updateInner = (i, b) => onChange({ ...block, blocks: innerBlocks.map((x, j) => (j === i ? b : x)) });
+  const removeInner = (i) => onChange({ ...block, blocks: innerBlocks.filter((_, j) => j !== i) });
+  const moveInner = (i, delta) => {
+    const swap = i + delta;
+    if (swap < 0 || swap >= innerBlocks.length) return;
+    const next = [...innerBlocks];
+    [next[i], next[swap]] = [next[swap], next[i]];
+    onChange({ ...block, blocks: next });
+  };
+
+  // Drag-drop dos blocks internos
+  const [dragIdx, setDragIdx] = useState(null);
+  const [overIdx, setOverIdx] = useState(null);
+  const onInnerDragStart = (e, i) => {
+    setDragIdx(i);
+    try { e.dataTransfer.effectAllowed = 'move'; } catch {}
+  };
+  const onInnerDragOver = (i) => setOverIdx(i);
+  const onInnerDrop = (i) => {
+    if (dragIdx === null || dragIdx === i) { setDragIdx(null); setOverIdx(null); return; }
+    const next = [...innerBlocks];
+    const [moved] = next.splice(dragIdx, 1);
+    next.splice(i, 0, moved);
+    onChange({ ...block, blocks: next });
+    setDragIdx(null);
+    setOverIdx(null);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <label className={LABEL}>Título da sub-etapa</label>
+        <input
+          value={block.title || ''}
+          onChange={(e) => update('title', e.target.value)}
+          placeholder="Ex: Leia o capítulo 1"
+          className={INPUT}
+        />
+      </div>
+
+      <div>
+        <label className={LABEL}>Descrição / abertura (markdown, opcional)</label>
+        <MarkdownTextarea
+          value={block.intro || ''}
+          onChange={(v) => update('intro', v)}
+          rows={3}
+          placeholder="Contexto, instrução ou prosa que apresenta a sub-etapa…"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className={LABEL + ' mb-0'}>
+            Conteúdo dentro da sub-etapa ({innerBlocks.length} {innerBlocks.length === 1 ? 'bloco' : 'blocos'})
+          </label>
+          <button type="button" onClick={addInner} className={BTN_SECONDARY}>+ Bloco</button>
+        </div>
+        <div className="space-y-2 pl-2 border-l-2" style={{ borderColor: 'rgba(180,140,80,0.18)' }}>
+          {innerBlocks.map((b, i) => (
+            <BlockEditor
+              key={i}
+              block={b}
+              idx={i}
+              onChange={(nb) => updateInner(i, nb)}
+              onRemove={() => removeInner(i)}
+              onMove={(delta) => moveInner(i, delta)}
+              onDragStart={onInnerDragStart}
+              onDragOver={onInnerDragOver}
+              onDrop={onInnerDrop}
+              isDragging={dragIdx === i}
+              isOver={overIdx === i && dragIdx !== null && dragIdx !== i}
+              lists={lists}
+              allowedKinds={INNER_BLOCK_KINDS}
+            />
+          ))}
+          {innerBlocks.length === 0 && (
+            <p className="text-xs text-[#6E6458] italic py-3 px-2">
+              Sub-etapa vazia. Adicione texto, link a material/post, vídeo, citação…
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────── BlockEditor (1 bloco) ───────────────────── */
+function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDragOver, onDrop, isDragging, isOver, lists, allowedKinds }) {
+  const update = (k, v) => onChange({ ...block, [k]: v });
+  const kinds = allowedKinds || BLOCK_KINDS;
 
   const renderFields = () => {
     switch (block.type) {
@@ -269,6 +372,8 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
             <input value={block.cite || ''} onChange={(e) => update('cite', e.target.value)} placeholder="Autor / fonte (opcional)" className={INPUT + ' text-xs'} />
           </div>
         );
+      case 'substage':
+        return <SubstageEditor block={block} onChange={onChange} lists={lists} />;
       default:
         return null;
     }
@@ -290,7 +395,7 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
           <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
           <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Bloco {idx + 1}</span>
           <select value={block.type} onChange={(e) => onChange(EMPTY_BLOCK(e.target.value))} className={INPUT + ' text-xs max-w-[280px]'}>
-            {BLOCK_KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+            {kinds.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
           </select>
         </div>
         <div className="flex gap-1">

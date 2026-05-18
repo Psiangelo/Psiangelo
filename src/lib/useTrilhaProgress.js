@@ -61,7 +61,7 @@ export function useTrilhaProgress() {
   const toggleStage = useCallback((trilhaId, stageTitle) => {
     const all = readAll();
     const now = new Date().toISOString();
-    const entry = all[trilhaId] || { completedStages: [], startedAt: now, updatedAt: now };
+    const entry = all[trilhaId] || { completedStages: [], completedSubstages: {}, startedAt: now, updatedAt: now };
     const done = entry.completedStages.includes(stageTitle);
     const updated = {
       ...entry,
@@ -73,6 +73,50 @@ export function useTrilhaProgress() {
     };
     writeAll({ ...all, [trilhaId]: updated });
   }, []);
+
+  /** Sub-etapas: progresso granular dentro de uma stage (chave: stageId, substageId) */
+  const isSubstageDone = useCallback(
+    (trilhaId, stageId, substageId) => {
+      const e = progress[trilhaId];
+      return !!e?.completedSubstages?.[stageId]?.includes(substageId);
+    },
+    [progress]
+  );
+
+  const toggleSubstage = useCallback((trilhaId, stageId, substageId) => {
+    if (!trilhaId || !stageId || !substageId) return;
+    const all = readAll();
+    const now = new Date().toISOString();
+    const entry = all[trilhaId] || { completedStages: [], completedSubstages: {}, startedAt: now, updatedAt: now };
+    const stageSubs = entry.completedSubstages?.[stageId] || [];
+    const done = stageSubs.includes(substageId);
+    const updatedSubs = done
+      ? stageSubs.filter((s) => s !== substageId)
+      : [...stageSubs, substageId];
+    const updated = {
+      ...entry,
+      completedSubstages: {
+        ...(entry.completedSubstages || {}),
+        [stageId]: updatedSubs,
+      },
+      updatedAt: now,
+      startedAt: entry.startedAt || now,
+    };
+    writeAll({ ...all, [trilhaId]: updated });
+  }, []);
+
+  /** Contadores de substages concluídas numa stage. Retorna {done, total}. */
+  const substageStats = useCallback(
+    (trilhaId, stage) => {
+      const subs = (stage?.blocks || []).filter((b) => b?.type === 'substage');
+      const total = subs.length;
+      if (total === 0) return { done: 0, total: 0 };
+      const completed = progress[trilhaId]?.completedSubstages?.[stage.id] || [];
+      const done = subs.filter((s) => completed.includes(s.id)).length;
+      return { done, total };
+    },
+    [progress]
+  );
 
   const resetTrilha = useCallback((trilhaId) => {
     const all = readAll();
@@ -90,5 +134,15 @@ export function useTrilhaProgress() {
     [progress]
   );
 
-  return { progress, ready, isStageDone, toggleStage, resetTrilha, percentOf };
+  return {
+    progress,
+    ready,
+    isStageDone,
+    toggleStage,
+    isSubstageDone,
+    toggleSubstage,
+    substageStats,
+    resetTrilha,
+    percentOf,
+  };
 }
