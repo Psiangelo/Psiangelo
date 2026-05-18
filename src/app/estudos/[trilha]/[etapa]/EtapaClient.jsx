@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
@@ -52,6 +53,7 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
 
   const [tocOpen, setTocOpen] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
+  const router = useRouter();
 
   // Atalhos de teclado: ← → navega entre etapas, T abre índice, M marca concluída
   useEffect(() => {
@@ -63,10 +65,10 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === 'ArrowLeft' && prev) {
         e.preventDefault();
-        window.location.href = `/estudos/${trilhaSlug}/${prev.slug}`;
+        router.push(`/estudos/${trilhaSlug}/${prev.slug}`);
       } else if (e.key === 'ArrowRight' && next) {
         e.preventDefault();
-        window.location.href = `/estudos/${trilhaSlug}/${next.slug}`;
+        router.push(`/estudos/${trilhaSlug}/${next.slug}`);
       } else if (e.key === 't' || e.key === 'T') {
         e.preventDefault();
         setTocOpen((v) => !v);
@@ -79,7 +81,7 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prev, next, trilhaSlug, trilha.id, stage?.title, tocOpen, toggleStage]);
+  }, [prev, next, trilhaSlug, trilha.id, stage?.title, tocOpen, toggleStage, router]);
 
   // "Voltar ao topo": aparece após scrollar 400px
   useEffect(() => {
@@ -228,9 +230,9 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
                 href={`/estudos/${trilhaSlug}`}
                 className="group block bg-accent/10 border border-accent/40 hover:bg-accent/15 transition-colors p-4 text-right"
               >
-                <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-accent mb-1 inline-block">Fim da trilha</span>
+                <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-accent mb-1 inline-block">✦ Última etapa</span>
                 <p className="font-serif text-text-bright text-[0.95rem] leading-tight">
-                  Voltar para o sumário
+                  Voltar ao sumário da trilha
                 </p>
               </Link>
             )}
