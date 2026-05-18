@@ -7,6 +7,7 @@ import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { getMaterials, getCategories, getContentTypes, DEFAULT_CATEGORIES, DEFAULT_CONTENT_TYPES, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useSectionLabel } from '@/lib/useLabels';
 import { img } from '@/lib/basepath';
 import { SpiralAccent } from '@/components/illustrations';
 
@@ -124,6 +125,7 @@ export default function MaterialsPreview() {
   const contentTypes = useSitedata(getContentTypes, DEFAULT_CONTENT_TYPES, SITEDATA_KEYS.contentTypes);
 
   const previewItems = (materials || []).filter((m) => m.available).slice(0, 6);
+  const sectionHeading = useSectionLabel('materials', '');
 
   // Sem materiais publicados não renderiza nada — evita espaço vazio enorme na home
   if (previewItems.length === 0) return null;
@@ -152,7 +154,9 @@ export default function MaterialsPreview() {
               variants={fadeUp}
               className="font-serif text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.05] mb-4"
             >
-              Notas de estudo e <em className="italic text-accent">clínica</em>
+              {sectionHeading || (
+                <>Notas de estudo e <em className="italic text-accent">clínica</em></>
+              )}
             </motion.h2>
             <motion.p
               variants={fadeUp}

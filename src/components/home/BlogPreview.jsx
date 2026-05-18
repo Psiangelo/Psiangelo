@@ -8,6 +8,7 @@ import SectionLabel from '@/components/SectionLabel';
 import { BranchOrnament, SpiralAccent } from '@/components/illustrations';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
+import { useSectionLabel } from '@/lib/useLabels';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 
@@ -65,6 +66,8 @@ export default function BlogPreview() {
     };
   }, []);
 
+  const sectionHeading = useSectionLabel('blog', 'Publicacoes recentes');
+
   if (posts.length === 0) return null;
 
   return (
@@ -77,7 +80,7 @@ export default function BlogPreview() {
       <motion.div initial="visible" animate="visible" variants={stagger} className="max-w-[1100px] mx-auto">
         <SectionLabel label="Blog" />
         <motion.div variants={fadeUp} className="flex items-end justify-between mb-10">
-          <h2 className="font-serif text-2xl text-text-bright">Publicacoes recentes</h2>
+          <h2 className="font-serif text-2xl text-text-bright">{sectionHeading}</h2>
           <Link href="/blog" className="text-xs font-sans text-accent hover:text-text-bright transition-colors uppercase tracking-widest">
             Ver todos &rarr;
           </Link>

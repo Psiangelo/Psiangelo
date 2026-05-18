@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useVisibility } from '@/lib/useVisibility';
+import { useSitedata } from '@/lib/useSitedata';
+import { getLabels, DEFAULT_LABELS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { LogoMarkInline } from '@/components/ui/LogoMark';
 
 export default function Navbar() {
@@ -24,15 +26,17 @@ export default function Navbar() {
   }, []);
 
   const { visibility: v } = useVisibility();
+  const labels = useSitedata(getLabels, DEFAULT_LABELS, SITEDATA_KEYS.labels);
+  const navLabels = labels?.nav || DEFAULT_LABELS.nav;
   const allLinks = [
-    { href: '/', label: 'Home', key: null },
-    { href: '/psicoterapia-analitica', label: 'Psicoterapia', key: 'psicoterapia' },
-    { href: '/blog', label: 'Blog', key: 'blog' },
-    { href: '/estudos', label: 'Estudos', key: 'estudos' },
-    { href: '/materiais', label: 'Materiais', key: 'materiais' },
-    { href: '/cursos', label: 'Cursos', key: 'cursos' },
+    { href: '/',                       label: navLabels.home         || 'Home',         key: 'home' },
+    { href: '/psicoterapia-analitica', label: navLabels.psicoterapia || 'Psicoterapia', key: 'psicoterapia' },
+    { href: '/blog',                   label: navLabels.blog         || 'Blog',         key: 'blog' },
+    { href: '/estudos',                label: navLabels.estudos      || 'Estudos',      key: 'estudos' },
+    { href: '/materiais',              label: navLabels.materiais    || 'Materiais',    key: 'materiais' },
+    { href: '/cursos',                 label: navLabels.cursos       || 'Cursos',       key: 'cursos' },
   ];
-  const links = allLinks.filter((l) => l.key == null || v[l.key]);
+  const links = allLinks.filter((l) => v[l.key] !== false);
 
   const isActive = (href) => {
     if (href === '/') return pathname === '/';

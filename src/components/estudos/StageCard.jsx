@@ -27,7 +27,8 @@ import { isExtra, resolveExtraAccent, EXTRA_ICON } from '@/lib/extraTone';
  */
 export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', done, onToggle, thumb, trilhaCover }) {
   const prefersReduced = useReducedMotion();
-  const stageHref = `/estudos/${trilhaSlug}/${stage.slug || stage.title}`;
+  const comingSoon = stage.comingSoon === true;
+  const stageHref = comingSoon ? '#' : `/estudos/${trilhaSlug}/${stage.slug || stage.title}`;
   // Cascata: thumb da etapa → capa da trilha → null (cai no fallback gráfico)
   // resolveImageSrc prefixa basePath em paths que começam com / (GH Pages)
   // Quando stage.thumbMode === 'icon', força o fallback ignorando qualquer imagem.
@@ -48,7 +49,11 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
     >
       <Link
         href={stageHref}
-        className="group block bg-bg-card border rounded-sm overflow-hidden transition-colors"
+        onClick={(e) => { if (comingSoon) e.preventDefault(); }}
+        aria-disabled={comingSoon ? true : undefined}
+        className={`group block bg-bg-card border rounded-sm overflow-hidden transition-colors ${
+          comingSoon ? 'cursor-default opacity-80' : ''
+        }`}
         style={{
           borderColor: done ? `${tone}66` : extra ? `${tone}33` : 'rgba(180,140,80,0.18)',
         }}
@@ -63,6 +68,19 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
               >
                 {number}
               </span>
+              {comingSoon && (
+                <span
+                  className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded"
+                  style={{
+                    color: '#0E0C0A',
+                    background: tone,
+                    border: `1px solid ${tone}`,
+                  }}
+                  title="Etapa ainda não aberta"
+                >
+                  Em breve
+                </span>
+              )}
               {kindLabel && (
                 <span
                   className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-0.5 rounded"

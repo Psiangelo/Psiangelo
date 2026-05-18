@@ -36,7 +36,8 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
   const trilhaIcon = extra ? EXTRA_ICON : (trilha.icon || 'compass');
   const stages = trilha.stages || [];
   const totalStages = stages.length;
-  const ctaLabel = pct > 0 ? 'Continuar' : 'Começar';
+  const comingSoon = trilha.comingSoon === true;
+  const ctaLabel = comingSoon ? 'Em breve' : (pct > 0 ? 'Continuar' : 'Começar');
 
   // Mini-selos: mostra até 6 etapas em fila, com estado individual
   const visibleStages = stages.slice(0, 6);
@@ -48,8 +49,12 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
-        href={`/estudos/${slug}`}
-        className="group relative block bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors overflow-hidden rounded-sm"
+        href={comingSoon ? '#' : `/estudos/${slug}`}
+        onClick={(e) => { if (comingSoon) e.preventDefault(); }}
+        aria-disabled={comingSoon ? true : undefined}
+        className={`group relative block bg-bg-card border border-border-subtle transition-colors overflow-hidden rounded-sm ${
+          comingSoon ? 'cursor-default opacity-80' : 'hover:border-accent/40'
+        }`}
         style={{ '--card-accent': tone }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px]">
@@ -57,6 +62,19 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
           <div className="p-6 md:p-8 flex flex-col">
             {/* Linha de meta */}
             <div className="flex items-center gap-2 flex-wrap mb-5">
+              {comingSoon && (
+                <span
+                  className="inline-flex items-center gap-1.5 font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2.5 py-1 rounded"
+                  style={{
+                    color: '#0E0C0A',
+                    background: tone,
+                    border: `1px solid ${tone}`,
+                  }}
+                  title="Esta trilha ainda não está aberta"
+                >
+                  Em breve
+                </span>
+              )}
               {extra && (
                 <span
                   className="inline-flex items-center gap-1.5 font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2.5 py-1 rounded"

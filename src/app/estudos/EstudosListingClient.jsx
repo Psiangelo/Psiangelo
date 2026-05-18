@@ -35,8 +35,10 @@ export default function EstudosListingClient({ initialTrilhas, initialAreas }) {
   const containerRef = useRef(null);
 
   // Migra trilhas pra garantir campos `area`, `icon` etc.
+  // Trilhas marcadas como `hidden` somem do listing; `comingSoon` aparecem
+  // mas com badge "Em breve" (a navegação fica capturada no card).
   const trilhas = useMemo(
-    () => (rawTrilhas || []).map(migrateTrilhaBlocks),
+    () => (rawTrilhas || []).map(migrateTrilhaBlocks).filter((t) => !t.hidden),
     [rawTrilhas]
   );
 

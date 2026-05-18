@@ -133,6 +133,46 @@ function ExtraToggle({ value, onChange, label = 'Extra', hint }) {
   );
 }
 
+/* ───────────────────── FlagToggle ─────────────────────
+   Toggle compacto e genérico pra flags simples (ocultar, em breve).
+*/
+function FlagToggle({ value, onChange, label, hint, color = '#B48C50', icon }) {
+  const active = value === true;
+  return (
+    <label
+      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer select-none transition-colors"
+      style={{
+        background: active ? `${color}1a` : 'transparent',
+        borderColor: active ? `${color}66` : 'rgba(180,140,80,0.15)',
+        color: active ? color : '#B8AD9E',
+      }}
+      title={hint || label}
+    >
+      <input
+        type="checkbox"
+        checked={active}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only"
+      />
+      <span
+        className="inline-flex items-center justify-center w-4 h-4 rounded-[3px]"
+        style={{
+          background: active ? color : 'transparent',
+          border: `1px solid ${active ? color : 'rgba(180,140,80,0.3)'}`,
+        }}
+      >
+        {active && (
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0E0C0A" strokeWidth="3.5" className="w-3 h-3">
+            <path d="M5 12l5 5L20 7" />
+          </svg>
+        )}
+      </span>
+      {icon}
+      <span className="font-mono text-[10px] tracking-widest uppercase">{label}</span>
+    </label>
+  );
+}
+
 /* ───────────────────── ThumbModeToggle ───────────────────── */
 function ThumbModeToggle({ value, onChange }) {
   const opts = [
@@ -572,6 +612,20 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
             label="Etapa extra"
             hint="Marca como etapa extra — accent roxo, ícone de estrela e badge no front."
           />
+          <FlagToggle
+            value={stage.hidden === true}
+            onChange={(v) => update('hidden', v)}
+            label="Ocultar"
+            hint="Some completamente do site (timeline + acesso direto)."
+            color="#8B7355"
+          />
+          <FlagToggle
+            value={stage.comingSoon === true}
+            onChange={(v) => update('comingSoon', v)}
+            label="Em breve"
+            hint="Aparece com badge 'Em breve' e o link fica bloqueado no front."
+            color="#D4A853"
+          />
         </div>
         <div className="flex gap-1">
           <button onClick={() => onMove(-1)} className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50]">↑</button>
@@ -776,6 +830,20 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
             onChange={(v) => setDraft({ ...draft, extra: v })}
             label="Trilha extra"
             hint="Marca toda a trilha como extra — accent roxo, ícone de estrela, badge."
+          />
+          <FlagToggle
+            value={draft.hidden === true}
+            onChange={(v) => setDraft({ ...draft, hidden: v })}
+            label="Ocultar"
+            hint="Some completamente do site (listing /estudos + link direto)."
+            color="#8B7355"
+          />
+          <FlagToggle
+            value={draft.comingSoon === true}
+            onChange={(v) => setDraft({ ...draft, comingSoon: v })}
+            label="Em breve"
+            hint="Aparece no listing com badge 'Em breve' e link bloqueado."
+            color="#D4A853"
           />
         </div>
         <div className="flex gap-2">
@@ -1229,6 +1297,8 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
               const tagParts = [migrated.level, migrated.archetype, migrated.duration].filter(Boolean);
               const area = findArea(lists.areas, migrated.area);
               const trilhaExtra = isExtra(migrated);
+              const trilhaHidden = migrated.hidden === true;
+              const trilhaComingSoon = migrated.comingSoon === true;
               const visualColor = trilhaExtra ? EXTRA_COLOR : (area?.color || '#B48C50');
               const visualIcon = trilhaExtra ? EXTRA_ICON : migrated.icon;
               const isDragging = trilhaDragIdx === i;
@@ -1243,7 +1313,7 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
                   onDrop={(e) => { e.preventDefault(); onTrilhaDrop(i); }}
                   className={`${CARD} flex items-start justify-between gap-4 transition-all ${
                     isDragging ? 'opacity-40' : ''
-                  } ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
+                  } ${isOver ? 'ring-2 ring-[#B48C50]' : ''} ${trilhaHidden ? 'opacity-50' : ''}`}
                   style={trilhaExtra ? { borderColor: `${EXTRA_COLOR}55`, background: `${EXTRA_COLOR}0a` } : undefined}
                 >
                   <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none pt-1 text-lg" title="Arraste para reordenar">⋮⋮</span>
@@ -1260,6 +1330,32 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {trilhaHidden && (
+                        <span
+                          className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+                          style={{
+                            color: '#0E0C0A',
+                            background: '#8B7355',
+                            border: '1px solid #8B7355',
+                          }}
+                          title="Oculta no site"
+                        >
+                          Oculta
+                        </span>
+                      )}
+                      {trilhaComingSoon && (
+                        <span
+                          className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+                          style={{
+                            color: '#0E0C0A',
+                            background: '#D4A853',
+                            border: '1px solid #D4A853',
+                          }}
+                          title="Aparece como 'Em breve' no site"
+                        >
+                          Em breve
+                        </span>
+                      )}
                       {trilhaExtra && (
                         <span
                           className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"

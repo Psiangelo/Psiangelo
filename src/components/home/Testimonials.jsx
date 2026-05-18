@@ -8,6 +8,7 @@ import ArchetypeBadge, { ARCHETYPE_TONE } from '@/components/ui/ArchetypeBadge';
 import { VesicaPiscis, GoldenArc } from '@/components/illustrations';
 import { getTestimonials, DEFAULT_TESTIMONIALS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useSectionLabel } from '@/lib/useLabels';
 
 const TABS = [
   { id: 'todos',       label: 'Todos' },
@@ -109,7 +110,9 @@ export default function Testimonials() {
             variants={fadeUp}
             className="font-serif text-[clamp(2rem,4vw,3rem)] text-text-bright mt-3 leading-[1.05]"
           >
-            O que dizem sobre o <em className="italic text-accent">trabalho</em>
+            {useSectionLabel('depoimentos', '') || (
+              <>O que dizem sobre o <em className="italic text-accent">trabalho</em></>
+            )}
           </motion.h2>
         </div>
 

@@ -8,6 +8,7 @@ import { fadeUp, stagger } from '@/lib/constants';
 import { trilhas as TRILHAS_DEFAULT, TRILHA_TONE } from '@/data/trilhas';
 import { getTrilhas } from '@/lib/sitedata';
 import { useTrilhaProgress } from '@/lib/useTrilhaProgress';
+import { useSectionLabel } from '@/lib/useLabels';
 import { OrbitalAccent, QuaternioSigil } from '@/components/illustrations';
 
 /**
@@ -59,7 +60,9 @@ export default function StudyPaths() {
               variants={fadeUp}
               className="font-serif text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.05] mb-4 max-w-2xl"
             >
-              Por onde <em className="italic text-accent">começar</em>
+              {useSectionLabel('trilhas', '') || (
+                <>Por onde <em className="italic text-accent">começar</em></>
+              )}
             </motion.h2>
             <motion.p
               variants={fadeUp}

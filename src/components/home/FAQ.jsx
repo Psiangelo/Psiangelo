@@ -7,6 +7,7 @@ import { fadeUp, stagger } from '@/lib/constants';
 import { OrbitalAccent } from '@/components/illustrations';
 import { getFaqs, DEFAULT_FAQS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useSectionLabel } from '@/lib/useLabels';
 
 const GROUP_BLURBS = {
   'Clínica':        'Como funciona o atendimento online.',
@@ -118,7 +119,9 @@ export default function FAQ() {
           variants={fadeUp}
           className="font-serif text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.05] mb-3 max-w-3xl"
         >
-          Perguntas <em className="italic text-accent">frequentes</em>
+          {useSectionLabel('faq', '') || (
+            <>Perguntas <em className="italic text-accent">frequentes</em></>
+          )}
         </motion.h2>
         <motion.p
           variants={fadeUp}

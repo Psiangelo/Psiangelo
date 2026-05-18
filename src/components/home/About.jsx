@@ -8,6 +8,7 @@ import DropCap from '@/components/ui/DropCap';
 import { fadeUp, stagger, slideInLeft, slideInRight } from '@/lib/constants';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useSectionLabel } from '@/lib/useLabels';
 import { QuaternioSigil, SpiralAccent } from '@/components/illustrations';
 import { resolveImageSrc } from '@/lib/basepath';
 import PosterCover from '@/components/ui/PosterCover';
@@ -65,7 +66,7 @@ export default function About() {
           variants={fadeUp}
           className="font-serif text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.05] mb-14 max-w-3xl"
         >
-          {content.title}
+          {useSectionLabel('about', content.title)}
         </motion.h2>
 
         {/* Grid 5fr / 7fr — coluna de identidade + coluna de narrativa */}

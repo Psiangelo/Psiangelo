@@ -73,22 +73,26 @@ export default function TrilhaDetailClient({
   // Items pra Timeline (etapas binárias: 0 ou 100)
   // Cada etapa pode ter seu próprio accent (roxo se .extra), mas se a trilha
   // inteira é extra, todas herdam roxo automaticamente.
+  // Etapas com `hidden:true` somem da timeline; `comingSoon:true` aparecem
+  // mas com badge + link bloqueado.
   const items = useMemo(() => {
-    return (trilha.stages || []).map((stage, idx) => {
-      const done = completedTitles.includes(stage.title);
-      const stageAccent = trilhaExtra
-        ? accent
-        : resolveExtraAccent(stage, areaAccent);
-      return {
-        id: stage.id || `stage-${idx}`,
-        icon: stage.icon || defaultIconForKind(stage.kind),
-        pct: done ? 100 : 0,
-        accent: stageAccent,
-        stage,
-        idx,
-        done,
-      };
-    });
+    return (trilha.stages || [])
+      .filter((stage) => !stage.hidden)
+      .map((stage, idx) => {
+        const done = completedTitles.includes(stage.title);
+        const stageAccent = trilhaExtra
+          ? accent
+          : resolveExtraAccent(stage, areaAccent);
+        return {
+          id: stage.id || `stage-${idx}`,
+          icon: stage.icon || defaultIconForKind(stage.kind),
+          pct: done ? 100 : 0,
+          accent: stageAccent,
+          stage,
+          idx,
+          done,
+        };
+      });
   }, [trilha, completedTitles, accent, areaAccent, trilhaExtra]);
 
   // Prev/Next trilhas

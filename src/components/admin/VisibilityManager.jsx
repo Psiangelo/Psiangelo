@@ -14,6 +14,7 @@ const GROUPS = [
     label: 'Módulos principais',
     hint: 'Quando oculto, some do menu, da home e a página dedicada vira placeholder.',
     items: [
+      { key: 'home',         label: 'Home (página inicial)',           url: '/' },
       { key: 'blog',         label: 'Blog e ensaios',                  url: '/blog' },
       { key: 'cursos',       label: 'Cursos',                          url: '/cursos' },
       { key: 'materiais',    label: 'Materiais',                       url: '/materiais' },

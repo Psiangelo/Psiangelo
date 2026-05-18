@@ -7,6 +7,7 @@ import { fadeUp, stagger } from '@/lib/constants';
 import SectionLabel from '@/components/SectionLabel';
 import CourseCard from '@/components/cursos/CourseCard';
 import { QuaternioSigil } from '@/components/illustrations';
+import { useSectionLabel } from '@/lib/useLabels';
 
 const STORAGE_KEY = 'angelo_admin_courses';
 
@@ -60,6 +61,8 @@ export default function CoursesPreview() {
     };
   }, []);
 
+  const sectionHeading = useSectionLabel('cursos', 'Cursos disponiveis');
+
   if (courses.length === 0) return null;
 
   const featured = courses.filter((c) => c.featured);
@@ -76,7 +79,7 @@ export default function CoursesPreview() {
         <SectionLabel label="Formacao" />
         <motion.div variants={fadeUp} className="flex items-end justify-between mb-10">
           <div>
-            <h2 className="font-serif text-2xl text-text-bright mb-2">Cursos disponiveis</h2>
+            <h2 className="font-serif text-2xl text-text-bright mb-2">{sectionHeading}</h2>
             <p className="text-sm text-text-dim font-sans">Aprofunde-se em psicologia analitica</p>
           </div>
           <Link href="/cursos" className="text-xs font-sans text-accent hover:text-text-bright transition-colors uppercase tracking-widest">

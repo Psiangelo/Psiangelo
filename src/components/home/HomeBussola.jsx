@@ -18,6 +18,7 @@
 import Link from 'next/link';
 import { useSitedata } from '@/lib/useSitedata';
 import { useVisibility } from '@/lib/useVisibility';
+import { useSectionLabel } from '@/lib/useLabels';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 
 const DEFAULT_PORTALS = [
@@ -117,10 +118,14 @@ export default function HomeBussola() {
           id="bussola-title"
           className="font-serif text-[clamp(2rem,4.5vw,3.2rem)] text-text-bright leading-[1.1] mb-4 max-w-3xl tracking-[-0.01em]"
         >
-          {data?.title || DEFAULT_HOME_BUSSOLA.title}{' '}
-          <em className="italic text-accent">
-            {data?.emphasis || DEFAULT_HOME_BUSSOLA.emphasis}
-          </em>
+          {useSectionLabel('bussola', '') || (
+            <>
+              {data?.title || DEFAULT_HOME_BUSSOLA.title}{' '}
+              <em className="italic text-accent">
+                {data?.emphasis || DEFAULT_HOME_BUSSOLA.emphasis}
+              </em>
+            </>
+          )}
         </h2>
         {(data?.lead || DEFAULT_HOME_BUSSOLA.lead) && (
           <p className="font-serif italic text-text-dim text-[1.05rem] leading-relaxed max-w-2xl mb-12">

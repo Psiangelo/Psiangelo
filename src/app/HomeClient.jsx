@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, Fragment } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import VisibilityGate from '@/components/VisibilityGate';
 import Hero from '@/components/home/Hero';
 import HomeDisclaimer from '@/components/home/HomeDisclaimer';
 import HomeSeoIntro from '@/components/home/HomeSeoIntro';
@@ -160,7 +161,7 @@ export default function HomePage() {
   const showCartografiaDivider = renderedIds.has('cartografia');
 
   return (
-    <>
+    <VisibilityGate visibilityKey="home" title="Home indisponível">
       <Navbar />
       <main>
         {rendered.map(({ id, node }, i) => {
@@ -196,6 +197,6 @@ export default function HomePage() {
         })}
       </main>
       <Footer showMaterialsCta={false} />
-    </>
+    </VisibilityGate>
   );
 }

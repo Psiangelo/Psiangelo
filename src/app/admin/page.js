@@ -7,6 +7,7 @@ import { materials as defaultMaterials, comingSoon as defaultComingSoon } from '
 import ContentManager from '@/components/admin/ContentManager';
 import BioManager from '@/components/admin/BioManager';
 import VisibilityManager from '@/components/admin/VisibilityManager';
+import LabelsManager from '@/components/admin/LabelsManager';
 import SectionOrderManager from '@/components/admin/SectionOrderManager';
 import PublishManager from '@/components/admin/PublishManager';
 import UnpublishedBanner from '@/components/admin/UnpublishedBanner';
@@ -68,13 +69,6 @@ const DEFAULT_SETTINGS = {
   siteTitle: 'Angelo Psicologia',
   siteDescription: 'Materiais de estudo em Psicologia Analitica - Resumos e Mapas Mentais de C.G. Jung',
   accentColor: '#B48C50',
-  showHeroSection: true,
-  showMaterialsSection: true,
-  showAboutSection: true,
-  showComingSoonSection: true,
-  showTestimonialsSection: true,
-  showFAQSection: true,
-  showFloatingWhatsApp: true,
 };
 
 const DEFAULT_TESTIMONIALS = [
@@ -2474,27 +2468,6 @@ function SettingsTab({ settings, setSettings, addToast, addLogEntry }) {
         </div>
       </div>
 
-      {/* Section toggles */}
-      <div className={`${CARD_CLASS} mb-4`}>
-        <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans mb-4">Secoes Visiveis</h3>
-        <div className="space-y-3">
-          {[
-            ['showHeroSection', 'Secao Hero (topo)'],
-            ['showMaterialsSection', 'Secao Materiais'],
-            ['showAboutSection', 'Secao Sobre'],
-            ['showComingSoonSection', 'Secao Em Breve'],
-            ['showTestimonialsSection', 'Secao Depoimentos'],
-            ['showFAQSection', 'Secao FAQ'],
-            ['showFloatingWhatsApp', 'Botao flutuante WhatsApp'],
-          ].map(([key, label]) => (
-            <div key={key} className="flex items-center justify-between py-2">
-              <span className="text-sm text-[#B8AD9E] font-sans">{label}</span>
-              <Toggle enabled={settings[key] !== false} onChange={(v) => updateSetting(key, v)} />
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Password change */}
       <div className={CARD_CLASS}>
         <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans mb-4">Alterar Senha</h3>
@@ -2860,6 +2833,7 @@ function AdminPanel() {
     { id: 'testimonials', label: 'Depoimentos', badge: testimonialsList.length },
     { id: 'faqs', label: 'FAQ', badge: faqsList.length },
     { id: 'visibility', label: 'Visibilidade', badge: null },
+    { id: 'labels',     label: 'Nomes (labels)', badge: null },
     { id: 'settings', label: 'Configurações', badge: null },
     { id: 'actions', label: 'Ações', badge: null },
     { id: 'publish', label: 'Publicar', badge: null },
@@ -2906,8 +2880,9 @@ function AdminPanel() {
       id: 'publish',
       label: 'Publicação',
       items: [
-        { id: 'visibility', label: 'Visibilidade', icon: IconGrid },
-        { id: 'publish',    label: 'Publicar',     icon: IconZap },
+        { id: 'visibility', label: 'Visibilidade',   icon: IconGrid },
+        { id: 'labels',     label: 'Nomes (labels)', icon: IconPen },
+        { id: 'publish',    label: 'Publicar',       icon: IconZap },
       ],
     },
     {
@@ -3136,6 +3111,13 @@ function AdminPanel() {
           {activeTab === 'visibility' && (
             <VisibilityManager
               key="visibility"
+              addToast={addToast}
+              addLogEntry={addLogEntry}
+            />
+          )}
+          {activeTab === 'labels' && (
+            <LabelsManager
+              key="labels"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

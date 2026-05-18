@@ -257,6 +257,8 @@ export function migrateStageToBlocks(stage, idx = 0) {
     coverImage: migrated.coverImage || '',
     thumbMode: migrated.thumbMode === 'icon' ? 'icon' : 'image',
     extra: migrated.extra === true,
+    hidden: migrated.hidden === true,
+    comingSoon: migrated.comingSoon === true,
   };
   if (Array.isArray(migrated.blocks) && migrated.blocks.length > 0) {
     // Normaliza substages dentro dos blocks (garante id, filtra aninhamento)
@@ -287,6 +289,8 @@ export function migrateTrilhaBlocks(trilha) {
     icon: trilha.icon || DEFAULT_TRILHA_ICON,
     thumbMode: trilha.thumbMode === 'icon' ? 'icon' : 'image',
     extra: trilha.extra === true,
+    hidden: trilha.hidden === true,
+    comingSoon: trilha.comingSoon === true,
     stages: (trilha.stages || []).map((s, i) => migrateStageToBlocks(s, i)),
   };
 }

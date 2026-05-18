@@ -42,6 +42,7 @@ export const SITEDATA_KEYS = {
   estudosPage:    'angelo_admin_estudos_page',
   cartographies:  'angelo_admin_cartographies',
   areas:          'angelo_admin_areas',
+  labels:         'angelo_admin_labels',
 };
 
 /* ===================================================================
@@ -446,6 +447,7 @@ export const setBio = (v) => writeJson(SITEDATA_KEYS.bio, v);
 
 export const DEFAULT_VISIBILITY = {
   // Módulos com página dedicada: oculta página + preview na home + link no nav
+  home:       true, // a própria página inicial; quando off, oculta link na navbar + página vira placeholder
   blog:       true,
   cursos:     true,
   materiais:  true,
@@ -1058,3 +1060,51 @@ function normalizeEstudosPage(stored) {
 
 export const getEstudosPage = () => normalizeEstudosPage(readJson(SITEDATA_KEYS.estudosPage, null));
 export const setEstudosPage = (v) => writeJson(SITEDATA_KEYS.estudosPage, v);
+
+/* ===================================================================
+   LABELS — textos customizáveis da navbar e dos títulos das seções da home.
+   Quando vazio (string em branco), o componente cai pro default hardcoded.
+=================================================================== */
+
+export const DEFAULT_NAV_LABELS = {
+  home:         'Home',
+  psicoterapia: 'Psicoterapia',
+  blog:         'Blog',
+  estudos:      'Estudos',
+  materiais:    'Materiais',
+  cursos:       'Cursos',
+};
+
+// Títulos editoriais das seções da home — cada chave é um id de seção
+// (ver HOME_SECTION_META). Valores em branco = usa default do componente.
+export const DEFAULT_SECTION_LABELS = {
+  hero:        '',
+  bussola:     '',
+  about:       '',
+  prelude:     '',
+  trilhas:     '',  // StudyPaths
+  materials:   '',  // MaterialsPreview
+  blog:        '',  // BlogPreview
+  cursos:      '',  // CoursesPreview
+  cartografia: '',
+  depoimentos: '',  // Testimonials
+  faq:         '',
+  contato:     '',  // ContactCTA
+  audience:    '',
+  approach:    '',
+};
+
+export const DEFAULT_LABELS = {
+  nav:      DEFAULT_NAV_LABELS,
+  sections: DEFAULT_SECTION_LABELS,
+};
+
+export const getLabels = () => {
+  const stored = readJson(SITEDATA_KEYS.labels, null);
+  if (!stored) return DEFAULT_LABELS;
+  return {
+    nav:      { ...DEFAULT_NAV_LABELS,     ...(stored.nav || {}) },
+    sections: { ...DEFAULT_SECTION_LABELS, ...(stored.sections || {}) },
+  };
+};
+export const setLabels = (v) => writeJson(SITEDATA_KEYS.labels, v);

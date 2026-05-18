@@ -7,6 +7,7 @@ import { fadeUp, stagger } from '@/lib/constants';
 import { QuaternioSigil, BranchOrnament, StarField, NebulaField, ShootingStars } from '@/components/illustrations';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useSectionLabel } from '@/lib/useLabels';
 
 // QR Code SVG hardcoded — gerado via qrserver/api offline.
 // Para produção definitiva, substituir por SVG real do número.
@@ -161,7 +162,7 @@ export default function ContactCTA() {
             variants={fadeUp}
             className="font-serif italic text-[clamp(2rem,4vw,3rem)] text-text-bright leading-[1.1] mt-3 mb-4"
           >
-            {c.title}
+            {useSectionLabel('contato', c.title)}
           </motion.h2>
           <motion.p
             variants={fadeUp}
