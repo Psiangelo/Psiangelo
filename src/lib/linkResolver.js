@@ -235,6 +235,7 @@ export function migrateStageToBlocks(stage, idx = 0) {
     intro: typeof migrated.intro === 'string' ? migrated.intro : '',
     summary: migrated.summary || migrated.detail || '',
     coverImage: migrated.coverImage || '',
+    thumbMode: migrated.thumbMode === 'icon' ? 'icon' : 'image',
   };
   if (Array.isArray(migrated.blocks) && migrated.blocks.length > 0) {
     return { ...base, blocks: migrated.blocks };
@@ -253,6 +254,7 @@ export function migrateTrilhaBlocks(trilha) {
     ...trilha,
     area: trilha.area || DEFAULT_AREA_ID,
     icon: trilha.icon || DEFAULT_TRILHA_ICON,
+    thumbMode: trilha.thumbMode === 'icon' ? 'icon' : 'image',
     stages: (trilha.stages || []).map((s, i) => migrateStageToBlocks(s, i)),
   };
 }

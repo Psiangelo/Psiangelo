@@ -45,6 +45,7 @@ const EMPTY_TRILHA = () => ({
   coverImage: '',
   area: DEFAULT_AREA_ID,
   icon: DEFAULT_TRILHA_ICON,
+  thumbMode: 'image',
   archetype: '',
   duration: '',
   level: '',
@@ -59,6 +60,7 @@ const EMPTY_STAGE = (idx = 0) => ({
   icon: DEFAULT_STAGE_ICON,
   summary: '',
   intro: '',
+  thumbMode: 'image',
   blocks: [],
 });
 
@@ -81,6 +83,59 @@ const EMPTY_BLOCK = (type = 'text') => {
     default:            return { type: 'text', body: '' };
   }
 };
+
+/* ───────────────────── ThumbModeToggle ───────────────────── */
+function ThumbModeToggle({ value, onChange }) {
+  const opts = [
+    {
+      v: 'image',
+      label: 'Imagem',
+      hint: 'capa',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="1" />
+          <circle cx="9" cy="10" r="1.6" />
+          <path d="M21 17 L15 12 L3 18" />
+        </svg>
+      ),
+    },
+    {
+      v: 'icon',
+      label: 'Ícone',
+      hint: 'selo',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 6 L13.5 12 L12 13 L10.5 12 Z" fill="currentColor" />
+          <path d="M10.5 12 L12 18 L13.5 12 L12 11 Z" />
+        </svg>
+      ),
+    },
+  ];
+  return (
+    <div className="inline-flex p-0.5 rounded-lg border border-[rgba(180,140,80,0.15)] bg-[#0E0C0A]">
+      {opts.map((o) => {
+        const active = value === o.v;
+        return (
+          <button
+            key={o.v}
+            type="button"
+            onClick={() => onChange(o.v)}
+            aria-pressed={active}
+            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-md font-mono text-[10px] tracking-widest uppercase transition-colors ${
+              active
+                ? 'bg-[#B48C50] text-[#0E0C0A]'
+                : 'text-[#B8AD9E] hover:text-[#B48C50]'
+            }`}
+          >
+            {o.icon}
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 /* ───────────────────── LinkPicker (interno do block tipo 'link') ───────────────────── */
 function LinkPicker({ link, onChange, lists }) {
@@ -390,6 +445,19 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
       </div>
 
       <div>
+        <label className={LABEL}>Exibição do card</label>
+        <ThumbModeToggle
+          value={stage.thumbMode || 'image'}
+          onChange={(v) => update('thumbMode', v)}
+        />
+        <p className="text-[10px] text-[#6E6458] font-sans mt-1.5 italic">
+          {stage.thumbMode === 'icon'
+            ? 'Mostra o ícone cerimonial grande (selo) — ignora capa e capa do material linkado.'
+            : 'Mostra a capa da etapa, ou a do material/post linkado, ou (último recurso) o ícone.'}
+        </p>
+      </div>
+
+      <div>
         <div className="flex items-center justify-between mb-3">
           <label className={LABEL + ' mb-0'}>
             Conteúdo da etapa ({(stage.blocks || []).length} {(stage.blocks || []).length === 1 ? 'bloco' : 'blocos'})
@@ -508,6 +576,19 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
             </div>
           )}
         </div>
+      </div>
+
+      <div>
+        <label className={LABEL}>Exibição do card da trilha (em /estudos)</label>
+        <ThumbModeToggle
+          value={draft.thumbMode || 'image'}
+          onChange={(v) => update('thumbMode', v)}
+        />
+        <p className="text-[10px] text-[#6E6458] font-sans mt-1.5 italic">
+          {draft.thumbMode === 'icon'
+            ? 'Mostra o ícone cerimonial gigante (selo) no listing — ignora a capa.'
+            : 'Mostra a imagem de capa no listing, ou o ícone se não houver capa.'}
+        </p>
       </div>
 
       <div>

@@ -29,7 +29,9 @@ export default function StageCard({ stage, idx, trilhaSlug, accent = '#B48C50', 
   const stageHref = `/estudos/${trilhaSlug}/${stage.slug || stage.title}`;
   // Cascata: thumb da etapa → capa da trilha → null (cai no fallback gráfico)
   // resolveImageSrc prefixa basePath em paths que começam com / (GH Pages)
-  const displayImage = resolveImageSrc(thumb || trilhaCover);
+  // Quando stage.thumbMode === 'icon', força o fallback ignorando qualquer imagem.
+  const displayImage =
+    stage.thumbMode === 'icon' ? null : resolveImageSrc(thumb || trilhaCover);
   const kindLabel = STAGE_KIND_LABEL[stage.kind] || stage.kind || '';
   const iconName = stage.icon || defaultIconForKind(stage.kind);
   const number = toRoman(idx + 1);

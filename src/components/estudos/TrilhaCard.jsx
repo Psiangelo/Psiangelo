@@ -182,7 +182,7 @@ export default function TrilhaCard({ trilha, area, pct = 0, completedTitles = []
 
           {/* Coluna capa */}
           <div className="relative h-48 lg:h-auto lg:min-h-[280px] overflow-hidden order-first lg:order-last">
-            {trilha.coverImage ? (
+            {trilha.thumbMode !== 'icon' && trilha.coverImage ? (
               <>
                 <img
                   src={resolveImageSrc(trilha.coverImage)}
