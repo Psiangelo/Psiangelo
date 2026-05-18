@@ -732,7 +732,9 @@ main:focus {
   color: #B8AD9E;
   font-size: 1.02rem;
   line-height: 1.85;
+  max-width: 65ch;
 }
+.estudos-text-block.text-[0\.95rem] { font-size: 0.95rem; line-height: 1.75; }
 .estudos-text-block p { margin: 0 0 1.15em 0; }
 .estudos-text-block strong {
   color: #E8DDD0;
