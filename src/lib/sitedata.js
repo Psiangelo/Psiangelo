@@ -447,7 +447,7 @@ export const DEFAULT_VISIBILITY = {
   bussola:           true,  // 2026-05-03: nova porta de entrada da home (substitui audience+approach+faq)
   audience:          false, // 2026-05-03: público canônico vai pra /psicoterapia-analitica/ (anti-canibalização SEO)
   approach:          false, // idem — princípios canônicos vivem na landing clínica
-  cartografia:       false, // rebaixada na home clínica (fica acessível via /trilhas e nav)
+  cartografia:       false, // rebaixada na home clínica (fica acessível via /estudos, /admin e nav)
   depoimentos:       false, // vedado publicar depoimentos de pacientes (CFP) — mantém oculto na home
   disclaimerEstagio: true,  // faixa "estagiário + supervisão" logo abaixo do hero
   faq:               false, // 2026-05-03: FAQ canônico vive na landing clínica (anti-canibalização)
