@@ -12,9 +12,14 @@ function getList() {
 
 export function generateStaticParams() {
   const params = [];
+  const seenPair = new Set();
   for (const t of getList()) {
     const trilhaSlug = t.slug || t.id;
     for (const s of t.stages || []) {
+      if (!s.slug) continue;
+      const key = `${trilhaSlug}::${s.slug}`;
+      if (seenPair.has(key)) continue;
+      seenPair.add(key);
       params.push({ trilha: trilhaSlug, etapa: s.slug });
     }
   }
