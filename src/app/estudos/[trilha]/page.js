@@ -20,10 +20,16 @@ export function generateStaticParams() {
 export function generateMetadata({ params }) {
   const t = bySlug(params.trilha);
   if (!t) return {};
+  const og = {
+    title: `${t.name} · Estudos · Psiangelo`,
+    description: t.subtitle || `Trilha de estudo: ${t.name}`,
+    type: 'article',
+  };
+  if (t.coverImage) og.images = [{ url: t.coverImage, alt: t.name }];
   return {
     title: `${t.name} · Estudos`,
     description: t.subtitle || `Trilha de estudo: ${t.name}`,
-    openGraph: { title: `${t.name} · Estudos · Psiangelo`, description: t.subtitle, type: 'article' },
+    openGraph: og,
   };
 }
 

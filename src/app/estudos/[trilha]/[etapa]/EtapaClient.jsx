@@ -51,6 +51,43 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
   const done = isStageDone(trilha.id, stage?.title);
 
   const [tocOpen, setTocOpen] = useState(false);
+  const [showTopBtn, setShowTopBtn] = useState(false);
+
+  // Atalhos de teclado: ← → navega entre etapas, T abre índice, M marca concluída
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const onKey = (e) => {
+      // Ignora se foco em input/textarea
+      const tag = (e.target?.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.target?.isContentEditable) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'ArrowLeft' && prev) {
+        e.preventDefault();
+        window.location.href = `/estudos/${trilhaSlug}/${prev.slug}`;
+      } else if (e.key === 'ArrowRight' && next) {
+        e.preventDefault();
+        window.location.href = `/estudos/${trilhaSlug}/${next.slug}`;
+      } else if (e.key === 't' || e.key === 'T') {
+        e.preventDefault();
+        setTocOpen((v) => !v);
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        toggleStage(trilha.id, stage?.title);
+      } else if (e.key === 'Escape' && tocOpen) {
+        setTocOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [prev, next, trilhaSlug, trilha.id, stage?.title, tocOpen, toggleStage]);
+
+  // "Voltar ao topo": aparece após scrollar 400px
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const onScroll = () => setShowTopBtn(window.scrollY > 400);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   if (!stage) return null;
 
@@ -67,6 +104,19 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
       </div>
 
       <main className="pt-32 md:pt-40 pb-16">
+        {/* Cover image da etapa (se houver) */}
+        {stage.coverImage && (
+          <div className="relative w-full max-w-[1100px] mx-auto h-[180px] md:h-[280px] mb-8 overflow-hidden">
+            <img
+              src={stage.coverImage}
+              alt=""
+              className="w-full h-full object-cover opacity-60"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent" />
+          </div>
+        )}
+
         {/* Breadcrumb + toggle índice */}
         <nav className="max-w-[800px] mx-auto px-5 sm:px-6 md:px-12 mb-6 flex items-center justify-between gap-3 font-mono text-[0.6rem] tracking-[0.22em] uppercase flex-wrap">
           <div className="flex items-center gap-2 flex-wrap">
@@ -187,6 +237,26 @@ export default function EtapaClient({ initialTrilha, initialEtapaIdx, initialPos
           </nav>
         </article>
       </main>
+
+      {/* Botão voltar ao topo */}
+      {showTopBtn && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Voltar ao topo"
+          className="fixed bottom-6 right-6 z-[50] w-11 h-11 bg-accent text-bg rounded-full shadow-lg shadow-black/30 hover:bg-text-bright transition-colors flex items-center justify-center"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 19V5M5 12l7-7 7 7" />
+          </svg>
+        </button>
+      )}
+
+      {/* Tooltip de atalhos no footer */}
+      <div className="max-w-[800px] mx-auto px-5 sm:px-6 md:px-12 pb-4 -mt-8 text-center">
+        <p className="font-mono text-[0.55rem] text-text-dim/40 tracking-[0.18em] uppercase">
+          ← anterior · → próxima · T índice · M marcar concluída
+        </p>
+      </div>
 
       {/* Índice flutuante (drawer lateral direita) */}
       {tocOpen && (

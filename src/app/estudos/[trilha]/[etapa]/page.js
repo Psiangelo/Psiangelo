@@ -27,14 +27,19 @@ export function generateMetadata({ params }) {
   if (!trilha) return {};
   const etapa = trilha.stages.find((s) => s.slug === params.etapa);
   if (!etapa) return {};
+  const cover = etapa.coverImage || trilha.coverImage;
+  const og = {
+    title: `${etapa.title} · ${trilha.name} · Psiangelo`,
+    description: etapa.summary || `${trilha.name} — ${etapa.title}`,
+    type: 'article',
+  };
+  if (cover) {
+    og.images = [{ url: cover, alt: etapa.title }];
+  }
   return {
     title: `${etapa.title} · ${trilha.name}`,
     description: etapa.summary || `${trilha.name} — ${etapa.title}`,
-    openGraph: {
-      title: `${etapa.title} · ${trilha.name} · Psiangelo`,
-      description: etapa.summary,
-      type: 'article',
-    },
+    openGraph: og,
   };
 }
 
