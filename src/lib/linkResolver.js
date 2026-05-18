@@ -184,3 +184,66 @@ export function migrateStageLink(stage) {
   }
   return { ...stage, link: { kind: 'none', value: '' } };
 }
+
+/**
+ * Tipos de bloco aceitos por uma etapa de trilha:
+ *   { type: 'text',        body: string }                            — markdown leve
+ *   { type: 'link',        link: { kind, value, label? } }           — card clicável (linkResolver)
+ *   { type: 'media',       provider: 'youtube'|'drive', url, caption? } — player inline
+ *   { type: 'embed',       html: string, caption? }                  — iframe cru
+ *   { type: 'cartography', slug: string, caption? }                  — CartographyView por slug
+ *   { type: 'quote',       body: string, cite? }                     — citação
+ */
+export const BLOCK_KINDS = [
+  { value: 'text',        label: 'Texto (markdown)' },
+  { value: 'link',        label: 'Link / card (material, post, curso, verbete, URL)' },
+  { value: 'media',       label: 'Vídeo (YouTube/Drive) embutido' },
+  { value: 'embed',       label: 'Embed HTML (iframe)' },
+  { value: 'cartography', label: 'Cartografia embutida' },
+  { value: 'quote',       label: 'Citação destacada' },
+];
+
+function slugifyTitle(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+/**
+ * Migra stage antigo (com `link` singular) para shape novo com `blocks[]`.
+ * - Se já tem `blocks`, retorna intacto
+ * - Se tem `link`, vira blocks: [{type:'link', link}]
+ * - Adiciona `slug` derivado do título quando ausente
+ * - Preserva `detail` como `summary`
+ */
+export function migrateStageToBlocks(stage, idx = 0) {
+  const migrated = migrateStageLink(stage || {});
+  const base = {
+    id: migrated.id || `stage-${idx}-${Date.now().toString(36).slice(-4)}`,
+    slug: migrated.slug || slugifyTitle(migrated.title || `etapa-${idx + 1}`),
+    title: migrated.title || `Etapa ${idx + 1}`,
+    kind: migrated.kind || 'leitura',
+    summary: migrated.summary || migrated.detail || '',
+  };
+  if (Array.isArray(migrated.blocks) && migrated.blocks.length > 0) {
+    return { ...base, blocks: migrated.blocks };
+  }
+  // Constrói blocks a partir do link antigo
+  const blocks = [];
+  if (migrated.link && migrated.link.kind !== 'none' && migrated.link.value) {
+    blocks.push({ type: 'link', link: migrated.link });
+  }
+  return { ...base, blocks };
+}
+
+export function migrateTrilhaBlocks(trilha) {
+  if (!trilha) return trilha;
+  return {
+    ...trilha,
+    stages: (trilha.stages || []).map((s, i) => migrateStageToBlocks(s, i)),
+  };
+}

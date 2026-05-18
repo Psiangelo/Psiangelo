@@ -72,7 +72,7 @@ export default function StudyPaths() {
           </div>
           <motion.div variants={fadeUp}>
             <Link
-              href="/trilhas"
+              href="/estudos"
               className="font-sans text-[0.72rem] font-medium tracking-[0.18em] uppercase text-accent hover:text-text-bright transition-colors inline-flex items-center gap-2 link-underline"
             >
               Ver todas as trilhas
@@ -98,7 +98,7 @@ export default function StudyPaths() {
               </p>
             </div>
             <Link
-              href={`/trilhas#${ongoing.id}`}
+              href={`/estudos/${ongoing.slug || ongoing.id}`}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-text-bright text-bg font-sans text-[0.65rem] font-semibold tracking-[0.2em] uppercase transition-colors flex-shrink-0"
             >
               Continuar
@@ -116,7 +116,7 @@ export default function StudyPaths() {
             return (
               <motion.div key={t.id} variants={fadeUp}>
                 <Link
-                  href={`/trilhas#${t.id}`}
+                  href={`/estudos/${t.slug || t.id}`}
                   className="group block bg-bg-card border border-border-subtle hover:border-border-hover transition-all h-full p-7 relative overflow-hidden"
                   style={{ borderBottom: `2px solid ${tone.border}` }}
                 >

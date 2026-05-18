@@ -14,7 +14,7 @@ const STATIC_PAGES = [
   { id: 'sobre',      title: 'Sobre',      href: '/#sobre',    hint: 'Formação e atuação' },
   { id: 'cartografia',title: 'Cartografia',href: '/#cartografia', hint: 'Mapa de conceitos' },
   { id: 'materiais',  title: 'Materiais',  href: '/materiais', hint: 'Resumos e mapas mentais' },
-  { id: 'trilhas',    title: 'Trilhas',    href: '/trilhas',   hint: 'Rotas de estudo' },
+  { id: 'trilhas',    title: 'Estudos',    href: '/estudos',   hint: 'Guias de estudo' },
   { id: 'cursos',     title: 'Cursos',     href: '/cursos',    hint: 'Formação' },
   { id: 'blog',       title: 'Blog',       href: '/blog',      hint: 'Ensaios' },
   { id: 'atender',    title: 'Atendimento', href: '/psicoterapia-analitica', hint: 'Psicoterapia analítica · agendar primeira conversa' },
@@ -71,7 +71,7 @@ function buildIndex() {
       typeLabel: 'Trilha',
       title: t.name,
       hint: t.subtitle || '',
-      href: `/trilhas#${t.id}`,
+      href: `/estudos/${t.slug || t.id}`,
       haystack: normalize(`${t.name} ${t.subtitle || ''} ${t.archetype || ''}`),
     });
   }
@@ -121,7 +121,7 @@ export default function CommandPalette() {
       if (visibility.blog === false && (item.href || '').startsWith('/blog')) return false;
       if (visibility.cursos === false && (item.href || '').startsWith('/cursos')) return false;
       if (visibility.materiais === false && (item.href || '').startsWith('/materiais')) return false;
-      if (visibility.trilhas === false && (item.href || '').startsWith('/trilhas')) return false;
+      if (visibility.estudos === false && (item.href || '').startsWith('/estudos')) return false;
       if (visibility.bio === false && item.href === '/bio') return false;
       if (visibility.psicoterapia === false && (item.href || '').startsWith('/psicoterapia')) return false;
       return true;

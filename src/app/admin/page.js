@@ -15,7 +15,6 @@ import CategoriesManager from '@/components/admin/CategoriesManager';
 import ContentTypesManager from '@/components/admin/ContentTypesManager';
 import MateriaisPageManager from '@/components/admin/MateriaisPageManager';
 import GlossarioManager from '@/components/admin/GlossarioManager';
-import EstudosHubManager from '@/components/admin/EstudosHubManager';
 import { getCategories, getContentTypes } from '@/lib/sitedata';
 import { isAuthConfigured, signIn as supabaseSignIn, getSession as supabaseGetSession } from '@/lib/supabase-auth';
 
@@ -2850,9 +2849,8 @@ function AdminPanel() {
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', badge: null },
     { id: 'materials', label: 'Materiais', badge: materialsList.length },
-    { id: 'trilhas', label: 'Trilhas', badge: null },
+    { id: 'trilhas', label: 'Estudos · Trilhas', badge: null },
     { id: 'glossario', label: 'Glossário', badge: null },
-    { id: 'estudos', label: 'Estudos (hub)', badge: null },
     { id: 'cartography', label: 'Cartografia', badge: null },
     { id: 'content', label: 'Conteúdo', badge: null },
     { id: 'sectionOrder', label: 'Ordem das seções', badge: null },
@@ -2881,9 +2879,8 @@ function AdminPanel() {
         { id: 'materials',   label: 'Materiais',   icon: IconBook },
         { id: 'blog',        label: 'Blog',        icon: IconPen },
         { id: 'courses',     label: 'Cursos',      icon: IconVideo },
-        { id: 'trilhas',     label: 'Trilhas',     icon: IconBook },
+        { id: 'trilhas',     label: 'Estudos · Trilhas', icon: IconBook },
         { id: 'glossario',   label: 'Glossário',   icon: IconBook },
-        { id: 'estudos',     label: 'Estudos (hub)', icon: IconGrid },
         { id: 'cartography', label: 'Cartografia', icon: IconGrid },
       ],
     },
@@ -3065,13 +3062,6 @@ function AdminPanel() {
           {activeTab === 'glossario' && (
             <GlossarioManager
               key="glossario"
-              addToast={addToast}
-              addLogEntry={addLogEntry}
-            />
-          )}
-          {activeTab === 'estudos' && (
-            <EstudosHubManager
-              key="estudos"
               addToast={addToast}
               addLogEntry={addLogEntry}
             />

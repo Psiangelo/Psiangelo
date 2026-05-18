@@ -47,7 +47,7 @@ export const SITEDATA_KEYS = {
 =================================================================== */
 
 export const DEFAULT_CARTO_NODES = [
-  { id: 'self',     label: 'Self',                  x: 400, y: 260, size: 28, tone: 'accent',   axiom: 'centro arquetípico',         href: '/trilhas' },
+  { id: 'self',     label: 'Self',                  x: 400, y: 260, size: 28, tone: 'accent',   axiom: 'centro arquetípico',         href: '/estudos' },
   { id: 'ego',      label: 'Ego',                   x: 290, y: 200, size: 18, tone: 'bright',   axiom: 'sujeito da consciência',     href: '' },
   { id: 'persona',  label: 'Persona',               x: 200, y: 130, size: 16, tone: 'bright',   axiom: 'máscara social',             href: '' },
   { id: 'sombra',   label: 'Sombra',                x: 250, y: 360, size: 22, tone: 'rubedo',   axiom: 'o que não se quis ser',      href: '/materiais#projecao' },
@@ -57,7 +57,7 @@ export const DEFAULT_CARTO_NODES = [
   { id: 'arc',      label: 'Arquétipo',             x: 660, y: 100, size: 16, tone: 'bright',   axiom: 'forma a priori',             href: '/materiais#hermeneutica-psicologia' },
   { id: 'complexo', label: 'Complexo',              x: 130, y: 280, size: 18, tone: 'bright',   axiom: 'núcleo afetivo autônomo',    href: '/materiais#consciencia-complexo-ego' },
   { id: 'sincron',  label: 'Sincronicidade',        x: 130, y: 440, size: 16, tone: 'rubedo',   axiom: 'sentido sem causa',          href: '' },
-  { id: 'individ',  label: 'Individuação',          x: 460, y: 460, size: 24, tone: 'accent',   axiom: 'tornar-se quem se é',        href: '/trilhas#aprofundando-na-clinica' },
+  { id: 'individ',  label: 'Individuação',          x: 460, y: 460, size: 24, tone: 'accent',   axiom: 'tornar-se quem se é',        href: '/estudos/aprofundando-na-clinica' },
   { id: 'mito',     label: 'Mito Pessoal',          x: 690, y: 450, size: 16, tone: 'citrinit', axiom: 'narrativa da alma',          href: '/blog' },
 ];
 
@@ -100,7 +100,7 @@ export const DEFAULT_HOMEPAGE = {
     portals: [
       { id: 'atendo',    visKey: 'psicoterapia', href: '/psicoterapia-analitica', glyph: '◈', eyebrow: 'Clínica',     title: 'Atendo',    body: 'Psicoterapia analítica online, em todo o Brasil — adolescentes, adultos e idosos.', cta: 'Conhecer o atendimento' },
       { id: 'blog',      visKey: 'blog',         href: '/blog',                   glyph: '✶', eyebrow: 'Ensaios',     title: 'Escrevo',   body: 'Textos sobre clínica, sonhos e símbolos — publicados periodicamente.',          cta: 'Ler os ensaios' },
-      { id: 'trilhas',   visKey: 'trilhas',      href: '/trilhas',                glyph: '✦', eyebrow: 'Estudo',      title: 'Trilhas',   body: 'Percursos guiados de leitura para entrar na obra de Jung pela porta certa.',     cta: 'Começar uma trilha' },
+      { id: 'estudos',   visKey: 'estudos',      href: '/estudos',                glyph: '✦', eyebrow: 'Estudo',      title: 'Estudos',   body: 'Guias curados de leitura para entrar na obra de Jung pela porta certa.',         cta: 'Começar a estudar' },
       { id: 'materiais', visKey: 'materiais',    href: '/materiais',              glyph: '◆', eyebrow: 'Sínteses',    title: 'Materiais', body: 'Resumos e mapas mentais para estudar e revisitar conceitos junguianos.',          cta: 'Ver materiais' },
       { id: 'glossario', visKey: 'glossario',    href: '/glossario',              glyph: '※', eyebrow: 'Léxico',      title: 'Glossário', body: 'Verbetes vivos da abordagem — definições curtas e remissões cruzadas.',          cta: 'Abrir o glossário' },
     ],
@@ -437,7 +437,6 @@ export const DEFAULT_VISIBILITY = {
   blog:       true,
   cursos:     true,
   materiais:  true,
-  trilhas:    true,
   bio:        true,
   estudos:    true,
   glossario:  true,
@@ -470,7 +469,7 @@ export const HOME_SECTION_META = [
   { id: 'approach',     label: 'Como trabalho (3 princípios)',          visKey: 'approach' },
   { id: 'about',        label: 'Sobre mim',                             visKey: 'about' },
   { id: 'prelude',      label: 'Prelúdio (editorial)',                  visKey: 'prelude' },
-  { id: 'trilhas',      label: 'Trilhas de estudo',                     visKey: 'trilhas' },
+  { id: 'estudos',      label: 'Estudos · Trilhas',                     visKey: 'estudos' },
   { id: 'jungQuote',    label: 'Citação de Jung' },
   { id: 'materials',    label: 'Materiais (preview)',                   visKey: 'materiais' },
   { id: 'blog',         label: 'Blog (preview)',                        visKey: 'blog' },

@@ -22,7 +22,6 @@ export default function Footer({ showMaterialsCta = false }) {
     { href: '/',          label: 'Home',      key: null },
     { href: '/#sobre',    label: 'Sobre',     key: 'about' },
     { href: '/materiais', label: 'Materiais', key: 'materiais' },
-    { href: '/trilhas',   label: 'Trilhas',   key: 'trilhas' },
     { href: '/estudos',   label: 'Estudos',   key: 'estudos' },
     { href: '/cursos',    label: 'Cursos',    key: 'cursos' },
     { href: '/blog',      label: 'Blog',      key: 'blog' },

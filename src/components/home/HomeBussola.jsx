@@ -45,8 +45,8 @@ const DEFAULT_PORTALS = [
   },
   {
     id: 'trilhas',
-    visKey: 'trilhas',
-    href: '/trilhas',
+    visKey: 'estudos',
+    href: '/estudos',
     glyph: '✦',
     eyebrow: 'Estudo',
     title: 'Trilhas',

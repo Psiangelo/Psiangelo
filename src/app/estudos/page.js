@@ -1,12 +1,13 @@
 import siteContent from '@/data/site-content.json';
-import EstudosClient from './EstudosClient';
+import { trilhas as TRILHAS_DEFAULT } from '@/data/trilhas';
+import EstudosListingClient from './EstudosListingClient';
 
 const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 
 export const metadata = {
-  title: 'Estudos · Sala de estudos em psicologia analítica',
+  title: 'Estudos · Guias de leitura em psicologia analítica',
   description:
-    'Curadoria de trilhas, verbetes, materiais e ensaios para quem quer estudar psicologia analítica junguiana — por onde começar, o que ler, em que ordem.',
+    'Guias de estudo em psicologia analítica junguiana — por onde começar, em que ordem ler, com vídeos, materiais, cartografia e ensaios em cada etapa.',
   alternates: { canonical: `${SITE_URL}/estudos/` },
   openGraph: {
     type: 'website',
@@ -14,12 +15,15 @@ export const metadata = {
     url: `${SITE_URL}/estudos/`,
     siteName: 'Psiangelo',
     title: 'Estudos · Psiangelo',
-    description: 'Curadoria de trilhas, verbetes, materiais e ensaios para estudar psicologia analítica.',
+    description: 'Guias de estudo em psicologia analítica junguiana.',
   },
 };
 
+function getInitialTrilhas() {
+  const stored = siteContent?.data?.angelo_admin_trilhas;
+  return Array.isArray(stored) && stored.length > 0 ? stored : TRILHAS_DEFAULT;
+}
+
 export default function EstudosPage() {
-  const posts = Array.isArray(siteContent?.data?.angelo_admin_blog) ? siteContent.data.angelo_admin_blog : [];
-  const courses = Array.isArray(siteContent?.data?.angelo_admin_courses) ? siteContent.data.angelo_admin_courses : [];
-  return <EstudosClient initialPosts={posts} initialCourses={courses} />;
+  return <EstudosListingClient initialTrilhas={getInitialTrilhas()} />;
 }
