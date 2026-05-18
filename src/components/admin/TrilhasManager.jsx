@@ -233,7 +233,7 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDr
 }
 
 /* ───────────────────── StageEditor ───────────────────── */
-function StageEditor({ stage, idx, onChange, onRemove, onMove, lists }) {
+function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDragOver, onDrop, isDragging, isOver, lists }) {
   const update = (k, v) => onChange({ ...stage, [k]: v });
 
   const addBlock = () => onChange({ ...stage, blocks: [...(stage.blocks || []), EMPTY_BLOCK('text')] });
@@ -266,9 +266,19 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, lists }) {
   };
 
   return (
-    <div className={CARD + ' space-y-4'}>
+    <div
+      draggable
+      onDragStart={(e) => { e.stopPropagation(); onDragStart?.(e, idx); try { e.dataTransfer.effectAllowed = 'move'; } catch {} }}
+      onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); onDragOver?.(idx); }}
+      onDragEnd={() => onDragOver?.(null)}
+      onDrop={(e) => { e.preventDefault(); e.stopPropagation(); onDrop?.(idx); }}
+      className={`${CARD} space-y-4 transition-all ${isDragging ? 'opacity-40' : ''} ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
+    >
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Etapa {idx + 1}</span>
+        <div className="flex items-center gap-2">
+          <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
+          <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Etapa {idx + 1}</span>
+        </div>
         <div className="flex gap-1">
           <button onClick={() => onMove(-1)} className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50]">↑</button>
           <button onClick={() => onMove(1)} className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50]">↓</button>
@@ -380,6 +390,21 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
     setDraft({ ...draft, stages: next });
   };
 
+  // Drag-and-drop entre etapas
+  const [stageDragIdx, setStageDragIdx] = useState(null);
+  const [stageOverIdx, setStageOverIdx] = useState(null);
+  const onStageDragStart = (e, i) => setStageDragIdx(i);
+  const onStageDragOver = (i) => setStageOverIdx(i);
+  const onStageDrop = (i) => {
+    if (stageDragIdx === null || stageDragIdx === i) { setStageDragIdx(null); setStageOverIdx(null); return; }
+    const next = [...draft.stages];
+    const [moved] = next.splice(stageDragIdx, 1);
+    next.splice(i, 0, moved);
+    setDraft({ ...draft, stages: next });
+    setStageDragIdx(null);
+    setStageOverIdx(null);
+  };
+
   return (
     <div className={CARD + ' space-y-5'}>
       <div className="flex items-center justify-between gap-3">
@@ -469,6 +494,11 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
               onChange={(ns) => updateStage(i, ns)}
               onRemove={() => removeStage(i)}
               onMove={(delta) => moveStage(i, delta)}
+              onDragStart={onStageDragStart}
+              onDragOver={onStageDragOver}
+              onDrop={onStageDrop}
+              isDragging={stageDragIdx === i}
+              isOver={stageOverIdx === i && stageDragIdx !== null && stageDragIdx !== i}
               lists={lists}
             />
           ))}

@@ -726,6 +726,105 @@ main:focus {
   text-decoration-color: #B48C50;
 }
 
+/* ====================== ESTUDOS · text block (markdown) ====================== */
+.estudos-text-block {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #B8AD9E;
+  font-size: 1.02rem;
+  line-height: 1.85;
+}
+.estudos-text-block p { margin: 0 0 1.15em 0; }
+.estudos-text-block strong {
+  color: #E8DDD0;
+  font-weight: 700;
+}
+.estudos-text-block em {
+  color: #D4A853;
+  font-style: italic;
+}
+.estudos-text-block a {
+  color: #B48C50;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(180, 140, 80, 0.45);
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+.estudos-text-block a:hover {
+  color: #E8DDD0;
+  text-decoration-color: #B48C50;
+}
+.estudos-text-block h1,
+.estudos-text-block h2,
+.estudos-text-block h3,
+.estudos-text-block h4 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  color: #E8DDD0;
+  font-weight: normal;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 1.6em 0 0.6em;
+}
+.estudos-text-block h1 { font-size: 1.9rem; }
+.estudos-text-block h2 { font-size: 1.5rem; padding-bottom: 0.3em; border-bottom: 1px solid rgba(180, 140, 80, 0.14); }
+.estudos-text-block h3 { font-size: 1.25rem; color: #D4C7B4; }
+.estudos-text-block h4 { font-size: 1.05rem; font-family: 'Instrument Sans', system-ui, sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #B48C50; }
+.estudos-text-block ul,
+.estudos-text-block ol {
+  margin: 0 0 1.2em 0;
+  padding-left: 1.4em;
+}
+.estudos-text-block li { margin: 0.3em 0; }
+.estudos-text-block ul > li {
+  list-style: none;
+  position: relative;
+}
+.estudos-text-block ul > li::before {
+  content: '·';
+  position: absolute;
+  left: -1em;
+  top: -0.15em;
+  color: #B48C50;
+  font-size: 1.5em;
+  line-height: 1;
+}
+.estudos-text-block ol > li::marker {
+  color: #B48C50;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.9em;
+}
+.estudos-text-block blockquote {
+  margin: 1.5em 0;
+  padding: 0.4em 0 0.4em 1.4em;
+  border-left: 2px solid rgba(180, 140, 80, 0.5);
+  color: #C9BFB0;
+  font-style: italic;
+}
+.estudos-text-block code {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.88em;
+  background: rgba(180, 140, 80, 0.08);
+  color: #D4A853;
+  padding: 0.08em 0.35em;
+  border-radius: 2px;
+}
+.estudos-text-block pre {
+  background: #131110;
+  border: 1px solid rgba(180, 140, 80, 0.1);
+  padding: 1em;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 0.86rem;
+}
+.estudos-text-block pre code { background: transparent; padding: 0; }
+.estudos-text-block hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(180, 140, 80, 0.3), transparent);
+  margin: 2.5em auto;
+  max-width: 70%;
+}
+
 /* ====================== VIEW TRANSITIONS (blog SPA) ====================== */
 /* Fallback suave entre listing e post view no /blog.
    Transicao full-page real rola quando document.startViewTransition e

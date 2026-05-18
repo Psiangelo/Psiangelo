@@ -6,9 +6,19 @@
  */
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { marked } from 'marked';
-import CartographyView from '@/components/cartography/CartographyView';
 import { resolveLink } from '@/lib/linkResolver';
+
+// CartographyView carrega d3-force pesado — só importa quando bloco cartografia aparece
+const CartographyView = dynamic(() => import('@/components/cartography/CartographyView'), {
+  ssr: false,
+  loading: () => (
+    <div className="my-8 aspect-video bg-bg-card border border-border-subtle flex items-center justify-center">
+      <span className="font-mono text-[0.6rem] text-text-dim tracking-[0.22em] uppercase">Carregando cartografia…</span>
+    </div>
+  ),
+});
 
 // Configura marked com defaults seguros
 marked.setOptions({ gfm: true, breaks: false });
