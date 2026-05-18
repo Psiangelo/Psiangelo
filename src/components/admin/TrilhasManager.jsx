@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getTrilhas, setTrilhas, getMaterials, getGlossario, getCartographies } from '@/lib/sitedata';
+import { getTrilhas, setTrilhas, getMaterials, getGlossario, getCartographies, getAreas, setAreas } from '@/lib/sitedata';
 import { LINK_KINDS, BLOCK_KINDS, migrateStageToBlocks, migrateTrilhaBlocks } from '@/lib/linkResolver';
+import { TRILHA_ICON_SLUGS, STAGE_ICON_SLUGS, ALL_ICON_SLUGS, DEFAULT_TRILHA_ICON, DEFAULT_STAGE_ICON, defaultIconForKind, iconLabel } from '@/lib/trilhaIcons';
+import { DEFAULT_AREA_ID, DEFAULT_AREAS, findArea } from '@/lib/areas';
 import MarkdownTextarea from './MarkdownTextarea';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
@@ -39,6 +41,8 @@ const EMPTY_TRILHA = () => ({
   subtitle: '',
   description: '',
   coverImage: '',
+  area: DEFAULT_AREA_ID,
+  icon: DEFAULT_TRILHA_ICON,
   archetype: '',
   duration: '',
   level: '',
@@ -50,8 +54,18 @@ const EMPTY_STAGE = (idx = 0) => ({
   slug: `etapa-${idx + 1}`,
   title: '',
   kind: 'leitura',
+  icon: DEFAULT_STAGE_ICON,
   summary: '',
+  intro: '',
   blocks: [],
+});
+
+const EMPTY_AREA = () => ({
+  id: `area-${Date.now().toString(36)}`,
+  slug: '',
+  label: '',
+  icon: 'compass',
+  color: '#B48C50',
 });
 
 const EMPTY_BLOCK = (type = 'text') => {
@@ -287,7 +301,7 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_180px] gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_160px_160px] gap-3">
         <div>
           <label className={LABEL}>Título</label>
           <input
@@ -303,8 +317,23 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
         </div>
         <div>
           <label className={LABEL}>Tipo (rótulo)</label>
-          <select value={stage.kind || 'leitura'} onChange={(e) => update('kind', e.target.value)} className={INPUT}>
+          <select
+            value={stage.kind || 'leitura'}
+            onChange={(e) => {
+              const kind = e.target.value;
+              // Se o ícone ainda é o default inferido do kind anterior, atualiza pro novo default
+              const wasInferred = !stage.icon || stage.icon === defaultIconForKind(stage.kind);
+              onChange({ ...stage, kind, icon: wasInferred ? defaultIconForKind(kind) : stage.icon });
+            }}
+            className={INPUT}
+          >
             {STAGE_KINDS.map((k) => <option key={k} value={k}>{k}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className={LABEL}>Ícone</label>
+          <select value={stage.icon || defaultIconForKind(stage.kind)} onChange={(e) => update('icon', e.target.value)} className={INPUT}>
+            {STAGE_ICON_SLUGS.map((slug) => <option key={slug} value={slug}>{iconLabel(slug)}</option>)}
           </select>
         </div>
       </div>
@@ -322,6 +351,16 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
       <div>
         <label className={LABEL}>Resumo (aparece no card e no hero da etapa)</label>
         <textarea value={stage.summary || ''} onChange={(e) => update('summary', e.target.value)} rows={2} className={TEXTAREA} placeholder="Frase curta que explica esta etapa..." />
+      </div>
+
+      <div>
+        <label className={LABEL}>Introdução (markdown, opcional — aparece antes dos blocos na página da etapa)</label>
+        <MarkdownTextarea
+          value={stage.intro || ''}
+          onChange={(v) => update('intro', v)}
+          rows={4}
+          placeholder="Prosa de abertura — apresente o tema da etapa, dê contexto, conduza o leitor para o conteúdo abaixo."
+        />
       </div>
 
       <div>
@@ -470,6 +509,36 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
         />
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className={LABEL}>Área (filtro principal em /estudos)</label>
+          <select
+            value={draft.area || DEFAULT_AREA_ID}
+            onChange={(e) => update('area', e.target.value)}
+            className={INPUT}
+          >
+            {(lists.areas || DEFAULT_AREAS).map((a) => (
+              <option key={a.slug} value={a.slug}>{a.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={LABEL}>Ícone da trilha</label>
+          <select
+            value={draft.icon || DEFAULT_TRILHA_ICON}
+            onChange={(e) => update('icon', e.target.value)}
+            className={INPUT}
+          >
+            {TRILHA_ICON_SLUGS.map((slug) => (
+              <option key={slug} value={slug}>{iconLabel(slug)}</option>
+            ))}
+          </select>
+          <p className="text-[10px] text-[#6E6458] font-sans mt-1.5 italic">
+            O SVG vem no próximo bloco visual — por enquanto o ícone é só uma referência.
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className={LABEL}>Nível (opcional)</label>
@@ -530,11 +599,131 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
   );
 }
 
+/* ───────────────────── AreasManager (sub-aba) ───────────────────── */
+function AreasManager({ addToast, addLogEntry }) {
+  const [list, setListLocal] = useState([]);
+
+  useEffect(() => {
+    setListLocal(getAreas());
+  }, []);
+
+  const persist = (next) => {
+    setListLocal(next);
+    setAreas(next);
+  };
+
+  const update = (idx, patch) => {
+    persist(list.map((a, i) => (i === idx ? { ...a, ...patch } : a)));
+  };
+
+  const move = (idx, delta) => {
+    const newIdx = idx + delta;
+    if (newIdx < 0 || newIdx >= list.length) return;
+    const next = [...list];
+    [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
+    persist(next);
+  };
+
+  const add = () => {
+    persist([...list, EMPTY_AREA()]);
+    addLogEntry?.('Área criada', 'Nova área');
+  };
+
+  const remove = (idx) => {
+    if (list.length <= 1) {
+      addToast?.('Mantenha ao menos uma área', 'error');
+      return;
+    }
+    if (!confirm(`Apagar a área "${list[idx]?.label || ''}"? Trilhas órfãs caem na primeira área.`)) return;
+    const removed = list[idx];
+    persist(list.filter((_, i) => i !== idx));
+    addLogEntry?.('Área apagada', removed?.label || '');
+    addToast?.('Área apagada', 'success');
+  };
+
+  const onSlugBlur = (idx, raw) => update(idx, { slug: slugify(raw), id: slugify(raw) || `area-${idx}` });
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h3 className="text-lg font-serif text-[#E8DDD0]">Áreas de estudo</h3>
+          <p className="text-xs text-[#6E6458] font-sans mt-1 max-w-2xl">
+            Cada trilha pertence a uma área. A área é o filtro principal de /estudos e define o accent visual.
+            Comece com psicologia junguiana — crie filosofia, antropologia, ou outras conforme expandir.
+          </p>
+        </div>
+        <button onClick={add} className={BTN_PRIMARY}>+ Nova área</button>
+      </div>
+
+      <div className="space-y-2">
+        {list.map((a, i) => (
+          <div key={a.id || i} className={CARD + ' grid grid-cols-1 md:grid-cols-[60px_1fr_1fr_140px_60px_auto] gap-3 items-end'}>
+            <div>
+              <label className={LABEL}>#</label>
+              <div className="flex flex-col gap-0.5">
+                <button onClick={() => move(i, -1)} disabled={i === 0} className="text-xs text-[#6E6458] hover:text-[#B48C50] disabled:opacity-30">↑</button>
+                <button onClick={() => move(i, 1)} disabled={i === list.length - 1} className="text-xs text-[#6E6458] hover:text-[#B48C50] disabled:opacity-30">↓</button>
+              </div>
+            </div>
+            <div>
+              <label className={LABEL}>Nome</label>
+              <input
+                value={a.label}
+                onChange={(e) => update(i, { label: e.target.value })}
+                placeholder="Psicologia Junguiana"
+                className={INPUT}
+              />
+            </div>
+            <div>
+              <label className={LABEL}>Slug (URL/referência)</label>
+              <input
+                value={a.slug}
+                onChange={(e) => update(i, { slug: e.target.value })}
+                onBlur={(e) => onSlugBlur(i, e.target.value)}
+                placeholder="psicologia-junguiana"
+                className={INPUT + ' font-mono text-xs'}
+              />
+            </div>
+            <div>
+              <label className={LABEL}>Ícone</label>
+              <select value={a.icon || 'compass'} onChange={(e) => update(i, { icon: e.target.value })} className={INPUT}>
+                {ALL_ICON_SLUGS.map((slug) => <option key={slug} value={slug}>{iconLabel(slug)}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL}>Cor</label>
+              <input
+                type="color"
+                value={a.color || '#B48C50'}
+                onChange={(e) => update(i, { color: e.target.value })}
+                className="w-full h-10 bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] rounded-lg cursor-pointer"
+                title={a.color}
+              />
+            </div>
+            <div>
+              <button onClick={() => remove(i)} className={BTN_DANGER}>Apagar</button>
+            </div>
+          </div>
+        ))}
+
+        {list.length === 0 && (
+          <div className="text-center py-10 border border-dashed border-[rgba(180,140,80,0.15)] rounded-xl">
+            <p className="text-sm text-[#6E6458] font-sans italic mb-4">Nenhuma área ainda.</p>
+            <button onClick={add} className={BTN_PRIMARY}>+ Criar primeira área</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────── Main ───────────────────── */
 export default function TrilhasManager({ addToast, addLogEntry }) {
+  const [tab, setTab] = useState('trilhas');
   const [list, setList] = useState([]);
   const [editing, setEditing] = useState(null);
-  const [lists, setLists] = useState({ materials: [], posts: [], courses: [], glossario: [], cartographies: [] });
+  const [lists, setLists] = useState({ materials: [], posts: [], courses: [], glossario: [], cartographies: [], areas: DEFAULT_AREAS });
 
   useEffect(() => {
     setList(getTrilhas());
@@ -548,6 +737,7 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
         courses: readJsonSafe('angelo_admin_courses', []),
         glossario: getGlossario() || [],
         cartographies: getCartographies() || [],
+        areas: getAreas() || DEFAULT_AREAS,
       });
     };
     sync();
@@ -593,6 +783,23 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
     persist(next);
   };
 
+  // Drag-and-drop entre trilhas no listing
+  const [trilhaDragIdx, setTrilhaDragIdx] = useState(null);
+  const [trilhaOverIdx, setTrilhaOverIdx] = useState(null);
+  const onTrilhaDrop = (i) => {
+    if (trilhaDragIdx === null || trilhaDragIdx === i) {
+      setTrilhaDragIdx(null);
+      setTrilhaOverIdx(null);
+      return;
+    }
+    const next = [...list];
+    const [moved] = next.splice(trilhaDragIdx, 1);
+    next.splice(i, 0, moved);
+    persist(next);
+    setTrilhaDragIdx(null);
+    setTrilhaOverIdx(null);
+  };
+
   const editingTrilha = editing === 'new' ? EMPTY_TRILHA() : list.find((t) => t.id === editing);
 
   return (
@@ -604,11 +811,39 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
             Cada trilha é um guia rico — etapas com texto, vídeos, materiais, cartografia e ensaios. Aparece em /estudos.
           </p>
         </div>
-        {!editing && <button onClick={() => setEditing('new')} className={BTN_PRIMARY}>+ Nova trilha</button>}
+        {tab === 'trilhas' && !editing && (
+          <button onClick={() => setEditing('new')} className={BTN_PRIMARY}>+ Nova trilha</button>
+        )}
       </div>
 
+      {/* Sub-tabs */}
+      {!editing && (
+        <div className="flex gap-1 border-b border-[rgba(180,140,80,0.15)]">
+          {[
+            { id: 'trilhas', label: 'Trilhas' },
+            { id: 'areas',   label: 'Áreas' },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition-colors border-b-2 -mb-px ${
+                tab === t.id
+                  ? 'text-[#B48C50] border-[#B48C50]'
+                  : 'text-[#6E6458] border-transparent hover:text-[#E8DDD0]'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
-        {editing && editingTrilha ? (
+        {tab === 'areas' && !editing ? (
+          <motion.div key="areas" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <AreasManager addToast={addToast} addLogEntry={addLogEntry} />
+          </motion.div>
+        ) : editing && editingTrilha ? (
           <motion.div key="editor" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
             <TrilhaEditor
               trilha={editingTrilha}
@@ -630,10 +865,39 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
               const migrated = migrateTrilhaBlocks(t);
               const slug = migrated.slug || migrated.id;
               const tagParts = [migrated.level, migrated.archetype, migrated.duration].filter(Boolean);
+              const area = findArea(lists.areas, migrated.area);
+              const isDragging = trilhaDragIdx === i;
+              const isOver = trilhaOverIdx === i && trilhaDragIdx !== null && trilhaDragIdx !== i;
               return (
-                <div key={t.id} className={CARD + ' flex items-start justify-between gap-4'}>
+                <div
+                  key={t.id}
+                  draggable
+                  onDragStart={(e) => { setTrilhaDragIdx(i); try { e.dataTransfer.effectAllowed = 'move'; } catch {} }}
+                  onDragOver={(e) => { e.preventDefault(); setTrilhaOverIdx(i); }}
+                  onDragEnd={() => { setTrilhaDragIdx(null); setTrilhaOverIdx(null); }}
+                  onDrop={(e) => { e.preventDefault(); onTrilhaDrop(i); }}
+                  className={`${CARD} flex items-start justify-between gap-4 transition-all ${
+                    isDragging ? 'opacity-40' : ''
+                  } ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
+                >
+                  <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none pt-1 text-lg" title="Arraste para reordenar">⋮⋮</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {area && (
+                        <span
+                          className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+                          style={{
+                            color: area.color,
+                            background: `${area.color}1a`,
+                            border: `1px solid ${area.color}40`,
+                          }}
+                        >
+                          {area.label}
+                        </span>
+                      )}
+                      <span className="font-mono text-[10px] text-[#6E6458] tracking-widest uppercase">
+                        {iconLabel(migrated.icon)}
+                      </span>
                       {tagParts.length > 0 && (
                         <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">{tagParts.join(' · ')}</span>
                       )}

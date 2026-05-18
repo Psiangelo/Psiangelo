@@ -1,3 +1,6 @@
+import { DEFAULT_AREA_ID } from '@/lib/areas';
+import { defaultIconForKind, DEFAULT_TRILHA_ICON } from '@/lib/trilhaIcons';
+
 /**
  * linkResolver — resolve um `link` rico em uma URL navegável + metadados.
  *
@@ -222,12 +225,16 @@ function slugifyTitle(s) {
  */
 export function migrateStageToBlocks(stage, idx = 0) {
   const migrated = migrateStageLink(stage || {});
+  const kind = migrated.kind || 'leitura';
   const base = {
     id: migrated.id || `stage-${idx}-${Date.now().toString(36).slice(-4)}`,
     slug: migrated.slug || slugifyTitle(migrated.title || `etapa-${idx + 1}`),
     title: migrated.title || `Etapa ${idx + 1}`,
-    kind: migrated.kind || 'leitura',
+    kind,
+    icon: migrated.icon || defaultIconForKind(kind),
+    intro: typeof migrated.intro === 'string' ? migrated.intro : '',
     summary: migrated.summary || migrated.detail || '',
+    coverImage: migrated.coverImage || '',
   };
   if (Array.isArray(migrated.blocks) && migrated.blocks.length > 0) {
     return { ...base, blocks: migrated.blocks };
@@ -244,6 +251,8 @@ export function migrateTrilhaBlocks(trilha) {
   if (!trilha) return trilha;
   return {
     ...trilha,
+    area: trilha.area || DEFAULT_AREA_ID,
+    icon: trilha.icon || DEFAULT_TRILHA_ICON,
     stages: (trilha.stages || []).map((s, i) => migrateStageToBlocks(s, i)),
   };
 }

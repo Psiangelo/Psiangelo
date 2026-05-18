@@ -17,6 +17,7 @@ import {
   materials as MATERIALS_DEFAULT,
   comingSoon as COMING_SOON_DEFAULT,
 } from '@/data/materials';
+import { DEFAULT_AREAS, normalizeAreas } from '@/lib/areas';
 
 export const SITEDATA_KEYS = {
   trilhas:        'angelo_admin_trilhas',
@@ -40,6 +41,7 @@ export const SITEDATA_KEYS = {
   glossarioPage:  'angelo_admin_glossario_page',
   estudosPage:    'angelo_admin_estudos_page',
   cartographies:  'angelo_admin_cartographies',
+  areas:          'angelo_admin_areas',
 };
 
 /* ===================================================================
@@ -228,6 +230,16 @@ function writeJson(key, value) {
 
 export const getTrilhas    = () => readJson(SITEDATA_KEYS.trilhas, TRILHAS_DEFAULT);
 export const setTrilhas    = (v) => writeJson(SITEDATA_KEYS.trilhas, v);
+
+/* ===================================================================
+   ÁREAS — categorias de trilhas (psicologia junguiana, filosofia, ...)
+   Cada trilha referencia uma área (slug). A área dita ícone + accent
+   visual no listing /estudos e na detail.
+=================================================================== */
+
+export { DEFAULT_AREAS } from '@/lib/areas';
+export const getAreas = () => normalizeAreas(readJson(SITEDATA_KEYS.areas, null));
+export const setAreas = (v) => writeJson(SITEDATA_KEYS.areas, v);
 /* ===================================================================
    CARTOGRAFIAS — multi (admin gerencia N cartografias, cada uma com slug)
    - Cartografia "home" é a padrão (substitui o singular antigo)
