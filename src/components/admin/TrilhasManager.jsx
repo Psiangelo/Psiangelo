@@ -6,6 +6,8 @@ import { getTrilhas, setTrilhas, getMaterials, getGlossario, getCartographies, g
 import { LINK_KINDS, BLOCK_KINDS, migrateStageToBlocks, migrateTrilhaBlocks } from '@/lib/linkResolver';
 import { TRILHA_ICON_SLUGS, STAGE_ICON_SLUGS, ALL_ICON_SLUGS, DEFAULT_TRILHA_ICON, DEFAULT_STAGE_ICON, defaultIconForKind, iconLabel } from '@/lib/trilhaIcons';
 import { DEFAULT_AREA_ID, DEFAULT_AREAS, findArea } from '@/lib/areas';
+import TrilhaIcon from '@/components/estudos/icons';
+import IconPicker from './IconPicker';
 import MarkdownTextarea from './MarkdownTextarea';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
@@ -292,7 +294,13 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full border border-[rgba(180,140,80,0.3)] text-[#B48C50]">
+            <TrilhaIcon name={stage.icon || defaultIconForKind(stage.kind)} size={16} />
+          </span>
           <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Etapa {idx + 1}</span>
+          {stage.title && (
+            <span className="font-serif text-sm text-[#E8DDD0] truncate max-w-[280px]">· {stage.title}</span>
+          )}
         </div>
         <div className="flex gap-1">
           <button onClick={() => onMove(-1)} className="px-2 py-1 text-xs text-[#6E6458] hover:text-[#B48C50]">↑</button>
@@ -301,7 +309,7 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_160px_160px] gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_180px] gap-3">
         <div>
           <label className={LABEL}>Título</label>
           <input
@@ -330,12 +338,15 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, onDragStart, onDr
             {STAGE_KINDS.map((k) => <option key={k} value={k}>{k}</option>)}
           </select>
         </div>
-        <div>
-          <label className={LABEL}>Ícone</label>
-          <select value={stage.icon || defaultIconForKind(stage.kind)} onChange={(e) => update('icon', e.target.value)} className={INPUT}>
-            {STAGE_ICON_SLUGS.map((slug) => <option key={slug} value={slug}>{iconLabel(slug)}</option>)}
-          </select>
-        </div>
+      </div>
+
+      <div>
+        <label className={LABEL}>Ícone da etapa</label>
+        <IconPicker
+          value={stage.icon || defaultIconForKind(stage.kind)}
+          onChange={(slug) => update('icon', slug)}
+          slugs={STAGE_ICON_SLUGS}
+        />
       </div>
 
       <div>
@@ -524,18 +535,17 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
         </div>
         <div>
           <label className={LABEL}>Ícone da trilha</label>
-          <select
-            value={draft.icon || DEFAULT_TRILHA_ICON}
-            onChange={(e) => update('icon', e.target.value)}
-            className={INPUT}
-          >
-            {TRILHA_ICON_SLUGS.map((slug) => (
-              <option key={slug} value={slug}>{iconLabel(slug)}</option>
-            ))}
-          </select>
-          <p className="text-[10px] text-[#6E6458] font-sans mt-1.5 italic">
-            O SVG vem no próximo bloco visual — por enquanto o ícone é só uma referência.
-          </p>
+          {(() => {
+            const activeArea = findArea(lists.areas || DEFAULT_AREAS, draft.area);
+            return (
+              <IconPicker
+                value={draft.icon || DEFAULT_TRILHA_ICON}
+                onChange={(slug) => update('icon', slug)}
+                slugs={TRILHA_ICON_SLUGS}
+                accent={activeArea?.color || '#B48C50'}
+              />
+            );
+          })()}
         </div>
       </div>
 
@@ -658,52 +668,73 @@ function AreasManager({ addToast, addLogEntry }) {
 
       <div className="space-y-2">
         {list.map((a, i) => (
-          <div key={a.id || i} className={CARD + ' grid grid-cols-1 md:grid-cols-[60px_1fr_1fr_140px_60px_auto] gap-3 items-end'}>
-            <div>
-              <label className={LABEL}>#</label>
-              <div className="flex flex-col gap-0.5">
-                <button onClick={() => move(i, -1)} disabled={i === 0} className="text-xs text-[#6E6458] hover:text-[#B48C50] disabled:opacity-30">↑</button>
-                <button onClick={() => move(i, 1)} disabled={i === list.length - 1} className="text-xs text-[#6E6458] hover:text-[#B48C50] disabled:opacity-30">↓</button>
+          <div key={a.id || i} className={CARD + ' space-y-3'}>
+            <div className="grid grid-cols-1 md:grid-cols-[80px_1fr_1fr_70px_auto] gap-3 items-end">
+              <div>
+                <label className={LABEL}>Ordem</label>
+                <div className="flex items-center gap-1 h-10">
+                  <span
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-full border"
+                    style={{ color: a.color || '#B48C50', borderColor: `${a.color || '#B48C50'}55` }}
+                    title={iconLabel(a.icon)}
+                  >
+                    <TrilhaIcon name={a.icon || 'compass'} size={18} />
+                  </span>
+                  <div className="flex flex-col">
+                    <button onClick={() => move(i, -1)} disabled={i === 0} className="text-xs text-[#6E6458] hover:text-[#B48C50] disabled:opacity-30 leading-none">↑</button>
+                    <button onClick={() => move(i, 1)} disabled={i === list.length - 1} className="text-xs text-[#6E6458] hover:text-[#B48C50] disabled:opacity-30 leading-none">↓</button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className={LABEL}>Nome</label>
+                <input
+                  value={a.label}
+                  onChange={(e) => update(i, { label: e.target.value })}
+                  placeholder="Psicologia Junguiana"
+                  className={INPUT}
+                />
+              </div>
+              <div>
+                <label className={LABEL}>Slug (URL/referência)</label>
+                <input
+                  value={a.slug}
+                  onChange={(e) => update(i, { slug: e.target.value })}
+                  onBlur={(e) => onSlugBlur(i, e.target.value)}
+                  placeholder="psicologia-junguiana"
+                  className={INPUT + ' font-mono text-xs'}
+                />
+              </div>
+              <div>
+                <label className={LABEL}>Cor</label>
+                <input
+                  type="color"
+                  value={a.color || '#B48C50'}
+                  onChange={(e) => update(i, { color: e.target.value })}
+                  className="w-full h-10 bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] rounded-lg cursor-pointer"
+                  title={a.color}
+                />
+              </div>
+              <div>
+                <button onClick={() => remove(i)} className={BTN_DANGER}>Apagar</button>
               </div>
             </div>
-            <div>
-              <label className={LABEL}>Nome</label>
-              <input
-                value={a.label}
-                onChange={(e) => update(i, { label: e.target.value })}
-                placeholder="Psicologia Junguiana"
-                className={INPUT}
-              />
-            </div>
-            <div>
-              <label className={LABEL}>Slug (URL/referência)</label>
-              <input
-                value={a.slug}
-                onChange={(e) => update(i, { slug: e.target.value })}
-                onBlur={(e) => onSlugBlur(i, e.target.value)}
-                placeholder="psicologia-junguiana"
-                className={INPUT + ' font-mono text-xs'}
-              />
-            </div>
-            <div>
-              <label className={LABEL}>Ícone</label>
-              <select value={a.icon || 'compass'} onChange={(e) => update(i, { icon: e.target.value })} className={INPUT}>
-                {ALL_ICON_SLUGS.map((slug) => <option key={slug} value={slug}>{iconLabel(slug)}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className={LABEL}>Cor</label>
-              <input
-                type="color"
-                value={a.color || '#B48C50'}
-                onChange={(e) => update(i, { color: e.target.value })}
-                className="w-full h-10 bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] rounded-lg cursor-pointer"
-                title={a.color}
-              />
-            </div>
-            <div>
-              <button onClick={() => remove(i)} className={BTN_DANGER}>Apagar</button>
-            </div>
+
+            <details className="group">
+              <summary className="cursor-pointer text-[11px] font-mono uppercase tracking-widest text-[#6E6458] hover:text-[#B48C50] flex items-center gap-2 select-none list-none">
+                <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+                <span>Trocar ícone · atualmente <span style={{ color: a.color || '#B48C50' }}>{iconLabel(a.icon)}</span></span>
+              </summary>
+              <div className="pt-3">
+                <IconPicker
+                  value={a.icon || 'compass'}
+                  onChange={(slug) => update(i, { icon: slug })}
+                  slugs={ALL_ICON_SLUGS}
+                  accent={a.color || '#B48C50'}
+                  compact
+                />
+              </div>
+            </details>
           </div>
         ))}
 
@@ -881,23 +912,32 @@ export default function TrilhasManager({ addToast, addLogEntry }) {
                   } ${isOver ? 'ring-2 ring-[#B48C50]' : ''}`}
                 >
                   <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none pt-1 text-lg" title="Arraste para reordenar">⋮⋮</span>
+                  <span
+                    className="inline-flex items-center justify-center w-12 h-12 rounded-full border shrink-0 mt-0.5"
+                    style={{
+                      color: area?.color || '#B48C50',
+                      borderColor: `${area?.color || '#B48C50'}55`,
+                      background: `${area?.color || '#B48C50'}0d`,
+                    }}
+                    title={iconLabel(migrated.icon)}
+                  >
+                    <TrilhaIcon name={migrated.icon} size={26} />
+                  </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       {area && (
                         <span
-                          className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
+                          className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 rounded"
                           style={{
                             color: area.color,
                             background: `${area.color}1a`,
                             border: `1px solid ${area.color}40`,
                           }}
                         >
+                          <TrilhaIcon name={area.icon} size={12} />
                           {area.label}
                         </span>
                       )}
-                      <span className="font-mono text-[10px] text-[#6E6458] tracking-widest uppercase">
-                        {iconLabel(migrated.icon)}
-                      </span>
                       {tagParts.length > 0 && (
                         <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">{tagParts.join(' · ')}</span>
                       )}
