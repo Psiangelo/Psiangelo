@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTrilhas, setTrilhas, getMaterials, getGlossario, getCartographies } from '@/lib/sitedata';
 import { LINK_KINDS, BLOCK_KINDS, migrateStageToBlocks, migrateTrilhaBlocks } from '@/lib/linkResolver';
+import MarkdownTextarea from './MarkdownTextarea';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y';
@@ -36,6 +37,7 @@ const EMPTY_TRILHA = () => ({
   slug: '',
   name: '',
   subtitle: '',
+  coverImage: '',
   archetype: '',
   duration: '',
   level: '',
@@ -135,7 +137,7 @@ function LinkPicker({ link, onChange, lists }) {
 }
 
 /* ───────────────────── BlockEditor (1 bloco) ───────────────────── */
-function BlockEditor({ block, idx, onChange, onRemove, onMove, lists }) {
+function BlockEditor({ block, idx, onChange, onRemove, onMove, onDragStart, onDragOver, onDrop, isDragging, isOver, lists }) {
   const update = (k, v) => onChange({ ...block, [k]: v });
 
   const renderFields = () => {
@@ -144,7 +146,12 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, lists }) {
         return (
           <div>
             <label className={LABEL}>Texto (parágrafos separados por linha em branco)</label>
-            <textarea value={block.body || ''} onChange={(e) => update('body', e.target.value)} rows={6} className={TEXTAREA} placeholder="Pode usar *itálico dourado* com asteriscos." />
+            <MarkdownTextarea
+              value={block.body || ''}
+              onChange={(v) => update('body', v)}
+              rows={6}
+              placeholder="**negrito**, *itálico dourado*, [link](url), citações com >"
+            />
           </div>
         );
       case 'link':
@@ -196,9 +203,19 @@ function BlockEditor({ block, idx, onChange, onRemove, onMove, lists }) {
   };
 
   return (
-    <div className="bg-[#0E0C0A] border border-[rgba(180,140,80,0.12)] rounded-lg p-4 space-y-3">
+    <div
+      draggable
+      onDragStart={(e) => onDragStart?.(e, idx)}
+      onDragOver={(e) => { e.preventDefault(); onDragOver?.(idx); }}
+      onDragEnd={() => onDragOver?.(null)}
+      onDrop={(e) => { e.preventDefault(); onDrop?.(idx); }}
+      className={`bg-[#0E0C0A] border rounded-lg p-4 space-y-3 transition-all ${
+        isDragging ? 'opacity-40' : ''
+      } ${isOver ? 'border-[#B48C50] border-2' : 'border-[rgba(180,140,80,0.12)]'}`}
+    >
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
+          <span className="cursor-grab text-[#6E6458] hover:text-[#B48C50] select-none" title="Arraste para reordenar">⋮⋮</span>
           <span className="font-mono text-[10px] text-[#B48C50] tracking-widest uppercase">Bloco {idx + 1}</span>
           <select value={block.type} onChange={(e) => onChange(EMPTY_BLOCK(e.target.value))} className={INPUT + ' text-xs max-w-[280px]'}>
             {BLOCK_KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
@@ -228,6 +245,24 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, lists }) {
     if (swap < 0 || swap >= next.length) return;
     [next[i], next[swap]] = [next[swap], next[i]];
     onChange({ ...stage, blocks: next });
+  };
+
+  // Drag-and-drop de blocos
+  const [dragIdx, setDragIdx] = useState(null);
+  const [overIdx, setOverIdx] = useState(null);
+  const onBlockDragStart = (e, i) => {
+    setDragIdx(i);
+    try { e.dataTransfer.effectAllowed = 'move'; } catch {}
+  };
+  const onBlockDragOver = (i) => setOverIdx(i);
+  const onBlockDrop = (i) => {
+    if (dragIdx === null || dragIdx === i) { setDragIdx(null); setOverIdx(null); return; }
+    const next = [...(stage.blocks || [])];
+    const [moved] = next.splice(dragIdx, 1);
+    next.splice(i, 0, moved);
+    onChange({ ...stage, blocks: next });
+    setDragIdx(null);
+    setOverIdx(null);
   };
 
   return (
@@ -279,6 +314,21 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, lists }) {
       </div>
 
       <div>
+        <label className={LABEL}>Imagem de capa da etapa (opcional)</label>
+        <input
+          value={stage.coverImage || ''}
+          onChange={(e) => update('coverImage', e.target.value)}
+          placeholder="https://... ou /images/capa.jpg"
+          className={INPUT + ' text-xs font-mono'}
+        />
+        {stage.coverImage && (
+          <div className="mt-2 w-32 h-20 rounded overflow-hidden border border-[rgba(180,140,80,0.15)]">
+            <img src={stage.coverImage} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" onError={(e) => { e.target.style.display = 'none'; }} />
+          </div>
+        )}
+      </div>
+
+      <div>
         <div className="flex items-center justify-between mb-3">
           <label className={LABEL + ' mb-0'}>
             Conteúdo da etapa ({(stage.blocks || []).length} {(stage.blocks || []).length === 1 ? 'bloco' : 'blocos'})
@@ -294,6 +344,11 @@ function StageEditor({ stage, idx, onChange, onRemove, onMove, lists }) {
               onChange={(nb) => updateBlock(i, nb)}
               onRemove={() => removeBlock(i)}
               onMove={(delta) => moveBlock(i, delta)}
+              onDragStart={onBlockDragStart}
+              onDragOver={onBlockDragOver}
+              onDrop={onBlockDrop}
+              isDragging={dragIdx === i}
+              isOver={overIdx === i && dragIdx !== null && dragIdx !== i}
               lists={lists}
             />
           ))}
@@ -362,6 +417,20 @@ function TrilhaEditor({ trilha, onChange, onCancel, onDelete, lists }) {
             onBlur={(e) => update('slug', slugify(e.target.value))}
             className={INPUT + ' font-mono text-xs'}
           />
+        </div>
+        <div>
+          <label className={LABEL}>Imagem de capa (opcional)</label>
+          <input
+            value={draft.coverImage || ''}
+            onChange={(e) => update('coverImage', e.target.value)}
+            placeholder="https://... ou /images/capa.jpg"
+            className={INPUT + ' text-xs font-mono'}
+          />
+          {draft.coverImage && (
+            <div className="mt-2 w-40 h-24 rounded overflow-hidden border border-[rgba(180,140,80,0.15)]">
+              <img src={draft.coverImage} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" onError={(e) => { e.target.style.display = 'none'; }} />
+            </div>
+          )}
         </div>
       </div>
 

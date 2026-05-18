@@ -49,42 +49,57 @@ export default function EstudosListingClient({ initialTrilhas }) {
                   <motion.div key={t.id || slug} variants={fadeUp}>
                     <Link
                       href={`/estudos/${slug}`}
-                      className="group block h-full bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors p-6"
+                      className="group relative block h-full bg-bg-card border border-border-subtle hover:border-accent/40 transition-colors overflow-hidden flex flex-col min-h-[240px]"
                     >
-                      <div className="flex items-center gap-2 mb-4 flex-wrap">
-                        {t.level && (
-                          <span
-                            className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1"
-                            style={{ background: tone.bg, color: tone.color, border: `1px solid ${tone.border}` }}
-                          >
-                            {t.level}
-                          </span>
-                        )}
-                        {t.duration && (
-                          <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
-                            {t.duration}
-                          </span>
-                        )}
-                        <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.18em] uppercase ml-auto">
-                          {(t.stages || []).length} etapas
-                        </span>
-                      </div>
-
-                      <h2 className="font-serif text-[1.5rem] md:text-2xl text-text-bright group-hover:text-accent transition-colors leading-tight mb-3">
-                        {renderHighlightedTitle(t.name)}
-                      </h2>
-
-                      {t.subtitle && (
-                        <p className="font-serif italic text-text-dim text-[0.95rem] leading-[1.65] mb-4">
-                          {t.subtitle}
-                        </p>
+                      {t.coverImage && (
+                        <div className="absolute inset-0">
+                          <img
+                            src={t.coverImage}
+                            alt=""
+                            className="w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-500"
+                            referrerPolicy="no-referrer"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-bg-card via-bg-card/95 to-bg-card/40" />
+                        </div>
                       )}
 
-                      <div className="mt-auto pt-4 border-t border-border-subtle/50 inline-flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">
-                        Começar
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform">
-                          <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
+                      <div className="relative p-6 flex-1 flex flex-col">
+                        <div className="flex items-center gap-2 mb-4 flex-wrap">
+                          {t.level && (
+                            <span
+                              className="font-mono text-[0.55rem] tracking-[0.22em] uppercase px-2 py-1"
+                              style={{ background: tone.bg, color: tone.color, border: `1px solid ${tone.border}` }}
+                            >
+                              {t.level}
+                            </span>
+                          )}
+                          {t.duration && (
+                            <span className="font-mono text-[0.55rem] text-text-dim/70 tracking-[0.18em] uppercase">
+                              {t.duration}
+                            </span>
+                          )}
+                          <span className="font-mono text-[0.55rem] text-text-dim/60 tracking-[0.18em] uppercase ml-auto">
+                            {(t.stages || []).length} etapas
+                          </span>
+                        </div>
+
+                        <h2 className="font-serif text-[1.5rem] md:text-2xl text-text-bright group-hover:text-accent transition-colors leading-tight mb-3">
+                          {renderHighlightedTitle(t.name)}
+                        </h2>
+
+                        {t.subtitle && (
+                          <p className="font-serif italic text-text-dim text-[0.95rem] leading-[1.65] mb-4">
+                            {t.subtitle}
+                          </p>
+                        )}
+
+                        <div className="mt-auto pt-4 border-t border-border-subtle/50 inline-flex items-center gap-2 font-mono text-[0.6rem] text-accent tracking-[0.22em] uppercase">
+                          Começar
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </div>
                       </div>
                     </Link>
                   </motion.div>

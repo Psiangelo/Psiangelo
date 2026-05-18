@@ -50,8 +50,21 @@ export default function TrilhaDetailClient({ initialTrilha }) {
           <span className="text-text-dim/70">{trilha.name}</span>
         </nav>
 
+        {/* Cover image como banner (se houver) */}
+        {trilha.coverImage && (
+          <div className="relative w-full h-[280px] md:h-[380px] mb-14 overflow-hidden">
+            <img
+              src={trilha.coverImage}
+              alt=""
+              className="w-full h-full object-cover opacity-50"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
+          </div>
+        )}
+
         {/* Hero da trilha */}
-        <header className="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 mb-14">
+        <header className={`max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 mb-14 ${trilha.coverImage ? '-mt-32 relative z-10' : ''}`}>
           <div className="flex flex-wrap items-center gap-2 mb-5">
             {trilha.level && (
               <span

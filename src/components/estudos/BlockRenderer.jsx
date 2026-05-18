@@ -6,8 +6,12 @@
  */
 
 import Link from 'next/link';
+import { marked } from 'marked';
 import CartographyView from '@/components/cartography/CartographyView';
 import { resolveLink } from '@/lib/linkResolver';
+
+// Configura marked com defaults seguros
+marked.setOptions({ gfm: true, breaks: false });
 
 function ytEmbed(url) {
   if (!url) return null;
@@ -36,13 +40,13 @@ function driveEmbed(url) {
 }
 
 function renderText(body) {
-  const paragraphs = String(body || '').split(/\n\n+/).filter(Boolean);
+  // Parse markdown completo via marked (GFM): bold, italic, links, listas, quotes, code, headers
+  const html = marked.parse(String(body || ''));
   return (
-    <div className="prose-glossario">
-      {paragraphs.map((p, i) => (
-        <p key={i} className="font-serif text-[1.02rem] text-text leading-[1.85] mb-5">{p}</p>
-      ))}
-    </div>
+    <div
+      className="prose-glossario estudos-text-block"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }
 
