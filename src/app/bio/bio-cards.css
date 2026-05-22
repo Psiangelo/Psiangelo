@@ -696,6 +696,48 @@
   --desc-on-flat: #B8AD9E;
 }
 
+/* ===== 5 accents adicionais (paleta hermética estendida) ===== */
+
+.bio-card[data-accent="albedo"] {
+  --flat: #F4ECD5;             /* marfim/cinza-claro alquímico */
+  --media-1: #2E2418;          /* sépia muito escuro */
+  --media-2: #6E5A40;          /* sépia médio */
+  --text-on-flat: #2A2014;
+  --desc-on-flat: #5A4830;
+}
+
+.bio-card[data-accent="citrinit"] {
+  --flat: #F4D88A;             /* amarelo cítrico claro */
+  --media-1: #4A3208;          /* mostarda escura */
+  --media-2: #8B6F1E;          /* ocre profundo */
+  --text-on-flat: #2E1F04;
+  --desc-on-flat: #5C3F14;
+}
+
+.bio-card[data-accent="bronze"] {
+  --flat: #C9A678;             /* bronze antigo metálico */
+  --media-1: #1A0F06;          /* preto-marrom */
+  --media-2: #543820;          /* castanho profundo */
+  --text-on-flat: #1A0F04;
+  --desc-on-flat: #3E2410;
+}
+
+.bio-card[data-accent="olive"] {
+  --flat: #D5CCA8;             /* verde-oliva apagado, lúgubre */
+  --media-1: #2A2E14;          /* musgo escuro */
+  --media-2: #5C5230;          /* oliva médio */
+  --text-on-flat: #1F1E08;
+  --desc-on-flat: #3F3A1F;
+}
+
+.bio-card[data-accent="wine"] {
+  --flat: #D9B8B0;             /* rosa-vinho desbotado */
+  --media-1: #2A0A0C;          /* vinho profundo, quase tinto */
+  --media-2: #6E1F1E;          /* bordô médio */
+  --text-on-flat: #2A0808;
+  --desc-on-flat: #5A1F20;
+}
+
 /* aplica camadas */
 .bio-card[data-accent] {
   background: var(--flat, #E9DAB6);

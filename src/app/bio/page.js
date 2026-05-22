@@ -7,23 +7,21 @@ import { img } from '@/lib/basepath';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
 import { BioCardIcon, hasBioIcon, inferBioIcon } from '@/components/bio/BioCardIcons';
+import { BIO_ACCENT_CYCLE, BIO_ACCENT_VALUES } from '@/components/bio/BioAccents';
 import './bio-cards.css';
 
 /**
  * /bio — Linktree mobile-first, clone fiel do /bio da Tulipa
- * em paleta Psiangelo (dourado · sépia · creme · rubedo · ink).
+ * em paleta Psiangelo (10 accents herméticos).
  *
  * Estrutura idêntica: mesh + petals ambient + ornamentos laterais +
  * head (avatar conic, name, tagline com traços, bio) + wave divider +
  * cards blob (simple OU rich com mídia 140px) + footer.
  */
 
-const ACCENT_CYCLE = ['gold', 'cream', 'sepia', 'rubedo', 'ink'];
-const ACCENT_VALID = new Set(ACCENT_CYCLE);
-
 function accentFor(link, idx) {
-  if (link.accent && ACCENT_VALID.has(link.accent)) return link.accent;
-  return ACCENT_CYCLE[idx % ACCENT_CYCLE.length];
+  if (link.accent && BIO_ACCENT_VALUES.has(link.accent)) return link.accent;
+  return BIO_ACCENT_CYCLE[idx % BIO_ACCENT_CYCLE.length];
 }
 
 function isExternal(href) {

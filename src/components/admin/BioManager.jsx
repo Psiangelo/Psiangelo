@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getBio, setBio, DEFAULT_BIO } from '@/lib/sitedata';
 import { BIO_ICON_OPTIONS, BioCardIcon, hasBioIcon, inferBioIcon } from '@/components/bio/BioCardIcons';
+import { BIO_ACCENTS } from '@/components/bio/BioAccents';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y min-h-[80px]';
@@ -558,6 +559,13 @@ export default function BioManager({ addToast, addLogEntry }) {
                     Card mostrando a <strong>imagem</strong>. Remova-a pra usar um ícone SVG.
                   </p>
                 )}
+
+                {/* Picker de cor/accent — sempre disponível, afeta o card todo */}
+                <ColorPicker
+                  value={link.accent || ''}
+                  positionInList={idx}
+                  onChange={(name) => updateLink(idx, 'accent', name)}
+                />
               </div>
             );
           })}
@@ -632,6 +640,82 @@ function IconPicker({ value, onChange, inferred }) {
       </div>
       <p className="text-[10px] text-[#6E6458] italic">
         Clique num ícone pra fixar. Sem seleção, o /bio escolhe sozinho pelo nome do link (ex.: "Contato" → WhatsApp).
+      </p>
+    </div>
+  );
+}
+
+/* ---------- Picker visual de cor/accent (paleta hermética) ---------- */
+function ColorPicker({ value, onChange, positionInList = 0 }) {
+  const selected = value || '';
+  // accent inferido pelo ciclo padrão quando nada foi escolhido
+  const cycleFallback = BIO_ACCENTS[positionInList % BIO_ACCENTS.length]?.value;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <label className="block text-[10px] uppercase tracking-widest text-[#6E6458] font-sans">
+          Cor do card
+          {!selected && cycleFallback && (
+            <span className="ml-2 normal-case tracking-normal text-[#B48C50] italic">
+              auto: {BIO_ACCENTS.find((a) => a.value === cycleFallback)?.label?.toLowerCase()}
+            </span>
+          )}
+        </label>
+        {selected && (
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="text-[10px] uppercase tracking-widest text-[#6E6458] hover:text-[#B48C50] transition-colors"
+            title="Voltar pro ciclo automático de cores"
+          >
+            usar automático
+          </button>
+        )}
+      </div>
+      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+        {BIO_ACCENTS.map((acc) => {
+          const isSelected = selected === acc.value;
+          const isAuto = !selected && cycleFallback === acc.value;
+          // preview: gradient mídia esquerda → flat direita
+          const bg = `linear-gradient(90deg, ${acc.media1} 0%, ${acc.media2} 30%, ${acc.flat} 60%, ${acc.flat} 100%)`;
+          return (
+            <button
+              key={acc.value}
+              type="button"
+              onClick={() => onChange(acc.value)}
+              title={`${acc.label} — ${acc.description}`}
+              aria-label={acc.label}
+              aria-pressed={isSelected}
+              className={
+                'group relative aspect-[5/4] rounded-lg border transition-all overflow-hidden ' +
+                (isSelected
+                  ? 'border-[#D4A853] shadow-[0_0_0_2px_rgba(212,168,83,0.55)]'
+                  : isAuto
+                    ? 'border-[rgba(180,140,80,0.45)]'
+                    : 'border-[rgba(180,140,80,0.12)] hover:border-[#B48C50]')
+              }
+              style={{ background: bg }}
+            >
+              {/* label embaixo, em barra translúcida pra dar legibilidade */}
+              <span
+                className="absolute bottom-0 left-0 right-0 px-1 py-0.5 text-[8px] font-sans uppercase tracking-wider text-center truncate"
+                style={{
+                  background: 'rgba(14, 12, 10, 0.72)',
+                  color: '#E8DDD0',
+                }}
+              >
+                {acc.label}
+              </span>
+              {isSelected && (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#D4A853] shadow-[0_0_0_1px_rgba(14,12,10,0.8)]" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-[10px] text-[#6E6458] italic">
+        Clique numa cor pra fixar este card. Sem seleção, o /bio alterna entre as 10 cores pra dar ritmo visual.
       </p>
     </div>
   );
