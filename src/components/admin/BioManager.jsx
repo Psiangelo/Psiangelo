@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getBio, setBio, DEFAULT_BIO } from '@/lib/sitedata';
+import { BIO_ICON_OPTIONS, BioCardIcon, hasBioIcon } from '@/components/bio/BioCardIcons';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y min-h-[80px]';
@@ -61,7 +62,7 @@ export default function BioManager({ addToast, addLogEntry }) {
   };
 
   const addLink = () => {
-    const links = [...(data.links || []), { label: 'Novo link', href: '', image: '', description: '' }];
+    const links = [...(data.links || []), { label: 'Novo link', href: '', image: '', icon: '', description: '' }];
     setData({ ...data, links });
     setDirty(true);
   };
@@ -398,8 +399,10 @@ export default function BioManager({ addToast, addLogEntry }) {
               Botões e cards
             </h3>
             <p className="text-[11px] text-[#6E6458] mt-1">
-              Com imagem → vira card (imagem esmaece até o botão). Sem imagem → só botão.
-              Descrição é opcional em ambos. Link pode ir pra onde quiser.
+              <strong className="text-[#B8AD9E]">Com imagem</strong> → card com foto.
+              <strong className="text-[#B8AD9E]"> Com ícone</strong> → card com SVG hermético (mandala, livro, chave…).
+              <strong className="text-[#B8AD9E]"> Sem nada</strong> → botão simples.
+              Descrição é opcional em todos. Imagem ganha do ícone.
             </p>
           </div>
           <button onClick={addLink} className={BTN_SECONDARY}>
@@ -417,6 +420,7 @@ export default function BioManager({ addToast, addLogEntry }) {
           {data.links?.map((link, idx) => {
             const preview = resolveLinkImage(link.image);
             const isHidden = !!link.hidden;
+            const hasIcon = !preview && hasBioIcon(link.icon);
             return (
               <div
                 key={idx}
@@ -433,7 +437,7 @@ export default function BioManager({ addToast, addLogEntry }) {
                   </div>
                 )}
                 <div className="flex items-start gap-3">
-                  {/* Preview miniatura */}
+                  {/* Preview miniatura — imagem OU ícone hermético */}
                   <div className="w-16 h-16 flex-shrink-0 bg-[#1A1714] border border-[rgba(180,140,80,0.12)] rounded overflow-hidden flex items-center justify-center">
                     {preview ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -443,6 +447,10 @@ export default function BioManager({ addToast, addLogEntry }) {
                         className="w-full h-full object-cover"
                         onError={(e) => { e.currentTarget.style.opacity = '0.3'; }}
                       />
+                    ) : hasIcon ? (
+                      <div className="w-12 h-12">
+                        <BioCardIcon name={link.icon} />
+                      </div>
                     ) : (
                       <span className="text-[#6E6458] text-[10px] text-center px-1">
                         sem<br/>imagem
@@ -513,8 +521,8 @@ export default function BioManager({ addToast, addLogEntry }) {
                   </div>
                 </div>
 
-                {/* Imagem + descrição em linha inferior */}
-                <div className="grid md:grid-cols-2 gap-3">
+                {/* Imagem + ícone + descrição em linha inferior */}
+                <div className="grid md:grid-cols-3 gap-3">
                   <div>
                     <label className={LABEL}>Imagem (URL opcional)</label>
                     <input
@@ -524,6 +532,27 @@ export default function BioManager({ addToast, addLogEntry }) {
                       className={INPUT}
                       placeholder="/images/foto.jpg ou https://..."
                     />
+                  </div>
+                  <div>
+                    <label className={LABEL}>
+                      Ícone hermético
+                      <span className="ml-1 normal-case tracking-normal text-[10px] text-[#6E6458]">
+                        (sem imagem)
+                      </span>
+                    </label>
+                    <select
+                      value={link.icon || ''}
+                      onChange={(e) => updateLink(idx, 'icon', e.target.value)}
+                      className={INPUT}
+                      disabled={!!link.image}
+                      title={link.image ? 'Remova a imagem pra usar o ícone' : 'Ícone SVG mostrado quando não há imagem'}
+                    >
+                      {BIO_ICON_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className={LABEL}>Descrição (opcional)</label>

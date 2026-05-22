@@ -8,6 +8,8 @@ import { img } from '@/lib/basepath';
 import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
+import { BioCardIcon, hasBioIcon } from '@/components/bio/BioCardIcons';
+import BioWaveDivider from '@/components/bio/BioWaveDivider';
 
 /**
  * /bio — página mobile-first tipo linktree.
@@ -87,12 +89,15 @@ function SimpleLink({ label, children, className = '' }) {
 }
 
 function LinkButton({ link, index }) {
-  const { label, href, image, description } = link;
+  const { label, href, image, description, icon } = link;
   const external = isExternal(href);
   const Tag = external ? 'a' : Link;
   const extraProps = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
   const imageSrc = resolveImageSrc(image);
-  const isCard = !!imageSrc;
+  const showIcon = !imageSrc && hasBioIcon(icon);
+  const isCard = !!imageSrc || showIcon;
+  // alterna layout dos cards "rich" pra dar ritmo (espelha posição do título nos pares)
+  const isAlt = isCard && index % 2 === 1;
 
   return (
     <motion.div
@@ -103,21 +108,51 @@ function LinkButton({ link, index }) {
       <Tag
         href={href || '#'}
         {...extraProps}
-        className="group relative block w-full bg-[#1A1714] border border-[rgba(180,140,80,0.22)] hover:border-accent hover:bg-[rgba(180,140,80,0.08)] transition-all duration-300 rounded-xl overflow-hidden"
+        className={`group relative block w-full bg-[#1A1714] border border-[rgba(180,140,80,0.22)] hover:border-accent hover:bg-[rgba(180,140,80,0.08)] transition-all duration-300 rounded-xl overflow-hidden ${
+          isAlt ? 'bio-card--alt' : ''
+        }`}
       >
         <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent/0 group-hover:bg-accent transition-colors z-20" />
 
         {isCard ? (
           <>
-            {/* Imagem grande em cima */}
-            <div className="relative h-44 sm:h-52 w-full overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageSrc}
-                alt={label || ''}
-                className="w-full h-full object-cover scale-[1.02] group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
-              />
+            {/* Mídia (imagem OU SVG hermético) */}
+            <div className="relative h-44 sm:h-52 w-full overflow-hidden bio-card__media">
+              {imageSrc ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imageSrc}
+                    alt={label || ''}
+                    className="w-full h-full object-cover scale-[1.02] group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                </>
+              ) : (
+                <div
+                  className={`absolute inset-0 flex items-center justify-center transition-transform duration-700 group-hover:scale-[1.04] ${
+                    isAlt ? 'bio-card__icon-wrap--alt' : ''
+                  }`}
+                  style={{
+                    background:
+                      'radial-gradient(ellipse at 50% 35%, rgba(212, 168, 83, 0.10) 0%, rgba(26, 23, 20, 0) 65%)',
+                  }}
+                >
+                  {/* mandala-halo de fundo bem suave */}
+                  <span className="absolute inset-0 opacity-25" aria-hidden="true">
+                    <svg viewBox="0 0 200 200" className="w-full h-full">
+                      <g fill="none" stroke="#B48C50" strokeWidth="0.3">
+                        <circle cx="100" cy="100" r="84" />
+                        <circle cx="100" cy="100" r="64" strokeWidth="0.2" />
+                        <circle cx="100" cy="100" r="40" strokeWidth="0.4" />
+                      </g>
+                    </svg>
+                  </span>
+                  <div className="relative w-32 h-32 sm:w-36 sm:h-36">
+                    <BioCardIcon name={icon} />
+                  </div>
+                </div>
+              )}
               {/* Gradiente que esmaece pro fundo do card */}
               <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent via-[#1A1714]/70 to-[#1A1714]" />
               <div className="absolute inset-0 bg-gradient-to-b from-[#1A1714]/0 via-[#1A1714]/0 to-[#1A1714]/70" />
@@ -318,6 +353,9 @@ export default function BioPage() {
         <div className="w-full mb-8">
           <Gallery images={bio.images} />
         </div>
+
+        {/* Separador ondulado entre identidade e cards */}
+        <BioWaveDivider delay={0.45} />
 
         {/* Botões / Cards — oculta links marcados como hidden */}
         <div className="w-full flex flex-col gap-3 mb-10">
