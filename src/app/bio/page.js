@@ -234,22 +234,35 @@ function WaveDivider() {
       <defs>
         <linearGradient id="bioWaveMain" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stopColor="#B48C50" stopOpacity="0" />
-          <stop offset="25%"  stopColor="#B48C50" stopOpacity="0.55" />
-          <stop offset="50%"  stopColor="#D4A853" stopOpacity="0.85" />
-          <stop offset="75%"  stopColor="#B48C50" stopOpacity="0.55" />
+          <stop offset="20%"  stopColor="#B48C50" stopOpacity="0.85" />
+          <stop offset="50%"  stopColor="#D4A853" stopOpacity="1" />
+          <stop offset="80%"  stopColor="#B48C50" stopOpacity="0.85" />
           <stop offset="100%" stopColor="#B48C50" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="bioWaveSoft" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stopColor="#E8DDD0" stopOpacity="0" />
-          <stop offset="50%"  stopColor="#E8DDD0" stopOpacity="0.5" />
+          <stop offset="50%"  stopColor="#E8DDD0" stopOpacity="0.7" />
           <stop offset="100%" stopColor="#E8DDD0" stopOpacity="0" />
         </linearGradient>
+        <linearGradient id="bioWaveBronze" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="#7A5E3A" stopOpacity="0" />
+          <stop offset="50%"  stopColor="#7A5E3A" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#7A5E3A" stopOpacity="0" />
+        </linearGradient>
       </defs>
-      <path d="M-20 28 Q 80 8, 180 28 T 380 28 T 580 28" fill="none" stroke="url(#bioWaveMain)" strokeWidth="1.4" />
-      <path className="bio-wave__slow" d="M-20 36 Q 100 56, 220 36 T 440 36 T 620 36" fill="none" stroke="url(#bioWaveSoft)" strokeWidth="1" />
-      <circle cx="270" cy="28" r="2.6" fill="#D4A853" opacity="0.95" />
-      <circle cx="135" cy="28" r="1.5" fill="#B48C50" opacity="0.75" />
-      <circle cx="405" cy="28" r="1.5" fill="#B48C50" opacity="0.75" />
+      {/* eco bronze por baixo, mais largo */}
+      <path d="M-20 18 Q 80 -2, 180 18 T 380 18 T 580 18" fill="none" stroke="url(#bioWaveBronze)" strokeWidth="2.5" />
+      {/* onda dourada principal */}
+      <path d="M-20 28 Q 80 8, 180 28 T 380 28 T 580 28" fill="none" stroke="url(#bioWaveMain)" strokeWidth="2.4" />
+      {/* eco creme sob */}
+      <path className="bio-wave__slow" d="M-20 38 Q 100 58, 220 38 T 440 38 T 620 38" fill="none" stroke="url(#bioWaveSoft)" strokeWidth="1.3" />
+      {/* nós + sombras */}
+      <circle cx="270" cy="28" r="3.2" fill="#D4A853" opacity="1" />
+      <circle cx="270" cy="28" r="6" fill="#D4A853" opacity="0.25" />
+      <circle cx="135" cy="28" r="2" fill="#B48C50" opacity="0.9" />
+      <circle cx="405" cy="28" r="2" fill="#B48C50" opacity="0.9" />
+      <circle cx="80"  cy="28" r="1.2" fill="#9A7A48" opacity="0.7" />
+      <circle cx="460" cy="28" r="1.2" fill="#9A7A48" opacity="0.7" />
     </svg>
   );
 }
