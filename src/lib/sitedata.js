@@ -437,6 +437,8 @@ export const getBio = () => {
       label: l.label ?? '',
       href: l.href ?? '',
       image: l.image ?? '',
+      icon: l.icon ?? '',
+      accent: l.accent ?? '',
       description: l.description ?? '',
       hidden: l.hidden ?? false,
     })),
