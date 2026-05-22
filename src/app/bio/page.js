@@ -2,56 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { getBio, DEFAULT_BIO } from '@/lib/sitedata';
 import { img } from '@/lib/basepath';
-import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
 import { BioCardIcon, hasBioIcon } from '@/components/bio/BioCardIcons';
-import BioWaveDivider from '@/components/bio/BioWaveDivider';
 import './bio-cards.css';
 
 /**
- * /bio — página mobile-first tipo linktree.
+ * /bio — Linktree mobile-first, clone fiel do /bio da Tulipa
+ * em paleta Psiangelo (dourado · sépia · creme · rubedo · ink).
  *
- * Editável pelo admin: nome, tagline, bio curta, galeria de imagens e
- * labels dos 4 botões (hrefs fixos).
+ * Estrutura idêntica: mesh + petals ambient + ornamentos laterais +
+ * head (avatar conic, name, tagline com traços, bio) + wave divider +
+ * cards blob (simple OU rich com mídia 140px) + footer.
  */
 
-function MandalaHalo() {
-  return (
-    <motion.svg
-      className="absolute inset-0 pointer-events-none"
-      viewBox="0 0 200 200"
-      style={{ opacity: 0.4 }}
-      animate={{ rotate: 360 }}
-      transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
-    >
-      <g fill="none" stroke="#B48C50" strokeWidth="0.5">
-        <circle cx="100" cy="100" r="96" strokeWidth="0.3" />
-        <circle cx="100" cy="100" r="80" strokeWidth="0.4" />
-        <circle cx="100" cy="100" r="64" />
-        {Array.from({ length: 16 }).map((_, i) => {
-          const angle = (i * 22.5 * Math.PI) / 180;
-          const x1 = 100 + Math.cos(angle) * 64;
-          const y1 = 100 + Math.sin(angle) * 64;
-          const x2 = 100 + Math.cos(angle) * 96;
-          const y2 = 100 + Math.sin(angle) * 96;
-          return (
-            <line
-              key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              strokeWidth={i % 4 === 0 ? 0.6 : 0.25}
-            />
-          );
-        })}
-      </g>
-    </motion.svg>
-  );
+const ACCENT_CYCLE = ['gold', 'cream', 'sepia', 'rubedo', 'ink'];
+const ACCENT_VALID = new Set(ACCENT_CYCLE);
+
+function accentFor(link, idx) {
+  if (link.accent && ACCENT_VALID.has(link.accent)) return link.accent;
+  return ACCENT_CYCLE[idx % ACCENT_CYCLE.length];
 }
 
 function isExternal(href) {
@@ -65,6 +37,13 @@ function resolveImageSrc(url) {
   if (url.startsWith('/Psiangelo')) return url;
   if (url.startsWith('/')) return img(url);
   return url;
+}
+
+function initials(name) {
+  if (!name) return 'P';
+  const parts = String(name).trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return parts[0][0].toUpperCase();
 }
 
 const ARROW_SVG = (
@@ -83,19 +62,14 @@ const ARROW_SVG = (
   </svg>
 );
 
-function LinkButton({ link, index }) {
-  const { label, href, image, description, icon } = link;
+function LinkCard({ link, accent, isAlt }) {
+  const { label, href, image, description, icon, id } = link;
   const external = isExternal(href);
   const Tag = external ? 'a' : Link;
   const extraProps = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
   const imageSrc = resolveImageSrc(image);
   const showIcon = !imageSrc && hasBioIcon(icon);
   const isRich = !!imageSrc || showIcon;
-  // alterna layout (mídia esquerda ↔ direita) pra dar ritmo de onda
-  const isAlt = isRich && index % 2 === 1;
-
-  // delay sutil pra entrada em cascata
-  const style = { animationDelay: `${0.15 + index * 0.07}s` };
 
   if (!isRich) {
     return (
@@ -103,8 +77,8 @@ function LinkButton({ link, index }) {
         href={href || '#'}
         {...extraProps}
         className="bio-card bio-card--simple"
-        style={style}
-        data-link-id={link.id || ''}
+        data-accent={accent}
+        data-link-id={id || ''}
       >
         <h3 className="bio-card__title">{label}</h3>
         {description && <p className="bio-card__desc">{description}</p>}
@@ -121,8 +95,8 @@ function LinkButton({ link, index }) {
       href={href || '#'}
       {...extraProps}
       className={`bio-card bio-card--rich ${isAlt ? 'bio-card--alt' : ''}`}
-      style={style}
-      data-link-id={link.id || ''}
+      data-accent={accent}
+      data-link-id={id || ''}
     >
       <div className="bio-card__media">
         {imageSrc ? (
@@ -144,54 +118,146 @@ function LinkButton({ link, index }) {
   );
 }
 
-function Gallery({ images }) {
-  const visible = (images || []).filter((i) => !i.hidden);
-  if (visible.length === 0) return null;
-
-  const single = visible.length === 1;
+/* Ornamento hermético — mandala dupla + linha vertical (substitui a flora botânica
+   da Tulipa). Renderizado nas laterais com sway sutil. */
+function HermeticOrnament({ side = 'left' }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.5 }}
-      className={`grid gap-2 w-full ${single ? 'grid-cols-1' : 'grid-cols-2'}`}
+    <svg
+      className={`bio-ornament bio-ornament--${side}`}
+      viewBox="0 0 200 700"
+      aria-hidden="true"
+      preserveAspectRatio={side === 'left' ? 'xMinYMin meet' : 'xMaxYMax meet'}
     >
-      {visible.map((item, i) => {
-        const src = item.url?.startsWith('http') || item.url?.startsWith('/Psiangelo')
-          ? item.url
-          : item.url?.startsWith('/')
-            ? img(item.url)
-            : item.url;
-        return (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.55 + i * 0.05 }}
-            className="relative aspect-square overflow-hidden rounded-lg bg-[#1A1714] border border-[rgba(180,140,80,0.12)]"
-          >
-            {src ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={src}
-                alt={item.alt || ''}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            ) : null}
-          </motion.div>
-        );
-      })}
-    </motion.div>
+      <defs>
+        <linearGradient id={`ornStem-${side}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#D4A853" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#6E5530" stopOpacity="0.5" />
+        </linearGradient>
+        <radialGradient id={`ornGlow-${side}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#D4A853" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#D4A853" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      <g className="bio-ornament__group">
+        {/* linha vertical mestra */}
+        <line
+          x1={side === 'left' ? 70 : 130}
+          y1="20"
+          x2={side === 'left' ? 70 : 130}
+          y2="680"
+          stroke={`url(#ornStem-${side})`}
+          strokeWidth="0.8"
+        />
+        {/* halo mandala superior */}
+        <g transform={`translate(${side === 'left' ? 70 : 130} 140)`}>
+          <circle r="58" fill={`url(#ornGlow-${side})`} />
+          <g fill="none" stroke="#B48C50" strokeWidth="0.4" opacity="0.75">
+            <circle r="52" strokeWidth="0.25" />
+            <circle r="40" strokeWidth="0.35" />
+            <circle r="28" />
+            <circle r="14" strokeWidth="0.5" />
+            {Array.from({ length: 16 }).map((_, i) => {
+              const a = (i * 22.5 * Math.PI) / 180;
+              return (
+                <line
+                  key={i}
+                  x1={Math.cos(a) * 28}
+                  y1={Math.sin(a) * 28}
+                  x2={Math.cos(a) * 52}
+                  y2={Math.sin(a) * 52}
+                  strokeWidth={i % 4 === 0 ? 0.55 : 0.22}
+                />
+              );
+            })}
+          </g>
+          <circle r="2.5" fill="#D4A853" />
+        </g>
+        {/* mandala média no meio */}
+        <g transform={`translate(${side === 'left' ? 70 : 130} 380)`}>
+          <circle r="42" fill={`url(#ornGlow-${side})`} opacity="0.7" />
+          <g fill="none" stroke="#B48C50" strokeWidth="0.4" opacity="0.65">
+            <circle r="36" strokeWidth="0.25" />
+            <circle r="24" />
+            <circle r="12" strokeWidth="0.45" />
+            {Array.from({ length: 12 }).map((_, i) => {
+              const a = (i * 30 * Math.PI) / 180;
+              return (
+                <line
+                  key={i}
+                  x1={Math.cos(a) * 12}
+                  y1={Math.sin(a) * 12}
+                  x2={Math.cos(a) * 36}
+                  y2={Math.sin(a) * 36}
+                  strokeWidth={i % 3 === 0 ? 0.5 : 0.18}
+                />
+              );
+            })}
+          </g>
+          <circle r="2" fill="#B48C50" />
+        </g>
+        {/* mandala inferior pequena */}
+        <g transform={`translate(${side === 'left' ? 70 : 130} 600)`}>
+          <g fill="none" stroke="#B48C50" strokeWidth="0.35" opacity="0.6">
+            <circle r="22" strokeWidth="0.22" />
+            <circle r="12" />
+            {Array.from({ length: 8 }).map((_, i) => {
+              const a = (i * 45 * Math.PI) / 180;
+              return (
+                <line
+                  key={i}
+                  x1={Math.cos(a) * 6}
+                  y1={Math.sin(a) * 6}
+                  x2={Math.cos(a) * 22}
+                  y2={Math.sin(a) * 22}
+                />
+              );
+            })}
+          </g>
+          <circle r="1.6" fill="#D4A853" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+function WaveDivider() {
+  return (
+    <svg
+      className="bio-wave"
+      viewBox="0 0 540 56"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="bioWaveMain" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="#B48C50" stopOpacity="0" />
+          <stop offset="25%"  stopColor="#B48C50" stopOpacity="0.55" />
+          <stop offset="50%"  stopColor="#D4A853" stopOpacity="0.85" />
+          <stop offset="75%"  stopColor="#B48C50" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#B48C50" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="bioWaveSoft" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="#E8DDD0" stopOpacity="0" />
+          <stop offset="50%"  stopColor="#E8DDD0" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#E8DDD0" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M-20 28 Q 80 8, 180 28 T 380 28 T 580 28" fill="none" stroke="url(#bioWaveMain)" strokeWidth="1.4" />
+      <path className="bio-wave__slow" d="M-20 36 Q 100 56, 220 36 T 440 36 T 620 36" fill="none" stroke="url(#bioWaveSoft)" strokeWidth="1" />
+      <circle cx="270" cy="28" r="2.6" fill="#D4A853" opacity="0.95" />
+      <circle cx="135" cy="28" r="1.5" fill="#B48C50" opacity="0.75" />
+      <circle cx="405" cy="28" r="1.5" fill="#B48C50" opacity="0.75" />
+    </svg>
   );
 }
 
 export default function BioPage() {
   const { visibility, ready } = useVisibility();
-  const [bio, setBio] = useState(DEFAULT_BIO);
+  const [bio, setBioState] = useState(DEFAULT_BIO);
 
   useEffect(() => {
-    const reload = () => setBio(getBio());
+    const reload = () => setBioState(getBio());
     reload();
     window.addEventListener('storage', reload);
     window.addEventListener('sitedata:changed', reload);
@@ -207,133 +273,78 @@ export default function BioPage() {
     return <HiddenPlaceholder title="Bio indisponível" />;
   }
 
+  const visibleLinks = (bio.links || []).filter((l) => !l.hidden);
+  const avatarSrc = resolveImageSrc(bio.avatar);
+
+  let richIndex = 0;
+
   return (
-    <main className="min-h-screen bg-bg grain-soft relative overflow-hidden">
-      {/* Campo estelar — fundo fixo de ponta a ponta */}
-      <div className="fixed inset-0 pointer-events-none">
-        <StarField count={80} maxOpacity={0.7} accentChance={0.22} />
-        <NebulaField count={10} />
-        <ShootingStars count={2} />
+    <main className="bio-page">
+      {/* Mesh gradient vivo no fundo */}
+      <div className="bio-mesh" aria-hidden="true" />
+
+      {/* 5 pétalas blur ambiente */}
+      <div className="bio-ambient" aria-hidden="true">
+        <span className="bio-petal bio-petal--a" />
+        <span className="bio-petal bio-petal--b" />
+        <span className="bio-petal bio-petal--c" />
+        <span className="bio-petal bio-petal--d" />
+        <span className="bio-petal bio-petal--e" />
       </div>
 
-      {/* Ornamento de fundo — raízes sutis no topo */}
-      <motion.svg
-        className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none opacity-40"
-        width="420"
-        height="420"
-        viewBox="0 0 420 420"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.4 }}
-        transition={{ duration: 2 }}
-      >
-        <defs>
-          <radialGradient id="bioBg" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#B48C50" stopOpacity="0.12" />
-            <stop offset="100%" stopColor="#B48C50" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx="210" cy="210" r="210" fill="url(#bioBg)" />
-      </motion.svg>
+      {/* Ornamentos herméticos laterais (substituem flora da Tulipa) */}
+      <HermeticOrnament side="left" />
+      <HermeticOrnament side="right" />
 
-      <div className="relative z-10 max-w-[460px] mx-auto px-6 py-12 sm:py-16 flex flex-col items-center">
-        {/* Avatar com halo mandala */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-32 h-32 sm:w-36 sm:h-36 mb-6"
-        >
-          <MandalaHalo />
-          <div className="absolute inset-3 rounded-full overflow-hidden border border-accent/30">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={resolveImageSrc(bio.avatar) || img('/images/angelo-portrait.png')}
-              alt={bio.name || 'Ângelo'}
-              className="w-full h-full object-cover grayscale-[0.15]"
-              fetchPriority="high"
-              decoding="async"
-            />
+      <div className="bio">
+        {/* HEAD — identidade */}
+        <header className="bio__head">
+          <div className="bio__avatar">
+            {avatarSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarSrc}
+                alt={bio.name || 'Psiangelo'}
+                fetchPriority="high"
+                decoding="async"
+              />
+            ) : (
+              <span className="bio__avatar--fallback">{initials(bio.name)}</span>
+            )}
           </div>
-        </motion.div>
+          <h1 className="bio__name">{bio.name}</h1>
+          {bio.tagline && <p className="bio__tagline">{bio.tagline}</p>}
+          {bio.bio && <p className="bio__bio">{bio.bio}</p>}
+        </header>
 
-        {/* Nome + tagline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-serif text-[2rem] sm:text-[2.3rem] text-text-bright text-center leading-[1.1] mb-1"
-        >
-          {bio.name}
-        </motion.h1>
+        {/* Wave divider */}
+        <WaveDivider />
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="font-mono text-[0.68rem] tracking-[0.22em] uppercase text-accent mb-5"
-        >
-          {bio.tagline}
-        </motion.p>
-
-        {/* Linha ornamental */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.9, delay: 0.35 }}
-          className="w-24 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent mb-6 origin-center"
-        />
-
-        {/* Bio curta */}
-        {bio.bio && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-[0.94rem] text-text-dim text-center leading-[1.7] max-w-[380px] mb-8"
-          >
-            {bio.bio}
-          </motion.p>
-        )}
-
-        {/* Galeria */}
-        <div className="w-full mb-8">
-          <Gallery images={bio.images} />
+        {/* CARDS — blob shape com accent cycling */}
+        <div className="bio__cards">
+          {visibleLinks.map((link, i) => {
+            const accent = accentFor(link, i);
+            const imageSrc = resolveImageSrc(link.image);
+            const showIcon = !imageSrc && hasBioIcon(link.icon);
+            const isRich = !!imageSrc || showIcon;
+            const isAlt = isRich && richIndex++ % 2 === 1;
+            return (
+              <LinkCard
+                key={i}
+                link={link}
+                accent={accent}
+                isAlt={isAlt}
+              />
+            );
+          })}
         </div>
-
-        {/* Separador ondulado entre identidade e cards */}
-        <BioWaveDivider delay={0.45} />
-
-        {/* Cards ondulados (blob shape) — oculta links marcados como hidden */}
-        <div className="bio-cards w-full mb-10">
-          {bio.links
-            .filter((link) => !link.hidden)
-            .map((link, i) => (
-              <LinkButton key={i} link={link} index={i} />
-            ))}
-        </div>
-
-        {/* Footer leve */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
-          className="mt-4 flex flex-col items-center gap-2"
-        >
-          <svg width="32" height="32" viewBox="0 0 32 32" className="opacity-40">
-            <g fill="none" stroke="#B48C50" strokeWidth="0.5">
-              <circle cx="16" cy="16" r="14" />
-              <circle cx="16" cy="16" r="8" />
-              <circle cx="16" cy="16" r="2" fill="#B48C50" fillOpacity="0.5" />
-            </g>
-          </svg>
-          <Link
-            href="/"
-            className="font-mono text-[0.6rem] tracking-[0.24em] uppercase text-text-dim/60 hover:text-accent transition-colors"
-          >
-            site completo →
-          </Link>
-        </motion.div>
       </div>
+
+      {/* Footer */}
+      <footer className="bio__foot">
+        <Link href="/" className="bio__back">↩ site completo</Link>
+        <span className="bio__credit">psiangelo</span>
+      </footer>
     </main>
   );
 }
