@@ -489,7 +489,11 @@ export const BIO_ICON_OPTIONS = [
 export function BioCardIcon({ name, className = '' }) {
   const svg = SVG_BY_ICON[name];
   if (!svg) return null;
-  return <div className={`relative w-full h-full flex items-center justify-center ${className}`}>{svg}</div>;
+  // wrapper minimal — o pai (.bio-card__media OU preview do admin) controla tamanho
+  if (className) {
+    return <div className={className}>{svg}</div>;
+  }
+  return svg;
 }
 
 export function hasBioIcon(name) {
