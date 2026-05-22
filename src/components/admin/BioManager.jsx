@@ -596,7 +596,7 @@ function IconPicker({ value, onChange, inferred }) {
           </button>
         )}
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-2">
+      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 bio-icon-picker">
         {items.map((opt) => {
           const isSelected = selected === opt.value;
           const isAuto = !selected && inferred === opt.value;
@@ -609,7 +609,7 @@ function IconPicker({ value, onChange, inferred }) {
               aria-label={opt.label}
               aria-pressed={isSelected}
               className={
-                'group relative aspect-square rounded-lg border transition-all flex items-center justify-center p-2 ' +
+                'group relative aspect-square rounded-lg border transition-all flex flex-col items-center justify-center p-2 pb-4 overflow-hidden ' +
                 (isSelected
                   ? 'border-[#B48C50] bg-[#B48C50]/15 shadow-[0_0_0_1px_rgba(180,140,80,0.5)_inset]'
                   : isAuto
@@ -617,10 +617,10 @@ function IconPicker({ value, onChange, inferred }) {
                     : 'border-[rgba(180,140,80,0.15)] bg-[#0E0C0A] hover:border-[#B48C50] hover:bg-[rgba(180,140,80,0.08)]')
               }
             >
-              <span className="w-full h-full pointer-events-none">
+              <div className="picker-icon-slot pointer-events-none flex items-center justify-center" style={{ width: '60%', aspectRatio: '1 / 1' }}>
                 <BioCardIcon name={opt.value} />
-              </span>
-              <span className="absolute bottom-0.5 left-0 right-0 text-[8px] font-sans uppercase tracking-wider text-center text-[#8C8378] group-hover:text-[#B48C50] pointer-events-none">
+              </div>
+              <span className="block w-full text-[8px] font-sans uppercase tracking-wider text-center text-[#8C8378] group-hover:text-[#B48C50] pointer-events-none truncate mt-1">
                 {opt.label}
               </span>
               {isSelected && (

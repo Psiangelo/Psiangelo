@@ -662,8 +662,8 @@
 
 .bio-card[data-accent="gold"] {
   --flat: #F4E4B8;             /* papel dourado quente */
-  --media-1: #3E2810;          /* chocolate escuro */
-  --media-2: #8B6936;          /* dourado terroso */
+  --media-1: #2A1A06;          /* preto-chocolate */
+  --media-2: #6E5530;          /* gold-deep */
   --text-on-flat: #2E1F08;
   --desc-on-flat: #5A3E1F;
 }
@@ -676,8 +676,8 @@
 }
 .bio-card[data-accent="cream"] {
   --flat: #EDDFC2;             /* creme/pergaminho clássico */
-  --media-1: #6E5530;          /* gold-deep */
-  --media-2: #B48C50;          /* dourado vivo */
+  --media-1: #1E1408;          /* chocolate quase preto — destaca SVG dourado */
+  --media-2: #6E5530;          /* gold-deep */
   --text-on-flat: #2A1F0F;
   --desc-on-flat: #5A3E2E;
 }

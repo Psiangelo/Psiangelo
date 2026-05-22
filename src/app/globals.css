@@ -871,3 +871,12 @@ main:focus {
   }
 }
 
+
+/* ====================== ADMIN — Bio icon picker ====================== */
+/* SVGs do grid de ícones do BioManager precisam preencher o slot */
+.picker-icon-slot { display: flex; align-items: center; justify-content: center; }
+.picker-icon-slot svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
