@@ -499,3 +499,54 @@ export function BioCardIcon({ name, className = '' }) {
 export function hasBioIcon(name) {
   return !!SVG_BY_ICON[name];
 }
+
+/**
+ * Tenta inferir um ícone razoável a partir do label e href do link, quando
+ * o usuário não escolheu nenhum explicitamente. Heurística pragmática:
+ * primeiro checa o href (sinal mais forte), depois palavras-chave no label.
+ */
+export function inferBioIcon(link) {
+  if (!link) return null;
+  if (link.icon && SVG_BY_ICON[link.icon]) return link.icon;
+
+  const href = (link.href || '').toLowerCase();
+  const label = (link.label || '').toLowerCase();
+  const desc = (link.description || '').toLowerCase();
+  const blob = `${label} ${desc}`;
+
+  // === por HREF (sinal mais confiável) ===
+  if (/wa\.me|whatsapp|api\.whatsapp/.test(href)) return 'whatsapp';
+  if (/^mailto:|@.+\./.test(href)) return 'feather';
+  if (/instagram\.com/.test(href)) return 'eye';
+  if (/youtu\.?be|vimeo|tiktok/.test(href)) return 'solar';
+  if (/spotify|soundcloud|deezer/.test(href)) return 'lunar';
+  if (/^tel:|telefone/.test(href)) return 'whatsapp';
+  if (/\/blog|\/post|\/ensaio/.test(href)) return 'feather';
+  if (/\/cursos?|\/aulas?|\/trilha|\/estudo/.test(href)) return 'mandala';
+  if (/\/material|\/resumo|\/biblioteca|\/livro/.test(href)) return 'scroll';
+  if (/\/glossario|\/conceito/.test(href)) return 'key';
+  if (/\/atendo|\/agenda|\/consulta|calendly|cal\.com|book/.test(href)) return 'compass';
+  if (/\/psicoterapia|\/clinica|\/sessao/.test(href)) return 'vessel';
+
+  // === por LABEL/DESCRIÇÃO (fallback semântico) ===
+  if (/whats|telefone|fala\s+comigo|contato/.test(blob)) return 'whatsapp';
+  if (/e-?mail|escreva/.test(blob)) return 'feather';
+  if (/instagram|instagra/.test(blob)) return 'eye';
+  if (/youtube|vídeo|video|assistir/.test(blob)) return 'solar';
+  if (/spotify|podcast|escutar|ouvir|música|musica/.test(blob)) return 'lunar';
+  if (/blog|ensaio|texto|reflex/.test(blob)) return 'feather';
+  if (/curso|aula|trilha|estud(o|ar)/.test(blob)) return 'mandala';
+  if (/material|resumo|biblioteca|livro|leitura/.test(blob)) return 'scroll';
+  if (/glossário|glossario|conceito|verbete/.test(blob)) return 'key';
+  if (/agenda|consulta|sess(ão|ao)|atendimento|book|marcar/.test(blob)) return 'compass';
+  if (/psicoterapia|clínica|clinica|análise|analise|jung/.test(blob)) return 'vessel';
+  if (/alquimia|filosofia|hermetismo/.test(blob)) return 'flame';
+  if (/luz|sol|consciente/.test(blob)) return 'solar';
+  if (/sombra|noturn|inconscient/.test(blob)) return 'lunar';
+  if (/pilar|templo|coluna|fundamento/.test(blob)) return 'column';
+  if (/coração|coracao|amor|afeto/.test(blob)) return 'heart';
+  if (/iniciaç(ão|ao)|começar|comecar|primeiro/.test(blob)) return 'star';
+
+  // fallback final — mandala (símbolo central da identidade Psiangelo)
+  return 'mandala';
+}

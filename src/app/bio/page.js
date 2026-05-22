@@ -6,7 +6,7 @@ import { getBio, DEFAULT_BIO } from '@/lib/sitedata';
 import { img } from '@/lib/basepath';
 import HiddenPlaceholder from '@/components/HiddenPlaceholder';
 import { useVisibility } from '@/lib/useVisibility';
-import { BioCardIcon, hasBioIcon } from '@/components/bio/BioCardIcons';
+import { BioCardIcon, hasBioIcon, inferBioIcon } from '@/components/bio/BioCardIcons';
 import './bio-cards.css';
 
 /**
@@ -63,12 +63,14 @@ const ARROW_SVG = (
 );
 
 function LinkCard({ link, accent, isAlt }) {
-  const { label, href, image, description, icon, id } = link;
+  const { label, href, image, description, id } = link;
   const external = isExternal(href);
   const Tag = external ? 'a' : Link;
   const extraProps = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
   const imageSrc = resolveImageSrc(image);
-  const showIcon = !imageSrc && hasBioIcon(icon);
+  // ícone explícito > inferido (sempre tem um, mesmo sem `icon` salvo)
+  const resolvedIcon = link.icon && hasBioIcon(link.icon) ? link.icon : inferBioIcon(link);
+  const showIcon = !imageSrc && !!resolvedIcon;
   const isRich = !!imageSrc || showIcon;
 
   if (!isRich) {
@@ -103,7 +105,7 @@ function LinkCard({ link, accent, isAlt }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imageSrc} alt={label || ''} loading="lazy" decoding="async" />
         ) : (
-          <BioCardIcon name={icon} />
+          <BioCardIcon name={resolvedIcon} />
         )}
       </div>
       <div className="bio-card__body">
@@ -325,8 +327,8 @@ export default function BioPage() {
           {visibleLinks.map((link, i) => {
             const accent = accentFor(link, i);
             const imageSrc = resolveImageSrc(link.image);
-            const showIcon = !imageSrc && hasBioIcon(link.icon);
-            const isRich = !!imageSrc || showIcon;
+            const resolvedIcon = link.icon && hasBioIcon(link.icon) ? link.icon : inferBioIcon(link);
+            const isRich = !!imageSrc || !!resolvedIcon;
             const isAlt = isRich && richIndex++ % 2 === 1;
             return (
               <LinkCard

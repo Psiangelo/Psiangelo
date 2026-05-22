@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getBio, setBio, DEFAULT_BIO } from '@/lib/sitedata';
-import { BIO_ICON_OPTIONS, BioCardIcon, hasBioIcon } from '@/components/bio/BioCardIcons';
+import { BIO_ICON_OPTIONS, BioCardIcon, hasBioIcon, inferBioIcon } from '@/components/bio/BioCardIcons';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y min-h-[80px]';
@@ -521,8 +521,8 @@ export default function BioManager({ addToast, addLogEntry }) {
                   </div>
                 </div>
 
-                {/* Imagem + ícone + descrição em linha inferior */}
-                <div className="grid md:grid-cols-3 gap-3">
+                {/* Imagem + descrição em linha */}
+                <div className="grid md:grid-cols-2 gap-3">
                   <div>
                     <label className={LABEL}>Imagem (URL opcional)</label>
                     <input
@@ -532,27 +532,6 @@ export default function BioManager({ addToast, addLogEntry }) {
                       className={INPUT}
                       placeholder="/images/foto.jpg ou https://..."
                     />
-                  </div>
-                  <div>
-                    <label className={LABEL}>
-                      Ícone hermético
-                      <span className="ml-1 normal-case tracking-normal text-[10px] text-[#6E6458]">
-                        (sem imagem)
-                      </span>
-                    </label>
-                    <select
-                      value={link.icon || ''}
-                      onChange={(e) => updateLink(idx, 'icon', e.target.value)}
-                      className={INPUT}
-                      disabled={!!link.image}
-                      title={link.image ? 'Remova a imagem pra usar o ícone' : 'Ícone SVG mostrado quando não há imagem'}
-                    >
-                      {BIO_ICON_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
                   </div>
                   <div>
                     <label className={LABEL}>Descrição (opcional)</label>
@@ -565,11 +544,95 @@ export default function BioManager({ addToast, addLogEntry }) {
                     />
                   </div>
                 </div>
+
+                {/* Grid visual de ícones — clique pra escolher */}
+                {!link.image && (
+                  <IconPicker
+                    value={link.icon || ''}
+                    inferred={!link.icon ? inferBioIcon(link) : null}
+                    onChange={(name) => updateLink(idx, 'icon', name)}
+                  />
+                )}
+                {link.image && (
+                  <p className="text-[11px] text-[#6E6458] italic">
+                    Card mostrando a <strong>imagem</strong>. Remova-a pra usar um ícone SVG.
+                  </p>
+                )}
               </div>
             );
           })}
         </div>
       </div>
     </motion.div>
+  );
+}
+
+/* ---------- Grid visual de ícones SVG ---------- */
+function IconPicker({ value, onChange, inferred }) {
+  // ignora a opção vazia (vai virar "auto" no header)
+  const items = BIO_ICON_OPTIONS.filter((o) => o.value !== '');
+  const selected = value || '';
+  const effective = selected || inferred || '';
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <label className="block text-[10px] uppercase tracking-widest text-[#6E6458] font-sans">
+          Ícone do card
+          {!selected && inferred && (
+            <span className="ml-2 normal-case tracking-normal text-[#B48C50] italic">
+              auto: {BIO_ICON_OPTIONS.find((o) => o.value === inferred)?.label?.toLowerCase() || inferred}
+            </span>
+          )}
+        </label>
+        {selected && (
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="text-[10px] uppercase tracking-widest text-[#6E6458] hover:text-[#B48C50] transition-colors"
+            title="Voltar pra detecção automática pelo label/href"
+          >
+            usar automático
+          </button>
+        )}
+      </div>
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-2">
+        {items.map((opt) => {
+          const isSelected = selected === opt.value;
+          const isAuto = !selected && inferred === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              title={opt.label}
+              aria-label={opt.label}
+              aria-pressed={isSelected}
+              className={
+                'group relative aspect-square rounded-lg border transition-all flex items-center justify-center p-2 ' +
+                (isSelected
+                  ? 'border-[#B48C50] bg-[#B48C50]/15 shadow-[0_0_0_1px_rgba(180,140,80,0.5)_inset]'
+                  : isAuto
+                    ? 'border-[rgba(180,140,80,0.45)] bg-[rgba(180,140,80,0.06)]'
+                    : 'border-[rgba(180,140,80,0.15)] bg-[#0E0C0A] hover:border-[#B48C50] hover:bg-[rgba(180,140,80,0.08)]')
+              }
+            >
+              <span className="w-full h-full pointer-events-none">
+                <BioCardIcon name={opt.value} />
+              </span>
+              <span className="absolute bottom-0.5 left-0 right-0 text-[8px] font-sans uppercase tracking-wider text-center text-[#8C8378] group-hover:text-[#B48C50] pointer-events-none">
+                {opt.label}
+              </span>
+              {isSelected && (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#D4A853]" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-[10px] text-[#6E6458] italic">
+        Clique num ícone pra fixar. Sem seleção, o /bio escolhe sozinho pelo nome do link (ex.: "Contato" → WhatsApp).
+      </p>
+    </div>
   );
 }
