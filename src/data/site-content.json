@@ -1,6 +1,6 @@
 {
-  "version": 1777082441828,
-  "publishedAt": "2026-04-25T02:00:43.116863+00:00",
+  "version": 1779635466262,
+  "publishedAt": "2026-05-24T15:11:06.92118+00:00",
   "note": "Publicado via banner",
   "data": {
     "angelo_admin_bio": {
@@ -9,37 +9,47 @@
       "links": [
         {
           "href": "https://wa.me/5581987349114",
+          "icon": "",
           "image": "",
           "label": "Contato",
+          "accent": "gold",
           "hidden": false,
           "description": ""
         },
         {
           "href": "https://psiangelo.github.io/Psiangelo",
+          "icon": "compass",
           "image": "",
           "label": "Saiba mais",
+          "accent": "gold",
           "hidden": false,
           "description": ""
         },
         {
           "href": "/materiais",
+          "icon": "",
           "image": "",
           "label": "Resumos e materiais",
+          "accent": "gold",
           "hidden": true,
           "description": ""
         },
         {
           "href": "/blog",
+          "icon": "",
           "image": "",
           "label": "Blog e ensaios",
-          "hidden": true,
+          "accent": "gold",
+          "hidden": false,
           "description": ""
         },
         {
           "href": "/cursos",
+          "icon": "book",
           "image": "",
           "label": "Cursos",
-          "hidden": true,
+          "accent": "gold",
+          "hidden": false,
           "description": ""
         }
       ],
@@ -48,6 +58,1837 @@
       "tagline": "Psicologia Analítica · Jung"
     },
     "angelo_admin_blog": [
+      {
+        "id": "mpjsfzmme5cpg",
+        "slug": "como-jung-se-relaciona-com-a-sua-psicologia",
+        "tags": [],
+        "title": "Como Jung se relaciona com a sua psicologia?",
+        "author": "Angelo",
+        "pinned": false,
+        "status": "published",
+        "content": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 2,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A equação pessoal de Carl Jung",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Ou: como a psicologia analítica nasceu de um problema astronômico de 1796 e por que ninguém te contou isso",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Conta-se que Jung saiu da casa do pai. Que era discípulo de Freud, percebeu que o mestre estava errado sobre uma ou outra coisa, e fundou uma escola própria — o filho rebelde, o herético, o apóstata. É uma história limpa, com começo, meio e fim, que cabe num parágrafo de manual e numa frase de quem nunca leu nem Freud nem Jung direito.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "O problema é que ela é falsa. Ou melhor: é tão parcial que beira a fabricação. Quando Sonu Shamdasani — o sujeito que passou trinta anos catalogando os arquivos inéditos de Jung em Zurique — sentou pra reconstruir como a psicologia analítica realmente apareceu no mundo, o que ele encontrou foi uma genealogia muito mais estranha. Não a história de uma ruptura. A história de uma obsessão epistemológica que atravessa o século XIX, passa pela astronomia, pela filosofia alemã, pela psiquiatria francesa, pelo pragmatismo americano, e desemboca num psiquiatra suíço passando a vida tentando responder a uma pergunta sem resposta: ",
+                  "type": "text"
+                },
+                {
+                  "text": "como é possível alguém produzir conhecimento sobre a alma humana quando o instrumento de medição é a própria alma humana?",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Esse problema tem nome. Chama-se equação pessoal. E vale a pena contar a história inteira.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A nova psicologia que queria ser física",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em 1893, William James escreveu pro amigo Théodore Flournoy uma frase de tédio educado: \"parece que hoje todo o mundo está publicando uma Psicologia\". Entre 1870 e 1910, o Ocidente foi inundado por manuais, periódicos, cátedras e clubes de algo chamado \"psicologia\". Toda a fauna humana foi convocada pro divã e pro laboratório — o louco, o gênio, o primitivo, o bebê, o degenerado, o normal, o rato branco. Personagens novos entram em cena: o esquizofrênico, o invertido, o pervertido, o introvertido, o extrovertido. O sonho não era modesto: fazer uma ciência da alma equiparada à física e à química.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em 1909, num congresso em Genebra, um grupo de psicólogos propôs seriamente que a psicologia adotasse o ",
+                  "type": "text"
+                },
+                {
+                  "text": "esperanto",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " como língua oficial pra unificar a terminologia. Não estou inventando. Achavam que se a linguagem se alinhasse, o resto se ajeitaria. O congresso terminou em discussões inflamadas, parte delas em esperanto, sem chegar a lugar nenhum. William Stern, em 1900, já tinha resumido: \"há muitas novas psicologias, mas ainda não a nova psicologia\". Husserl seria mais cruel: \"a história da psicologia é, na realidade, somente uma história de crises\".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Era nesse caldo que Jung ia entrar. E é importante segurar essa imagem: não uma psicologia consolidada que Freud invadiu e Jung depois corrompeu, mas um campo em ebulição, sem método consensual, sem objeto consensual, sem vocabulário consensual.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A equação pessoal: de Greenwich a Leipzig",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em 1796, no observatório de Greenwich, o astrônomo real Nevil Maskelyne percebeu que havia uma discrepância de quase um segundo entre suas observações dos trânsitos estelares e as do seu assistente, Kinnebrook. Resolveu-se o problema do jeito antigo: o assistente foi demitido.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Vinte anos depois, outro astrônomo, Friedrich Bessel, foi investigar se outros pares de observadores apresentavam a mesma diferença. Apresentavam. Bessel cunhou então a expressão ",
+                  "type": "text"
+                },
+                {
+                  "text": "equação pessoal",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " pra designar essa variação inevitável entre observadores. E descobriu, mais perturbador ainda, que ela não era constante. Cada pessoa via diferente. E a diferença mudava ao longo do tempo.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A astronomia teve que aprender a conviver com isso. A psicologia, nascendo justamente nesse período (1860–1870), se apaixonou pela ideia: se você consegue medir o tempo de reação de uma tarefa simples, você consegue medir um processo mental. Foi assim que Wundt fundou o laboratório de Leipzig em 1879, comemorado por décadas como o marco zero da psicologia científica.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A piada da história é que a ",
+                  "type": "text"
+                },
+                {
+                  "text": "equação pessoal",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " — que começou como um obstáculo astronômico a ser contornado — vai virar primeiro a esperança da psicologia experimental, depois um problema irresolvível, e por fim, na cabeça de Jung, o ",
+                  "type": "text"
+                },
+                {
+                  "text": "abismo epistemológico que define o que a psicologia pode e não pode ser",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ". A mesma expressão atravessa cem anos virando do avesso a cada vinte. A história de uma palavra, às vezes, é a história de um campo inteiro.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Os dois papas",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "No final do século XIX dizia-se que havia dois papas na psicologia: Wundt e William James. Concordavam em pouca coisa.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Wundt era o pai do laboratório, da experimentação rigorosa, da fé de que pra ser ciência tinha que copiar a física. Sua proposta era construir definições conceituais fixas, rígidas. Como se a psicologia pudesse ter uma tabela periódica.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "James achava aquilo uma piada. Em 1890, na abertura do seu monumental ",
+                  "type": "text"
+                },
+                {
+                  "text": "Princípios de Psicologia",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", escreveu a frase que ainda hoje causa desconforto:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Isto não é uma ciência; no máximo, uma esperança de ciência... A psicologia se encontra nas mesmas condições que a física antes de Galileu, ou a química antes de Lavoisier.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Mais importante: foi James quem importou explicitamente a ",
+                  "type": "text"
+                },
+                {
+                  "text": "equação pessoal",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " da astronomia pra dentro da psicologia, e fez dela uma acusação. No método comparativo da época — em que se estudava \"a mente do selvagem\", \"a mente da criança\" —, a equação pessoal do pesquisador ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"enxerga as coisas basicamente do jeito que as quer ver\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". O selvagem é desprovido de moral se a moral dele choca o europeu. A criança não tem consciência de si se ela fala de si na terceira pessoa. ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"A maioria dos psicólogos criou regras universais a partir de suas peculiaridades pessoais\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", escreveu. O recurso pra escapar disso era \"sagacidade e inocência\" — que é um jeito polido de dizer que não tem solução técnica, só ética.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Jung, dezenove anos depois, encontraria pessoalmente esse senhor de barba branca em Massachusetts. E levaria embora dele, na bagagem, três coisas: o pragmatismo, o pluralismo e a equação pessoal. Voltaremos a isso.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A iluminação de Krafft-Ebing",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em ",
+                  "type": "text"
+                },
+                {
+                  "text": "Memórias, Sonhos, Reflexões",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", Jung conta que se decidiu pela psiquiatria num lampejo, lendo o prefácio do manual de Krafft-Ebing pra um exame. O que o atingiu foi uma frase que não devia ter atingido ninguém:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Provavelmente é devido à peculiaridade do sujeito e às lacunas em sua elaboração que os manuais de psiquiatria são marcados por um caráter mais ou menos subjetivo.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A leitura de Jung é, como Shamdasani observa, ",
+                  "type": "text"
+                },
+                {
+                  "text": "curiosíssima",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Krafft-Ebing estava se defendendo da acusação de subjetividade, dizendo que apesar dela tinha conseguido construir quadros patológicos objetivos baseados em trinta e três anos de clínica. Jung leu o oposto. Leu que ",
+                  "type": "text"
+                },
+                {
+                  "text": "os manuais são, em parte, confissões subjetivas dos seus autores",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ", que toda psiquiatria carrega o sujeito que a escreve, que a doença mental é necessariamente \"doença da pessoa\". E pensou: aqui está um campo onde o subjetivo não pode ser exorcizado.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Essa leitura enviesada, esse mal-entendido produtivo de uma frase escrita pra dizer o contrário, vai organizar tudo que Jung pensa daí em diante. A pergunta que ele tira de Krafft-Ebing — ",
+                  "type": "text"
+                },
+                {
+                  "text": "pode a psiquiatria ser uma ciência diante de seu caráter inescapavelmente subjetivo?",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " — é a pergunta que ele vai martelar pelo resto da vida.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Não é exagero dizer que toda a psicologia analítica é uma resposta — uma série de respostas insatisfatórias, autoconscientes da própria insuficiência — pra essa pergunta.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Burghölzli e o experimento que abriu uma porta",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em dezembro de 1900, recém-formado e endividado, Jung assume o posto de médico-assistente no hospital psiquiátrico Burghölzli, em Zurique, sob a direção de Eugen Bleuler — o mesmo Bleuler que criaria, alguns anos depois, o termo ",
+                  "type": "text"
+                },
+                {
+                  "text": "esquizofrenia",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Jung passou os primeiros seis meses lendo todos os anuários de psiquiatria disponíveis e estranhando profundamente o que via na prática: psiquiatras esperando pacientes morrerem pra dissecar cérebros no microscópio. Quando o chefe do laboratório de dissecação largou tudo pra ir fazer fotografia, Jung percebeu que aquilo era ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"só esporte\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " e que ele precisava largar também.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Voltou-se pros testes de associação de palavras. O experimento era simples — uma lista de cem palavras lidas em sequência, o sujeito responde com a primeira palavra que vem à mente, e mede-se o tempo de reação. Galton tinha inventado, Wundt tinha adaptado. Jung e Franz Riklin, no Burghölzli, fizeram uma virada que parece pequena mas mudou tudo: em vez de tentar usar o teste pra diagnóstico diferencial — que não funcionava — focaram nas ",
+                  "type": "text"
+                },
+                {
+                  "text": "perturbações",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " das respostas. Por que esse sujeito travou nessa palavra? Por que demorou três segundos nessa e duzentos milissegundos naquela?",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A hipótese: porque a palavra-estímulo ativou um ",
+                  "type": "text"
+                },
+                {
+                  "text": "complexo emocionalmente carregado",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Algo carregado de afeto inconsciente que perturbava o fluxo normal da associação. ",
+                  "type": "text"
+                },
+                {
+                  "text": "O teste de associação foi, na cabeça de Jung, a prova experimental da existência do inconsciente.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " Quando Bleuler pediu a ele um seminário sobre ",
+                  "type": "text"
+                },
+                {
+                  "text": "A Interpretação dos Sonhos",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", em 1902, Jung já vinha empilhando esses dados há dois anos. A leitura de Freud não foi descoberta. Foi explicação.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Foi isso, mais que qualquer outra coisa, que tornou Jung ",
+                  "type": "text"
+                },
+                {
+                  "text": "atraente",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " pra Freud em 1907. Freud tinha evidência clínica do inconsciente. Jung trouxe a evidência experimental que faltava — e trouxe não como discípulo, mas como cientista já estabelecido, com reputação internacional independente. Quando os dois finalmente se encontraram em Viena, no início de 1907, conversaram por treze horas seguidas. Bem mais que uma sessão dupla.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Freud, sete anos, uma ruptura",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A história Freud-Jung é a que todo mundo conhece, em parte porque a ",
+                  "type": "text"
+                },
+                {
+                  "text": "Correspondência Freud-Jung",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " foi publicada em 1974 e despertou um pequeno gênero literário em torno disso. Jung chamou aquilo de ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"aquela maldita correspondência\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Faz sentido: ela cristalizou pra sempre a leitura ",
+                  "type": "text"
+                },
+                {
+                  "text": "centrada em Freud",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " da psicologia analítica.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "O que vale a pena reter, contra essa leitura, são três coisas.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Primeira:",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " a ",
+                  "type": "text"
+                },
+                {
+                  "text": "análise didática",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " — a regra de que todo analista precisa passar por uma análise antes de exercer — ",
+                  "type": "text"
+                },
+                {
+                  "text": "foi invenção de Jung",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ", não de Freud. Saiu da experiência prática do Burghölzli, onde a equipe analisava os sonhos uns dos outros e se submetia aos próprios testes. Jung formalizou a ideia em 1912 nas palestras na Universidade Fordham, comparando-a ao treinamento de cirurgiões. Freud aderiu na sequência, reconhecendo ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"um dos muitos méritos da escola de Zurique\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Foi essa prática que diferenciou a psicanálise das outras psicoterapias da época — em que se aprendia hipnose visitando Bernheim, observando e imitando — e foi ela que tornou a psicanálise institucionalmente viável. Sem a análise didática, a psicanálise não teria sobrevivido. Sem Jung, a análise didática não teria existido.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Segunda:",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " a ruptura, em 1913, depois da publicação de ",
+                  "type": "text"
+                },
+                {
+                  "text": "Transformações e Símbolos da Libido",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", não foi sobre sexo. Foi sobre a ",
+                  "type": "text"
+                },
+                {
+                  "text": "equação pessoal",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Jung passou a se interessar pela cisão Freud-Adler, que tinha rachado a Sociedade Psicanalítica de Viena em 1911. Leu Adler atentamente, escreveu uma revisão (nunca publicada) e chegou a uma conclusão ao mesmo tempo elegante e devastadora:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Encontramos uma oposição semelhante entre Freud e Adler, fortemente vinculada a suas disposições pessoais... O que estava em jogo na divergência entre Freud e Adler era o embate de visões de mundo inconscientes.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em outras palavras: Freud e Adler não estavam descrevendo a realidade. Estavam descrevendo a si mesmos. Cada teoria era uma ",
+                  "type": "text"
+                },
+                {
+                  "text": "confissão pessoal travestida de descoberta universal",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Essa é exatamente a pergunta de Krafft-Ebing voltando, em forma de bomba, pra dentro da própria psicanálise. E isso, mais que qualquer divergência sobre libido, é o que torna a permanência de Jung na psicanálise impossível. Se toda teoria é confissão, a hipótese da universalidade da sexualidade infantil é só a confissão do ",
+                  "type": "text"
+                },
+                {
+                  "text": "senhor Freud de Viena",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Terceira:",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " Jung não era discípulo, era colaborador. E vinha de outra linhagem. Como escreveu em 1936, num texto que também não publicou em vida: ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"De modo algum sou uma decorrência exclusiva de Freud. Já tinha uma atitude científica própria e a teoria dos complexos antes de conhecê-lo. Os mestres que me influenciaram são, principalmente, Bleuler, Pierre Janet e Theodore Flournoy\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". E poderíamos acrescentar, pelas evidências do próprio Shamdasani: Krafft-Ebing, William James, Binet, Dilthey, Schopenhauer, Von Hartmann — que já tinham conceitos próprios do inconsciente cinquenta anos antes de Freud nascer. O ",
+                  "type": "text"
+                },
+                {
+                  "text": "mito freudocêntrico",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " é exatamente isso: um mito.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "James, o pai que ninguém menciona",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Em 1909 Jung foi com Freud à América, num evento na Universidade Clark. Lá conheceu William James pessoalmente. Tiveram conversas longas. James escreveu pra Flournoy, com sua delicadeza habitual, que Jung ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"professa grande estima por você e causou uma impressão muito agradável\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", enquanto Freud ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"deixou-me pessoalmente com a impressão de ser um sujeito obcecado com ideias fixas\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "No manuscrito original de ",
+                  "type": "text"
+                },
+                {
+                  "text": "Memórias",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", Jung escreveu um capítulo inteiro sobre James — capítulo cortado da versão publicada. Aniela Jaffé editou pesado. No texto original, Jung diz que James foi ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"uma das pessoas mais notáveis que conheceu na vida\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", alguém com quem podia ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"conversar facilmente\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", coisa que ele dizia conseguir no mundo todo só com James e Flournoy. Jung relata explicitamente a dívida intelectual: o empirismo radical, o pragmatismo, o pluralismo, a tipologia (a distinção entre \"moderados\" e \"radicais\" filosóficos no livro ",
+                  "type": "text"
+                },
+                {
+                  "text": "Pragmatismo",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " é o protótipo direto dos tipos junguianos). E numa carta pra Kurt Wolff em 1957:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Devo principalmente a esses dois pesquisadores [James e Flournoy] ter compreendido a essência dos distúrbios psíquicos no âmbito da alma humana como um todo.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "James como inspirador essencial. Tradição americana, não vienense. Por que isso some da história? Em parte porque Jaffé editou — ",
+                  "type": "text"
+                },
+                {
+                  "text": "Memórias",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " não é autobiografia, é compilação editada com mão pesada. Em parte porque o mito freudocêntrico é mais arrumadinho. Em parte porque Jung, como ele mesmo admitia, tinha a tendência a ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"apagar suas pegadas\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Tipos Psicológicos",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ": uma derrota magnífica",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Tipos Psicológicos",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " saiu em 1921. É o livro mais lido de Jung em vida, o que pavimentou a recepção internacional, o que originou o MBTI (que dá calafrios em qualquer junguiano sério, e em Jung daria também). Mas o livro que o público lê não é o livro que Jung escreveu.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A intenção de Jung, declarada repetidas vezes em cartas e prefácios, era ",
+                  "type": "text"
+                },
+                {
+                  "text": "resolver o problema da equação pessoal",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Se cada teoria é a confissão de um tipo, e se existem tipos discerníveis, então dá pra construir uma metalinguagem em que cada teoria seja localizada como a expressão típica de uma posição psicológica. A psicanálise é a psicologia do tipo X. A psicologia individual de Adler é a do tipo Y. A psicologia complexa é a do tipo Z. Você localiza o tipo, você localiza a confissão, você sai do solipsismo.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Era o sonho de uma ",
+                  "type": "text"
+                },
+                {
+                  "text": "psicologia crítica",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " — análoga à ",
+                  "type": "text"
+                },
+                {
+                  "text": "filosofia crítica",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " de Kant. Um aparato pra examinar as condições de possibilidade do próprio conhecimento psicológico. Jung escreve pra Kranefeldt em 1933:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Minhas intenções e meus interesses tampouco estão direcionados para a caracterologia mas, muito pelo contrário, para a tipologia. Mas não no sentido de que eu tenha definido tipos para classificar pessoas com eles; minha ideia era contar com um esquema que me permitisse organizar o material psicológico.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Os leitores leram o capítulo X, a \"Descrição Geral dos Tipos\", como se fosse o livro inteiro. Pularam os dez capítulos históricos e filosóficos. Pegaram só os retratos. Em 1934, no prefácio à edição espanhola, Jung escreveu, ainda mais incomodado: ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"esse tipo de classificação não é senão uma brincadeira infantil de salão\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Em 1935, em palestras em Zurique: o tipo ",
+                  "type": "text"
+                },
+                {
+                  "text": "\"é uma função teórica sem músculos ou carne, e se você se identifica com ela, você se identifica com um cadáver\"",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A piada melancólica é que ",
+                  "type": "text"
+                },
+                {
+                  "text": "o sucesso popular dos Tipos veio justamente do mal-entendido",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Galton tinha inventado a técnica das fotografias compostas, sobrepondo retratos de uma família pra produzir um ",
+                  "type": "text"
+                },
+                {
+                  "text": "rosto representativo",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Os tipos de Jung eram retratos galtonescos, e funcionavam exatamente assim: reconhecíveis o suficiente pra cada um se ver, abstratos o suficiente pra todos se verem. A tipologia virou divertimento de salão.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "E pior: a tipologia não tinha resolvido a equação pessoal. Em 1922, Beatrice Hinkle, a tradutora americana de Jung, publicou um modelo alternativo subdividindo os tipos. Tinha agora dois sistemas junguianos rivais dentro da própria escola. Como decidir entre os dois? Pela tipologia de Jung? Pela tipologia de Hinkle? ",
+                  "type": "text"
+                },
+                {
+                  "text": "Voltamos ao solipsismo.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " Em ",
+                  "type": "text"
+                },
+                {
+                  "text": "Tipos Psicológicos",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", ironicamente, Jung evita declarar o próprio tipo, o que pela tese do próprio livro é uma lacuna decisiva — o leitor não tem como decifrar a equação pessoal ",
+                  "type": "text"
+                },
+                {
+                  "text": "dele",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A confissão final",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A partir dos anos 1930, Jung passa a se referir cada vez menos a \"psicologia analítica\" (termo prático, pra clínica) e cada vez mais a ",
+                  "type": "text"
+                },
+                {
+                  "text": "psicologia complexa",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " — ",
+                  "type": "text"
+                },
+                {
+                  "text": "Komplexe Psychologie",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". A mudança é mais que estilística. Toni Wolff escreve, em 1936, que a ",
+                  "type": "text"
+                },
+                {
+                  "text": "psicologia complexa",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " é o nome do projeto teórico geral; ",
+                  "type": "text"
+                },
+                {
+                  "text": "psicologia analítica",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " é só o nome do método clínico. Como o termo nunca pegou no inglês, sumiu da história. Hoje quase ninguém usa.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "E em 1935, numa palestra em Londres, Jung faz a admissão que, lida em sequência com tudo o que veio antes, é devastadora:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Considero minha contribuição à psicologia uma confissão de minha subjetividade. É minha psicologia pessoal, meu preconceito que me leva a ver as coisas dessa forma. Mas espero que Freud e Adler façam o mesmo, e confessem que suas ideias são seu ponto de vista subjetivo. À medida que admitirmos nosso viés pessoal, estaremos realmente contribuindo para uma psicologia objetiva.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Aqui o ciclo se fecha. A pergunta vinda de Krafft-Ebing — ",
+                  "type": "text"
+                },
+                {
+                  "text": "pode a psiquiatria ser uma ciência?",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " — recebe a resposta mais honesta possível, e a mais incômoda: ",
+                  "type": "text"
+                },
+                {
+                  "text": "a psicologia objetiva não existe enquanto soma de descrições universais. Ela só pode existir enquanto soma de confissões subjetivas que se reconhecem como tais.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " Cada teoria é um testemunho. Cada psicologia é um documento autobiográfico travestido de tratado. O psicólogo só faz ciência ",
+                  "type": "text"
+                },
+                {
+                  "text": "na medida em que confessa que está fazendo confissão",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ".",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "No final da vida, em 1955, Jung resume em uma frase pra Aniela Jaffé:",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "attrs": {
+                "pullquote": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "text": "Sou o mais amaldiçoado diletante que já viveu. Quis alcançar algo com minha ciência e depois me vi lançado neste mar de lava, tendo de classificar todas as coisas. É por isso que uso o termo diletantismo: vivo de empréstimos, empresto constantemente o conhecimento dos outros.",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "A frase foi ",
+                  "type": "text"
+                },
+                {
+                  "text": "cortada",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " do ",
+                  "type": "text"
+                },
+                {
+                  "text": "Memórias, Sonhos, Reflexões",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " publicado. Era distante demais da imagem que se queria preservar. O fundador da psicologia analítica não devia ser um diletante. Devia ser um profeta.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3,
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "O que sobra disso pra clínica",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Duas coisas pulsam no que sobrou.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Uma: ",
+                  "type": "text"
+                },
+                {
+                  "text": "toda teoria psicológica é, em algum grau, autobiografia disfarçada.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " Não é insulto, é condição. O analista freudiano que vê pulsão sexual em tudo está, em parte, dizendo algo sobre si. O cognitivista que reduz a vida psíquica a vieses está dizendo algo sobre si. O junguiano que enxerga arquétipos em cada relacionamento conjugal está, em parte, dizendo algo sobre si. ",
+                  "type": "text"
+                },
+                {
+                  "text": "E você, no consultório, está dizendo algo sobre você quando escolhe a teoria com que vai trabalhar com o paciente.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " A psicologia analítica, no melhor sentido dela, é aquela que dispensa a necessidade de uma teoria ",
+                  "type": "text"
+                },
+                {
+                  "text": "a priori",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": " e constrói dialeticamente, com cada paciente, uma nova teoria pra cada novo caso. Isso é o oposto da aplicação de manual.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Duas: ",
+                  "type": "text"
+                },
+                {
+                  "text": "as pessoas se escondem atrás da teoria pra não se implicar no caso",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": ". Quando o paciente não melhora, a culpa é dele (não se entregou ao processo). Quando o caso dá errado, a teoria estava certa, mas o intérprete errou. ",
+                  "type": "text"
+                },
+                {
+                  "text": "A teoria vira escudo.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                },
+                {
+                  "text": " E o sujeito que deveria estar exposto ao Outro se esconde atrás dela como Adão atrás da figueira.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "O que resta da psicologia analítica, depois de você arrancar todas as fantasias sobre arquétipos cósmicos e sincronicidades miraculosas, é uma proposta epistemológica radical: ",
+                  "type": "text"
+                },
+                {
+                  "text": "não há ponto de apoio externo",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ". O analista trabalha com a própria subjetividade como instrumento — exposto, falível, sujeito ao engano, sujeito à projeção, sujeito à equação pessoal — e a única honestidade possível é dizer isso pra si mesmo, pra supervisão e, no momento certo, pro paciente.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Jung passou a vida tentando resolver essa equação. Não resolveu. Ninguém resolveu. Mas foi, talvez, o único psicólogo do século XX que olhou o problema de frente o tempo todo — até quando isso o fazia parecer diletante, místico, embaraçoso e cansado. ",
+                  "type": "text"
+                },
+                {
+                  "text": "Não me transformem numa lenda",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                },
+                {
+                  "text": ", ele pediu em 1930. Transformaram. E a lenda escondeu, justamente, a parte mais interessante: que ele estava, o tempo todo, tentando avisar que ",
+                  "type": "text"
+                },
+                {
+                  "text": "a psicologia não é uma ciência da alma. É a confissão de cada psicólogo sobre a sua.",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "horizontalRule"
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": null
+              },
+              "content": [
+                {
+                  "text": "Texto baseado no Prólogo e Capítulo 1 de Sonu Shamdasani, Jung e a Construção da Psicologia Moderna: O Sonho de uma Ciência (Cambridge, 2003; ed. Idéias & Letras, 2005).",
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "excerpt": "",
+        "seriesId": "",
+        "seo_title": "",
+        "created_at": "2026-05-24T13:03:21.118Z",
+        "updated_at": "2026-05-24T15:09:37.225Z",
+        "seriesOrder": 0,
+        "content_html": "<h2>A equação pessoal de Carl Jung</h2><p><em>Ou: como a psicologia analítica nasceu de um problema astronômico de 1796 e por que ninguém te contou isso</em></p><p>Conta-se que Jung saiu da casa do pai. Que era discípulo de Freud, percebeu que o mestre estava errado sobre uma ou outra coisa, e fundou uma escola própria — o filho rebelde, o herético, o apóstata. É uma história limpa, com começo, meio e fim, que cabe num parágrafo de manual e numa frase de quem nunca leu nem Freud nem Jung direito.</p><p>O problema é que ela é falsa. Ou melhor: é tão parcial que beira a fabricação. Quando Sonu Shamdasani — o sujeito que passou trinta anos catalogando os arquivos inéditos de Jung em Zurique — sentou pra reconstruir como a psicologia analítica realmente apareceu no mundo, o que ele encontrou foi uma genealogia muito mais estranha. Não a história de uma ruptura. A história de uma obsessão epistemológica que atravessa o século XIX, passa pela astronomia, pela filosofia alemã, pela psiquiatria francesa, pelo pragmatismo americano, e desemboca num psiquiatra suíço passando a vida tentando responder a uma pergunta sem resposta: <strong>como é possível alguém produzir conhecimento sobre a alma humana quando o instrumento de medição é a própria alma humana?</strong></p><p>Esse problema tem nome. Chama-se equação pessoal. E vale a pena contar a história inteira.</p><h3>A nova psicologia que queria ser física</h3><p>Em 1893, William James escreveu pro amigo Théodore Flournoy uma frase de tédio educado: \"parece que hoje todo o mundo está publicando uma Psicologia\". Entre 1870 e 1910, o Ocidente foi inundado por manuais, periódicos, cátedras e clubes de algo chamado \"psicologia\". Toda a fauna humana foi convocada pro divã e pro laboratório — o louco, o gênio, o primitivo, o bebê, o degenerado, o normal, o rato branco. Personagens novos entram em cena: o esquizofrênico, o invertido, o pervertido, o introvertido, o extrovertido. O sonho não era modesto: fazer uma ciência da alma equiparada à física e à química.</p><p>Em 1909, num congresso em Genebra, um grupo de psicólogos propôs seriamente que a psicologia adotasse o <strong>esperanto</strong> como língua oficial pra unificar a terminologia. Não estou inventando. Achavam que se a linguagem se alinhasse, o resto se ajeitaria. O congresso terminou em discussões inflamadas, parte delas em esperanto, sem chegar a lugar nenhum. William Stern, em 1900, já tinha resumido: \"há muitas novas psicologias, mas ainda não a nova psicologia\". Husserl seria mais cruel: \"a história da psicologia é, na realidade, somente uma história de crises\".</p><p>Era nesse caldo que Jung ia entrar. E é importante segurar essa imagem: não uma psicologia consolidada que Freud invadiu e Jung depois corrompeu, mas um campo em ebulição, sem método consensual, sem objeto consensual, sem vocabulário consensual.</p><h3>A equação pessoal: de Greenwich a Leipzig</h3><p>Em 1796, no observatório de Greenwich, o astrônomo real Nevil Maskelyne percebeu que havia uma discrepância de quase um segundo entre suas observações dos trânsitos estelares e as do seu assistente, Kinnebrook. Resolveu-se o problema do jeito antigo: o assistente foi demitido.</p><p>Vinte anos depois, outro astrônomo, Friedrich Bessel, foi investigar se outros pares de observadores apresentavam a mesma diferença. Apresentavam. Bessel cunhou então a expressão <em>equação pessoal</em> pra designar essa variação inevitável entre observadores. E descobriu, mais perturbador ainda, que ela não era constante. Cada pessoa via diferente. E a diferença mudava ao longo do tempo.</p><p>A astronomia teve que aprender a conviver com isso. A psicologia, nascendo justamente nesse período (1860–1870), se apaixonou pela ideia: se você consegue medir o tempo de reação de uma tarefa simples, você consegue medir um processo mental. Foi assim que Wundt fundou o laboratório de Leipzig em 1879, comemorado por décadas como o marco zero da psicologia científica.</p><p>A piada da história é que a <em>equação pessoal</em> — que começou como um obstáculo astronômico a ser contornado — vai virar primeiro a esperança da psicologia experimental, depois um problema irresolvível, e por fim, na cabeça de Jung, o <strong>abismo epistemológico que define o que a psicologia pode e não pode ser</strong>. A mesma expressão atravessa cem anos virando do avesso a cada vinte. A história de uma palavra, às vezes, é a história de um campo inteiro.</p><h3>Os dois papas</h3><p>No final do século XIX dizia-se que havia dois papas na psicologia: Wundt e William James. Concordavam em pouca coisa.</p><p>Wundt era o pai do laboratório, da experimentação rigorosa, da fé de que pra ser ciência tinha que copiar a física. Sua proposta era construir definições conceituais fixas, rígidas. Como se a psicologia pudesse ter uma tabela periódica.</p><p>James achava aquilo uma piada. Em 1890, na abertura do seu monumental <em>Princípios de Psicologia</em>, escreveu a frase que ainda hoje causa desconforto:</p><blockquote><p>Isto não é uma ciência; no máximo, uma esperança de ciência... A psicologia se encontra nas mesmas condições que a física antes de Galileu, ou a química antes de Lavoisier.</p></blockquote><p>Mais importante: foi James quem importou explicitamente a <em>equação pessoal</em> da astronomia pra dentro da psicologia, e fez dela uma acusação. No método comparativo da época — em que se estudava \"a mente do selvagem\", \"a mente da criança\" —, a equação pessoal do pesquisador <em>\"enxerga as coisas basicamente do jeito que as quer ver\"</em>. O selvagem é desprovido de moral se a moral dele choca o europeu. A criança não tem consciência de si se ela fala de si na terceira pessoa. <em>\"A maioria dos psicólogos criou regras universais a partir de suas peculiaridades pessoais\"</em>, escreveu. O recurso pra escapar disso era \"sagacidade e inocência\" — que é um jeito polido de dizer que não tem solução técnica, só ética.</p><p>Jung, dezenove anos depois, encontraria pessoalmente esse senhor de barba branca em Massachusetts. E levaria embora dele, na bagagem, três coisas: o pragmatismo, o pluralismo e a equação pessoal. Voltaremos a isso.</p><h3>A iluminação de Krafft-Ebing</h3><p>Em <em>Memórias, Sonhos, Reflexões</em>, Jung conta que se decidiu pela psiquiatria num lampejo, lendo o prefácio do manual de Krafft-Ebing pra um exame. O que o atingiu foi uma frase que não devia ter atingido ninguém:</p><blockquote><p>Provavelmente é devido à peculiaridade do sujeito e às lacunas em sua elaboração que os manuais de psiquiatria são marcados por um caráter mais ou menos subjetivo.</p></blockquote><p>A leitura de Jung é, como Shamdasani observa, <em>curiosíssima</em>. Krafft-Ebing estava se defendendo da acusação de subjetividade, dizendo que apesar dela tinha conseguido construir quadros patológicos objetivos baseados em trinta e três anos de clínica. Jung leu o oposto. Leu que <strong>os manuais são, em parte, confissões subjetivas dos seus autores</strong>, que toda psiquiatria carrega o sujeito que a escreve, que a doença mental é necessariamente \"doença da pessoa\". E pensou: aqui está um campo onde o subjetivo não pode ser exorcizado.</p><p>Essa leitura enviesada, esse mal-entendido produtivo de uma frase escrita pra dizer o contrário, vai organizar tudo que Jung pensa daí em diante. A pergunta que ele tira de Krafft-Ebing — <em>pode a psiquiatria ser uma ciência diante de seu caráter inescapavelmente subjetivo?</em> — é a pergunta que ele vai martelar pelo resto da vida.</p><p>Não é exagero dizer que toda a psicologia analítica é uma resposta — uma série de respostas insatisfatórias, autoconscientes da própria insuficiência — pra essa pergunta.</p><h3>Burghölzli e o experimento que abriu uma porta</h3><p>Em dezembro de 1900, recém-formado e endividado, Jung assume o posto de médico-assistente no hospital psiquiátrico Burghölzli, em Zurique, sob a direção de Eugen Bleuler — o mesmo Bleuler que criaria, alguns anos depois, o termo <em>esquizofrenia</em>. Jung passou os primeiros seis meses lendo todos os anuários de psiquiatria disponíveis e estranhando profundamente o que via na prática: psiquiatras esperando pacientes morrerem pra dissecar cérebros no microscópio. Quando o chefe do laboratório de dissecação largou tudo pra ir fazer fotografia, Jung percebeu que aquilo era <em>\"só esporte\"</em> e que ele precisava largar também.</p><p>Voltou-se pros testes de associação de palavras. O experimento era simples — uma lista de cem palavras lidas em sequência, o sujeito responde com a primeira palavra que vem à mente, e mede-se o tempo de reação. Galton tinha inventado, Wundt tinha adaptado. Jung e Franz Riklin, no Burghölzli, fizeram uma virada que parece pequena mas mudou tudo: em vez de tentar usar o teste pra diagnóstico diferencial — que não funcionava — focaram nas <strong>perturbações</strong> das respostas. Por que esse sujeito travou nessa palavra? Por que demorou três segundos nessa e duzentos milissegundos naquela?</p><p>A hipótese: porque a palavra-estímulo ativou um <em>complexo emocionalmente carregado</em>. Algo carregado de afeto inconsciente que perturbava o fluxo normal da associação. <strong>O teste de associação foi, na cabeça de Jung, a prova experimental da existência do inconsciente.</strong> Quando Bleuler pediu a ele um seminário sobre <em>A Interpretação dos Sonhos</em>, em 1902, Jung já vinha empilhando esses dados há dois anos. A leitura de Freud não foi descoberta. Foi explicação.</p><p>Foi isso, mais que qualquer outra coisa, que tornou Jung <em>atraente</em> pra Freud em 1907. Freud tinha evidência clínica do inconsciente. Jung trouxe a evidência experimental que faltava — e trouxe não como discípulo, mas como cientista já estabelecido, com reputação internacional independente. Quando os dois finalmente se encontraram em Viena, no início de 1907, conversaram por treze horas seguidas. Bem mais que uma sessão dupla.</p><h3>Freud, sete anos, uma ruptura</h3><p>A história Freud-Jung é a que todo mundo conhece, em parte porque a <em>Correspondência Freud-Jung</em> foi publicada em 1974 e despertou um pequeno gênero literário em torno disso. Jung chamou aquilo de <em>\"aquela maldita correspondência\"</em>. Faz sentido: ela cristalizou pra sempre a leitura <em>centrada em Freud</em> da psicologia analítica.</p><p>O que vale a pena reter, contra essa leitura, são três coisas.</p><p><strong>Primeira:</strong> a <em>análise didática</em> — a regra de que todo analista precisa passar por uma análise antes de exercer — <strong>foi invenção de Jung</strong>, não de Freud. Saiu da experiência prática do Burghölzli, onde a equipe analisava os sonhos uns dos outros e se submetia aos próprios testes. Jung formalizou a ideia em 1912 nas palestras na Universidade Fordham, comparando-a ao treinamento de cirurgiões. Freud aderiu na sequência, reconhecendo <em>\"um dos muitos méritos da escola de Zurique\"</em>. Foi essa prática que diferenciou a psicanálise das outras psicoterapias da época — em que se aprendia hipnose visitando Bernheim, observando e imitando — e foi ela que tornou a psicanálise institucionalmente viável. Sem a análise didática, a psicanálise não teria sobrevivido. Sem Jung, a análise didática não teria existido.</p><p><strong>Segunda:</strong> a ruptura, em 1913, depois da publicação de <em>Transformações e Símbolos da Libido</em>, não foi sobre sexo. Foi sobre a <em>equação pessoal</em>. Jung passou a se interessar pela cisão Freud-Adler, que tinha rachado a Sociedade Psicanalítica de Viena em 1911. Leu Adler atentamente, escreveu uma revisão (nunca publicada) e chegou a uma conclusão ao mesmo tempo elegante e devastadora:</p><blockquote><p>Encontramos uma oposição semelhante entre Freud e Adler, fortemente vinculada a suas disposições pessoais... O que estava em jogo na divergência entre Freud e Adler era o embate de visões de mundo inconscientes.</p></blockquote><p>Em outras palavras: Freud e Adler não estavam descrevendo a realidade. Estavam descrevendo a si mesmos. Cada teoria era uma <strong>confissão pessoal travestida de descoberta universal</strong>. Essa é exatamente a pergunta de Krafft-Ebing voltando, em forma de bomba, pra dentro da própria psicanálise. E isso, mais que qualquer divergência sobre libido, é o que torna a permanência de Jung na psicanálise impossível. Se toda teoria é confissão, a hipótese da universalidade da sexualidade infantil é só a confissão do <em>senhor Freud de Viena</em>.</p><p><strong>Terceira:</strong> Jung não era discípulo, era colaborador. E vinha de outra linhagem. Como escreveu em 1936, num texto que também não publicou em vida: <em>\"De modo algum sou uma decorrência exclusiva de Freud. Já tinha uma atitude científica própria e a teoria dos complexos antes de conhecê-lo. Os mestres que me influenciaram são, principalmente, Bleuler, Pierre Janet e Theodore Flournoy\"</em>. E poderíamos acrescentar, pelas evidências do próprio Shamdasani: Krafft-Ebing, William James, Binet, Dilthey, Schopenhauer, Von Hartmann — que já tinham conceitos próprios do inconsciente cinquenta anos antes de Freud nascer. O <em>mito freudocêntrico</em> é exatamente isso: um mito.</p><h3>James, o pai que ninguém menciona</h3><p>Em 1909 Jung foi com Freud à América, num evento na Universidade Clark. Lá conheceu William James pessoalmente. Tiveram conversas longas. James escreveu pra Flournoy, com sua delicadeza habitual, que Jung <em>\"professa grande estima por você e causou uma impressão muito agradável\"</em>, enquanto Freud <em>\"deixou-me pessoalmente com a impressão de ser um sujeito obcecado com ideias fixas\"</em>.</p><p>No manuscrito original de <em>Memórias</em>, Jung escreveu um capítulo inteiro sobre James — capítulo cortado da versão publicada. Aniela Jaffé editou pesado. No texto original, Jung diz que James foi <em>\"uma das pessoas mais notáveis que conheceu na vida\"</em>, alguém com quem podia <em>\"conversar facilmente\"</em>, coisa que ele dizia conseguir no mundo todo só com James e Flournoy. Jung relata explicitamente a dívida intelectual: o empirismo radical, o pragmatismo, o pluralismo, a tipologia (a distinção entre \"moderados\" e \"radicais\" filosóficos no livro <em>Pragmatismo</em> é o protótipo direto dos tipos junguianos). E numa carta pra Kurt Wolff em 1957:</p><blockquote><p>Devo principalmente a esses dois pesquisadores [James e Flournoy] ter compreendido a essência dos distúrbios psíquicos no âmbito da alma humana como um todo.</p></blockquote><p>James como inspirador essencial. Tradição americana, não vienense. Por que isso some da história? Em parte porque Jaffé editou — <em>Memórias</em> não é autobiografia, é compilação editada com mão pesada. Em parte porque o mito freudocêntrico é mais arrumadinho. Em parte porque Jung, como ele mesmo admitia, tinha a tendência a <em>\"apagar suas pegadas\"</em>.</p><h3><em>Tipos Psicológicos</em>: uma derrota magnífica</h3><p><em>Tipos Psicológicos</em> saiu em 1921. É o livro mais lido de Jung em vida, o que pavimentou a recepção internacional, o que originou o MBTI (que dá calafrios em qualquer junguiano sério, e em Jung daria também). Mas o livro que o público lê não é o livro que Jung escreveu.</p><p>A intenção de Jung, declarada repetidas vezes em cartas e prefácios, era <strong>resolver o problema da equação pessoal</strong>. Se cada teoria é a confissão de um tipo, e se existem tipos discerníveis, então dá pra construir uma metalinguagem em que cada teoria seja localizada como a expressão típica de uma posição psicológica. A psicanálise é a psicologia do tipo X. A psicologia individual de Adler é a do tipo Y. A psicologia complexa é a do tipo Z. Você localiza o tipo, você localiza a confissão, você sai do solipsismo.</p><p>Era o sonho de uma <em>psicologia crítica</em> — análoga à <em>filosofia crítica</em> de Kant. Um aparato pra examinar as condições de possibilidade do próprio conhecimento psicológico. Jung escreve pra Kranefeldt em 1933:</p><blockquote><p>Minhas intenções e meus interesses tampouco estão direcionados para a caracterologia mas, muito pelo contrário, para a tipologia. Mas não no sentido de que eu tenha definido tipos para classificar pessoas com eles; minha ideia era contar com um esquema que me permitisse organizar o material psicológico.</p></blockquote><p>Os leitores leram o capítulo X, a \"Descrição Geral dos Tipos\", como se fosse o livro inteiro. Pularam os dez capítulos históricos e filosóficos. Pegaram só os retratos. Em 1934, no prefácio à edição espanhola, Jung escreveu, ainda mais incomodado: <em>\"esse tipo de classificação não é senão uma brincadeira infantil de salão\"</em>. Em 1935, em palestras em Zurique: o tipo <em>\"é uma função teórica sem músculos ou carne, e se você se identifica com ela, você se identifica com um cadáver\"</em>.</p><p>A piada melancólica é que <strong>o sucesso popular dos Tipos veio justamente do mal-entendido</strong>. Galton tinha inventado a técnica das fotografias compostas, sobrepondo retratos de uma família pra produzir um <em>rosto representativo</em>. Os tipos de Jung eram retratos galtonescos, e funcionavam exatamente assim: reconhecíveis o suficiente pra cada um se ver, abstratos o suficiente pra todos se verem. A tipologia virou divertimento de salão.</p><p>E pior: a tipologia não tinha resolvido a equação pessoal. Em 1922, Beatrice Hinkle, a tradutora americana de Jung, publicou um modelo alternativo subdividindo os tipos. Tinha agora dois sistemas junguianos rivais dentro da própria escola. Como decidir entre os dois? Pela tipologia de Jung? Pela tipologia de Hinkle? <strong>Voltamos ao solipsismo.</strong> Em <em>Tipos Psicológicos</em>, ironicamente, Jung evita declarar o próprio tipo, o que pela tese do próprio livro é uma lacuna decisiva — o leitor não tem como decifrar a equação pessoal <em>dele</em>.</p><h3>A confissão final</h3><p>A partir dos anos 1930, Jung passa a se referir cada vez menos a \"psicologia analítica\" (termo prático, pra clínica) e cada vez mais a <em>psicologia complexa</em> — <em>Komplexe Psychologie</em>. A mudança é mais que estilística. Toni Wolff escreve, em 1936, que a <em>psicologia complexa</em> é o nome do projeto teórico geral; <em>psicologia analítica</em> é só o nome do método clínico. Como o termo nunca pegou no inglês, sumiu da história. Hoje quase ninguém usa.</p><p>E em 1935, numa palestra em Londres, Jung faz a admissão que, lida em sequência com tudo o que veio antes, é devastadora:</p><blockquote><p>Considero minha contribuição à psicologia uma confissão de minha subjetividade. É minha psicologia pessoal, meu preconceito que me leva a ver as coisas dessa forma. Mas espero que Freud e Adler façam o mesmo, e confessem que suas ideias são seu ponto de vista subjetivo. À medida que admitirmos nosso viés pessoal, estaremos realmente contribuindo para uma psicologia objetiva.</p></blockquote><p>Aqui o ciclo se fecha. A pergunta vinda de Krafft-Ebing — <em>pode a psiquiatria ser uma ciência?</em> — recebe a resposta mais honesta possível, e a mais incômoda: <strong>a psicologia objetiva não existe enquanto soma de descrições universais. Ela só pode existir enquanto soma de confissões subjetivas que se reconhecem como tais.</strong> Cada teoria é um testemunho. Cada psicologia é um documento autobiográfico travestido de tratado. O psicólogo só faz ciência <em>na medida em que confessa que está fazendo confissão</em>.</p><p>No final da vida, em 1955, Jung resume em uma frase pra Aniela Jaffé:</p><blockquote><p>Sou o mais amaldiçoado diletante que já viveu. Quis alcançar algo com minha ciência e depois me vi lançado neste mar de lava, tendo de classificar todas as coisas. É por isso que uso o termo diletantismo: vivo de empréstimos, empresto constantemente o conhecimento dos outros.</p></blockquote><p>A frase foi <em>cortada</em> do <em>Memórias, Sonhos, Reflexões</em> publicado. Era distante demais da imagem que se queria preservar. O fundador da psicologia analítica não devia ser um diletante. Devia ser um profeta.</p><h3>O que sobra disso pra clínica</h3><p>Duas coisas pulsam no que sobrou.</p><p>Uma: <strong>toda teoria psicológica é, em algum grau, autobiografia disfarçada.</strong> Não é insulto, é condição. O analista freudiano que vê pulsão sexual em tudo está, em parte, dizendo algo sobre si. O cognitivista que reduz a vida psíquica a vieses está dizendo algo sobre si. O junguiano que enxerga arquétipos em cada relacionamento conjugal está, em parte, dizendo algo sobre si. <strong>E você, no consultório, está dizendo algo sobre você quando escolhe a teoria com que vai trabalhar com o paciente.</strong> A psicologia analítica, no melhor sentido dela, é aquela que dispensa a necessidade de uma teoria <em>a priori</em> e constrói dialeticamente, com cada paciente, uma nova teoria pra cada novo caso. Isso é o oposto da aplicação de manual.</p><p>Duas: <strong>as pessoas se escondem atrás da teoria pra não se implicar no caso</strong>. Quando o paciente não melhora, a culpa é dele (não se entregou ao processo). Quando o caso dá errado, a teoria estava certa, mas o intérprete errou. <strong>A teoria vira escudo.</strong> E o sujeito que deveria estar exposto ao Outro se esconde atrás dela como Adão atrás da figueira.</p><p>O que resta da psicologia analítica, depois de você arrancar todas as fantasias sobre arquétipos cósmicos e sincronicidades miraculosas, é uma proposta epistemológica radical: <em>não há ponto de apoio externo</em>. O analista trabalha com a própria subjetividade como instrumento — exposto, falível, sujeito ao engano, sujeito à projeção, sujeito à equação pessoal — e a única honestidade possível é dizer isso pra si mesmo, pra supervisão e, no momento certo, pro paciente.</p><p>Jung passou a vida tentando resolver essa equação. Não resolveu. Ninguém resolveu. Mas foi, talvez, o único psicólogo do século XX que olhou o problema de frente o tempo todo — até quando isso o fazia parecer diletante, místico, embaraçoso e cansado. <em>Não me transformem numa lenda</em>, ele pediu em 1930. Transformaram. E a lenda escondeu, justamente, a parte mais interessante: que ele estava, o tempo todo, tentando avisar que <strong>a psicologia não é uma ciência da alma. É a confissão de cada psicólogo sobre a sua.</strong></p><hr><p><em>Texto baseado no Prólogo e Capítulo 1 de Sonu Shamdasani, Jung e a Construção da Psicologia Moderna: O Sonho de uma Ciência (Cambridge, 2003; ed. Idéias &amp; Letras, 2005).</em></p>",
+        "scheduled_at": "",
+        "featured_cover": "",
+        "featured_image": "",
+        "seo_description": "",
+        "featured_cover_alt": "",
+        "featured_image_alt": ""
+      },
       {
         "id": "moc6pger7lxvb",
         "slug": "o-que-e-consciencia-em-jung",
@@ -2633,6 +4474,15 @@
         "question": "Posso solicitar um material sobre um tema especifico?"
       }
     ],
+    "angelo_admin_areas": [
+      {
+        "id": "psicologia-junguiana",
+        "icon": "spiral",
+        "slug": "psicologia-junguiana",
+        "color": "#B48C50",
+        "label": "Psicologia Junguiana"
+      }
+    ],
     "angelo_admin_courses": [],
     "angelo_admin_therapy": {
       "cta": {
@@ -2668,7 +4518,7 @@
           "q": "E se eu precisar faltar?"
         },
         {
-          "a": "Absoluto, conforme o Código de Ética da profissão. Nada do que você trazer sai daqui.",
+          "a": "Absoluto, conforme ética. Nada do que você trazer sai daqui.",
           "q": "Sigilo"
         },
         {
@@ -2743,55 +4593,130 @@
           {
             "dow": 1,
             "label": "Segunda",
-            "endHour": 22,
-            "startHour": 14
+            "endHour": 21,
+            "startHour": 15
           },
           {
             "dow": 2,
             "label": "Terça",
-            "endHour": 22,
-            "startHour": 14
+            "endHour": 21,
+            "startHour": 15
           },
           {
             "dow": 3,
             "label": "Quarta",
-            "endHour": 20,
-            "startHour": 14
+            "endHour": 21,
+            "startHour": 15
           },
           {
             "dow": 4,
             "label": "Quinta",
-            "endHour": 22,
-            "startHour": 14
+            "endHour": 21,
+            "startHour": 15
           },
           {
             "dow": 5,
             "label": "Sexta",
-            "endHour": 22,
-            "startHour": 14
+            "endHour": 21,
+            "startHour": 15
           }
         ],
         "stepHour": 1,
-        "blockedSlots": [],
+        "blockedSlots": [
+          "1-14",
+          "1-19",
+          "1-20",
+          "1-21",
+          "1-22",
+          "2-21",
+          "3-20",
+          "4-18",
+          "4-20",
+          "4-21",
+          "5-20",
+          "5-19",
+          "5-14",
+          "4-14",
+          "3-14",
+          "2-14",
+          "3-22"
+        ],
         "sectionLabel": "Janelas de atendimento"
       },
       "deontology": {
         "crp": "",
-        "show": true,
-        "text": "Atendo como estagiário em psicologia, sob supervisão clínica da Associação Allos. Quando concluir a graduação e obtiver registro no CRP, esta indicação será atualizada."
+        "show": false,
+        "text": "Atendo como estagiário, sob supervisão clínica da Associação Allos. Quando concluir a graduação e obtiver registro no CRP, esta indicação será atualizada."
       },
       "whatsappNumber": "5581987349114"
     },
+    "angelo_admin_trilhas": [
+      {
+        "id": "trilha-mpbryeoh",
+        "area": "psicologia-junguiana",
+        "icon": "compass",
+        "name": "Jung: Por onde eu começo?",
+        "slug": "introducaojung",
+        "extra": false,
+        "level": "Introdutório",
+        "hidden": false,
+        "stages": [
+          {
+            "id": "stage-iuzg4",
+            "icon": "scroll",
+            "kind": "leitura",
+            "slug": "etapa",
+            "extra": false,
+            "intro": "",
+            "title": "História",
+            "blocks": [
+              {
+                "link": {
+                  "kind": "blog",
+                  "label": "",
+                  "value": "como-jung-se-relaciona-com-a-sua-psicologia"
+                },
+                "type": "link"
+              }
+            ],
+            "hidden": false,
+            "summary": "Premissas que irão auxiliar a nortear a leitura e o estudo da psicologia Junguiana.",
+            "thumbMode": "icon",
+            "comingSoon": false,
+            "coverImage": ""
+          }
+        ],
+        "duration": "",
+        "subtitle": "",
+        "archetype": "",
+        "thumbMode": "icon",
+        "comingSoon": false,
+        "coverImage": "",
+        "description": "Aqui você vai entender por onde começar quando não sabe absolutamente nada sobre psicologia complexa. "
+      }
+    ],
     "angelo_admin_homepage": {
       "hero": {
-        "lead": "Atendimento clínico em psicoterapia analítica, online, para adolescentes, adultos e idosos em todo o Brasil. Não parto de pressupostos sobre você — o trabalho começa do que você me conta e do que ressoa entre nós.",
-        "eyebrow": "Psicoterapia Analítica · Abordagem Junguiana · 100% Online",
+        "lead": "A casa de Ângelo: clínica junguiana online em todo o Brasil, e um trabalho público de estudo e escrita sobre a obra de Jung. Aqui você encontra a porta de entrada para tudo isso.",
+        "eyebrow": "Clínica · Estudo · Escrita · Psicologia Analítica",
         "tagline": "Uma escuta para a sua vida.",
         "titlePrefix": "Psi",
         "titleEmphasis": "angelo"
       },
       "about": {
         "title": "Sobre",
+        "images": [
+          {
+            "alt": "Aprimoramento clínico de habilidades terapêuticas conduzido por Ângelo",
+            "src": "/images/sobre/aprimoramento-clinico.jpg",
+            "caption": "Aprimoramento clínico de habilidades terapêuticas que conduzi."
+          },
+          {
+            "alt": "Grupo de estudos sobre a prática da psicoterapia",
+            "src": "/images/sobre/grupo-estudos.jpg",
+            "caption": "Grupo de estudos sobre a prática da psicoterapia."
+          }
+        ],
         "quoteText": "Quem olha para fora, sonha; quem olha para dentro, desperta.",
         "milestones": [
           {
@@ -2806,7 +4731,7 @@
           },
           {
             "year": "UNICAP",
-            "label": "Liga",
+            "label": "Presidência da liga",
             "detail": "Psicologia Analítica"
           },
           {
@@ -2816,7 +4741,7 @@
           }
         ],
         "paragraph1": "Atendo em clínica desde o terceiro período da graduação, em estágio supervisionado pela Associação Allos. A abordagem é a psicologia analítica — a prática clínica desenvolvida a partir do trabalho de Carl Gustav Jung.",
-        "paragraph2": "Além do atendimento, conduzo grupos de estudo para estudantes e profissionais que buscam aprofundar a prática clínica junguiana, participo de intervisões e da Liga de Psicologia Analítica da UNICAP. O que publico aqui — materiais, trilhas, ensaios — nasce desse atravessamento entre estudo e clínica.",
+        "paragraph2": "Além do atendimento, conduzo grupos de estudo para estudantes e profissionais que buscam aprofundar a prática clínica junguiana, participo de intervisões, e sou Presidente da Liga de Psicologia Analítica da UNICAP. O que publico aqui — materiais, trilhas, ensaios — nasce desse atravessamento entre estudo e clínica.",
         "credentials": [
           {
             "mark": "◆",
@@ -2835,7 +4760,7 @@
           },
           {
             "mark": "◇",
-            "label": "Facilitação",
+            "label": "Presidência",
             "detail": "Liga de Psicologia Analítica · UNICAP"
           },
           {
@@ -2845,6 +4770,74 @@
           }
         ],
         "quoteAuthor": "Carl Gustav Jung"
+      },
+      "bussola": {
+        "lead": "A clínica e o trabalho público caminham juntos aqui. Esta é a entrada — escolha por onde começar.",
+        "title": "Seis portas",
+        "eyebrow": "Por onde começar",
+        "portals": [
+          {
+            "id": "atendo",
+            "cta": "Conhecer o atendimento",
+            "body": "Psicoterapia analítica online, em todo o Brasil — adolescentes, adultos e idosos.",
+            "href": "/psicoterapia-analitica",
+            "glyph": "◈",
+            "title": "Atendo",
+            "visKey": "psicoterapia",
+            "eyebrow": "Clínica"
+          },
+          {
+            "id": "blog",
+            "cta": "Ler os ensaios",
+            "body": "Textos sobre clínica, sonhos e símbolos — publicados periodicamente.",
+            "href": "/blog",
+            "glyph": "✶",
+            "title": "Escrevo",
+            "visKey": "blog",
+            "eyebrow": "Ensaios"
+          },
+          {
+            "id": "trilhas",
+            "cta": "Começar uma trilha",
+            "body": "Percursos guiados de leitura para entrar na obra de Jung pela porta certa.",
+            "href": "/trilhas",
+            "glyph": "✦",
+            "title": "Trilhas",
+            "visKey": "trilhas",
+            "eyebrow": "Estudo"
+          },
+          {
+            "id": "atlas",
+            "cta": "Explorar o Atlas",
+            "body": "O caderno de notas e mapas conceituais que mantenho em estudo contínuo.",
+            "href": "/atlas",
+            "glyph": "◇",
+            "title": "Atlas",
+            "visKey": "atlas",
+            "eyebrow": "Vault aberto"
+          },
+          {
+            "id": "materiais",
+            "cta": "Ver materiais",
+            "body": "Resumos e mapas mentais para estudar e revisitar conceitos junguianos.",
+            "href": "/materiais",
+            "glyph": "◆",
+            "title": "Materiais",
+            "visKey": "materiais",
+            "eyebrow": "Sínteses"
+          },
+          {
+            "id": "glossario",
+            "cta": "Abrir o glossário",
+            "body": "Verbetes vivos da abordagem — definições curtas e remissões cruzadas.",
+            "href": "/glossario",
+            "glyph": "※",
+            "title": "Glossário",
+            "visKey": "glossario",
+            "eyebrow": "Léxico"
+          }
+        ],
+        "emphasis": "desta clínica e da casa."
       },
       "contact": {
         "lead": "Uma conversa inicial sem compromisso — você me conta o que traz e avaliamos juntos se faz sentido seguir. Atendimento 100% online, por videochamada, em todo o Brasil.",
@@ -2868,15 +4861,15 @@
       }
     },
     "angelo_admin_settings": {
-      "siteTitle": "Angelo Psicologia",
+      "siteTitle": " Psicoterapia Junguiana Online",
       "accentColor": "#B48C50",
       "youtubeLink": "",
       "emailAddress": "",
-      "instagramLink": "",
+      "instagramLink": "https://www.instagram.com/",
       "showFAQSection": true,
       "whatsappNumber": "5581987349114",
       "showHeroSection": true,
-      "siteDescription": "Materiais de estudo em Psicologia Analitica - Resumos e Mapas Mentais de C.G. Jung",
+      "siteDescription": " Psicoterapia junguiana online para adolescentes, adultos e idosos. Atendimento por videochamada  ▎ psicoterapeuta clínico. Agende uma sessão.",
       "showAboutSection": true,
       "showFloatingWhatsApp": true,
       "showMaterialsSection": true,
@@ -3125,21 +5118,103 @@
       "bio": true,
       "faq": false,
       "blog": true,
+      "home": false,
       "about": false,
+      "atlas": false,
       "cursos": false,
-      "contato": true,
+      "bussola": false,
+      "contato": false,
+      "estudos": true,
       "prelude": false,
-      "trilhas": false,
+      "trilhas": true,
+      "approach": false,
+      "audience": false,
       "glossario": false,
       "materiais": false,
       "cartografia": false,
       "depoimentos": false,
-      "psicoterapia": true,
+      "psicoterapia": false,
       "disclaimerEstagio": false,
       "whatsappFlutuante": true
     },
     "angelo_admin_blog_series": [],
     "angelo_admin_coming_soon": [],
+    "angelo_admin_estudos_page": {
+      "hero": {
+        "lead": "Curadoria do que publico aqui — trilhas, verbetes, materiais e ensaios — pensada para quem está chegando ou para quem quer aprofundar.",
+        "title": "Estudos",
+        "kicker": "Por onde começar, o que ler, em que ordem",
+        "eyebrow": "Sala de estudos",
+        "emphasis": "em psicologia analítica",
+        "primaryCtaHref": "#trilhas",
+        "primaryCtaLabel": "Começar uma trilha",
+        "secondaryCtaHref": "/glossario",
+        "secondaryCtaLabel": "Ver glossário"
+      },
+      "blocks": [
+        {
+          "id": "hero",
+          "config": {},
+          "visible": true
+        },
+        {
+          "id": "manifesto",
+          "config": {
+            "body": "",
+            "title": "Como estudar Jung"
+          },
+          "visible": false
+        },
+        {
+          "id": "trilhas",
+          "config": {
+            "title": "Trilhas",
+            "selected": [],
+            "subtitle": "Sequências curadas — por onde começar."
+          },
+          "visible": true
+        },
+        {
+          "id": "glossario",
+          "config": {
+            "limit": 8,
+            "title": "Glossário em foco",
+            "selected": [],
+            "subtitle": "Verbetes-chave para começar."
+          },
+          "visible": true
+        },
+        {
+          "id": "materiais",
+          "config": {
+            "limit": 6,
+            "title": "Materiais",
+            "selected": [],
+            "subtitle": "Resumos, mapas e ensaios."
+          },
+          "visible": false
+        },
+        {
+          "id": "cursos",
+          "config": {
+            "title": "Cursos",
+            "selected": [],
+            "subtitle": "Formação aprofundada."
+          },
+          "visible": false
+        },
+        {
+          "id": "blog",
+          "config": {
+            "limit": 4,
+            "title": "Ensaios",
+            "selected": [],
+            "subtitle": "Textos sobre clínica e símbolos."
+          },
+          "visible": false
+        }
+      ]
+    },
     "angelo_admin_testimonials": [
       {
         "id": "test-1",
@@ -3203,30 +5278,237 @@
             "last_sign_in_at": "2026-04-12T01:33:16.149862Z"
           }
         ],
-        "updated_at": "2026-04-25T01:56:34.77686Z",
+        "updated_at": "2026-05-24T15:08:54.733966Z",
         "app_metadata": {
           "provider": "email",
           "providers": [
             "email"
           ]
         },
-        "confirmed_at": "2026-04-23T12:08:13.624564Z",
+        "confirmed_at": "2026-05-18T04:14:52.368533Z",
         "is_anonymous": false,
         "user_metadata": {
           "username": "gabriel",
           "nome_completo": "Gabriel",
           "email_verified": true
         },
-        "last_sign_in_at": "2026-04-25T01:56:34.767223556Z",
-        "email_confirmed_at": "2026-04-23T12:08:13.624564Z"
+        "last_sign_in_at": "2026-05-24T12:41:32.225652Z",
+        "email_confirmed_at": "2026-05-18T04:14:52.368533Z"
       },
-      "expires_at": 1777085794,
+      "expires_at": 1779638934,
       "expires_in": 3600,
       "token_type": "bearer",
-      "access_token": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjZjYjc3MTc3LTdkOGQtNGU1OS1iNjdlLTVlNGQ1ZWI4MzY3NCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3FuaXlxbXN6cW1xZXRpbWZybGpmLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiZDkyNmMyOS0yODk4LTRlNjQtOGY5ZS03MmI0NTE2ZmNkZjMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzc3MDg1Nzk0LCJpYXQiOjE3NzcwODIxOTQsImVtYWlsIjoiZ2FicmllbF8yMGFuZ2Vsb0Bob3RtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5vbWVfY29tcGxldG8iOiJHYWJyaWVsIiwidXNlcm5hbWUiOiJnYWJyaWVsIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NzcwODIxOTR9XSwic2Vzc2lvbl9pZCI6IjYyNjQ4OGE3LTEyNDUtNDFjNy05YmI3LTk1NDcyNDAyNDM0MCIsImlzX2Fub255bW91cyI6ZmFsc2V9.F6vicLZV_ofh_C7PtHkojmnPUYr97JZGRFO4D3yFqcm-A_YQ_0Tgq5n3TapYiTCJH43oVCuqN3ylRu6ERW9ryA",
-      "refresh_token": "esqsdntpxi3h",
-      "weak_password": null
+      "access_token": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjZjYjc3MTc3LTdkOGQtNGU1OS1iNjdlLTVlNGQ1ZWI4MzY3NCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3FuaXlxbXN6cW1xZXRpbWZybGpmLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiZDkyNmMyOS0yODk4LTRlNjQtOGY5ZS03MmI0NTE2ZmNkZjMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzc5NjM4OTM0LCJpYXQiOjE3Nzk2MzUzMzQsImVtYWlsIjoiZ2FicmllbF8yMGFuZ2Vsb0Bob3RtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5vbWVfY29tcGxldG8iOiJHYWJyaWVsIiwidXNlcm5hbWUiOiJnYWJyaWVsIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3Nzk2MjY0OTJ9XSwic2Vzc2lvbl9pZCI6IjFhY2E0MGFiLTMzYTUtNDBmZC1hNThjLWFmZTE1MGQ3MDdlMSIsImlzX2Fub255bW91cyI6ZmFsc2V9.PQkZHZ0y_yeliATbOdX99fdGQlI3BTjmHkew2zLT8SJCECw10EKABmA82gU5Irv90ChYtp_D1-WWZ6bH1UooFw",
+      "refresh_token": "xfg35wt63xnc"
     },
+    "angelo_admin_cartographies": [
+      {
+        "id": "home",
+        "name": "Cartografia (home)",
+        "slug": "home",
+        "edges": [
+          [
+            "self",
+            "ego"
+          ],
+          [
+            "self",
+            "individ"
+          ],
+          [
+            "self",
+            "incol"
+          ],
+          [
+            "ego",
+            "persona"
+          ],
+          [
+            "ego",
+            "sombra"
+          ],
+          [
+            "ego",
+            "complexo"
+          ],
+          [
+            "sombra",
+            "individ"
+          ],
+          [
+            "anima",
+            "self"
+          ],
+          [
+            "animus",
+            "self"
+          ],
+          [
+            "anima",
+            "arc"
+          ],
+          [
+            "animus",
+            "arc"
+          ],
+          [
+            "arc",
+            "incol"
+          ],
+          [
+            "complexo",
+            "sombra"
+          ],
+          [
+            "complexo",
+            "sincron"
+          ],
+          [
+            "individ",
+            "mito"
+          ],
+          [
+            "mito",
+            "incol"
+          ],
+          [
+            "sincron",
+            "incol"
+          ]
+        ],
+        "nodes": [
+          {
+            "x": 420.7958679199219,
+            "y": 289.5520782470703,
+            "id": "self",
+            "href": "/trilhas",
+            "size": 28,
+            "tone": "accent",
+            "axiom": "centro arquetípico",
+            "label": "Self"
+          },
+          {
+            "x": 290,
+            "y": 200,
+            "id": "ego",
+            "href": "",
+            "size": 18,
+            "tone": "bright",
+            "axiom": "sujeito da consciência",
+            "label": "Ego"
+          },
+          {
+            "x": 200,
+            "y": 130,
+            "id": "persona",
+            "href": "",
+            "size": 16,
+            "tone": "bright",
+            "axiom": "máscara social",
+            "label": "Persona"
+          },
+          {
+            "x": 250,
+            "y": 360,
+            "id": "sombra",
+            "href": "/materiais#projecao",
+            "size": 22,
+            "tone": "rubedo",
+            "axiom": "o que não se quis ser",
+            "label": "Sombra"
+          },
+          {
+            "x": 540,
+            "y": 170,
+            "id": "anima",
+            "href": "",
+            "size": 20,
+            "tone": "citrinit",
+            "axiom": "feminino interior",
+            "label": "Anima"
+          },
+          {
+            "x": 600,
+            "y": 330,
+            "id": "animus",
+            "href": "",
+            "size": 20,
+            "tone": "citrinit",
+            "axiom": "masculino interior",
+            "label": "Animus"
+          },
+          {
+            "x": 700,
+            "y": 200,
+            "id": "incol",
+            "href": "",
+            "size": 18,
+            "tone": "accent",
+            "axiom": "substrato comum",
+            "label": "Inconsciente Coletivo"
+          },
+          {
+            "x": 660,
+            "y": 100,
+            "id": "arc",
+            "href": "/materiais#hermeneutica-psicologia",
+            "size": 16,
+            "tone": "bright",
+            "axiom": "forma a priori",
+            "label": "Arquétipo"
+          },
+          {
+            "x": 130,
+            "y": 280,
+            "id": "complexo",
+            "href": "/materiais#consciencia-complexo-ego",
+            "size": 18,
+            "tone": "bright",
+            "axiom": "núcleo afetivo autônomo",
+            "label": "Complexo"
+          },
+          {
+            "x": 130,
+            "y": 440,
+            "id": "sincron",
+            "href": "",
+            "size": 16,
+            "tone": "rubedo",
+            "axiom": "sentido sem causa",
+            "label": "Sincronicidade"
+          },
+          {
+            "x": 460,
+            "y": 460,
+            "id": "individ",
+            "href": "/trilhas#aprofundando-na-clinica",
+            "size": 24,
+            "tone": "accent",
+            "axiom": "tornar-se quem se é",
+            "label": "Individuação"
+          },
+          {
+            "x": 690,
+            "y": 450,
+            "id": "mito",
+            "href": "/blog",
+            "size": 16,
+            "tone": "citrinit",
+            "axiom": "narrativa da alma",
+            "label": "Mito Pessoal"
+          }
+        ],
+        "title": "Conceitos",
+        "layout": "manual",
+        "source": "manual",
+        "viewBox": {
+          "h": 520,
+          "w": 800
+        },
+        "description": "Um mapa vivo dos conceitos junguianos. Passe o mouse sobre cada nó para ler o axioma, e veja como as ideias se conectam.",
+        "titleEmphasis": "junguianos"
+      }
+    ],
     "angelo_admin_home_sections": [
       "hero",
       "disclaimer",
@@ -3244,6 +5526,209 @@
       "faq",
       "contato",
       "blog"
+    ],
+    "angelo_admin_atlas_overrides": {
+      "hiddenNotes": [],
+      "hiddenFolders": [
+        "psicologia-complexa",
+        "allos",
+        "psicologia-geral",
+        "mitologia-humanidades",
+        "humanistas",
+        "conceitos"
+      ]
+    },
+    "angelo_admin_cartography_edges": [
+      [
+        "self",
+        "ego"
+      ],
+      [
+        "self",
+        "individ"
+      ],
+      [
+        "self",
+        "incol"
+      ],
+      [
+        "ego",
+        "persona"
+      ],
+      [
+        "ego",
+        "sombra"
+      ],
+      [
+        "ego",
+        "complexo"
+      ],
+      [
+        "sombra",
+        "individ"
+      ],
+      [
+        "anima",
+        "self"
+      ],
+      [
+        "animus",
+        "self"
+      ],
+      [
+        "anima",
+        "arc"
+      ],
+      [
+        "animus",
+        "arc"
+      ],
+      [
+        "arc",
+        "incol"
+      ],
+      [
+        "complexo",
+        "sombra"
+      ],
+      [
+        "complexo",
+        "sincron"
+      ],
+      [
+        "individ",
+        "mito"
+      ],
+      [
+        "mito",
+        "incol"
+      ],
+      [
+        "sincron",
+        "incol"
+      ]
+    ],
+    "angelo_admin_cartography_nodes": [
+      {
+        "x": 420.7958679199219,
+        "y": 289.5520782470703,
+        "id": "self",
+        "href": "/trilhas",
+        "size": 28,
+        "tone": "accent",
+        "axiom": "centro arquetípico",
+        "label": "Self"
+      },
+      {
+        "x": 290,
+        "y": 200,
+        "id": "ego",
+        "href": "",
+        "size": 18,
+        "tone": "bright",
+        "axiom": "sujeito da consciência",
+        "label": "Ego"
+      },
+      {
+        "x": 200,
+        "y": 130,
+        "id": "persona",
+        "href": "",
+        "size": 16,
+        "tone": "bright",
+        "axiom": "máscara social",
+        "label": "Persona"
+      },
+      {
+        "x": 250,
+        "y": 360,
+        "id": "sombra",
+        "href": "/materiais#projecao",
+        "size": 22,
+        "tone": "rubedo",
+        "axiom": "o que não se quis ser",
+        "label": "Sombra"
+      },
+      {
+        "x": 540,
+        "y": 170,
+        "id": "anima",
+        "href": "",
+        "size": 20,
+        "tone": "citrinit",
+        "axiom": "feminino interior",
+        "label": "Anima"
+      },
+      {
+        "x": 600,
+        "y": 330,
+        "id": "animus",
+        "href": "",
+        "size": 20,
+        "tone": "citrinit",
+        "axiom": "masculino interior",
+        "label": "Animus"
+      },
+      {
+        "x": 700,
+        "y": 200,
+        "id": "incol",
+        "href": "",
+        "size": 18,
+        "tone": "accent",
+        "axiom": "substrato comum",
+        "label": "Inconsciente Coletivo"
+      },
+      {
+        "x": 660,
+        "y": 100,
+        "id": "arc",
+        "href": "/materiais#hermeneutica-psicologia",
+        "size": 16,
+        "tone": "bright",
+        "axiom": "forma a priori",
+        "label": "Arquétipo"
+      },
+      {
+        "x": 130,
+        "y": 280,
+        "id": "complexo",
+        "href": "/materiais#consciencia-complexo-ego",
+        "size": 18,
+        "tone": "bright",
+        "axiom": "núcleo afetivo autônomo",
+        "label": "Complexo"
+      },
+      {
+        "x": 130,
+        "y": 440,
+        "id": "sincron",
+        "href": "",
+        "size": 16,
+        "tone": "rubedo",
+        "axiom": "sentido sem causa",
+        "label": "Sincronicidade"
+      },
+      {
+        "x": 460,
+        "y": 460,
+        "id": "individ",
+        "href": "/trilhas#aprofundando-na-clinica",
+        "size": 24,
+        "tone": "accent",
+        "axiom": "tornar-se quem se é",
+        "label": "Individuação"
+      },
+      {
+        "x": 690,
+        "y": 450,
+        "id": "mito",
+        "href": "/blog",
+        "size": 16,
+        "tone": "citrinit",
+        "axiom": "narrativa da alma",
+        "label": "Mito Pessoal"
+      }
     ],
     "angelo_admin_course_categories": []
   }
