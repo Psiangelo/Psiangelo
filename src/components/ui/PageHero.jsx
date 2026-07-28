@@ -16,6 +16,9 @@ import CursorGlow from './CursorGlow';
  *  - kicker: tagline serif italic abaixo do título
  *  - lead: parágrafo de introdução
  *  - actions: ReactNode opcional (CTAs)
+ *  - sideCard: ReactNode opcional — quando presente, vira grid 2 colunas
+ *    (texto + card) a partir de lg; empilha abaixo do texto no mobile.
+ *    Ausente (padrão): layout de coluna única, igual sempre foi.
  */
 import Breadcrumbs from './Breadcrumbs';
 
@@ -28,6 +31,7 @@ export default function PageHero({
   lead,
   actions,
   breadcrumbs,
+  sideCard,
 }) {
   return (
     <section className="relative pt-28 md:pt-40 pb-12 md:pb-20 px-5 sm:px-6 md:px-12 overflow-hidden">
@@ -70,6 +74,7 @@ export default function PageHero({
       </motion.svg>
 
       <div className="relative max-w-[1180px] mx-auto">
+        <div className={sideCard ? 'grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10 lg:gap-16 items-center' : ''}>
         <div className="relative pl-0 md:pl-10 max-w-3xl">
           {/* Espinha vertical âmbar */}
           <span className="vertical-spine hidden md:block left-0" aria-hidden />
@@ -175,6 +180,17 @@ export default function PageHero({
               {actions}
             </motion.div>
           )}
+        </div>
+
+        {sideCard && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {sideCard}
+          </motion.div>
+        )}
         </div>
       </div>
     </section>

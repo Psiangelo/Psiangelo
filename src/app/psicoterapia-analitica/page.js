@@ -1,19 +1,11 @@
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PageHero from '@/components/ui/PageHero';
+import TherapyHeroSection from '@/components/therapy/TherapyHeroSection';
 import TherapyGate from '@/components/therapy/TherapyGate';
 import TherapyContent from '@/components/therapy/TherapyContent';
 import AudienceCards from '@/components/therapy/AudienceCards';
 import TherapySchema from '@/components/therapy/TherapySchema';
-
-const HERO_DEFAULT = {
-  eyebrow: 'Psicoterapia analítica · abordagem junguiana · 100% online',
-  title: 'Psicoterapia analítica',
-  emphasis: 'online, em todo o Brasil',
-  lead:
-    'Atendimento clínico em abordagem junguiana para adolescentes, adultos e idosos. Não parto de pressupostos sobre você — o trabalho começa do que você me conta e do que ressoa entre nós, e o que se segue é único para a sua vida.',
-};
 
 // FAQ rica para JSON-LD (também alimenta a renderização visual via DEFAULT_THERAPY)
 const SEO_FAQ = [
@@ -101,17 +93,6 @@ export default function PsicoterapiaPage() {
       </main>
       <Footer />
     </TherapyGate>
-  );
-}
-
-function TherapyHeroSection() {
-  return (
-    <PageHero
-      eyebrow={HERO_DEFAULT.eyebrow}
-      title={HERO_DEFAULT.title}
-      emphasis={HERO_DEFAULT.emphasis}
-      lead={HERO_DEFAULT.lead}
-    />
   );
 }
 

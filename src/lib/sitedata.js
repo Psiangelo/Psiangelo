@@ -583,11 +583,19 @@ export const isVisible = (key) => {
 
 export const DEFAULT_THERAPY = {
   hero: {
-    eyebrow: 'Psicoterapia analítica · abordagem junguiana',
-    title: 'Um trabalho para escutar',
-    emphasis: 'quem você é',
+    eyebrow: 'Psicoterapia analítica · abordagem junguiana · 100% online',
+    title: 'Psicoterapia analítica',
+    emphasis: 'online, em todo o Brasil',
     lead:
-      'Não parto de nenhum pressuposto sobre você. O trabalho começa do que você me conta e do que ressoa entre nós — e o que se segue é único para a sua vida.',
+      'Atendimento clínico em abordagem junguiana para adolescentes, adultos e idosos. Não parto de pressupostos sobre você — o trabalho começa do que você me conta e do que ressoa entre nós, e o que se segue é único para a sua vida.',
+    photo: {
+      show: true,
+      src: '/images/angelo-terapia.png',
+      alt: 'Ângelo, em atendimento de psicoterapia analítica',
+      name: 'Ângelo',
+      credential: 'Estagiário em Psicologia · Associação Allos',
+      bio: 'Estudante de psicologia em estágio clínico supervisionado. Atendo com escuta atenta ao que é singular em cada processo — sem pressupor de antemão quem você é.',
+    },
   },
   approach: {
     sectionLabel: 'Como trabalho',

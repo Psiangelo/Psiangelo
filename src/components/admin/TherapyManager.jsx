@@ -7,6 +7,7 @@ import {
   setTherapy,
   DEFAULT_THERAPY,
 } from '@/lib/sitedata';
+import FeaturedImagePicker from './FeaturedImagePicker';
 
 const INPUT = 'w-full bg-[#0E0C0A] border border-[rgba(180,140,80,0.15)] focus:border-[#B48C50] outline-none text-[#E8DDD0] text-sm font-sans rounded-lg px-3 py-2 transition-colors';
 const TEXTAREA = INPUT + ' resize-y';
@@ -283,6 +284,42 @@ export default function TherapyManager({ addToast, addLogEntry }) {
           <div>
             <label className={LABEL}>Lead (parágrafo)</label>
             <textarea value={data.hero.lead} rows={4} onChange={(e) => update('hero', { lead: e.target.value })} className={TEXTAREA} />
+          </div>
+
+          <div className="pt-4 border-t border-[rgba(180,140,80,0.1)] space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase tracking-widest text-[#6E6458] font-sans">
+                Foto + bio curta (aparece ao lado do hero)
+              </p>
+              <label className="flex items-center gap-2 text-xs text-[#B8AD9E] font-sans cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={data.hero.photo?.show ?? true}
+                  onChange={(e) => update('hero', { photo: { ...data.hero.photo, show: e.target.checked } })}
+                />
+                Mostrar
+              </label>
+            </div>
+            <FeaturedImagePicker
+              value={data.hero.photo?.src || ''}
+              alt={data.hero.photo?.alt || ''}
+              onChange={(v) => update('hero', { photo: { ...data.hero.photo, src: v } })}
+              onAltChange={(v) => update('hero', { photo: { ...data.hero.photo, alt: v } })}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-4">
+              <div>
+                <label className={LABEL}>Nome</label>
+                <input value={data.hero.photo?.name || ''} onChange={(e) => update('hero', { photo: { ...data.hero.photo, name: e.target.value } })} className={INPUT} />
+              </div>
+              <div>
+                <label className={LABEL}>Credencial (linha curta)</label>
+                <input value={data.hero.photo?.credential || ''} onChange={(e) => update('hero', { photo: { ...data.hero.photo, credential: e.target.value } })} className={INPUT} />
+              </div>
+            </div>
+            <div>
+              <label className={LABEL}>Bio curta</label>
+              <textarea value={data.hero.photo?.bio || ''} rows={3} onChange={(e) => update('hero', { photo: { ...data.hero.photo, bio: e.target.value } })} className={TEXTAREA} />
+            </div>
           </div>
         </div>
       )}
