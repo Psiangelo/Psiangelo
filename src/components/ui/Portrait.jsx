@@ -8,8 +8,7 @@ import { img } from '@/lib/basepath';
  *
  * PortraitHero usa a foto real (public/images/angelo-portrait.png),
  * com mandala dourada girando atrás como halo, frame editorial
- * com cantos accent e emblema ψ que cobre o canto inferior direito
- * (esconde a marca d'água do Gemini ao mesmo tempo que decora).
+ * com cantos accent e emblema ψ decorativo no canto inferior direito.
  *
  * PortraitAvatar mantém a versão SVG line-art para footer/avatar
  * pequeno onde foto não cabe bem.
@@ -222,11 +221,7 @@ export function PortraitHero({ className = '', animate = true }) {
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
           fetchPriority="high"
           decoding="async"
-          style={{
-            objectPosition: 'center 25%',
-            // Crop sutil pra esconder a marca d'água do Gemini no canto inferior direito
-            clipPath: 'inset(0 3% 4% 0)',
-          }}
+          style={{ objectPosition: 'center 20%' }}
         />
 
         {/* Gradient sutil dourado no hover */}

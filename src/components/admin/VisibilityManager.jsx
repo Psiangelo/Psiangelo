@@ -29,6 +29,7 @@ const GROUPS = [
     hint: 'Controla só o que aparece na página inicial. Audience/Approach/FAQ vêm desligados — o conteúdo canônico vive na landing /psicoterapia-analitica/, ligar aqui duplica e canibaliza SEO.',
     items: [
       { key: 'disclaimerEstagio', label: 'Faixa de status (estagiário + supervisão)' },
+      { key: 'manifesto',         label: 'A casa (manifesto — texto editorial logo abaixo do hero)' },
       { key: 'bussola',           label: 'Bússola (mapa das 6 portas — porta de entrada)' },
       { key: 'prelude',           label: 'Prelúdio (passagem italic)' },
       { key: 'about',             label: 'Sobre (About)' },
@@ -38,6 +39,13 @@ const GROUPS = [
       { key: 'depoimentos',       label: 'Depoimentos' },
       { key: 'faq',               label: 'Perguntas frequentes (FAQ) — duplica /psicoterapia-analitica' },
       { key: 'contato',           label: 'Convite de contato (ContactCTA)' },
+    ],
+  },
+  {
+    label: 'Blog',
+    hint: 'Controla o que aparece no fim de cada post individual.',
+    items: [
+      { key: 'blogAuthorBox', label: 'Caixa de autor (foto + bio + CTA pra terapia)' },
     ],
   },
   {

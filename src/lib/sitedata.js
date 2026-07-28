@@ -43,6 +43,7 @@ export const SITEDATA_KEYS = {
   cartographies:  'angelo_admin_cartographies',
   areas:          'angelo_admin_areas',
   labels:         'angelo_admin_labels',
+  blogAuthorCta:  'angelo_admin_blog_author_cta',
 };
 
 /* ===================================================================
@@ -93,6 +94,14 @@ export const DEFAULT_HOMEPAGE = {
     titleEmphasis: 'angelo',
     tagline: 'Uma escuta para a sua vida.',
     lead: 'A casa de Ângelo: clínica junguiana online em todo o Brasil, e um trabalho público de estudo e escrita sobre a obra de Jung. Aqui você encontra a porta de entrada para tudo isso.',
+  },
+  manifesto: {
+    eyebrow: 'A casa',
+    title: 'Uma escuta junguiana',
+    emphasis: 'para a vida que se vive agora.',
+    paragraph1: 'A psicologia analítica — também conhecida como abordagem junguiana — é a tradição clínica iniciada por Carl Gustav Jung. Ela escuta a vida pelos seus elementos próprios: sonhos, complexos, símbolos e o movimento de tornar-se quem se é, que Jung chamou de individuação.',
+    paragraph2: 'Esta casa reúne três frentes que dependem umas das outras — clínica, estudo e escrita. Atendo por videochamada, em todo o Brasil, e publico aqui o que atravessa o trabalho: trilhas de leitura, mapas conceituais, ensaios e o vault de notas que mantenho em estudo contínuo.',
+    paragraph3: 'O formato online não é só operacional: amplia o acesso à clínica junguiana — ainda rara fora dos grandes centros — para quem mora longe de um(a) psicólogo(a) desta abordagem, inclusive brasileiros vivendo no exterior.',
   },
   bussola: {
     eyebrow: 'Por onde começar',
@@ -387,6 +396,7 @@ export const getHomepage = () => {
     ? DEFAULT_HOMEPAGE.contact
     : { ...DEFAULT_HOMEPAGE.contact, ...(stored.contact || {}) };
   const about = { ...DEFAULT_HOMEPAGE.about, ...(stored.about || {}) };
+  const manifesto = { ...DEFAULT_HOMEPAGE.manifesto, ...(stored.manifesto || {}) };
   // bussola: merge raso, mas mantém portals do default quando o admin não tocou
   const storedBussola = stored.bussola || {};
   const bussola = {
@@ -406,7 +416,7 @@ export const getHomepage = () => {
     if (migratedHero || migratedContact || migratedPrelude) {
       _homepageMigrated = true;
       try {
-        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, bussola, prelude, about, contact }));
+        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, bussola, manifesto, prelude, about, contact }));
         // não dispara evento aqui pra evitar loop de re-render; o resultado retornado já tem a copy correta
       } catch {
         /* quota cheia — migração só em memória */
@@ -416,7 +426,7 @@ export const getHomepage = () => {
     }
   }
 
-  return { hero, bussola, prelude, about, contact };
+  return { hero, bussola, manifesto, prelude, about, contact };
 };
 export const setHomepage = (v) => writeJson(SITEDATA_KEYS.homepage, v);
 
@@ -447,6 +457,24 @@ export const getBio = () => {
 export const setBio = (v) => writeJson(SITEDATA_KEYS.bio, v);
 
 /* ===================================================================
+   BLOG · CAIXA DE AUTOR — foto + bio (herdados de getBio()) + CTA
+   pro fim de cada post. Só o CTA é próprio daqui; foto/nome/bio vêm
+   do Bio pra não duplicar edição em dois lugares.
+=================================================================== */
+
+export const DEFAULT_BLOG_AUTHOR_CTA = {
+  label: 'Marcar uma conversa inicial',
+  href: '/psicoterapia-analitica',
+};
+
+export const getBlogAuthorCta = () => {
+  const stored = readJson(SITEDATA_KEYS.blogAuthorCta, null);
+  if (!stored) return DEFAULT_BLOG_AUTHOR_CTA;
+  return { ...DEFAULT_BLOG_AUTHOR_CTA, ...stored };
+};
+export const setBlogAuthorCta = (v) => writeJson(SITEDATA_KEYS.blogAuthorCta, v);
+
+/* ===================================================================
    VISIBILITY — controla o que aparece no site público
    (por módulo: blog, cursos, materiais, trilhas, etc)
 =================================================================== */
@@ -462,6 +490,7 @@ export const DEFAULT_VISIBILITY = {
   glossario:  true,
   psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
+  manifesto:         true,  // "A casa" — manifesto editorial logo abaixo do hero
   prelude:           true,
   about:             true,
   bussola:           true,  // 2026-05-03: nova porta de entrada da home (substitui audience+approach+faq)
@@ -472,6 +501,8 @@ export const DEFAULT_VISIBILITY = {
   disclaimerEstagio: true,  // faixa "estagiário + supervisão" logo abaixo do hero
   faq:               false, // 2026-05-03: FAQ canônico vive na landing clínica (anti-canibalização)
   contato:           true,
+  // Blog
+  blogAuthorBox:     true,  // caixa de autor (foto + bio + CTA) no fim de cada post
   // Extras
   whatsappFlutuante: true,
 };
@@ -483,7 +514,7 @@ export const DEFAULT_VISIBILITY = {
 export const HOME_SECTION_META = [
   { id: 'hero',         label: 'Hero (topo)',                           fixed: true  },
   { id: 'disclaimer',   label: 'Faixa de status (estagiário)',          visKey: 'disclaimerEstagio' },
-  { id: 'seoIntro',     label: 'Manifesto (texto editorial)' },
+  { id: 'seoIntro',     label: 'Manifesto — "A casa" (texto editorial)',  visKey: 'manifesto' },
   { id: 'bussola',      label: 'Bússola (mapa das portas)',             visKey: 'bussola' },
   { id: 'audience',     label: 'Para quem atendo (3 públicos)',         visKey: 'audience' },
   { id: 'approach',     label: 'Como trabalho (3 princípios)',          visKey: 'approach' },

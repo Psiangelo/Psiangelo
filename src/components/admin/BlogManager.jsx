@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BlogEditor from './BlogEditor';
 import FeaturedImagePicker from './FeaturedImagePicker';
+import { getBlogAuthorCta, setBlogAuthorCta, DEFAULT_BLOG_AUTHOR_CTA } from '@/lib/sitedata';
 
 // ─── Constants ──────────────────────────────────────────────────────
 const STORAGE_KEY = 'angelo_admin_blog';
@@ -388,6 +389,51 @@ function SeriesManager({ seriesList, setSeriesList, addToast }) {
   );
 }
 
+function AuthorBoxManager({ addToast }) {
+  const [data, setData] = useState(DEFAULT_BLOG_AUTHOR_CTA);
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    setData(getBlogAuthorCta());
+  }, []);
+
+  const update = (key, value) => {
+    setData((prev) => ({ ...prev, [key]: value }));
+    setDirty(true);
+  };
+
+  const save = () => {
+    setBlogAuthorCta(data);
+    setDirty(false);
+    addToast?.('CTA da caixa de autor salvo', 'success');
+  };
+
+  return (
+    <div className={CARD_CLASS + ' mb-6'}>
+      <h3 className="text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-1">
+        Caixa de autor — CTA
+      </h3>
+      <p className="text-xs text-[#6E6458] font-sans mb-3">
+        Aparece no fim de cada post, com foto + nome + bio (editáveis em Bio / Linktree) e este botão.
+        Pra esconder a caixa inteira, use Visibilidade → Blog.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className={LABEL_CLASS}>Texto do botão</label>
+          <input value={data.label} onChange={(e) => update('label', e.target.value)} className={INPUT_CLASS} />
+        </div>
+        <div>
+          <label className={LABEL_CLASS}>Destino (link interno ou URL)</label>
+          <input value={data.href} onChange={(e) => update('href', e.target.value)} className={INPUT_CLASS} placeholder="/psicoterapia-analitica" />
+        </div>
+      </div>
+      <button onClick={save} disabled={!dirty} className={BTN_PRIMARY + (dirty ? '' : ' opacity-40 cursor-not-allowed')}>
+        Salvar
+      </button>
+    </div>
+  );
+}
+
 // ─── Post Editor View ───────────────────────────────────────────────
 function PostEditor({ post, seriesList, onSave, onCancel }) {
   const [data, setData] = useState({
@@ -704,6 +750,7 @@ export default function BlogManager({ addToast, addLogEntry }) {
   const [editingPostId, setEditingPostId] = useState(null);
   const [view, setView] = useState('list');
   const [showSeries, setShowSeries] = useState(false);
+  const [showAuthorBox, setShowAuthorBox] = useState(false);
 
   // Persist
   useEffect(() => { saveToStorage(STORAGE_KEY, posts); }, [posts]);
@@ -804,12 +851,23 @@ export default function BlogManager({ addToast, addLogEntry }) {
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h2 className="text-xl font-serif text-[#E8DDD0]">Blog ({posts.length})</h2>
             <div className="flex gap-2">
+              <button onClick={() => setShowAuthorBox(!showAuthorBox)} className={BTN_SECONDARY}>
+                {showAuthorBox ? 'Ocultar autor' : 'Autor'}
+              </button>
               <button onClick={() => setShowSeries(!showSeries)} className={BTN_SECONDARY}>
                 {showSeries ? 'Ocultar series' : 'Series'}
               </button>
               <button onClick={handleNewPost} className={BTN_PRIMARY}>+ Novo Post</button>
             </div>
           </div>
+
+          <AnimatePresence>
+            {showAuthorBox && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                <AuthorBoxManager addToast={addToast} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence>
             {showSeries && (

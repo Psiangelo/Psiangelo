@@ -127,7 +127,7 @@ export default function HomePage() {
   const RENDERERS = {
     hero:        () => <Hero />,
     disclaimer:  () => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
-    seoIntro:    () => <HomeSeoIntro />,
+    seoIntro:    () => (v.manifesto ? <HomeSeoIntro /> : null),
     bussola:     () => (v.bussola !== false ? <HomeBussola /> : null),
     audience:    () => (v.audience ? <AudienceCards heading="Para quem atendo" /> : null),
     approach:    () => (v.approach ? <HomeApproach /> : null),

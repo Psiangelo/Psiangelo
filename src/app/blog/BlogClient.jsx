@@ -24,6 +24,7 @@ import RelatedPosts from '@/components/blog/RelatedPosts';
 import PrevNextPost from '@/components/blog/PrevNextPost';
 import GlossaryLinker from '@/components/blog/GlossaryLinker';
 import BlogPostBody from '@/components/blog/BlogPostBody';
+import AuthorBox from '@/components/blog/AuthorBox';
 import { slugifyTag } from '@/lib/tagSlug';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
@@ -266,7 +267,7 @@ function SeriesNav({ currentPost, allPosts, seriesList, onNavigate }) {
 }
 
 /* ====== Blog Post View ====== */
-function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
+function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate, visibility }) {
   const readTime = calculateReadingTime(post.content_html);
   const headings = extractHeadings(post.content_html);
   const htmlWithIds = addHeadingIds(post.content_html);
@@ -425,6 +426,8 @@ function BlogPostView({ post, allPosts, seriesList, onBack, onNavigate }) {
             <div className="mt-12 pt-6 border-t border-border-subtle" data-reading-hide="true">
               <ShareButtons title={post.title} />
             </div>
+
+            {visibility?.blogAuthorBox !== false && <AuthorBox />}
 
             <PrevNextPost
               currentPost={post}
@@ -845,6 +848,7 @@ export default function BlogPage() {
               seriesList={seriesList}
               onBack={handleBack}
               onNavigate={handleSelectPost}
+              visibility={visibility}
             />
           </AnimatePresence>
         ) : (

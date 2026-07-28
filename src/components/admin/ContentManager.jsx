@@ -158,8 +158,9 @@ export default function ContentManager({ addToast, addLogEntry }) {
   };
 
   const blocks = [
-    { id: 'hero',    label: 'Hero' },
-    { id: 'bussola', label: 'Bússola' },
+    { id: 'hero',      label: 'Hero' },
+    { id: 'manifesto', label: 'A casa' },
+    { id: 'bussola',   label: 'Bússola' },
     { id: 'prelude', label: 'Prelúdio' },
     { id: 'about',   label: 'Sobre' },
     { id: 'contact', label: 'Contato' },
@@ -233,6 +234,48 @@ export default function ContentManager({ addToast, addLogEntry }) {
           <div>
             <label className={LABEL}>Lead (parágrafo)</label>
             <textarea value={data.hero.lead} rows={4} onChange={(e) => updateBlock('hero', 'lead', e.target.value)} className={TEXTAREA} />
+          </div>
+        </div>
+      )}
+
+      {/* MANIFESTO ("A casa") */}
+      {activeBlock === 'manifesto' && (
+        <div className={CARD + ' space-y-4'}>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">A casa (manifesto — logo abaixo do hero)</h3>
+            <button
+              onClick={() => resetBlock('manifesto')}
+              className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+              title="Substitui o conteúdo desta seção pelo texto padrão."
+            >
+              ↺ Restaurar
+            </button>
+          </div>
+          <div>
+            <label className={LABEL}>Eyebrow (linha mono pequena)</label>
+            <input value={data.manifesto?.eyebrow ?? ''} onChange={(e) => updateBlock('manifesto', 'eyebrow', e.target.value)} className={INPUT} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL}>Título — prefixo (regular)</label>
+              <input value={data.manifesto?.title ?? ''} onChange={(e) => updateBlock('manifesto', 'title', e.target.value)} className={INPUT} />
+            </div>
+            <div>
+              <label className={LABEL}>Título — ênfase (italic dourado)</label>
+              <input value={data.manifesto?.emphasis ?? ''} onChange={(e) => updateBlock('manifesto', 'emphasis', e.target.value)} className={INPUT} />
+            </div>
+          </div>
+          <div>
+            <label className={LABEL}>Parágrafo 1</label>
+            <textarea value={data.manifesto?.paragraph1 ?? ''} rows={4} onChange={(e) => updateBlock('manifesto', 'paragraph1', e.target.value)} className={TEXTAREA} />
+          </div>
+          <div>
+            <label className={LABEL}>Parágrafo 2</label>
+            <textarea value={data.manifesto?.paragraph2 ?? ''} rows={4} onChange={(e) => updateBlock('manifesto', 'paragraph2', e.target.value)} className={TEXTAREA} />
+          </div>
+          <div>
+            <label className={LABEL}>Parágrafo 3</label>
+            <textarea value={data.manifesto?.paragraph3 ?? ''} rows={4} onChange={(e) => updateBlock('manifesto', 'paragraph3', e.target.value)} className={TEXTAREA} />
           </div>
         </div>
       )}
