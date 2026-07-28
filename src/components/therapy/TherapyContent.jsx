@@ -64,9 +64,9 @@ export default function TherapyContent() {
             <HeroMandala size={720} opacity={0.05} />
           </div>
         </div>
-        <div className="relative max-w-[1100px] mx-auto">
+        <div className="relative max-w-[1100px] mx-auto text-center">
           <Reveal>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <TherapyCTAButton cta={data.cta} whatsappNumber={data.whatsappNumber} helper={false} />
               <span className="font-serif italic text-[0.92rem] text-text-dim max-w-xs leading-relaxed">
                 {data.cta.helper}
