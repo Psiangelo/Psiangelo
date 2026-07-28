@@ -86,13 +86,16 @@ export default function BlogPreview() {
           </Link>
         </motion.div>
 
-        <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 justify-items-center">
+        <motion.div
+          variants={stagger}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-6 -mx-5 px-5 pb-2 scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-3 sm:gap-6 md:gap-8 sm:overflow-visible sm:snap-none sm:mx-0 sm:px-0 sm:pb-0 justify-items-center"
+        >
           {posts.map((post) => {
             const readTime = calculateReadingTime(post.content_html);
             const seed = post.slug || post.id || post.title || '';
             const hasImage = post.featured_cover || post.featured_image;
             return (
-              <motion.article key={post.id} variants={fadeUp} className="group w-full max-w-[300px] relative">
+              <motion.article key={post.id} variants={fadeUp} className="group w-[78vw] max-w-[300px] shrink-0 snap-start sm:w-full sm:shrink relative">
                 <Link href={`/blog/${post.slug || post.id}/`} className="block">
                   <span aria-hidden className="absolute left-0 top-3 bottom-3 w-[2px] bg-accent/20 group-hover:bg-accent/60 transition-colors" />
                   <div className="pl-3">
