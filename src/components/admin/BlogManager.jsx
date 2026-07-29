@@ -653,6 +653,9 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
               <h3 className="text-[10px] uppercase tracking-widest text-[#6E6458] font-sans mb-3">Resumo</h3>
               <textarea value={data.excerpt} onChange={(e) => setData({ ...data, excerpt: e.target.value })}
                 placeholder="Descricao para os cards..." rows={3} className={INPUT_CLASS + ' resize-y text-xs'} />
+              <p className="text-[10px] text-[#3A352E] font-sans mt-1.5 leading-relaxed">
+                Aparece nos cards do blog e é a descrição usada quando o link do post é compartilhado (WhatsApp, X, Threads etc.). Sem resumo, a prévia mostra um texto genérico do site.
+              </p>
             </div>
 
             {/* Tags */}
@@ -730,6 +733,9 @@ function PostEditor({ post, seriesList, onSave, onCancel }) {
                         <textarea value={data.seo_description} onChange={(e) => setData({ ...data, seo_description: e.target.value })}
                           placeholder={data.excerpt || 'Descricao para buscadores'} rows={2} className={INPUT_CLASS + ' resize-y text-xs'} />
                         <p className="text-[10px] text-[#3A352E] font-sans mt-1">{(data.seo_description || data.excerpt || '').length}/160</p>
+                        <p className="text-[10px] text-[#3A352E] font-sans mt-1 leading-relaxed">
+                          Opcional — só preencha se quiser um texto diferente do Resumo pra buscadores e prévia de link. Vazio, usa o Resumo.
+                        </p>
                       </div>
                     </div>
                   </motion.div>
