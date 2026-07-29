@@ -322,23 +322,24 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Right: portrait SVG editorial */}
+        {/* Right: portrait SVG editorial — visível também no mobile, acima do texto */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92, rotate: 2 }}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden md:block"
+          className="order-first md:order-none w-full max-w-[260px] mx-auto md:max-w-none md:mx-0 mb-2 md:mb-0"
         >
           <PortraitHero />
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — só desktop: em mobile o conteúdo costuma passar
+          de 100vh e a posição absoluta bottom-8 acaba caindo em cima dos CTAs */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+        className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-3"
       >
         <span className="font-mono text-[0.55rem] text-text-dim/40 tracking-[0.3em] uppercase">
           scroll
