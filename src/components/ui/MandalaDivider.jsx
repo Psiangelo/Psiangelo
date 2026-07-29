@@ -1,8 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useAmbientMotion } from '@/lib/useAmbientMotion';
 
 export default function MandalaDivider({ size = 64, opacity = 0.35, spin = true, className = '' }) {
+  // Em celular a mandala fica parada: gira em 60s, quase não se percebe, e o
+  // loop de animação custa o mesmo que um que se percebe.
+  const ambient = useAmbientMotion();
+  const spinning = spin && ambient;
+
   return (
     <div className={`flex items-center justify-center w-full ${className}`}>
       <span className="flex-1 h-px bg-gradient-to-r from-transparent via-accent/15 to-accent/25" />
@@ -12,8 +18,8 @@ export default function MandalaDivider({ size = 64, opacity = 0.35, spin = true,
         viewBox="0 0 64 64"
         className="mx-6 flex-shrink-0"
         style={{ opacity }}
-        animate={spin ? { rotate: 360 } : undefined}
-        transition={spin ? { duration: 60, repeat: Infinity, ease: 'linear' } : undefined}
+        animate={spinning ? { rotate: 360 } : undefined}
+        transition={spinning ? { duration: 60, repeat: Infinity, ease: 'linear' } : undefined}
       >
         <g fill="none" stroke="#B48C50" strokeWidth="0.6">
           <circle cx="32" cy="32" r="28" strokeWidth="0.4" />

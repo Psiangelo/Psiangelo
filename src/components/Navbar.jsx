@@ -17,13 +17,55 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 50);
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(total > 0 ? window.scrollY / total : 0);
+    // A versão anterior fazia setState em CADA evento de scroll e lia
+    // scrollHeight junto, o que força recálculo de layout a cada quadro. Agora:
+    // a altura fica em cache (recalculada só no resize), o trabalho acontece
+    // dentro de um requestAnimationFrame, e o progresso é arredondado pra
+    // inteiro — sem isso o React re-renderizava a barra por evento.
+    let raf = 0;
+    let total = 0;
+    let lastPct = -1;
+    let lastScrolled = null;
+
+    const measure = () => {
+      total = document.documentElement.scrollHeight - window.innerHeight;
     };
+
+    const apply = () => {
+      raf = 0;
+      const y = window.scrollY;
+
+      const isScrolled = y > 50;
+      if (isScrolled !== lastScrolled) {
+        lastScrolled = isScrolled;
+        setScrolled(isScrolled);
+      }
+
+      const pct = total > 0 ? Math.round((y / total) * 100) : 0;
+      if (pct !== lastPct) {
+        lastPct = pct;
+        setScrollProgress(pct / 100);
+      }
+    };
+
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+
+    measure();
+    apply();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const { visibility: v } = useVisibility();
@@ -63,7 +105,9 @@ export default function Navbar() {
       transition={{ duration: 0.6, delay: 0.1 }}
       className={`fixed top-0 w-full z-[500] flex items-center justify-between transition-all duration-500 ${
         scrolled
-          ? 'py-3 px-5 sm:px-6 md:px-12 bg-bg/[0.92] backdrop-blur-xl border-b border-border-subtle'
+          ? // Fundo opaco no celular: backdrop-blur numa barra fixa reprocessa o
+            // desfoque conforme a página rola atrás, e isso pesa em mobile.
+            'py-3 px-5 sm:px-6 md:px-12 bg-bg border-b border-border-subtle md:bg-bg/[0.92] md:backdrop-blur-xl'
           : 'py-4 sm:py-5 px-5 sm:px-6 md:px-12'
       }`}
     >
@@ -127,7 +171,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 w-full bg-bg/95 backdrop-blur-xl border-b border-border-subtle md:hidden"
+            className="absolute top-full left-0 w-full bg-bg border-b border-border-subtle md:hidden"
           >
             <div className="flex flex-col px-6 py-6 gap-5">
               {links.map((link) => (

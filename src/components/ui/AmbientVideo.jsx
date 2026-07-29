@@ -10,6 +10,9 @@ import { img } from '@/lib/basepath';
  * - o poster aparece na hora; o mp4 só é anexado quando a seção chega perto da
  *   viewport (IntersectionObserver), então nenhuma faixa fora da dobra baixa
  *   vídeo em quem não rolou até lá;
+ * - em telas de celular fica só o poster: decodificar vídeo em loop é o que
+ *   mais derruba o FPS em aparelho modesto, e como o clipe é ambiente a imagem
+ *   parada entrega quase a mesma coisa. `keepOnMobile` libera caso a caso;
  * - `prefers-reduced-motion` e o Save-Data do navegador cancelam o vídeo por
  *   completo — fica só o poster;
  * - o basePath do GitHub Pages entra pelo img(), como no resto do site.
@@ -23,6 +26,7 @@ export default function AmbientVideo({
   className = '',
   opacity = 0.55,
   eager = false,
+  keepOnMobile = false,
   objectPosition = 'center',
 }) {
   const wrapRef = useRef(null);
@@ -30,10 +34,13 @@ export default function AmbientVideo({
   const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
-    // Usuário pediu menos movimento, ou está economizando dados: só poster.
+    // Só poster quando: pediram menos movimento, estão economizando dados, ou
+    // é tela de celular. A decisão fica aqui dentro do efeito de propósito —
+    // assim o <video> nunca chega a entrar no DOM nesses casos.
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const saveData = navigator.connection?.saveData;
-    if (reduce || saveData) return;
+    const isPhone = window.matchMedia?.('(max-width: 767px)').matches;
+    if (reduce || saveData || (isPhone && !keepOnMobile)) return;
 
     if (eager) {
       setShouldLoad(true);
@@ -58,7 +65,7 @@ export default function AmbientVideo({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [eager]);
+  }, [eager, keepOnMobile]);
 
   // Alguns navegadores ignoram o autoPlay quando o src entra depois do mount
   useEffect(() => {

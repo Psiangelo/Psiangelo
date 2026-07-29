@@ -15,10 +15,12 @@ import { useEffect, useState } from 'react';
 export default function CursorGlow({ size = 380, intensity = 0.1, contained = false }) {
   const [pos, setPos] = useState({ x: -1000, y: -1000 });
   const [visible, setVisible] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     // Só ativa em devices com hover real (desktop)
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    setEnabled(true);
 
     let raf = 0;
     let nextX = -1000;
@@ -48,6 +50,11 @@ export default function CursorGlow({ size = 380, intensity = 0.1, contained = fa
       if (raf) cancelAnimationFrame(raf);
     };
   }, [visible]);
+
+  // No touch não existe cursor a seguir, e este wrapper tem mix-blend-mode em
+  // tela cheia: mesmo invisível, obrigava o navegador a compor a tela toda a
+  // cada quadro. Em celular ele simplesmente não entra no DOM.
+  if (!enabled) return null;
 
   return (
     <div

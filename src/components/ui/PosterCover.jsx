@@ -16,6 +16,7 @@
 
 import { motion } from 'framer-motion';
 import { resolveImageSrc } from '@/lib/basepath';
+import { useAmbientMotion } from '@/lib/useAmbientMotion';
 import {
   TriangleCompass,
   HexRing,
@@ -86,6 +87,7 @@ export default function PosterCover({
   footer,
   className = '',
 }) {
+  const ambient = useAmbientMotion();
   const resolved = resolveImageSrc(src);
   const idx = typeof geoIndex === 'number' ? geoIndex % GEOS.length : hashSeed(seed) % GEOS.length;
   const { Comp: Geo, size: geoSize, opacity: geoOpacity } = GEOS[idx];
@@ -170,9 +172,11 @@ export default function PosterCover({
         />
       )}
 
-      {/* 3. Ornamento geométrico + linha dourada */}
+      {/* 3. Ornamento geométrico + linha dourada.
+             O giro sai em celular: são vários cards por listagem, cada um com um
+             loop de animação próprio, e o efeito some atrás da imagem. */}
       <div className={`absolute ${geoPos} pointer-events-none flex flex-col items-end gap-2`}>
-        <Geo size={geoSize} opacity={geoOpacity} className="text-[#B48C50]" />
+        <Geo size={geoSize} opacity={geoOpacity} animated={ambient} className="text-[#B48C50]" />
         {!titleOverlay && (
           <span className="block w-10 h-px bg-[#B48C50]/60" />
         )}

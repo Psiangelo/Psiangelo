@@ -88,6 +88,19 @@ body::after {
 .grain-strong { position: relative; }
 .grain-strong::before { opacity: 1; }
 
+/* Em celular o grão sai de cena. Ele é uma camada em tela cheia com
+   mix-blend-mode, e blend obriga o navegador a recompor a tela inteira a cada
+   quadro: é o custo mais alto da página em aparelho modesto, para um efeito
+   que na tela pequena quase não se percebe. */
+@media (max-width: 767px) {
+  body::after,
+  .grain-soft::before,
+  .grain-medium::before,
+  .grain-strong::before {
+    display: none;
+  }
+}
+
 /* ====================== SCROLLBAR ====================== */
 ::-webkit-scrollbar {
   width: 6px;

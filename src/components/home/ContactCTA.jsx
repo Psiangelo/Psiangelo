@@ -7,6 +7,7 @@ import { fadeUp, stagger } from '@/lib/constants';
 import { QuaternioSigil } from '@/components/illustrations';
 import AmbientVideo from '@/components/ui/AmbientVideo';
 import { WhatsAppIcon } from '@/components/ui/Button';
+import { useAmbientMotion } from '@/lib/useAmbientMotion';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 import { useSectionLabel } from '@/lib/useLabels';
@@ -40,6 +41,7 @@ const SECONDARY_CONTACTS = [
 export default function ContactCTA() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
+  const ambient = useAmbientMotion();
   const homepage = useSitedata(getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS.homepage);
   const c = homepage.contact || DEFAULT_HOMEPAGE.contact;
 
@@ -146,7 +148,7 @@ export default function ContactCTA() {
                 não levava a lugar nenhum quando escaneado). Sem legenda de
                 prazo: não cabe ao site prometer tempo de resposta. */}
             <div className="flex items-center justify-center flex-shrink-0">
-              <QuaternioSigil size={132} opacity={0.5} animated />
+              <QuaternioSigil size={132} opacity={0.5} animated={ambient} />
             </div>
           </a>
 
