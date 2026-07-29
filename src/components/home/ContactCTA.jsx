@@ -80,7 +80,12 @@ export default function ContactCTA() {
     >
       {/* Céu real no convite final — substitui o campo estelar em SVG, que
           custava caro em nós e nunca chegou perto de parecer um céu. */}
-      <AmbientVideo src="/video/contato.mp4" poster="/video/contato.jpg" opacity={0.5} />
+      <AmbientVideo
+        src="/video/contato.mp4"
+        srcMobile="/video/contato-m.mp4"
+        poster="/video/contato.jpg"
+        opacity={0.5}
+      />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import AmbientVideo from '@/components/ui/AmbientVideo';
 import Button, { ArrowIcon, WhatsAppIcon } from '@/components/ui/Button';
 import { resolveImageSrc } from '@/lib/basepath';
+import { clinicPhoto } from '@/lib/clinicPhoto';
 import { useSitedata } from '@/lib/useSitedata';
 import {
   getTherapy,
@@ -31,6 +32,7 @@ export default function AuthorBand({
   body,
   secondary = { href: '/psicoterapia-analitica', label: 'Como atendo' },
   video = '/video/materiais.mp4',
+  videoMobile = '/video/materiais-m.mp4',
   poster = '/video/materiais.jpg',
 }) {
   const therapy = useSitedata(getTherapy, DEFAULT_THERAPY, SITEDATA_KEYS.therapy);
@@ -52,7 +54,7 @@ export default function AuthorBand({
       id={id}
       className="relative overflow-hidden py-20 md:py-28 px-5 sm:px-6 md:px-12 section-border-t section-border-b"
     >
-      <AmbientVideo src={video} poster={poster} opacity={0.42} />
+      <AmbientVideo src={video} srcMobile={videoMobile} poster={poster} opacity={0.42} />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -71,8 +73,9 @@ export default function AuthorBand({
         {photo?.src && (
           <div className="relative flex-shrink-0">
             <div className="w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden border border-accent/30">
+              {/* Círculo de no máximo 176px: carregava o PNG de 2 MB pra isso */}
               <img
-                src={resolveImageSrc(photo.src)}
+                src={resolveImageSrc(clinicPhoto(photo.src, 'avatar').src)}
                 alt={photo.alt || 'Ângelo'}
                 className="w-full h-full object-cover"
                 style={{ objectPosition: 'center 20%' }}

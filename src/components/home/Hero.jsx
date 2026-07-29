@@ -18,12 +18,7 @@ import {
 import { useSitedata } from '@/lib/useSitedata';
 import { useVisibility } from '@/lib/useVisibility';
 import { useIsMobile, useReducedMotion } from '@/lib/useMediaQuery';
-
-// A foto padrão da clínica é um PNG de 2 MB. No topo da página isso custa caro,
-// então existe um JPG equivalente de 72 KB só pro hero. Se o admin trocou a
-// foto, a dele é usada como veio — o atalho só vale pra imagem padrão.
-const CLINIC_PHOTO_DEFAULT = '/images/angelo-terapia.png';
-const CLINIC_PHOTO_HERO = '/images/angelo-terapia-hero.jpg';
+import { clinicPhoto } from '@/lib/clinicPhoto';
 
 export default function Hero() {
   const content = useSitedata(
@@ -39,7 +34,7 @@ export default function Hero() {
   const showRichFX = !isMobile && !reducedMotion;
 
   const photo = therapy?.hero?.photo || DEFAULT_THERAPY.hero.photo;
-  const heroPhoto = photo?.src === CLINIC_PHOTO_DEFAULT ? CLINIC_PHOTO_HERO : photo?.src;
+  const heroPhoto = clinicPhoto(photo?.src, 'hero');
 
   const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
   const whatsappMsg = encodeURIComponent(
@@ -74,6 +69,7 @@ export default function Hero() {
           texto cai. eager: é a única faixa acima da dobra. */}
       <AmbientVideo
         src="/video/hero.mp4"
+        srcMobile="/video/hero-m.mp4"
         poster="/video/hero.jpg"
         opacity={0.85}
         eager
@@ -224,7 +220,12 @@ export default function Hero() {
           transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="order-first md:order-none w-full max-w-[230px] sm:max-w-[250px] mx-auto md:max-w-none md:mx-0"
         >
-          <PortraitHero src={heroPhoto} alt={photo?.alt || 'Ângelo'} animate={showRichFX} />
+          <PortraitHero
+            src={heroPhoto.src}
+            srcMobile={heroPhoto.srcMobile}
+            alt={photo?.alt || 'Ângelo'}
+            animate={showRichFX}
+          />
         </motion.div>
       </div>
 

@@ -179,7 +179,7 @@ function HaloMandala({ stroke = '#B48C50', opacity = 0.18 }) {
    COMPONENTES PRINCIPAIS
 ============================================================ */
 
-export function PortraitHero({ className = '', animate = true, src, alt }) {
+export function PortraitHero({ className = '', animate = true, src, srcMobile, alt }) {
   return (
     <div className={`relative w-full aspect-[4/5] group ${className}`}>
       {/* Mandala girando atrás (halo dourado fora da foto) */}
@@ -213,16 +213,24 @@ export function PortraitHero({ className = '', animate = true, src, alt }) {
         </motion.svg>
       )}
 
-      {/* Frame da foto */}
+      {/* Frame da foto.
+          <picture> com media query, e não srcset: em celular de tela densa o
+          srcset voltaria a escolher o arquivo grande pelo DPR, que é justamente
+          o que se quer evitar aqui. */}
       <div className="relative w-full h-full overflow-hidden bg-bg-card border border-border-subtle transition-all duration-700 group-hover:border-accent/30 group-hover:shadow-xl group-hover:shadow-accent/5">
-        <img
-          src={src ? resolveImageSrc(src) : img('/images/angelo-portrait.png')}
-          alt={alt || 'Ângelo · retrato'}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
-          fetchPriority="high"
-          decoding="async"
-          style={{ objectPosition: 'center 20%' }}
-        />
+        <picture>
+          {srcMobile && (
+            <source media="(max-width: 767px)" srcSet={resolveImageSrc(srcMobile)} />
+          )}
+          <img
+            src={src ? resolveImageSrc(src) : img('/images/angelo-portrait.png')}
+            alt={alt || 'Ângelo · retrato'}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+            fetchPriority="high"
+            decoding="async"
+            style={{ objectPosition: 'center 20%' }}
+          />
+        </picture>
 
         {/* Gradient sutil dourado no hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
