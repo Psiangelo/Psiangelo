@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
+import TherapistCard from '@/components/therapy/TherapistCard';
 
 // Temas agrupados por natureza clínica. Cada um aponta pro público mais
 // recorrente, mas todos podem ser trabalhados em qualquer idade.
@@ -126,6 +127,7 @@ export default function AtendoClient() {
           title="O que se trata"
           emphasis="na clínica analítica"
           lead="Lista não exaustiva de queixas e temas mais frequentes na minha prática. A abordagem analítica não trata síndromes, trata pessoas — mas essas pistas ajudam você a identificar se o que está vivendo pode encontrar escuta aqui."
+          sideCard={<TherapistCard />}
         />
 
         <div className="relative max-w-[960px] mx-auto px-5 sm:px-6 md:px-12 pb-24">

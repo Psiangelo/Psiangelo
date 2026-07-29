@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import TherapyGate from '@/components/therapy/TherapyGate';
 import TherapySchema from '@/components/therapy/TherapySchema';
+import TherapistCard from '@/components/therapy/TherapistCard';
 import { CLINICAL_FAQ } from '@/data/clinical-faq';
 
 const FAQ = [
@@ -89,6 +90,7 @@ export default function PsicoterapiaAdolescentesPage() {
           title="Um espaço próprio"
           emphasis="para o que está em formação"
           lead="Psicoterapia analítica online para adolescentes em todo o Brasil. Uma escuta sem julgamento, com sigilo cuidadoso e diálogo transparente com a família — um lugar onde o que está se construindo pode ser falado e pensado."
+          sideCard={<TherapistCard />}
         />
 
         <ContentBlock />

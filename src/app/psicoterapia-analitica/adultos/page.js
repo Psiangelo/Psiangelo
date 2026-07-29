@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import TherapyGate from '@/components/therapy/TherapyGate';
 import TherapySchema from '@/components/therapy/TherapySchema';
+import TherapistCard from '@/components/therapy/TherapistCard';
 import { CLINICAL_FAQ } from '@/data/clinical-faq';
 
 const FAQ = [
@@ -95,6 +96,7 @@ export default function PsicoterapiaAdultosPage() {
           title="Uma escuta sem"
           emphasis="fórmulas prontas"
           lead="Psicoterapia analítica online para adultos em todo o Brasil. Análise junguiana para crise de sentido, sonhos recorrentes, transições de vida, busca de autoconhecimento — uma clínica que se constrói no encontro, não num modelo pronto."
+          sideCard={<TherapistCard />}
         />
 
         <ContentBlock />

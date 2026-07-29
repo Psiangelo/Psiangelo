@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
 import TherapyGate from '@/components/therapy/TherapyGate';
 import TherapySchema from '@/components/therapy/TherapySchema';
+import TherapistCard from '@/components/therapy/TherapistCard';
 import { CLINICAL_FAQ } from '@/data/clinical-faq';
 
 const FAQ = [
@@ -92,6 +93,7 @@ export default function PsicoterapiaIdososPage() {
           title="A segunda metade da vida"
           emphasis="também pede escuta"
           lead="Psicoterapia analítica online para idosos em todo o Brasil. Para Carl Gustav Jung, a maturidade não é declínio — é uma forma específica de desenvolvimento psíquico, com questões próprias de sentido, memória, integração e novos começos."
+          sideCard={<TherapistCard />}
         />
 
         <ContentBlock />
