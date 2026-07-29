@@ -33,6 +33,7 @@ export const SITEDATA_KEYS = {
   settings:       'angelo_admin_settings',
   therapy:        'angelo_admin_therapy',
   homeSections:   'angelo_admin_home_sections',
+  homeSectionsLayout: 'angelo_admin_home_sections_layout',
   categories:     'angelo_admin_categories',
   contentTypes:   'angelo_admin_content_types',
   materiaisPage:  'angelo_admin_materiais_page',
@@ -490,6 +491,8 @@ export const DEFAULT_VISIBILITY = {
   glossario:  true,
   psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
+  ensaioDestaque:    true,  // 2026-07-29: ensaio mais recente em bloco grande (home blog-first)
+  autor:             true,  // 2026-07-29: faixa "quem escreve" — ponte do blog pra clínica
   manifesto:         true,  // "A casa" — manifesto editorial logo abaixo do hero
   prelude:           true,
   about:             true,
@@ -511,31 +514,51 @@ export const DEFAULT_VISIBILITY = {
    HOME SECTIONS ORDER — ordem vertical das seções da página inicial
 =================================================================== */
 
+/**
+ * Ordem blog-first (2026-07-29). O eixo da home passou a ser a escrita: o
+ * ensaio mais recente vem logo depois do hero, a grade de ensaios em seguida,
+ * e só então as pontes de conversão (clínica, materiais, estudos).
+ */
 export const HOME_SECTION_META = [
-  { id: 'hero',         label: 'Hero (topo)',                           fixed: true  },
-  { id: 'disclaimer',   label: 'Faixa de status (estagiário)',          visKey: 'disclaimerEstagio' },
-  { id: 'seoIntro',     label: 'Manifesto — "A casa" (texto editorial)',  visKey: 'manifesto' },
-  { id: 'bussola',      label: 'Bússola (mapa das portas)',             visKey: 'bussola' },
-  { id: 'audience',     label: 'Para quem atendo (3 públicos)',         visKey: 'audience' },
-  { id: 'approach',     label: 'Como trabalho (3 princípios)',          visKey: 'approach' },
-  { id: 'about',        label: 'Sobre mim',                             visKey: 'about' },
-  { id: 'prelude',      label: 'Prelúdio (editorial)',                  visKey: 'prelude' },
-  { id: 'estudos',      label: 'Estudos · Trilhas',                     visKey: 'estudos' },
-  { id: 'jungQuote',    label: 'Citação de Jung' },
-  { id: 'materials',    label: 'Materiais (preview)',                   visKey: 'materiais' },
-  { id: 'blog',         label: 'Blog (preview)',                        visKey: 'blog' },
-  { id: 'cursos',       label: 'Cursos (preview)',                      visKey: 'cursos' },
-  { id: 'cartografia',  label: 'Cartografia de conceitos',              visKey: 'cartografia' },
-  { id: 'depoimentos',  label: 'Depoimentos',                           visKey: 'depoimentos' },
-  { id: 'faq',          label: 'FAQ',                                   visKey: 'faq' },
-  { id: 'contato',      label: 'Contato (CTA final)',                   visKey: 'contato' },
+  { id: 'hero',          label: 'Hero (topo)',                           fixed: true  },
+  { id: 'disclaimer',    label: 'Faixa de status (estagiário)',          visKey: 'disclaimerEstagio' },
+  { id: 'featuredEssay', label: 'Ensaio em destaque (bloco grande)',     visKey: 'ensaioDestaque' },
+  { id: 'blog',          label: 'Últimos ensaios (grade)',               visKey: 'blog' },
+  { id: 'autor',         label: 'Quem escreve → CTA psicoterapia',       visKey: 'autor' },
+  { id: 'bussola',       label: 'Bússola (mapa das portas)',             visKey: 'bussola' },
+  { id: 'materials',     label: 'Materiais (preview + CTA)',             visKey: 'materiais' },
+  { id: 'jungQuote',     label: 'Citação de Jung' },
+  { id: 'estudos',       label: 'Estudos · Trilhas',                     visKey: 'estudos' },
+  { id: 'about',         label: 'Sobre mim',                             visKey: 'about' },
+  { id: 'seoIntro',      label: 'Manifesto — "A casa" (texto editorial)', visKey: 'manifesto' },
+  { id: 'prelude',       label: 'Prelúdio (editorial)',                  visKey: 'prelude' },
+  { id: 'audience',      label: 'Para quem atendo (3 públicos)',         visKey: 'audience' },
+  { id: 'approach',      label: 'Como trabalho (3 princípios)',          visKey: 'approach' },
+  { id: 'cursos',        label: 'Cursos (preview)',                      visKey: 'cursos' },
+  { id: 'cartografia',   label: 'Cartografia de conceitos',              visKey: 'cartografia' },
+  { id: 'depoimentos',   label: 'Depoimentos',                           visKey: 'depoimentos' },
+  { id: 'faq',           label: 'FAQ',                                   visKey: 'faq' },
+  { id: 'contato',       label: 'Contato (CTA final)',                   visKey: 'contato' },
 ];
+
+/**
+ * Versão do layout da home. A ordem das seções é conteúdo (o admin salva a
+ * dele), mas uma repaginada muda o *desenho*, não a preferência — quando esta
+ * constante sobe, a ordem salva antes da repaginada é descartada uma vez e o
+ * novo default entra. O que o admin salvar depois disso é preservado.
+ */
+export const HOME_LAYOUT_VERSION = 2;
 
 export const DEFAULT_HOME_SECTIONS = HOME_SECTION_META.map((s) => s.id);
 
 export const getHomeSections = () => {
   const stored = readJson(SITEDATA_KEYS.homeSections, null);
   if (!Array.isArray(stored)) return DEFAULT_HOME_SECTIONS;
+
+  // Ordem salva antes desta repaginada: descarta uma vez e adota o novo default
+  const savedLayout = Number(readJson(SITEDATA_KEYS.homeSectionsLayout, 0)) || 0;
+  if (savedLayout < HOME_LAYOUT_VERSION) return DEFAULT_HOME_SECTIONS;
+
   // Valida + deduplica (user pode ter salvo ordem corrompida com duplicatas)
   const seen = new Set();
   const valid = [];
@@ -562,7 +585,11 @@ export const getHomeSections = () => {
   });
   return valid;
 };
-export const setHomeSections = (v) => writeJson(SITEDATA_KEYS.homeSections, v);
+export const setHomeSections = (v) => {
+  writeJson(SITEDATA_KEYS.homeSections, v);
+  // Carimba o layout atual: a partir daqui a ordem do admin manda de novo
+  writeJson(SITEDATA_KEYS.homeSectionsLayout, HOME_LAYOUT_VERSION);
+};
 
 export const getSiteVisibility = () => {
   const stored = readJson(SITEDATA_KEYS.visibility, null);

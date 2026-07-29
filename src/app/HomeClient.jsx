@@ -11,6 +11,8 @@ import HomeApproach from '@/components/home/HomeApproach';
 import HomeBussola from '@/components/home/HomeBussola';
 import AudienceCards from '@/components/therapy/AudienceCards';
 import Prelude from '@/components/home/Prelude';
+import FeaturedEssay from '@/components/home/FeaturedEssay';
+import AuthorBand from '@/components/home/AuthorBand';
 import About from '@/components/home/About';
 import Cartography from '@/components/home/Cartography';
 import StudyPaths from '@/components/home/StudyPaths';
@@ -124,19 +126,32 @@ export default function HomePage() {
   // RENDERERS data-aware: só "rende­riza" (vira item de rendered) se visibility
   // estiver on AND se existe conteúdo de fato — evita wrapper div vazio
   // carregando divider órfão, que é o que dava "buraco" na home.
+  // O ensaio em destaque consome o post mais recente; a grade abaixo dele
+  // começa do segundo pra não mostrar a mesma capa duas vezes.
+  const showsFeatured = v.ensaioDestaque !== false && has.blog;
+
   const RENDERERS = {
-    hero:        () => <Hero />,
-    disclaimer:  () => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
+    hero:          () => <Hero />,
+    disclaimer:    () => (v.disclaimerEstagio !== false ? <HomeDisclaimer /> : null),
+    featuredEssay: () => (showsFeatured ? <FeaturedEssay /> : null),
+    blog:          () => {
+      if (!v.blog || !has.blog) return null;
+      // Com um único post publicado, a grade ficaria vazia depois do destaque
+      if (showsFeatured && blogCount <= 1) return null;
+      return <BlogPreview skip={showsFeatured ? 1 : 0} limit={6} />;
+    },
+    autor:       () => (v.autor !== false ? <AuthorBand /> : null),
     seoIntro:    () => (v.manifesto ? <HomeSeoIntro /> : null),
     bussola:     () => (v.bussola !== false ? <HomeBussola /> : null),
     audience:    () => (v.audience ? <AudienceCards heading="Para quem atendo" /> : null),
     approach:    () => (v.approach ? <HomeApproach /> : null),
     about:       () => (v.about ? <About /> : null),
     prelude:     () => (v.prelude ? <Prelude /> : null),
-    trilhas:     () => (v.trilhas && has.trilhas ? <StudyPaths /> : null),
+    // O id no catálogo é 'estudos'; antes o renderer se chamava 'trilhas' e
+    // nunca casava, então a seção de trilhas jamais aparecia na home.
+    estudos:     () => (v.estudos !== false && has.trilhas ? <StudyPaths /> : null),
     jungQuote:   () => <JungQuote />,
     materials:   () => (v.materiais && has.materials ? <MaterialsPreview /> : null),
-    blog:        () => (v.blog && has.blog ? <BlogPreview /> : null),
     cursos:      () => (v.cursos && has.cursos ? <CoursesPreview /> : null),
     cartografia: () => (v.cartografia ? <Cartography /> : null),
     depoimentos: () => (v.depoimentos && has.depoimentos ? <Testimonials /> : null),

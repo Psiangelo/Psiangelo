@@ -1,109 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import CursorGlow from '@/components/ui/CursorGlow';
-import { PortraitHero } from '@/components/ui/Portrait';
+import AmbientVideo from '@/components/ui/AmbientVideo';
+import Button, { ArrowIcon, WhatsAppIcon } from '@/components/ui/Button';
 import { getHomepage, getSettings, DEFAULT_HOMEPAGE, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 import { useVisibility } from '@/lib/useVisibility';
-import { useIsMobile, useReducedMotion } from '@/lib/useMediaQuery';
-import { StarField, NebulaField, ShootingStars } from '@/components/illustrations';
-
-function FloatingParticles({ count = 16 }) {
-  const [particles, setParticles] = useState([]);
-
-  useEffect(() => {
-    const pts = Array.from({ length: count }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 15 + 10,
-      delay: Math.random() * 5,
-      drift: Math.random() * 20 - 10,
-      opacity: 0.08 + Math.random() * 0.12,
-    }));
-    setParticles(pts);
-  }, [count]);
-
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: p.size,
-            height: p.size,
-            background: `rgba(180, 140, 80, ${p.opacity})`,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            x: [0, p.drift, 0],
-            opacity: [0.3, 0.7, 0.3],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-// Mandala SVG translúcida — ambient atrás do conteúdo
-function MandalaBackdrop() {
-  return (
-    <motion.svg
-      className="absolute right-[-180px] top-[18%] hidden lg:block pointer-events-none"
-      width="780"
-      height="780"
-      viewBox="0 0 780 780"
-      style={{ opacity: 0.07 }}
-      animate={{ rotate: 360 }}
-      transition={{ duration: 240, repeat: Infinity, ease: 'linear' }}
-    >
-      <g fill="none" stroke="#B48C50" strokeWidth="0.6">
-        <circle cx="390" cy="390" r="370" strokeWidth="0.4" />
-        <circle cx="390" cy="390" r="300" />
-        <circle cx="390" cy="390" r="220" />
-        <circle cx="390" cy="390" r="140" />
-        <circle cx="390" cy="390" r="70" />
-        <circle cx="390" cy="390" r="20" fill="#B48C50" fillOpacity="0.4" />
-        {Array.from({ length: 24 }).map((_, i) => {
-          const angle = (i * 15 * Math.PI) / 180;
-          const x1 = 390 + Math.cos(angle) * 70;
-          const y1 = 390 + Math.sin(angle) * 70;
-          const x2 = 390 + Math.cos(angle) * 370;
-          const y2 = 390 + Math.sin(angle) * 370;
-          return (
-            <line
-              key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              strokeWidth={i % 4 === 0 ? 0.7 : 0.3}
-            />
-          );
-        })}
-        {Array.from({ length: 12 }).map((_, i) => {
-          const angle = (i * 30 * Math.PI) / 180 + Math.PI / 12;
-          const x = 390 + Math.cos(angle) * 220;
-          const y = 390 + Math.sin(angle) * 220;
-          return <circle key={`p${i}`} cx={x} cy={y} r="2.5" fill="#B48C50" />;
-        })}
-      </g>
-    </motion.svg>
-  );
-}
 
 export default function Hero() {
   const content = useSitedata(
@@ -112,9 +16,6 @@ export default function Hero() {
     SITEDATA_KEYS.homepage,
   );
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
-  const isMobile = useIsMobile();
-  const reducedMotion = useReducedMotion();
-  const showRichFX = !isMobile && !reducedMotion;
   const { visibility: v } = useVisibility();
 
   const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
@@ -126,13 +27,14 @@ export default function Hero() {
     ? `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`
     : '#contato';
 
+  // Cada letra sobe por trás da máscara de overflow do seu grupo
   const letterAnim = {
     hidden: { opacity: 0, y: 50 },
     visible: (i) => ({
       opacity: 1,
       y: 0,
       transition: {
-        delay: 0.4 + i * 0.04,
+        delay: 0.35 + i * 0.04,
         duration: 0.8,
         ease: [0.16, 1, 0.3, 1],
       },
@@ -143,28 +45,33 @@ export default function Hero() {
   const emphasisLetters = (content.titleEmphasis || 'angelo').split('');
 
   return (
-    <section className="relative min-h-screen flex items-center px-5 sm:px-6 md:px-12 overflow-hidden pt-28 md:pt-20 pb-14 md:pb-20">
-      {/* Cursor glow contido no hero */}
-      <CursorGlow contained size={460} intensity={0.11} />
+    <section className="relative min-h-[100svh] flex items-center px-5 sm:px-6 md:px-12 overflow-hidden pt-28 md:pt-24 pb-16 md:pb-24">
+      {/* Footage de fundo — tinta preta se dissolvendo na água (solutio).
+          Fica à direita do quadro; a esquerda é quase preta, que é onde o
+          texto cai. eager: é a única faixa acima da dobra. */}
+      <AmbientVideo
+        src="/video/hero.mp4"
+        poster="/video/hero.jpg"
+        opacity={0.85}
+        eager
+        objectPosition="70% center"
+      />
 
-      {/* Ambient light effects */}
-      <div className="ambient-glow absolute top-[12%] left-[35%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px]" />
-      <div className="absolute bottom-0 left-0 w-full h-[300px] bg-gradient-to-t from-accent/[0.02] to-transparent pointer-events-none" />
-
-      {/* Céu estrelado — camada mais distante (reduzido em mobile/reduced-motion) */}
-      <StarField count={showRichFX ? 70 : 25} maxOpacity={0.7} accentChance={0.22} />
-      {showRichFX && <NebulaField count={8} />}
-      {showRichFX && <ShootingStars count={3} />}
-
-      {/* Mandala translúcida no fundo (desktop apenas) */}
-      {showRichFX && <MandalaBackdrop />}
-
-      {/* Floating particles — menos em mobile */}
-      <FloatingParticles count={showRichFX ? 16 : 6} />
-
-      {/* Subtle grid pattern */}
+      {/* Scrim — segura a legibilidade do texto à esquerda e costura o vídeo
+          com o fundo da página embaixo. */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.018]"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(90deg, #0E0C0A 0%, rgba(14,12,10,0.9) 28%, rgba(14,12,10,0.28) 56%, rgba(14,12,10,0) 100%), linear-gradient(to top, #0E0C0A 2%, rgba(14,12,10,0) 32%)',
+        }}
+      />
+
+      <CursorGlow contained size={460} intensity={0.09} />
+
+      {/* Malha fina — mantém a textura editorial por cima do vídeo */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.02]"
         style={{
           backgroundImage:
             'linear-gradient(rgba(180,140,80,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(180,140,80,0.3) 1px, transparent 1px)',
@@ -172,28 +79,27 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative z-10 max-w-[1180px] w-full mx-auto grid grid-cols-1 md:grid-cols-[1fr_360px] gap-12 md:gap-16 items-center">
-        {/* Left: ficha técnica + display + corpo + CTAs */}
-        <div className="relative pl-0 md:pl-10">
-          {/* Espinha dourada — vertical accent line */}
+      {/* Sem retrato aqui: ele vive na faixa "quem escreve", e ter a mesma foto
+          duas vezes na mesma rolagem não somava. O lado direito fica para a
+          tinta, que é onde o clipe tem movimento. */}
+      <div className="relative z-10 max-w-[1180px] w-full mx-auto">
+        <div className="relative pl-0 md:pl-10 max-w-[640px]">
           <span className="vertical-spine hidden md:block left-0" aria-hidden />
 
-          {/* Eyebrow simples — substitui a ficha técnica */}
           <motion.p
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-mono text-[0.65rem] text-accent tracking-[0.32em] uppercase mb-8 flex items-center gap-3"
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="font-mono text-[0.65rem] text-accent tracking-[0.32em] uppercase mb-7 flex items-center gap-3"
           >
             <span className="block w-8 h-px bg-accent/40" />
             {content.eyebrow}
           </motion.p>
 
-          {/* Triângulo da marca — acima do wordmark */}
           <motion.svg
             initial={{ opacity: 0, y: -8, scale: 0.85 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             width="46"
             height="42"
             viewBox="0 0 46 42"
@@ -204,9 +110,11 @@ export default function Hero() {
             <circle cx="23" cy="28" r="3" fill="currentColor" />
           </motion.svg>
 
-          {/* Animated title — "Psiangelo" em linha única: Psi bright + angelo italic accent */}
-          <h1 className="font-serif font-normal text-text-bright leading-[1] mb-5 tracking-[-0.02em]">
-            <span className="flex items-baseline flex-wrap text-[clamp(3.2rem,9vw,6.8rem)]">
+          <h1 className="font-serif font-normal text-text-bright leading-[1.05] mb-5 tracking-[-0.02em]">
+            <span className="sr-only">
+              {(content.titlePrefix || 'Psi') + (content.titleEmphasis || 'angelo')}
+            </span>
+            <span aria-hidden className="flex items-baseline flex-wrap text-[clamp(3.2rem,9vw,6.8rem)]">
               <span className="inline-flex overflow-hidden align-baseline">
                 {prefixLetters.map((letter, i) => (
                   <motion.span
@@ -221,7 +129,7 @@ export default function Hero() {
                   </motion.span>
                 ))}
               </span>
-              <span className="inline-flex overflow-hidden align-baseline italic text-accent">
+              <span className="inline-flex overflow-hidden align-baseline italic text-accent-bright">
                 {emphasisLetters.map((letter, i) => (
                   <motion.span
                     key={`e-${i}`}
@@ -238,19 +146,18 @@ export default function Hero() {
             </span>
           </h1>
 
-          {/* Moldura dourada (homenagem ao Geo Triângulo) */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 1.2, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.2, delay: 1, ease: [0.22, 1, 0.36, 1] }}
             className="h-px w-full max-w-[420px] bg-gradient-to-r from-accent/60 via-accent/30 to-transparent origin-left mb-7"
           />
 
           <motion.p
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.75 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="font-serif italic text-accent-soft text-lg md:text-xl mb-8 tracking-wide"
+            animate={{ opacity: 0.85 }}
+            transition={{ duration: 0.6, delay: 0.85 }}
+            className="font-serif italic text-accent-soft text-lg md:text-xl mb-7 tracking-wide"
           >
             {content.tagline}
             <span className="ml-3 font-mono not-italic text-[0.65rem] text-text-dim/70 tracking-[0.25em] uppercase">
@@ -261,93 +168,47 @@ export default function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1 }}
-            className="text-[0.98rem] text-text-dim max-w-md leading-[1.85] mb-10"
+            transition={{ duration: 0.7, delay: 0.95 }}
+            className="text-[0.98rem] text-text max-w-md leading-[1.85] mb-9"
           >
             {content.lead}
           </motion.p>
 
-          {/* CTA hierárquico — primário (WhatsApp clínico) + secundário (abordagem) + terciário (ensaios) */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.2 }}
-            className="flex flex-wrap items-center gap-4"
+            transition={{ duration: 0.7, delay: 1.1 }}
+            className="btn-row"
           >
-            <a
-              href={whatsappUrl}
-              target={whatsappNumber ? '_blank' : undefined}
-              rel={whatsappNumber ? 'noopener noreferrer' : undefined}
-              className="group relative inline-flex items-center gap-3 px-8 py-4 font-sans text-[0.74rem] font-semibold tracking-[0.18em] uppercase text-bg bg-accent hover:bg-text-bright transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/15 overflow-hidden"
-            >
-              <span className="relative z-10">Marcar conversa inicial</span>
-              <svg
-                className="relative z-10"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-              <motion.span
-                className="absolute inset-0 bg-text-bright"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </a>
-            <Link
-              href="/psicoterapia-analitica"
-              className="group inline-flex items-center gap-3 px-7 py-3.5 font-sans text-[0.72rem] font-medium tracking-[0.18em] uppercase text-text border border-border-hover hover:border-accent hover:text-accent transition-all relative"
-            >
+            <Button href={whatsappUrl} variant="solid" iconLeft={<WhatsAppIcon />}>
+              Marcar conversa
+            </Button>
+            <Button href="/psicoterapia-analitica" variant="outline">
               Como atendo
-              <motion.span
-                className="absolute bottom-0 left-0 h-px bg-accent"
-                initial={{ width: 0 }}
-                whileHover={{ width: '100%' }}
-                transition={{ duration: 0.3 }}
-              />
-            </Link>
+            </Button>
             {v.blog !== false && (
-              <Link
-                href="/blog"
-                className="font-sans text-[0.7rem] font-medium tracking-[0.18em] uppercase text-text-dim hover:text-accent transition-colors link-underline"
-              >
-                Ler ensaios
+              <Link href="/blog" className="link-arrow">
+                Ler os ensaios
+                <ArrowIcon />
               </Link>
             )}
           </motion.div>
         </div>
-
-        {/* Right: portrait SVG editorial — visível também no mobile, acima do texto */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92, rotate: 2 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="order-first md:order-none w-full max-w-[260px] mx-auto md:max-w-none md:mx-0 mb-2 md:mb-0"
-        >
-          <PortraitHero />
-        </motion.div>
       </div>
 
-      {/* Scroll indicator — só desktop: em mobile o conteúdo costuma passar
-          de 100vh e a posição absoluta bottom-8 acaba caindo em cima dos CTAs */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1 }}
+        transition={{ delay: 2.2, duration: 1 }}
         className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-3"
       >
-        <span className="font-mono text-[0.55rem] text-text-dim/40 tracking-[0.3em] uppercase">
+        <span className="font-mono text-[0.55rem] text-text-dim/50 tracking-[0.3em] uppercase">
           scroll
         </span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-px h-10 bg-gradient-to-b from-accent/40 via-accent/20 to-transparent"
+          className="w-px h-10 bg-gradient-to-b from-accent/50 via-accent/20 to-transparent"
         />
       </motion.div>
     </section>

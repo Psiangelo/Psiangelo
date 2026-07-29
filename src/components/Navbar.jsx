@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useVisibility } from '@/lib/useVisibility';
 import { useSitedata } from '@/lib/useSitedata';
-import { getLabels, DEFAULT_LABELS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { getLabels, getSettings, DEFAULT_LABELS, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { LogoMarkInline } from '@/components/ui/LogoMark';
+import Button, { WhatsAppIcon } from '@/components/ui/Button';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -38,6 +39,16 @@ export default function Navbar() {
   ];
   const links = allLinks.filter((l) => v[l.key] !== false);
 
+  // CTA do header — mesma conversa do hero, disponível em qualquer página
+  const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
+  const whatsappUrl = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+        settings.whatsappMessage ||
+          'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.',
+      )}`
+    : '/psicoterapia-analitica';
+
   const isActive = (href) => {
     if (href === '/') return pathname === '/';
     if (href.startsWith('/#')) return false;
@@ -60,7 +71,8 @@ export default function Navbar() {
         <LogoMarkInline height={28} className="transition-opacity group-hover:opacity-85" />
       </Link>
 
-      <ul className="hidden md:flex items-center gap-10">
+      <div className="hidden md:flex items-center gap-8 lg:gap-10">
+      <ul className="flex items-center gap-8 lg:gap-10">
         {links.map((link) => {
           const active = isActive(link.href);
           return (
@@ -84,6 +96,11 @@ export default function Navbar() {
           );
         })}
       </ul>
+
+        <Button href={whatsappUrl} variant="solid" size="sm" iconLeft={<WhatsAppIcon />}>
+          Marcar conversa
+        </Button>
+      </div>
 
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
@@ -125,6 +142,17 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <Button
+                href={whatsappUrl}
+                variant="solid"
+                size="sm"
+                block
+                iconLeft={<WhatsAppIcon />}
+                onClick={() => setMobileOpen(false)}
+                className="mt-1"
+              >
+                Marcar conversa
+              </Button>
             </div>
           </motion.div>
         )}

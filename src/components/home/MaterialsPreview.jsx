@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import Link from 'next/link';
 import SectionLabel from '@/components/SectionLabel';
+import Button, { ArrowIcon } from '@/components/ui/Button';
 import { fadeUp, stagger } from '@/lib/constants';
 import { getMaterials, getCategories, getContentTypes, DEFAULT_CATEGORIES, DEFAULT_CONTENT_TYPES, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
@@ -124,7 +125,9 @@ export default function MaterialsPreview() {
   const categories = useSitedata(getCategories, DEFAULT_CATEGORIES, SITEDATA_KEYS.categories);
   const contentTypes = useSitedata(getContentTypes, DEFAULT_CONTENT_TYPES, SITEDATA_KEYS.contentTypes);
 
-  const previewItems = (materials || []).filter((m) => m.available).slice(0, 6);
+  const availableItems = (materials || []).filter((m) => m.available);
+  const previewItems = availableItems.slice(0, 6);
+  const materialsCount = availableItems.length;
   const sectionHeading = useSectionLabel('materials', '');
 
   // Sem materiais publicados não renderiza nada — evita espaço vazio enorme na home
@@ -201,6 +204,22 @@ export default function MaterialsPreview() {
               <Tile item={item} span="h-full" index={i} categories={categories} contentTypes={contentTypes} />
             </Link>
           ))}
+        </motion.div>
+
+        {/* Fecho de conversão — o link do cabeçalho é discreto de propósito;
+            quem rolou o bento inteiro merece um alvo de verdade. */}
+        <motion.div
+          variants={fadeUp}
+          className="mt-12 pt-10 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-6"
+        >
+          <p className="font-serif italic text-[1.05rem] text-text-bright text-center sm:text-left max-w-lg">
+            {materialsCount > previewItems.length
+              ? `São ${materialsCount} materiais no catálogo — resumos, mapas e sínteses para estudar Jung pela raiz.`
+              : 'Resumos, mapas e sínteses para estudar Jung pela raiz.'}
+          </p>
+          <Button href="/materiais" variant="solid" icon={<ArrowIcon />} className="flex-shrink-0">
+            Ver os materiais
+          </Button>
         </motion.div>
       </motion.div>
     </section>

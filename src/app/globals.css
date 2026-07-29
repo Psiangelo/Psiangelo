@@ -269,6 +269,170 @@ body.reading-mode .whatsapp-button {
   scrollbar-width: none;
 }
 
+/* ====================== BOTÕES (sistema global) ====================== */
+/* Um só desenho de botão pro site inteiro. O preenchimento varre da direita
+   pra esquerda no hover e volta pelo mesmo caminho ao sair — o gesto é o que
+   dá a sensação de acabamento. Variantes trocam só as 3 custom properties. */
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: #E8DDD0;
+  --btn-bd: rgba(180, 140, 80, 0.32);
+  --btn-sweep: #D4A853;
+  --btn-fg-hover: #0E0C0A;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1rem 2rem;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: center;
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-bd);
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--btn-sweep);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn:hover::before,
+.btn:focus-visible::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  color: var(--btn-fg-hover);
+  border-color: var(--btn-sweep);
+}
+
+/* Dourado sólido — ação primária (marcar conversa, baixar material) */
+.btn--solid {
+  --btn-bg: #D4A853;
+  --btn-fg: #0E0C0A;
+  --btn-bd: #D4A853;
+  --btn-sweep: #8B3A2E;
+  --btn-fg-hover: #F3E7D6;
+}
+
+/* Rubedo — usado quando o botão dourado já está em cena e este é o par dele */
+.btn--wine {
+  --btn-bg: #8B3A2E;
+  --btn-fg: #F3E7D6;
+  --btn-bd: #8B3A2E;
+  --btn-sweep: #D4A853;
+  --btn-fg-hover: #0E0C0A;
+}
+
+/* Contorno discreto — ação terciária dentro de cards */
+.btn--ghost {
+  --btn-bd: rgba(180, 140, 80, 0.18);
+  --btn-fg: #B8AD9E;
+  --btn-sweep: rgba(180, 140, 80, 0.16);
+  --btn-fg-hover: #E8DDD0;
+}
+
+.btn--sm {
+  padding: 0.72rem 1.4rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+}
+
+.btn--lg {
+  padding: 1.15rem 2.5rem;
+  font-size: 0.76rem;
+}
+
+.btn--block {
+  display: flex;
+  width: 100%;
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+/* Link com seta — terciário, sem caixa */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 0.55rem;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #B48C50;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s, border-color 0.3s, gap 0.3s;
+}
+
+/* Sem isto o SVG sem width/height assume 300x150 e estoura a linha */
+.link-arrow svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.link-arrow:hover,
+.link-arrow:focus-visible {
+  color: #E8DDD0;
+  border-color: rgba(180, 140, 80, 0.55);
+  gap: 0.95rem;
+}
+
+/* Botão decorativo dentro de um card que já é o link: como ele não recebe
+   hover próprio, o sweep passa a seguir o hover do card (.group). */
+.group:hover .btn--in-card::before,
+.group:focus-within .btn--in-card::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.group:hover .btn--in-card,
+.group:focus-within .btn--in-card {
+  color: var(--btn-fg-hover);
+  border-color: var(--btn-sweep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::before {
+    transition: none;
+  }
+}
+
 /* ====================== LINK & BUTTON BASE ====================== */
 .link-underline {
   position: relative;

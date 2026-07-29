@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AmbientVideo from '@/components/ui/AmbientVideo';
 import { jungQuotes } from '@/data/quotes';
 
 /**
@@ -54,7 +55,18 @@ export default function JungQuote({ variant = 'block', rotate = true, rotateMs =
   }
 
   return (
-    <section className="relative py-8 md:py-12 px-5 sm:px-6 md:px-12 overflow-hidden">
+    <section className="relative py-20 md:py-28 px-5 sm:px-6 md:px-12 overflow-hidden">
+      {/* Faixa de respiro: uma vela no escuro atrás da citação. O clipe é quase
+          todo preto, então o texto continua legível sem scrim pesado. */}
+      <AmbientVideo src="/video/quote.mp4" poster="/video/quote.jpg" opacity={0.72} />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(70% 100% at 50% 50%, rgba(14,12,10,0.66) 0%, rgba(14,12,10,0.93) 72%)',
+        }}
+      />
+
       {/* decoração sutil: aspas gigantes */}
       <span
         aria-hidden

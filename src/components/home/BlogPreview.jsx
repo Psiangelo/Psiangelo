@@ -1,21 +1,22 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { fadeUp, stagger } from '@/lib/constants';
 import SectionLabel from '@/components/SectionLabel';
-import { BranchOrnament, SpiralAccent } from '@/components/illustrations';
+import { SpiralAccent } from '@/components/illustrations';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 import { useSectionLabel } from '@/lib/useLabels';
+import { slugifyTag } from '@/lib/tagSlug';
 
 const STORAGE_KEY = 'angelo_admin_blog';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
   try {
-    return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+    return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
   } catch { return dateStr; }
 }
 
@@ -25,16 +26,23 @@ function calculateReadingTime(html) {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-export default function BlogPreview() {
+/**
+ * BlogPreview — grade dos ensaios recentes.
+ *
+ * `skip` existe porque o FeaturedEssay já mostra o primeiro post: quando aquela
+ * seção está ligada, esta começa do segundo pra não repetir a mesma capa duas
+ * vezes na mesma rolagem.
+ */
+export default function BlogPreview({ skip = 0, limit = 6 }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
   const [posts, setPosts] = useState([]);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     const load = () => {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) { setPosts([]); return; }
+        if (!raw) { setPosts([]); setTotal(0); return; }
         const all = JSON.parse(raw);
         const published = all
           .filter((p) => p.status === 'published')
@@ -42,10 +50,10 @@ export default function BlogPreview() {
             if (a.pinned && !b.pinned) return -1;
             if (!a.pinned && b.pinned) return 1;
             return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
-          })
-          .slice(0, 3);
-        setPosts(published);
-      } catch { setPosts([]); }
+          });
+        setTotal(published.length);
+        setPosts(published.slice(skip, skip + limit));
+      } catch { setPosts([]); setTotal(0); }
     };
 
     load();
@@ -64,9 +72,9 @@ export default function BlogPreview() {
       window.removeEventListener('sitedata:changed', onChanged);
       window.removeEventListener('sitedata:bootstrap', load);
     };
-  }, []);
+  }, [skip, limit]);
 
-  const sectionHeading = useSectionLabel('blog', 'Publicacoes recentes');
+  const sectionHeading = useSectionLabel('blog', 'Últimos ensaios');
 
   if (posts.length === 0) return null;
 
@@ -77,69 +85,74 @@ export default function BlogPreview() {
         size={260}
         opacity={0.1}
       />
-      <motion.div initial="visible" animate="visible" variants={stagger} className="max-w-[1100px] mx-auto">
+      <motion.div initial="visible" animate="visible" variants={stagger} className="max-w-[1180px] mx-auto">
         <SectionLabel label="Blog" />
-        <motion.div variants={fadeUp} className="flex items-end justify-between mb-10">
-          <h2 className="font-serif text-2xl text-text-bright">{sectionHeading}</h2>
-          <Link href="/blog" className="text-xs font-sans text-accent hover:text-text-bright transition-colors uppercase tracking-widest">
-            Ver todos &rarr;
+        <motion.div variants={fadeUp} className="flex items-end justify-between gap-6 mb-10 flex-wrap">
+          <h2 className="font-serif text-[clamp(1.6rem,3vw,2.2rem)] text-text-bright leading-tight">
+            {sectionHeading}
+          </h2>
+          <Link href="/blog" className="link-arrow">
+            {total > posts.length + skip ? `Ver todos os ${total}` : 'Ver todos'}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15" aria-hidden>
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </Link>
         </motion.div>
 
+        {/* Com 2 posts uma grade de 3 colunas deixa um vão visível, então o
+            número de colunas segue o número de posts. E a largura do card é
+            travada: capa 9/16 solta numa coluna larga vira um cartaz enorme. */}
         <motion.div
           variants={stagger}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-6 -mx-5 px-5 pb-2 scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-3 sm:gap-6 md:gap-8 sm:overflow-visible sm:snap-none sm:mx-0 sm:px-0 sm:pb-0 justify-items-center"
+          className={`grid grid-cols-1 justify-items-center gap-8 md:gap-10 ${
+            posts.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2 max-w-[720px] mx-auto'
+          }`}
         >
           {posts.map((post) => {
             const readTime = calculateReadingTime(post.content_html);
-            const seed = post.slug || post.id || post.title || '';
-            const hasImage = post.featured_cover || post.featured_image;
+            const cover = post.featured_cover || post.featured_image;
+            const href = `/blog/${post.slug || post.id}/`;
             return (
-              <motion.article key={post.id} variants={fadeUp} className="group w-[78vw] max-w-[300px] shrink-0 snap-start sm:w-full sm:shrink relative">
-                <Link href={`/blog/${post.slug || post.id}/`} className="block">
-                  <span aria-hidden className="absolute left-0 top-3 bottom-3 w-[2px] bg-accent/20 group-hover:bg-accent/60 transition-colors" />
-                  <div className="pl-3">
-                    {hasImage ? (
-                      <PosterCover
-                        src={post.featured_cover || post.featured_image}
-                        alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
-                        aspect={post.featured_cover ? '9/16' : '16/9'}
-                        seed={seed}
-                        intensity={2}
-                        titleOverlay
-                        eyebrow={post.tags?.[0]}
-                        title={renderHighlightedTitle(post.title, { accentClassName: 'text-accent not-italic' })}
-                        footer={
-                          <>
-                            <time>{formatDate(post.updated_at)}</time>
-                            <span className="text-text-dim/70">·</span>
-                            <span>{readTime} min</span>
-                          </>
-                        }
-                      />
-                    ) : (
-                      <div className="bg-bg-card border border-border-subtle group-hover:border-accent/40 rounded-lg p-5 transition-colors">
-                        <div className="flex items-center gap-3 mb-3 flex-wrap">
-                          <time className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-text-dim">{formatDate(post.updated_at)}</time>
-                          <span className="font-mono text-[0.55rem] text-text-dim/70">{readTime} min</span>
-                          {post.tags?.[0] && (
-                            <span className="font-mono text-[0.55rem] tracking-[0.2em] uppercase text-accent">{post.tags[0]}</span>
-                          )}
-                        </div>
-                        <h3 className="font-serif text-lg text-text-bright leading-tight mb-3 group-hover:text-accent transition-colors line-clamp-2">
-                          {renderHighlightedTitle(post.title)}
-                        </h3>
-                        <p className="text-[0.82rem] text-text-dim leading-relaxed line-clamp-3">{post.excerpt}</p>
-                      </div>
-                    )}
-                    {hasImage && post.excerpt && (
-                      <div className="mt-4 flex items-start gap-3">
-                        <span className="block w-8 h-px bg-accent/40 mt-[10px] flex-shrink-0 group-hover:bg-accent/80 transition-colors" />
-                        <p className="text-[0.82rem] text-text-dim leading-relaxed flex-1 line-clamp-2">{post.excerpt}</p>
-                      </div>
-                    )}
-                  </div>
+              <motion.article key={post.id} variants={fadeUp} className="group flex flex-col w-full max-w-[330px]">
+                <Link href={href} className="block mb-5">
+                  <PosterCover
+                    src={cover}
+                    alt={post.featured_cover_alt || post.featured_image_alt || stripHighlights(post.title)}
+                    aspect={post.featured_cover ? '9/16' : '3/4'}
+                    seed={post.slug || post.id || post.title || ''}
+                    intensity={2}
+                    titleOverlay
+                    eyebrow={post.tags?.[0]}
+                    title={renderHighlightedTitle(post.title, { accentClassName: 'text-accent-bright italic' })}
+                    footer={
+                      <>
+                        <time>{formatDate(post.updated_at)}</time>
+                        <span className="text-text-dim/70">·</span>
+                        <span>{readTime} min</span>
+                      </>
+                    }
+                  />
                 </Link>
+
+                {post.excerpt && (
+                  <p className="text-[0.88rem] text-text-dim leading-[1.75] line-clamp-3 mb-4 pl-1">
+                    {post.excerpt}
+                  </p>
+                )}
+
+                {post.tags?.length > 0 && (
+                  <div className="mt-auto flex flex-wrap gap-2 pt-1">
+                    {post.tags.slice(0, 3).map((tag) => (
+                      <Link
+                        key={tag}
+                        href={`/blog/tag/${slugifyTag(tag)}/`}
+                        className="font-mono text-[0.55rem] tracking-[0.18em] uppercase text-text-dim border border-border-subtle px-2.5 py-1 hover:text-accent hover:border-accent/40 transition-colors"
+                      >
+                        {tag}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </motion.article>
             );
           })}
