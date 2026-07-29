@@ -69,7 +69,6 @@ export default function Hero() {
           texto cai. eager: é a única faixa acima da dobra. */}
       <AmbientVideo
         src="/video/hero.mp4"
-        srcMobile="/video/hero-m.mp4"
         poster="/video/hero.jpg"
         opacity={0.85}
         eager

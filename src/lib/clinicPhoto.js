@@ -13,12 +13,15 @@
 const DEFAULT_SRC = '/images/angelo-terapia.png';
 
 const VARIANTS = {
-  // Retrato do hero: 760px, com um corte de 420px para celular
+  // Retrato do hero: 760px em qualquer tela. Houve um corte de 420px só pra
+  // celular, mas 72 KB não é o que pesa numa página com vídeo, e em tela densa
+  // aquele corte aparecia macio.
   hero: {
     src: '/images/angelo-terapia-hero.jpg',
-    srcMobile: '/images/angelo-terapia-hero-m.jpg',
+    srcMobile: null,
   },
-  // Círculo das faixas de autor: nunca passa de 176px na tela
+  // Círculo das faixas de autor: nunca passa de 176px na tela, então 360px de
+  // largura já cobre telas 2x. Aqui a economia é real: eram 2 MB.
   avatar: {
     src: '/images/angelo-terapia-avatar.jpg',
     srcMobile: null,

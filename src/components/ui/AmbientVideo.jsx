@@ -10,9 +10,6 @@ import { img } from '@/lib/basepath';
  * - o poster aparece na hora; o mp4 só é anexado quando a seção chega perto da
  *   viewport (IntersectionObserver), então nenhuma faixa fora da dobra baixa
  *   vídeo em quem não rolou até lá;
- * - em celular toca a versão `-m` (854px, ~1/4 do peso) quando existe. O clipe
- *   é fundo coberto por scrim, então resolução alta numa tela de 390px seria
- *   bit desperdiçado;
  * - `prefers-reduced-motion` e o Save-Data do navegador cancelam o vídeo por
  *   completo, fica só o poster;
  * - o basePath do GitHub Pages entra pelo img(), como no resto do site.
@@ -22,7 +19,6 @@ import { img } from '@/lib/basepath';
  */
 export default function AmbientVideo({
   src,
-  srcMobile,
   poster,
   className = '',
   opacity = 0.55,
@@ -42,8 +38,10 @@ export default function AmbientVideo({
     const saveData = navigator.connection?.saveData;
     if (reduce || saveData) return;
 
-    const isPhone = window.matchMedia?.('(max-width: 767px)').matches;
-    const chosen = isPhone && srcMobile ? srcMobile : src;
+    // Mesmo arquivo em todas as telas. Houve uma versão reduzida pra celular e
+    // ela ficou visivelmente pior: nessas cenas escuras o que aparece primeiro
+    // ao cortar bitrate é banding, não perda de nitidez.
+    const chosen = src;
     if (!chosen) return;
 
     if (eager) {
@@ -69,7 +67,7 @@ export default function AmbientVideo({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [eager, src, srcMobile]);
+  }, [eager, src]);
 
   // Alguns navegadores ignoram o autoPlay quando o src entra depois do mount
   useEffect(() => {

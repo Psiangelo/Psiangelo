@@ -32,7 +32,6 @@ export default function AuthorBand({
   body,
   secondary = { href: '/psicoterapia-analitica', label: 'Como atendo' },
   video = '/video/materiais.mp4',
-  videoMobile = '/video/materiais-m.mp4',
   poster = '/video/materiais.jpg',
 }) {
   const therapy = useSitedata(getTherapy, DEFAULT_THERAPY, SITEDATA_KEYS.therapy);
@@ -54,7 +53,7 @@ export default function AuthorBand({
       id={id}
       className="relative overflow-hidden py-20 md:py-28 px-5 sm:px-6 md:px-12 section-border-t section-border-b"
     >
-      <AmbientVideo src={video} srcMobile={videoMobile} poster={poster} opacity={0.42} />
+      <AmbientVideo src={video} poster={poster} opacity={0.42} />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
