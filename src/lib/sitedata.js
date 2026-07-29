@@ -492,7 +492,7 @@ export const DEFAULT_VISIBILITY = {
   psicoterapia: true, // visível por padrão — atendimento online ativo (adolescentes, adultos, idosos)
   // Seções só da home
   ensaioDestaque:    true,  // 2026-07-29: ensaio mais recente em bloco grande (home blog-first)
-  autor:             true,  // 2026-07-29: faixa "quem escreve" — ponte do blog pra clínica
+  autor:             true,  // 2026-07-29: faixa "quem escreve" no fim da listagem do blog
   manifesto:         true,  // "A casa" — manifesto editorial logo abaixo do hero
   prelude:           true,
   about:             true,
@@ -515,26 +515,29 @@ export const DEFAULT_VISIBILITY = {
 =================================================================== */
 
 /**
- * Ordem blog-first (2026-07-29). O eixo da home passou a ser a escrita: o
- * ensaio mais recente vem logo depois do hero, a grade de ensaios em seguida,
- * e só então as pontes de conversão (clínica, materiais, estudos).
+ * Ordem da home (2026-07-29).
+ *
+ * Quem chega sabe primeiro quem é o Ângelo, depois lê, depois estuda:
+ * hero → sobre → ensaio em destaque → grade de ensaios → trilhas.
+ *
+ * A faixa "quem escreve" saiu daqui e passou a viver no fim da listagem do
+ * blog: na home ela repetia o retrato do hero e a bio do "sobre".
  */
 export const HOME_SECTION_META = [
   { id: 'hero',          label: 'Hero (topo)',                           fixed: true  },
   { id: 'disclaimer',    label: 'Faixa de status (estagiário)',          visKey: 'disclaimerEstagio' },
+  { id: 'about',         label: 'Sobre mim',                             visKey: 'about' },
   { id: 'featuredEssay', label: 'Ensaio em destaque (bloco grande)',     visKey: 'ensaioDestaque' },
   { id: 'blog',          label: 'Últimos ensaios (grade)',               visKey: 'blog' },
-  { id: 'autor',         label: 'Quem escreve → CTA psicoterapia',       visKey: 'autor' },
+  { id: 'estudos',       label: 'Estudos · Trilhas',                     visKey: 'estudos' },
+  { id: 'jungQuote',     label: 'Citação de Jung' },
   { id: 'bussola',       label: 'Bússola (mapa das portas)',             visKey: 'bussola' },
   { id: 'materials',     label: 'Materiais (preview + CTA)',             visKey: 'materiais' },
-  { id: 'jungQuote',     label: 'Citação de Jung' },
-  { id: 'estudos',       label: 'Estudos · Trilhas',                     visKey: 'estudos' },
-  { id: 'about',         label: 'Sobre mim',                             visKey: 'about' },
+  { id: 'cursos',        label: 'Cursos (preview)',                      visKey: 'cursos' },
   { id: 'seoIntro',      label: 'Manifesto — "A casa" (texto editorial)', visKey: 'manifesto' },
   { id: 'prelude',       label: 'Prelúdio (editorial)',                  visKey: 'prelude' },
   { id: 'audience',      label: 'Para quem atendo (3 públicos)',         visKey: 'audience' },
   { id: 'approach',      label: 'Como trabalho (3 princípios)',          visKey: 'approach' },
-  { id: 'cursos',        label: 'Cursos (preview)',                      visKey: 'cursos' },
   { id: 'cartografia',   label: 'Cartografia de conceitos',              visKey: 'cartografia' },
   { id: 'depoimentos',   label: 'Depoimentos',                           visKey: 'depoimentos' },
   { id: 'faq',           label: 'FAQ',                                   visKey: 'faq' },
@@ -547,7 +550,7 @@ export const HOME_SECTION_META = [
  * constante sobe, a ordem salva antes da repaginada é descartada uma vez e o
  * novo default entra. O que o admin salvar depois disso é preservado.
  */
-export const HOME_LAYOUT_VERSION = 2;
+export const HOME_LAYOUT_VERSION = 3;
 
 export const DEFAULT_HOME_SECTIONS = HOME_SECTION_META.map((s) => s.id);
 

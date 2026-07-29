@@ -12,7 +12,6 @@ import HomeBussola from '@/components/home/HomeBussola';
 import AudienceCards from '@/components/therapy/AudienceCards';
 import Prelude from '@/components/home/Prelude';
 import FeaturedEssay from '@/components/home/FeaturedEssay';
-import AuthorBand from '@/components/home/AuthorBand';
 import About from '@/components/home/About';
 import Cartography from '@/components/home/Cartography';
 import StudyPaths from '@/components/home/StudyPaths';
@@ -140,7 +139,6 @@ export default function HomePage() {
       if (showsFeatured && blogCount <= 1) return null;
       return <BlogPreview skip={showsFeatured ? 1 : 0} limit={6} />;
     },
-    autor:       () => (v.autor !== false ? <AuthorBand /> : null),
     seoIntro:    () => (v.manifesto ? <HomeSeoIntro /> : null),
     bussola:     () => (v.bussola !== false ? <HomeBussola /> : null),
     audience:    () => (v.audience ? <AudienceCards heading="Para quem atendo" /> : null),

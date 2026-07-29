@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { img } from '@/lib/basepath';
+import { img, resolveImageSrc } from '@/lib/basepath';
 
 /**
  * Portrait — retrato editorial do Ângelo.
@@ -179,7 +179,7 @@ function HaloMandala({ stroke = '#B48C50', opacity = 0.18 }) {
    COMPONENTES PRINCIPAIS
 ============================================================ */
 
-export function PortraitHero({ className = '', animate = true }) {
+export function PortraitHero({ className = '', animate = true, src, alt }) {
   return (
     <div className={`relative w-full aspect-[4/5] group ${className}`}>
       {/* Mandala girando atrás (halo dourado fora da foto) */}
@@ -216,8 +216,8 @@ export function PortraitHero({ className = '', animate = true }) {
       {/* Frame da foto */}
       <div className="relative w-full h-full overflow-hidden bg-bg-card border border-border-subtle transition-all duration-700 group-hover:border-accent/30 group-hover:shadow-xl group-hover:shadow-accent/5">
         <img
-          src={img('/images/angelo-portrait.png')}
-          alt="Ângelo · retrato"
+          src={src ? resolveImageSrc(src) : img('/images/angelo-portrait.png')}
+          alt={alt || 'Ângelo · retrato'}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
           fetchPriority="high"
           decoding="async"

@@ -5,9 +5,25 @@ import Link from 'next/link';
 import CursorGlow from '@/components/ui/CursorGlow';
 import AmbientVideo from '@/components/ui/AmbientVideo';
 import Button, { ArrowIcon, WhatsAppIcon } from '@/components/ui/Button';
-import { getHomepage, getSettings, DEFAULT_HOMEPAGE, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { PortraitHero } from '@/components/ui/Portrait';
+import {
+  getHomepage,
+  getSettings,
+  getTherapy,
+  DEFAULT_HOMEPAGE,
+  DEFAULT_SETTINGS,
+  DEFAULT_THERAPY,
+  SITEDATA_KEYS,
+} from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 import { useVisibility } from '@/lib/useVisibility';
+import { useIsMobile, useReducedMotion } from '@/lib/useMediaQuery';
+
+// A foto padrão da clínica é um PNG de 2 MB. No topo da página isso custa caro,
+// então existe um JPG equivalente de 72 KB só pro hero. Se o admin trocou a
+// foto, a dele é usada como veio — o atalho só vale pra imagem padrão.
+const CLINIC_PHOTO_DEFAULT = '/images/angelo-terapia.png';
+const CLINIC_PHOTO_HERO = '/images/angelo-terapia-hero.jpg';
 
 export default function Hero() {
   const content = useSitedata(
@@ -16,7 +32,14 @@ export default function Hero() {
     SITEDATA_KEYS.homepage,
   );
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const therapy = useSitedata(getTherapy, DEFAULT_THERAPY, SITEDATA_KEYS.therapy);
   const { visibility: v } = useVisibility();
+  const isMobile = useIsMobile();
+  const reducedMotion = useReducedMotion();
+  const showRichFX = !isMobile && !reducedMotion;
+
+  const photo = therapy?.hero?.photo || DEFAULT_THERAPY.hero.photo;
+  const heroPhoto = photo?.src === CLINIC_PHOTO_DEFAULT ? CLINIC_PHOTO_HERO : photo?.src;
 
   const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
   const whatsappMsg = encodeURIComponent(
@@ -79,11 +102,8 @@ export default function Hero() {
         }}
       />
 
-      {/* Sem retrato aqui: ele vive na faixa "quem escreve", e ter a mesma foto
-          duas vezes na mesma rolagem não somava. O lado direito fica para a
-          tinta, que é onde o clipe tem movimento. */}
-      <div className="relative z-10 max-w-[1180px] w-full mx-auto">
-        <div className="relative pl-0 md:pl-10 max-w-[640px]">
+      <div className="relative z-10 max-w-[1180px] w-full mx-auto grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10 md:gap-16 items-center">
+        <div className="relative pl-0 md:pl-10">
           <span className="vertical-spine hidden md:block left-0" aria-hidden />
 
           <motion.p
@@ -194,6 +214,18 @@ export default function Hero() {
             )}
           </motion.div>
         </div>
+
+        {/* Retrato ao lado do wordmark. É a mesma foto da landing clínica, e
+            vem de lá: mantendo uma fonte só, trocar a foto no admin muda os
+            dois lugares. */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="order-first md:order-none w-full max-w-[230px] sm:max-w-[250px] mx-auto md:max-w-none md:mx-0"
+        >
+          <PortraitHero src={heroPhoto} alt={photo?.alt || 'Ângelo'} animate={showRichFX} />
+        </motion.div>
       </div>
 
       <motion.div
