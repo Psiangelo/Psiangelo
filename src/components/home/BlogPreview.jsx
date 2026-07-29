@@ -99,13 +99,24 @@ export default function BlogPreview({ skip = 0, limit = 6 }) {
           </Link>
         </motion.div>
 
-        {/* Com 2 posts uma grade de 3 colunas deixa um vão visível, então o
-            número de colunas segue o número de posts. E a largura do card é
-            travada: capa 9/16 solta numa coluna larga vira um cartaz enorme. */}
+        {/* Dica de arraste — só mobile, só quando há mais de um card */}
+        {posts.length > 1 && (
+          <motion.div variants={fadeUp} className="sm:hidden mb-3 flex items-center gap-2 text-text-dim/70">
+            <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase">Arraste</span>
+            <span aria-hidden className="font-mono text-[0.7rem] text-accent/60 tracking-[-0.08em]">
+              &gt;&gt;&gt;
+            </span>
+          </motion.div>
+        )}
+
+        {/* No mobile os cards rolam na horizontal, pra capa 9/16 não virar uma
+            parede vertical de três telas. De sm pra cima vira grade, e o número
+            de colunas segue o número de posts: com 2 cards uma grade de 3
+            colunas deixa um vão visível. */}
         <motion.div
           variants={stagger}
-          className={`grid grid-cols-1 justify-items-center gap-8 md:gap-10 ${
-            posts.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2 max-w-[720px] mx-auto'
+          className={`flex overflow-x-auto snap-x snap-mandatory gap-6 -mx-5 px-5 pb-3 scrollbar-hide justify-items-center sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none sm:px-0 sm:pb-0 sm:gap-8 md:gap-10 ${
+            posts.length >= 3 ? 'lg:grid-cols-3 sm:mx-0' : 'sm:max-w-[720px] sm:mx-auto'
           }`}
         >
           {posts.map((post) => {
@@ -113,7 +124,11 @@ export default function BlogPreview({ skip = 0, limit = 6 }) {
             const cover = post.featured_cover || post.featured_image;
             const href = `/blog/${post.slug || post.id}/`;
             return (
-              <motion.article key={post.id} variants={fadeUp} className="group flex flex-col w-full max-w-[330px]">
+              <motion.article
+                key={post.id}
+                variants={fadeUp}
+                className="group flex flex-col w-[78vw] max-w-[330px] shrink-0 snap-start sm:w-full sm:shrink"
+              >
                 <Link href={href} className="block mb-5">
                   <PosterCover
                     src={cover}

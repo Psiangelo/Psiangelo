@@ -14,21 +14,30 @@ import {
 } from '@/lib/sitedata';
 
 /**
- * AuthorBand — a ponte entre a escrita e a clínica.
+ * AuthorBand — a pessoa por trás do conteúdo, e a ponte para a clínica.
  *
- * Fica logo depois da grade de ensaios: quem acabou de ler dois títulos
- * descobre que quem escreve também atende. É o único ponto da home que faz
- * essa costura de forma direta — o resto da conversão clínica mora em
- * /psicoterapia-analitica/ (anti-canibalização de SEO).
+ * Fecha uma listagem: quem acabou de percorrer os ensaios ou as trilhas
+ * descobre quem está do outro lado, e tem para onde ir. A conversão clínica
+ * canônica continua morando em /psicoterapia-analitica/ (anti-canibalização de
+ * SEO), aqui é só a costura.
  *
- * Reaproveita a foto e a bio já cadastradas na landing clínica, então não há
- * um segundo lugar pra manter atualizado.
+ * A foto, o nome e a credencial vêm da landing clínica, então não existe um
+ * segundo lugar para manter atualizado. O que muda por página é o rótulo e o
+ * texto: no blog é quem escreve, em estudos é quem organiza.
  */
-export default function AuthorBand() {
+export default function AuthorBand({
+  id = 'quem-escreve',
+  eyebrow = 'Quem escreve',
+  body,
+  secondary = { href: '/psicoterapia-analitica', label: 'Como atendo' },
+  video = '/video/materiais.mp4',
+  poster = '/video/materiais.jpg',
+}) {
   const therapy = useSitedata(getTherapy, DEFAULT_THERAPY, SITEDATA_KEYS.therapy);
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
 
   const photo = therapy?.hero?.photo || DEFAULT_THERAPY.hero.photo;
+  const text = body || photo?.bio;
 
   const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
   const whatsappUrl = whatsappNumber
@@ -40,10 +49,10 @@ export default function AuthorBand() {
 
   return (
     <section
-      id="quem-escreve"
+      id={id}
       className="relative overflow-hidden py-20 md:py-28 px-5 sm:px-6 md:px-12 section-border-t section-border-b"
     >
-      <AmbientVideo src="/video/materiais.mp4" poster="/video/materiais.jpg" opacity={0.42} />
+      <AmbientVideo src={video} poster={poster} opacity={0.42} />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -79,7 +88,7 @@ export default function AuthorBand() {
         )}
 
         <div className="text-center md:text-left">
-          <p className="meta-caps-accent mb-4">Quem escreve</p>
+          <p className="meta-caps-accent mb-4">{eyebrow}</p>
 
           <h2 className="font-serif text-[clamp(1.6rem,3.2vw,2.4rem)] text-text-bright leading-[1.2] mb-4">
             {photo?.name || 'Ângelo'}
@@ -90,17 +99,21 @@ export default function AuthorBand() {
             )}
           </h2>
 
-          <p className="text-[0.98rem] text-text leading-[1.9] mb-8 max-w-[58ch] mx-auto md:mx-0">
-            {photo?.bio}
-          </p>
+          {text && (
+            <p className="text-[0.98rem] text-text leading-[1.9] mb-8 max-w-[58ch] mx-auto md:mx-0">
+              {text}
+            </p>
+          )}
 
           <div className="btn-row justify-center md:justify-start">
             <Button href={whatsappUrl} variant="solid" iconLeft={<WhatsAppIcon />}>
               Marcar conversa
             </Button>
-            <Button href="/psicoterapia-analitica" variant="outline" icon={<ArrowIcon />}>
-              Como atendo
-            </Button>
+            {secondary?.href && (
+              <Button href={secondary.href} variant="outline" icon={<ArrowIcon />}>
+                {secondary.label}
+              </Button>
+            )}
           </div>
         </div>
       </motion.div>

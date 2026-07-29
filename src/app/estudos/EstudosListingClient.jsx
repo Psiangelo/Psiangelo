@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import VisibilityGate from '@/components/VisibilityGate';
+import AuthorBand from '@/components/AuthorBand';
+import { useVisibility } from '@/lib/useVisibility';
 import { useSitedata } from '@/lib/useSitedata';
 import { useTrilhaProgress } from '@/lib/useTrilhaProgress';
 import { getTrilhas, getAreas, SITEDATA_KEYS } from '@/lib/sitedata';
@@ -27,6 +29,7 @@ function normalize(s) {
 export default function EstudosListingClient({ initialTrilhas, initialAreas }) {
   const rawTrilhas = useSitedata(getTrilhas, initialTrilhas, SITEDATA_KEYS.trilhas);
   const areas = useSitedata(getAreas, initialAreas || DEFAULT_AREAS, SITEDATA_KEYS.areas);
+  const { visibility } = useVisibility();
 
   const [activeArea, setActiveArea] = useState(null); // slug | null
   const [search, setSearch] = useState('');
@@ -284,6 +287,18 @@ export default function EstudosListingClient({ initialTrilhas, initialAreas }) {
             )}
           </div>
         </section>
+
+        {/* Quem organiza — fecha a listagem, como a faixa "quem escreve" fecha o
+            blog. Aqui o texto é de curadoria, não de escuta clínica: o que
+            legitima uma trilha é o percurso de quem a montou. */}
+        {visibility.autor !== false && (
+          <AuthorBand
+            id="quem-organiza"
+            eyebrow="Quem organiza"
+            body="As trilhas daqui saem do meu próprio percurso de leitura. Conduzo grupos de estudo para estudantes e profissionais, participo de intervisões e da Liga de Psicologia Analítica da UNICAP, e o que atravesso nesse caminho volta organizado em etapas, para você entrar na obra de Jung pela porta certa."
+            secondary={{ href: '/blog', label: 'Ler os ensaios' }}
+          />
+        )}
       </main>
       <Footer />
     </VisibilityGate>

@@ -25,7 +25,7 @@ import PrevNextPost from '@/components/blog/PrevNextPost';
 import GlossaryLinker from '@/components/blog/GlossaryLinker';
 import BlogPostBody from '@/components/blog/BlogPostBody';
 import AuthorBox from '@/components/blog/AuthorBox';
-import AuthorBand from '@/components/blog/AuthorBand';
+import AuthorBand from '@/components/AuthorBand';
 import { slugifyTag } from '@/lib/tagSlug';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
