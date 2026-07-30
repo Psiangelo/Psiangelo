@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import PosterCover from '@/components/ui/PosterCover';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 
@@ -30,7 +31,7 @@ function pickRelated(currentPost, allPosts, max = 3) {
   return picked;
 }
 
-export default function RelatedPosts({ currentPost, allPosts, onNavigate }) {
+export default function RelatedPosts({ currentPost, allPosts }) {
   const related = pickRelated(currentPost, allPosts, 3);
   if (related.length === 0) return null;
 
@@ -52,8 +53,8 @@ export default function RelatedPosts({ currentPost, allPosts, onNavigate }) {
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.08 }}
           >
-            <button
-              onClick={() => onNavigate(p)}
+            <Link
+              href={`/blog/${p.slug || p.id}/`}
               className="group block w-full text-left bg-bg-card/60 border border-border-subtle hover:border-accent/40 transition-colors overflow-hidden h-full"
             >
               {p.featured_image ? (
@@ -92,7 +93,7 @@ export default function RelatedPosts({ currentPost, allPosts, onNavigate }) {
                   </p>
                 )}
               </div>
-            </button>
+            </Link>
           </motion.li>
         ))}
       </ul>

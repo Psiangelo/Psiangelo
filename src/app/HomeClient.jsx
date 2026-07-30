@@ -15,6 +15,7 @@ import FeaturedEssay from '@/components/home/FeaturedEssay';
 import About from '@/components/home/About';
 import Cartography from '@/components/home/Cartography';
 import StudyPaths from '@/components/home/StudyPaths';
+import Newsletter from '@/components/ui/Newsletter';
 import MaterialsPreview from '@/components/home/MaterialsPreview';
 import CoursesPreview from '@/components/home/CoursesPreview';
 import BlogPreview from '@/components/home/BlogPreview';
@@ -148,6 +149,7 @@ export default function HomePage() {
     // O id no catálogo é 'estudos'; antes o renderer se chamava 'trilhas' e
     // nunca casava, então a seção de trilhas jamais aparecia na home.
     estudos:     () => (v.estudos !== false && has.trilhas ? <StudyPaths /> : null),
+    newsletter:  () => (v.newsletter !== false ? <Newsletter source="home" /> : null),
     jungQuote:   () => <JungQuote />,
     materials:   () => (v.materiais && has.materials ? <MaterialsPreview /> : null),
     cursos:      () => (v.cursos && has.cursos ? <CoursesPreview /> : null),

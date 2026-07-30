@@ -2,25 +2,24 @@ import HomeClient from './HomeClient';
 
 const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 
-// Title da home foca em brand + visão da casa (clínica + estudo + escrita).
-// O long-tail clínico ("psicoterapia analítica online", públicos, "primeira
-// conversa") fica reservado pra /psicoterapia-analitica/ pra evitar
-// canibalização — a home aponta pra ela via bússola e manifesto.
+// Title da home foca em brand + o que a casa é hoje: estudo público da obra
+// de Jung (ensaios, glossário, trilhas). O long-tail clínico fica reservado
+// pra /psicoterapia-analitica/, que segue oculta enquanto não há CRP.
 export const metadata = {
   title: {
-    absolute: 'Psiangelo · Psicologia Analítica · Clínica, Estudo e Escrita',
+    absolute: 'Psiangelo · Psicologia Analítica · Ensaios, Glossário e Trilhas de Leitura',
   },
   description:
-    'A casa do Psiangelo — clínica junguiana online em todo o Brasil, trilhas de estudo, ensaios e o vault aberto de notas sobre psicologia analítica. Por onde começar.',
+    'Estudo público e contínuo da obra de Carl Gustav Jung: ensaios sobre psicologia analítica, um glossário de conceitos junguianos e trilhas de leitura para entrar na obra pela porta certa.',
   alternates: { canonical: `${SITE_URL}/` },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
     url: `${SITE_URL}/`,
     siteName: 'Psiangelo',
-    title: 'Psiangelo · Psicologia Analítica · Clínica, Estudo e Escrita',
+    title: 'Psiangelo · Psicologia Analítica · Ensaios, Glossário e Trilhas de Leitura',
     description:
-      'Clínica junguiana online no Brasil, trilhas de estudo, ensaios e o vault aberto de notas sobre psicologia analítica.',
+      'Estudo público da obra de Jung: ensaios, glossário de conceitos junguianos e trilhas de leitura.',
     images: [
       { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo', type: 'image/png' },
       { url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: 'Psiangelo', type: 'image/png' },
@@ -28,9 +27,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Psiangelo · Psicologia Analítica · Clínica, Estudo e Escrita',
+    title: 'Psiangelo · Psicologia Analítica · Ensaios, Glossário e Trilhas de Leitura',
     description:
-      'Clínica junguiana online no Brasil, trilhas de estudo, ensaios e o vault aberto de notas sobre psicologia analítica.',
+      'Estudo público da obra de Jung: ensaios, glossário de conceitos junguianos e trilhas de leitura.',
     images: [`${SITE_URL}/og.png`],
   },
 };

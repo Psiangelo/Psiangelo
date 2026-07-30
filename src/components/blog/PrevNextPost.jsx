@@ -1,13 +1,17 @@
 'use client';
 
+import Link from 'next/link';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 
 /**
  * PrevNextPost — navegação sequencial "anterior / próximo" ao final do post.
  * Baseia-se em ordem cronológica (updated_at desc) dos published posts.
  * Pinned não altera essa ordem — aqui é timeline editorial pura.
+ *
+ * Links reais (/blog/<slug>/) — cada post tem sua própria rota estática,
+ * então não há mais motivo pra swap local via onNavigate.
  */
-export default function PrevNextPost({ currentPost, allPosts, onNavigate }) {
+export default function PrevNextPost({ currentPost, allPosts }) {
   const published = allPosts
     .filter((p) => p.status === 'published')
     .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
@@ -27,8 +31,8 @@ export default function PrevNextPost({ currentPost, allPosts, onNavigate }) {
       className="mt-14 pt-8 border-t border-border-subtle grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6"
     >
       {prev ? (
-        <button
-          onClick={() => onNavigate(prev)}
+        <Link
+          href={`/blog/${prev.slug || prev.id}/`}
           className="group text-left p-5 border border-border-subtle hover:border-accent/40 bg-bg-card/40 transition-colors focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent focus-visible:outline-offset-2"
         >
           <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-accent/70 flex items-center gap-2">
@@ -37,12 +41,12 @@ export default function PrevNextPost({ currentPost, allPosts, onNavigate }) {
           <h3 className="mt-2 font-serif text-[1.02rem] text-text-bright leading-snug group-hover:text-accent transition-colors line-clamp-2">
             {renderHighlightedTitle(prev.title)}
           </h3>
-        </button>
+        </Link>
       ) : <span />}
 
       {next ? (
-        <button
-          onClick={() => onNavigate(next)}
+        <Link
+          href={`/blog/${next.slug || next.id}/`}
           className="group text-right p-5 border border-border-subtle hover:border-accent/40 bg-bg-card/40 transition-colors focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent focus-visible:outline-offset-2"
         >
           <span className="font-mono text-[0.55rem] tracking-[0.22em] uppercase text-accent/70 flex items-center justify-end gap-2">
@@ -51,7 +55,7 @@ export default function PrevNextPost({ currentPost, allPosts, onNavigate }) {
           <h3 className="mt-2 font-serif text-[1.02rem] text-text-bright leading-snug group-hover:text-accent transition-colors line-clamp-2">
             {renderHighlightedTitle(next.title)}
           </h3>
-        </button>
+        </Link>
       ) : <span />}
     </nav>
   );

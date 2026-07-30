@@ -6,12 +6,23 @@ import { DEFAULT_VISIBILITY, getSiteVisibility, SITEDATA_KEYS } from '@/lib/site
 /**
  * useVisibility — hook que retorna o mapa de visibilidade do site.
  *
- * Começa com DEFAULT_VISIBILITY (tudo visível) para evitar flash
- * de conteúdo escondido durante SSR/hidratação, depois lê o
- * localStorage no useEffect. `ready` indica se já leu.
+ * Começa com a visibilidade do snapshot publicado (getSiteVisibility(true),
+ * modo seedOnly — puro, ignora localStorage) para bater byte-a-byte com o
+ * HTML gerado no build; depois lê o localStorage de verdade no useEffect
+ * (que pode trazer overrides do admin). `ready` indica se já leu.
+ *
+ * Acoplamento: se o snapshot marcar alguma chave como `false` (ex.: `home`),
+ * a página correspondente já nasce como HiddenPlaceholder no HTML estático —
+ * isso é esperado e reflete o que está publicado, não um bug deste hook.
  */
 export function useVisibility() {
-  const [visibility, setVisibility] = useState(DEFAULT_VISIBILITY);
+  const [visibility, setVisibility] = useState(() => {
+    try {
+      return getSiteVisibility(true);
+    } catch {
+      return DEFAULT_VISIBILITY;
+    }
+  });
   const [ready, setReady] = useState(false);
 
   useEffect(() => {

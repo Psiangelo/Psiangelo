@@ -1,5 +1,14 @@
 const BASE = 'https://psiangelo.github.io/Psiangelo';
 
+// Reposicionamento 2026-07: o site é hoje um projeto de estudo público sobre
+// Jung — blog, glossário, trilhas de leitura — não uma clínica. A psicoterapia
+// está oculta enquanto o Ângelo não tem CRP (atua como estagiário sob
+// supervisão). Declarar `ProfessionalService`/`MedicalTherapy` aqui seria
+// anunciar um serviço clínico que a própria página não expõe mais — schema
+// mentindo sobre o conteúdo real. Person + WebSite + Blog descreve o que a
+// página de fato é, e preserva a descrição honesta de estagiário sob
+// supervisão, que é o sinal de experiência de primeira mão que sustenta
+// o E-E-A-T do site.
 export default function StructuredData() {
   const data = {
     '@context': 'https://schema.org',
@@ -7,85 +16,26 @@ export default function StructuredData() {
       {
         '@type': 'Person',
         '@id': `${BASE}#person`,
-        name: 'Psiangelo',
+        name: 'Ângelo',
         givenName: 'Ângelo',
-        jobTitle: 'Estagiário de psicologia — atendimento clínico supervisionado',
+        jobTitle: 'Estudante de psicologia — estágio clínico supervisionado',
         description:
-          'Estagiário de psicologia em estágio clínico supervisionado (Associação Allos), atuando em psicoterapia analítica de abordagem junguiana. Atendimento 100% online para adolescentes, adultos e idosos em todo o Brasil.',
+          'Estudante de psicologia, estagiário clínico sob supervisão (Associação Allos). Mantém aqui um projeto de estudo público sobre a obra de Carl Gustav Jung e a psicologia analítica — ensaios, glossário e trilhas de leitura.',
         url: BASE,
         image: `${BASE}/images/angelo-portrait.png`,
         knowsAbout: [
           'Psicologia Analítica',
           'Carl Gustav Jung',
-          'Psicoterapia Junguiana',
           'Análise de Sonhos',
           'Individuação',
           'Arquétipos',
           'Sombra',
-          'Segunda Metade da Vida',
-          'Psicologia do Adolescente',
-          'Psicologia do Idoso',
+          'Alquimia Psicológica',
+          'Tipologia Junguiana',
         ],
         affiliation: [
           { '@type': 'Organization', name: 'Associação Allos' },
           { '@type': 'Organization', name: 'Liga de Psicologia Analítica — UNICAP' },
-        ],
-      },
-      {
-        '@type': 'ProfessionalService',
-        '@id': `${BASE}#service`,
-        name: 'Psiangelo — Psicoterapia Analítica Online',
-        description:
-          'Atendimento clínico em psicoterapia analítica de abordagem junguiana, 100% online, para adolescentes, adultos e idosos em todo o Brasil.',
-        url: `${BASE}/psicoterapia-analitica`,
-        provider: { '@id': `${BASE}#person` },
-        serviceType: 'Psicoterapia analítica online',
-        areaServed: { '@type': 'Country', name: 'Brasil' },
-        availableChannel: {
-          '@type': 'ServiceChannel',
-          serviceUrl: `${BASE}/psicoterapia-analitica`,
-          availableLanguage: ['pt-BR'],
-          serviceLocation: {
-            '@type': 'VirtualLocation',
-            url: `${BASE}/psicoterapia-analitica`,
-          },
-        },
-        audience: [
-          {
-            '@type': 'PeopleAudience',
-            name: 'Adolescentes',
-            suggestedMinAge: 14,
-            suggestedMaxAge: 18,
-          },
-          {
-            '@type': 'PeopleAudience',
-            name: 'Adultos',
-            suggestedMinAge: 18,
-            suggestedMaxAge: 60,
-          },
-          {
-            '@type': 'PeopleAudience',
-            name: 'Idosos',
-            suggestedMinAge: 60,
-          },
-        ],
-        availableService: [
-          {
-            '@type': 'MedicalTherapy',
-            name: 'Psicoterapia analítica online para adultos',
-          },
-          {
-            '@type': 'MedicalTherapy',
-            name: 'Psicoterapia analítica online para adolescentes',
-          },
-          {
-            '@type': 'MedicalTherapy',
-            name: 'Psicoterapia analítica online para idosos',
-          },
-          {
-            '@type': 'MedicalTherapy',
-            name: 'Análise de sonhos em psicoterapia junguiana',
-          },
         ],
       },
       {
@@ -94,8 +44,20 @@ export default function StructuredData() {
         url: BASE,
         name: 'Psiangelo',
         description:
-          'Psicoterapia analítica online em abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil.',
+          'Um projeto de estudo público sobre a obra de Carl Gustav Jung — ensaios, glossário e trilhas de leitura em psicologia analítica.',
         publisher: { '@id': `${BASE}#person` },
+        inLanguage: 'pt-BR',
+      },
+      {
+        '@type': 'Blog',
+        '@id': `${BASE}#blog`,
+        url: `${BASE}/blog`,
+        name: 'Ensaios — Psiangelo',
+        description:
+          'Ensaios sobre Jung, símbolos, sonhos e o processo de individuação.',
+        author: { '@id': `${BASE}#person` },
+        publisher: { '@id': `${BASE}#person` },
+        isPartOf: { '@id': `${BASE}#website` },
         inLanguage: 'pt-BR',
       },
     ],

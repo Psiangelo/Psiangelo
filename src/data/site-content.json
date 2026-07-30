@@ -1,5 +1,5 @@
 {
-  "version": 1779635466262,
+  "version": 1785410377594,
   "publishedAt": "2026-05-24T15:11:06.92118+00:00",
   "note": "Publicado via banner",
   "data": {
@@ -4697,11 +4697,11 @@
     ],
     "angelo_admin_homepage": {
       "hero": {
-        "lead": "A casa de Ângelo: clínica junguiana online em todo o Brasil, e um trabalho público de estudo e escrita sobre a obra de Jung. Aqui você encontra a porta de entrada para tudo isso.",
-        "eyebrow": "Clínica · Estudo · Escrita · Psicologia Analítica",
-        "tagline": "Uma escuta para a sua vida.",
+        "eyebrow": "Estudo · Escrita · Psicologia Analítica",
         "titlePrefix": "Psi",
-        "titleEmphasis": "angelo"
+        "titleEmphasis": "angelo",
+        "tagline": "A obra de Jung, lida devagar e por escrito.",
+        "lead": "Um estudo público, contínuo, da obra de Carl Gustav Jung: ensaios publicados aos poucos, um glossário vivo e trilhas de leitura para quem está começando ou quer aprofundar."
       },
       "about": {
         "title": "Sobre",
@@ -4718,126 +4718,59 @@
           }
         ],
         "quoteText": "Quem olha para fora, sonha; quem olha para dentro, desperta.",
+        "quoteAuthor": "Carl Gustav Jung",
+        "paragraph1": "Sou estudante de psicologia e mantenho este espaço como um caderno público de leitura da obra de Carl Gustav Jung: um corpus que venho indexando, cruzando e comentando desde a graduação.",
+        "paragraph2": "Concilio essa leitura com a condução de um grupo de estudos, com a presidência da Liga de Psicologia Analítica da UNICAP e com o estágio clínico supervisionado pela Associação Allos, hoje meu único contato direto e regular com a prática clínica. O que publico aqui, ensaios, glossário e trilhas, nasce desse cruzamento entre estudo, orientação e a pouca prática que já tenho.",
+        "paragraph3": "O método é simples e tento ser rigoroso com ele: cada citação de Jung é conferida contra a fonte, referenciada por obra e parágrafo, nunca por memória ou por segunda mão. É esse rigor de fonte, não um título, que sustenta o que escrevo aqui.",
+        "credentials": [
+          {
+            "mark": "◆",
+            "label": "Leitura",
+            "detail": "Corpus de Jung indexado e citado por obra e parágrafo"
+          },
+          {
+            "mark": "◇",
+            "label": "Escrita",
+            "detail": "Ensaios públicos sobre a obra de Jung"
+          },
+          {
+            "mark": "◆",
+            "label": "Estudo",
+            "detail": "Condução de grupo de estudos"
+          },
+          {
+            "mark": "◇",
+            "label": "Liga",
+            "detail": "Presidência · Psicologia Analítica · UNICAP"
+          },
+          {
+            "mark": "◆",
+            "label": "Estágio",
+            "detail": "Clínico e supervisionado · Associação Allos"
+          }
+        ],
         "milestones": [
           {
             "year": "III",
-            "label": "Início clínico",
-            "detail": "3º período da graduação"
+            "label": "Leitura sistemática",
+            "detail": "3º período, início do corpus"
           },
           {
             "year": "Allos",
             "label": "Estágio",
-            "detail": "Supervisionado"
+            "detail": "Clínico, supervisionado"
           },
           {
             "year": "UNICAP",
-            "label": "Presidência da liga",
-            "detail": "Psicologia Analítica"
+            "label": "Liga",
+            "detail": "Presidência · Psicologia Analítica"
           },
           {
             "year": "Hoje",
-            "label": "Clínica",
-            "detail": "Atendimento online BR"
+            "label": "Escrita pública",
+            "detail": "Ensaios, glossário e trilhas"
           }
-        ],
-        "paragraph1": "Atendo em clínica desde o terceiro período da graduação, em estágio supervisionado pela Associação Allos. A abordagem é a psicologia analítica — a prática clínica desenvolvida a partir do trabalho de Carl Gustav Jung.",
-        "paragraph2": "Além do atendimento, conduzo grupos de estudo para estudantes e profissionais que buscam aprofundar a prática clínica junguiana, participo de intervisões, e sou Presidente da Liga de Psicologia Analítica da UNICAP. O que publico aqui — materiais, trilhas, ensaios — nasce desse atravessamento entre estudo e clínica.",
-        "credentials": [
-          {
-            "mark": "◆",
-            "label": "Atendimento",
-            "detail": "100% online · Brasil inteiro"
-          },
-          {
-            "mark": "◇",
-            "label": "Estágio",
-            "detail": "Clínico · Associação Allos"
-          },
-          {
-            "mark": "◆",
-            "label": "Supervisão",
-            "detail": "Intervisão e supervisão clínica"
-          },
-          {
-            "mark": "◇",
-            "label": "Presidência",
-            "detail": "Liga de Psicologia Analítica · UNICAP"
-          },
-          {
-            "mark": "◆",
-            "label": "Abordagem",
-            "detail": "Psicologia analítica (C. G. Jung)"
-          }
-        ],
-        "quoteAuthor": "Carl Gustav Jung"
-      },
-      "bussola": {
-        "lead": "A clínica e o trabalho público caminham juntos aqui. Esta é a entrada — escolha por onde começar.",
-        "title": "Seis portas",
-        "eyebrow": "Por onde começar",
-        "portals": [
-          {
-            "id": "atendo",
-            "cta": "Conhecer o atendimento",
-            "body": "Psicoterapia analítica online, em todo o Brasil — adolescentes, adultos e idosos.",
-            "href": "/psicoterapia-analitica",
-            "glyph": "◈",
-            "title": "Atendo",
-            "visKey": "psicoterapia",
-            "eyebrow": "Clínica"
-          },
-          {
-            "id": "blog",
-            "cta": "Ler os ensaios",
-            "body": "Textos sobre clínica, sonhos e símbolos — publicados periodicamente.",
-            "href": "/blog",
-            "glyph": "✶",
-            "title": "Escrevo",
-            "visKey": "blog",
-            "eyebrow": "Ensaios"
-          },
-          {
-            "id": "trilhas",
-            "cta": "Começar uma trilha",
-            "body": "Percursos guiados de leitura para entrar na obra de Jung pela porta certa.",
-            "href": "/trilhas",
-            "glyph": "✦",
-            "title": "Trilhas",
-            "visKey": "trilhas",
-            "eyebrow": "Estudo"
-          },
-          {
-            "id": "atlas",
-            "cta": "Explorar o Atlas",
-            "body": "O caderno de notas e mapas conceituais que mantenho em estudo contínuo.",
-            "href": "/atlas",
-            "glyph": "◇",
-            "title": "Atlas",
-            "visKey": "atlas",
-            "eyebrow": "Vault aberto"
-          },
-          {
-            "id": "materiais",
-            "cta": "Ver materiais",
-            "body": "Resumos e mapas mentais para estudar e revisitar conceitos junguianos.",
-            "href": "/materiais",
-            "glyph": "◆",
-            "title": "Materiais",
-            "visKey": "materiais",
-            "eyebrow": "Sínteses"
-          },
-          {
-            "id": "glossario",
-            "cta": "Abrir o glossário",
-            "body": "Verbetes vivos da abordagem — definições curtas e remissões cruzadas.",
-            "href": "/glossario",
-            "glyph": "※",
-            "title": "Glossário",
-            "visKey": "glossario",
-            "eyebrow": "Léxico"
-          }
-        ],
-        "emphasis": "desta clínica e da casa."
+        ]
       },
       "contact": {
         "lead": "Uma conversa inicial sem compromisso — você me conta o que traz e avaliamos juntos se faz sentido seguir. Atendimento 100% online, por videochamada, em todo o Brasil.",
@@ -4861,7 +4794,7 @@
       }
     },
     "angelo_admin_settings": {
-      "siteTitle": " Psicoterapia Junguiana Online",
+      "siteTitle": "Psiangelo — Estudos sobre Jung",
       "accentColor": "#B48C50",
       "youtubeLink": "",
       "emailAddress": "",
@@ -4869,7 +4802,7 @@
       "showFAQSection": true,
       "whatsappNumber": "5581987349114",
       "showHeroSection": true,
-      "siteDescription": " Psicoterapia junguiana online para adolescentes, adultos e idosos. Atendimento por videochamada  ▎ psicoterapeuta clínico. Agende uma sessão.",
+      "siteDescription": "Ensaios, glossário e trilhas de leitura sobre a obra de Carl Gustav Jung e a psicologia analítica — um projeto de estudo público conduzido por um estudante de psicologia em estágio clínico supervisionado.",
       "showAboutSection": true,
       "showFloatingWhatsApp": true,
       "showMaterialsSection": true,
@@ -5118,8 +5051,8 @@
       "bio": true,
       "faq": false,
       "blog": true,
-      "home": false,
-      "about": false,
+      "home": true,
+      "about": true,
       "atlas": false,
       "cursos": false,
       "bussola": false,
@@ -5129,7 +5062,7 @@
       "trilhas": true,
       "approach": false,
       "audience": false,
-      "glossario": false,
+      "glossario": true,
       "materiais": false,
       "cartografia": false,
       "depoimentos": false,
@@ -5381,7 +5314,7 @@
             "x": 420.7958679199219,
             "y": 289.5520782470703,
             "id": "self",
-            "href": "/trilhas",
+            "href": "/estudos",
             "size": 28,
             "tone": "accent",
             "axiom": "centro arquetípico",
@@ -5481,7 +5414,7 @@
             "x": 460,
             "y": 460,
             "id": "individ",
-            "href": "/trilhas#aprofundando-na-clinica",
+            "href": "/estudos/aprofundando-na-clinica",
             "size": 24,
             "tone": "accent",
             "axiom": "tornar-se quem se é",
@@ -5613,7 +5546,7 @@
         "x": 420.7958679199219,
         "y": 289.5520782470703,
         "id": "self",
-        "href": "/trilhas",
+        "href": "/estudos",
         "size": 28,
         "tone": "accent",
         "axiom": "centro arquetípico",
@@ -5713,7 +5646,7 @@
         "x": 460,
         "y": 460,
         "id": "individ",
-        "href": "/trilhas#aprofundando-na-clinica",
+        "href": "/estudos/aprofundando-na-clinica",
         "size": 24,
         "tone": "accent",
         "axiom": "tornar-se quem se é",

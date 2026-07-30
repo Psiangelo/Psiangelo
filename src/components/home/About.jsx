@@ -120,6 +120,11 @@ export default function About() {
             <p className="text-[0.96rem] text-text leading-[1.85] mb-8">
               {content.paragraph2}
             </p>
+            {content.paragraph3 && (
+              <p className="text-[0.96rem] text-text leading-[1.85] mb-8">
+                {content.paragraph3}
+              </p>
+            )}
 
             <PullQuote cite={content.quoteAuthor}>
               {content.quoteText}

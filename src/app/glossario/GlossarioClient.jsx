@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageHero from '@/components/ui/PageHero';
@@ -17,18 +17,30 @@ export default function GlossarioClient({ initialList, initialCategories }) {
   const list       = useSitedata(getGlossario, initialList,           SITEDATA_KEYS.glossario);
   const categories = useSitedata(getGlossarioCategories, initialCategories, SITEDATA_KEYS.glossarioCategories);
   const pageData   = useSitedata(getGlossarioPage, DEFAULT_GLOSSARIO_PAGE,  SITEDATA_KEYS.glossarioPage);
+  const [query, setQuery] = useState('');
+  const normalizedQuery = query.trim().toLowerCase();
 
-  // Filtra ocultos e agrupa por categoria, na ordem definida pelo admin
+  // Filtra ocultos, busca (termo + aliases) e agrupa por categoria, na
+  // ordem definida pelo admin
   const grouped = useMemo(() => {
     const visible = list.filter((t) => !t.hidden);
+    const filtered = normalizedQuery
+      ? visible.filter((t) => {
+          const haystack = [t.term, ...(t.aliases || [])].join(' ').toLowerCase();
+          return haystack.includes(normalizedQuery);
+        })
+      : visible;
     const map = new Map(categories.map((c) => [c.slug, { cat: c, items: [] }]));
     const orphans = [];
-    for (const t of visible) {
+    for (const t of filtered) {
       if (map.has(t.category)) map.get(t.category).items.push(t);
       else orphans.push(t);
     }
     return { groups: Array.from(map.values()), orphans };
-  }, [list, categories]);
+  }, [list, categories, normalizedQuery]);
+
+  const totalVisible = list.filter((t) => !t.hidden).length;
+  const totalFiltered = grouped.groups.reduce((sum, g) => sum + g.items.length, 0) + grouped.orphans.length;
 
   return (
     <VisibilityGate visibilityKey="glossario" title="Glossário indisponível">
@@ -39,11 +51,30 @@ export default function GlossarioClient({ initialList, initialCategories }) {
           title={pageData.hero.title}
           emphasis={pageData.hero.emphasis}
           kicker={pageData.hero.kicker}
-          lead={pageData.hero.lead?.replace?.('{count}', list.filter((t) => !t.hidden).length) || pageData.hero.lead}
+          lead={pageData.hero.lead?.replace?.('{count}', totalVisible) || pageData.hero.lead}
         />
 
         <section className="py-8 md:py-16 px-5 sm:px-6 md:px-12">
           <div className="max-w-[1100px] mx-auto">
+            <div className="mb-10 max-w-md">
+              <label htmlFor="glossario-search" className="sr-only">Buscar termo</label>
+              <div className="relative">
+                <input
+                  id="glossario-search"
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Buscar termo (ex.: si mesmo, máscara, sombra...)"
+                  className="w-full bg-bg-card border border-border-subtle focus:border-accent/60 outline-none transition-colors px-4 py-2.5 text-sm font-sans text-text placeholder:text-text-dim/60"
+                />
+              </div>
+              {normalizedQuery && (
+                <p className="mt-2 font-mono text-[0.6rem] tracking-[0.18em] uppercase text-text-dim/70">
+                  {totalFiltered} {totalFiltered === 1 ? 'resultado' : 'resultados'}
+                </p>
+              )}
+            </div>
+
             {grouped.groups.map(({ cat, items }) => {
               if (items.length === 0) return null;
               return (
@@ -108,7 +139,9 @@ export default function GlossarioClient({ initialList, initialCategories }) {
 
             {grouped.groups.every(({ items }) => items.length === 0) && grouped.orphans.length === 0 && (
               <p className="text-center font-serif italic text-text-dim py-16">
-                {pageData.empty?.emptyMessage || 'Nenhum verbete ainda.'}
+                {normalizedQuery
+                  ? `Nenhum verbete encontrado para "${query.trim()}".`
+                  : (pageData.empty?.emptyMessage || 'Nenhum verbete ainda.')}
               </p>
             )}
           </div>

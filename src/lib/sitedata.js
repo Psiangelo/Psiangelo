@@ -18,6 +18,19 @@ import {
   comingSoon as COMING_SOON_DEFAULT,
 } from '@/data/materials';
 import { DEFAULT_AREAS, normalizeAreas } from '@/lib/areas';
+import siteContentSnapshot from '@/data/site-content.json';
+
+/**
+ * SNAPSHOT_DATA — o mesmo conteúdo publicado que ContentBootstrap grava no
+ * localStorage do visitante (ou snapshot.data, quando Supabase não está
+ * configurado). Servindo de "seed" em build-time: quando não há valor no
+ * localStorage (SSR/export estático, ou primeiro paint do cliente antes do
+ * ContentBootstrap rodar), os getters abaixo caem nesse snapshot em vez do
+ * default hardcoded — assim o HTML gerado estaticamente já sai com o
+ * conteúdo publicado, e o primeiro render do cliente bate byte-a-byte com
+ * esse HTML (mesmo import, mesmo valor, nos dois ambientes).
+ */
+const SNAPSHOT_DATA = siteContentSnapshot?.data || {};
 
 export const SITEDATA_KEYS = {
   trilhas:        'angelo_admin_trilhas',
@@ -45,6 +58,8 @@ export const SITEDATA_KEYS = {
   areas:          'angelo_admin_areas',
   labels:         'angelo_admin_labels',
   blogAuthorCta:  'angelo_admin_blog_author_cta',
+  blog:           'angelo_admin_blog',
+  blogSeries:     'angelo_admin_blog_series',
 };
 
 /* ===================================================================
@@ -90,26 +105,26 @@ export const CARTO_TONES = ['accent', 'bright', 'citrinit', 'rubedo'];
 
 export const DEFAULT_HOMEPAGE = {
   hero: {
-    eyebrow: 'Clínica · Estudo · Escrita · Psicologia Analítica',
+    eyebrow: 'Estudo · Escrita · Psicologia Analítica',
     titlePrefix: 'Psi',
     titleEmphasis: 'angelo',
-    tagline: 'Uma escuta para a sua vida.',
-    lead: 'A casa de Ângelo: clínica junguiana online em todo o Brasil, e um trabalho público de estudo e escrita sobre a obra de Jung. Aqui você encontra a porta de entrada para tudo isso.',
+    tagline: 'A obra de Jung, lida devagar e por escrito.',
+    lead: 'Um estudo público, contínuo, da obra de Carl Gustav Jung: ensaios publicados aos poucos, um glossário vivo e trilhas de leitura para quem está começando ou quer aprofundar.',
   },
   manifesto: {
     eyebrow: 'A casa',
-    title: 'Uma escuta junguiana',
-    emphasis: 'para a vida que se vive agora.',
-    paragraph1: 'A psicologia analítica — também conhecida como abordagem junguiana — é a tradição clínica iniciada por Carl Gustav Jung. Ela escuta a vida pelos seus elementos próprios: sonhos, complexos, símbolos e o movimento de tornar-se quem se é, que Jung chamou de individuação.',
-    paragraph2: 'Esta casa reúne três frentes que dependem umas das outras — clínica, estudo e escrita. Atendo por videochamada, em todo o Brasil, e publico aqui o que atravessa o trabalho: trilhas de leitura, mapas conceituais, ensaios e o vault de notas que mantenho em estudo contínuo.',
-    paragraph3: 'O formato online não é só operacional: amplia o acesso à clínica junguiana — ainda rara fora dos grandes centros — para quem mora longe de um(a) psicólogo(a) desta abordagem, inclusive brasileiros vivendo no exterior.',
+    title: 'Uma leitura junguiana',
+    emphasis: 'feita em público.',
+    paragraph1: 'A psicologia analítica, também conhecida como abordagem junguiana, é a tradição clínica iniciada por Carl Gustav Jung. Ela escuta a vida pelos seus elementos próprios: sonhos, complexos, símbolos e o movimento de tornar-se quem se é, que Jung chamou de individuação.',
+    paragraph2: 'Esta casa é um estudo desse pensamento feito às claras. Publico aqui o que atravessa a leitura: trilhas, um glossário de conceitos, ensaios e o vault de notas que mantenho em estudo contínuo, com referência à obra e ao parágrafo de origem.',
+    paragraph3: 'Não é um curso fechado nem um resumo de segunda mão. É um caderno público, revisado aos poucos, para quem quer entrar na obra de Jung com método e sem atalho.',
   },
   bussola: {
     eyebrow: 'Por onde começar',
     title: 'Cinco portas',
-    emphasis: 'desta clínica e da casa.',
+    emphasis: 'para ler, estudar e escrever comigo.',
     lead:
-      'A clínica e o trabalho público caminham juntos aqui. Esta é a entrada — escolha por onde começar.',
+      'Ensaios, trilhas de leitura, glossário e o pouco de prática clínica que já tenho. Escolha por onde entrar.',
     portals: [
       { id: 'atendo',    visKey: 'psicoterapia', href: '/psicoterapia-analitica', glyph: '◈', eyebrow: 'Clínica',     title: 'Atendo',    body: 'Psicoterapia analítica online, em todo o Brasil — adolescentes, adultos e idosos.', cta: 'Conhecer o atendimento' },
       { id: 'blog',      visKey: 'blog',         href: '/blog',                   glyph: '✶', eyebrow: 'Ensaios',     title: 'Escrevo',   body: 'Textos sobre clínica, sonhos e símbolos — publicados periodicamente.',          cta: 'Ler os ensaios' },
@@ -124,22 +139,23 @@ export const DEFAULT_HOMEPAGE = {
   },
   about: {
     title: 'Sobre',
-    paragraph1: 'Atendo em clínica desde o terceiro período da graduação, em estágio supervisionado pela Associação Allos. A abordagem é a psicologia analítica — a prática clínica desenvolvida a partir do trabalho de Carl Gustav Jung.',
-    paragraph2: 'Além do atendimento, conduzo grupos de estudo para estudantes e profissionais que buscam aprofundar a prática clínica junguiana, participo de intervisões e da Liga de Psicologia Analítica da UNICAP. O que publico aqui — materiais, trilhas, ensaios — nasce desse atravessamento entre estudo e clínica.',
+    paragraph1: 'Sou estudante de psicologia e mantenho este espaço como um caderno público de leitura da obra de Carl Gustav Jung: um corpus que venho indexando, cruzando e comentando desde a graduação.',
+    paragraph2: 'Concilio essa leitura com a condução de um grupo de estudos, com a presidência da Liga de Psicologia Analítica da UNICAP e com o estágio clínico supervisionado pela Associação Allos, hoje meu único contato direto e regular com a prática clínica. O que publico aqui, ensaios, glossário e trilhas, nasce desse cruzamento entre estudo, orientação e a pouca prática que já tenho.',
+    paragraph3: 'O método é simples e tento ser rigoroso com ele: cada citação de Jung é conferida contra a fonte, referenciada por obra e parágrafo, nunca por memória ou por segunda mão. É esse rigor de fonte, não um título, que sustenta o que escrevo aqui.',
     quoteText: 'Quem olha para fora, sonha; quem olha para dentro, desperta.',
     quoteAuthor: 'Carl Gustav Jung',
     credentials: [
-      { mark: '◆', label: 'Atendimento', detail: '100% online · Brasil inteiro' },
-      { mark: '◇', label: 'Estágio',     detail: 'Clínico · Associação Allos' },
-      { mark: '◆', label: 'Supervisão',  detail: 'Intervisão e supervisão clínica' },
-      { mark: '◇', label: 'Facilitação', detail: 'Liga de Psicologia Analítica · UNICAP' },
-      { mark: '◆', label: 'Abordagem',   detail: 'Psicologia analítica (C. G. Jung)' },
+      { mark: '◆', label: 'Leitura',      detail: 'Corpus de Jung indexado e citado por obra e parágrafo' },
+      { mark: '◇', label: 'Escrita',      detail: 'Ensaios públicos sobre a obra de Jung' },
+      { mark: '◆', label: 'Estudo',       detail: 'Condução de grupo de estudos' },
+      { mark: '◇', label: 'Liga',         detail: 'Presidência · Psicologia Analítica · UNICAP' },
+      { mark: '◆', label: 'Estágio',      detail: 'Clínico e supervisionado · Associação Allos' },
     ],
     milestones: [
-      { year: 'III',    label: 'Início clínico', detail: '3º período da graduação' },
-      { year: 'Allos',  label: 'Estágio',        detail: 'Supervisionado' },
-      { year: 'UNICAP', label: 'Liga',           detail: 'Psicologia Analítica' },
-      { year: 'Hoje',   label: 'Clínica',        detail: 'Atendimento online BR' },
+      { year: 'III',    label: 'Leitura sistemática', detail: '3º período, início do corpus' },
+      { year: 'Allos',  label: 'Estágio',             detail: 'Clínico, supervisionado' },
+      { year: 'UNICAP', label: 'Liga',                detail: 'Presidência · Psicologia Analítica' },
+      { year: 'Hoje',   label: 'Escrita pública',     detail: 'Ensaios, glossário e trilhas' },
     ],
     images: [
       {
@@ -214,15 +230,29 @@ export const DEFAULT_BIO = {
    READ HELPERS — server-safe (devolvem default sem window)
 =================================================================== */
 
-function readJson(key, fallback) {
-  if (typeof window === 'undefined') return fallback;
+/**
+ * readJson — leitor genérico storage-first com seed do snapshot.
+ *
+ * @param key       chave do localStorage (e do snapshot.data)
+ * @param fallback  default hardcoded, usado só quando o snapshot também não tem a chave
+ * @param seedOnly  quando true, IGNORA localStorage e devolve sempre o valor
+ *                  determinístico (snapshot ?? fallback) — usado para computar
+ *                  o estado inicial de hooks (useSitedata/useVisibility), pra
+ *                  garantir que o primeiro render do cliente bata com o HTML
+ *                  gerado no build (que nunca teve acesso a localStorage).
+ */
+function readJson(key, fallback, seedOnly = false) {
+  const seedFallback = Object.prototype.hasOwnProperty.call(SNAPSHOT_DATA, key)
+    ? SNAPSHOT_DATA[key]
+    : fallback;
+  if (seedOnly || typeof window === 'undefined') return seedFallback;
   try {
     const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
+    if (!raw) return seedFallback;
     const parsed = JSON.parse(raw);
-    return parsed ?? fallback;
+    return parsed ?? seedFallback;
   } catch {
-    return fallback;
+    return seedFallback;
   }
 }
 
@@ -243,8 +273,27 @@ function writeJson(key, value) {
   }
 }
 
-export const getTrilhas    = () => readJson(SITEDATA_KEYS.trilhas, TRILHAS_DEFAULT);
+export const getTrilhas    = (seedOnly) => readJson(SITEDATA_KEYS.trilhas, TRILHAS_DEFAULT, seedOnly);
 export const setTrilhas    = (v) => writeJson(SITEDATA_KEYS.trilhas, v);
+
+/* ===================================================================
+   BLOG — posts + séries. Não tinha entrada formal em SITEDATA_KEYS antes;
+   adicionado pra que /blog e /blog/[slug] sigam o mesmo padrão seed-first
+   dos demais getters (em vez de ler localStorage cru em cada componente).
+=================================================================== */
+export const getBlogPosts = (seedOnly) => {
+  const posts = readJson(SITEDATA_KEYS.blog, [], seedOnly);
+  return Array.isArray(posts) ? posts : [];
+};
+export const setBlogPosts = (v) => writeJson(SITEDATA_KEYS.blog, v);
+
+export const getPublishedBlogPosts = (seedOnly) =>
+  getBlogPosts(seedOnly).filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
+
+export const getBlogSeries = (seedOnly) => {
+  const series = readJson(SITEDATA_KEYS.blogSeries, [], seedOnly);
+  return Array.isArray(series) ? series : [];
+};
 
 /* ===================================================================
    ÁREAS — categorias de trilhas (psicologia junguiana, filosofia, ...)
@@ -253,7 +302,7 @@ export const setTrilhas    = (v) => writeJson(SITEDATA_KEYS.trilhas, v);
 =================================================================== */
 
 export { DEFAULT_AREAS } from '@/lib/areas';
-export const getAreas = () => normalizeAreas(readJson(SITEDATA_KEYS.areas, null));
+export const getAreas = (seedOnly) => normalizeAreas(readJson(SITEDATA_KEYS.areas, null, seedOnly));
 export const setAreas = (v) => writeJson(SITEDATA_KEYS.areas, v);
 /* ===================================================================
    CARTOGRAFIAS — multi (admin gerencia N cartografias, cada uma com slug)
@@ -297,15 +346,15 @@ function normalizeCartography(c, i = 0) {
   };
 }
 
-export function getCartographies() {
+export function getCartographies(seedOnly) {
   // Tenta ler a estrutura nova primeiro
-  const stored = readJson(SITEDATA_KEYS.cartographies, null);
+  const stored = readJson(SITEDATA_KEYS.cartographies, null, seedOnly);
   if (Array.isArray(stored) && stored.length > 0) {
     return stored.map(normalizeCartography);
   }
   // Migração: lê do singular antigo e retorna como cartografia 'home'
-  const oldNodes = readJson(SITEDATA_KEYS.cartoNodes, null);
-  const oldEdges = readJson(SITEDATA_KEYS.cartoEdges, null);
+  const oldNodes = readJson(SITEDATA_KEYS.cartoNodes, null, seedOnly);
+  const oldEdges = readJson(SITEDATA_KEYS.cartoEdges, null, seedOnly);
   if (oldNodes || oldEdges) {
     return [{
       ...DEFAULT_CARTOGRAPHIES[0],
@@ -381,10 +430,10 @@ function looksLegacy(section, markers) {
 
 let _homepageMigrated = false;
 
-export const getHomepage = () => {
+export const getHomepage = (seedOnly) => {
   // Merge profundo: garante que campos novos do default apareçam mesmo
   // se o admin tiver salvo antes de existirem.
-  const stored = readJson(SITEDATA_KEYS.homepage, null);
+  const stored = readJson(SITEDATA_KEYS.homepage, null, seedOnly);
   if (!stored) return DEFAULT_HOMEPAGE;
 
   const hero = looksLegacy(stored.hero, HOMEPAGE_LEGACY_MARKERS.hero)
@@ -410,7 +459,9 @@ export const getHomepage = () => {
 
   // Se houve migração, persiste uma vez por sessão pra que o snapshot publicado
   // no Supabase reflita a copy nova (e não volte o legacy quando outros devices sincronizam).
-  if (!_homepageMigrated && typeof window !== 'undefined') {
+  // seedOnly: nunca grava — essa chamada roda em fase de render (estado inicial
+  // do hook), e side-effects de localStorage ali quebrariam a regra de hooks.
+  if (!seedOnly && !_homepageMigrated && typeof window !== 'undefined') {
     const migratedHero    = hero    !== undefined && looksLegacy(stored.hero,    HOMEPAGE_LEGACY_MARKERS.hero);
     const migratedContact = contact !== undefined && looksLegacy(stored.contact, HOMEPAGE_LEGACY_MARKERS.contact);
     const migratedPrelude = prelude !== undefined && looksLegacy(stored.prelude, HOMEPAGE_LEGACY_MARKERS.prelude);
@@ -431,8 +482,8 @@ export const getHomepage = () => {
 };
 export const setHomepage = (v) => writeJson(SITEDATA_KEYS.homepage, v);
 
-export const getBio = () => {
-  const stored = readJson(SITEDATA_KEYS.bio, null);
+export const getBio = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.bio, null, seedOnly);
   if (!stored) return DEFAULT_BIO;
   const links = Array.isArray(stored.links) ? stored.links : DEFAULT_BIO.links;
   const images = Array.isArray(stored.images) ? stored.images : DEFAULT_BIO.images;
@@ -468,8 +519,8 @@ export const DEFAULT_BLOG_AUTHOR_CTA = {
   href: '/psicoterapia-analitica',
 };
 
-export const getBlogAuthorCta = () => {
-  const stored = readJson(SITEDATA_KEYS.blogAuthorCta, null);
+export const getBlogAuthorCta = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.blogAuthorCta, null, seedOnly);
   if (!stored) return DEFAULT_BLOG_AUTHOR_CTA;
   return { ...DEFAULT_BLOG_AUTHOR_CTA, ...stored };
 };
@@ -504,6 +555,7 @@ export const DEFAULT_VISIBILITY = {
   disclaimerEstagio: true,  // faixa "estagiário + supervisão" logo abaixo do hero
   faq:               false, // 2026-05-03: FAQ canônico vive na landing clínica (anti-canibalização)
   contato:           true,
+  newsletter:        true,  // 2026-07-30: captura de e-mail (home + fim de cada ensaio)
   // Blog
   blogAuthorBox:     true,  // caixa de autor (foto + bio + CTA) no fim de cada post
   // Extras
@@ -515,13 +567,18 @@ export const DEFAULT_VISIBILITY = {
 =================================================================== */
 
 /**
- * Ordem da home (2026-07-29).
+ * Ordem da home (2026-07-30).
  *
  * Quem chega sabe primeiro quem é o Ângelo, depois lê, depois estuda:
- * hero → sobre → ensaio em destaque → grade de ensaios → trilhas.
+ * hero → sobre → ensaio em destaque → grade de ensaios → trilhas → assinar.
  *
  * A faixa "quem escreve" saiu daqui e passou a viver no fim da listagem do
  * blog: na home ela repetia o retrato do hero e a bio do "sobre".
+ *
+ * 2026-07-30: reposicionamento "blog com um autor" — hero, sobre e bússola
+ * trocam o eixo clínico pelo eixo de estudo/escrita; entra a seção de
+ * inscrição por e-mail logo depois de trilhas, onde o leitor já viu prova
+ * de valor (ensaios + trilha) antes de ser convidado a assinar.
  */
 export const HOME_SECTION_META = [
   { id: 'hero',          label: 'Hero (topo)',                           fixed: true  },
@@ -530,6 +587,7 @@ export const HOME_SECTION_META = [
   { id: 'featuredEssay', label: 'Ensaio em destaque (bloco grande)',     visKey: 'ensaioDestaque' },
   { id: 'blog',          label: 'Últimos ensaios (grade)',               visKey: 'blog' },
   { id: 'estudos',       label: 'Estudos · Trilhas',                     visKey: 'estudos' },
+  { id: 'newsletter',    label: 'Inscrição por e-mail',                  visKey: 'newsletter' },
   { id: 'jungQuote',     label: 'Citação de Jung' },
   { id: 'bussola',       label: 'Bússola (mapa das portas)',             visKey: 'bussola' },
   { id: 'materials',     label: 'Materiais (preview + CTA)',             visKey: 'materiais' },
@@ -550,16 +608,16 @@ export const HOME_SECTION_META = [
  * constante sobe, a ordem salva antes da repaginada é descartada uma vez e o
  * novo default entra. O que o admin salvar depois disso é preservado.
  */
-export const HOME_LAYOUT_VERSION = 3;
+export const HOME_LAYOUT_VERSION = 4;
 
 export const DEFAULT_HOME_SECTIONS = HOME_SECTION_META.map((s) => s.id);
 
-export const getHomeSections = () => {
-  const stored = readJson(SITEDATA_KEYS.homeSections, null);
+export const getHomeSections = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.homeSections, null, seedOnly);
   if (!Array.isArray(stored)) return DEFAULT_HOME_SECTIONS;
 
   // Ordem salva antes desta repaginada: descarta uma vez e adota o novo default
-  const savedLayout = Number(readJson(SITEDATA_KEYS.homeSectionsLayout, 0)) || 0;
+  const savedLayout = Number(readJson(SITEDATA_KEYS.homeSectionsLayout, 0, seedOnly)) || 0;
   if (savedLayout < HOME_LAYOUT_VERSION) return DEFAULT_HOME_SECTIONS;
 
   // Valida + deduplica (user pode ter salvo ordem corrompida com duplicatas)
@@ -594,18 +652,15 @@ export const setHomeSections = (v) => {
   writeJson(SITEDATA_KEYS.homeSectionsLayout, HOME_LAYOUT_VERSION);
 };
 
-export const getSiteVisibility = () => {
-  const stored = readJson(SITEDATA_KEYS.visibility, null);
+export const getSiteVisibility = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.visibility, null, seedOnly);
   if (!stored) return DEFAULT_VISIBILITY;
   return { ...DEFAULT_VISIBILITY, ...stored };
 };
 export const setSiteVisibility = (v) => writeJson(SITEDATA_KEYS.visibility, v);
 
-/** É visível? Safe em SSR — devolve default quando sem window. */
-export const isVisible = (key) => {
-  if (typeof window === 'undefined') return DEFAULT_VISIBILITY[key] ?? true;
-  return getSiteVisibility()[key] ?? true;
-};
+/** É visível? Safe em SSR — getSiteVisibility() já cai no snapshot sem window. */
+export const isVisible = (key) => getSiteVisibility()[key] ?? true;
 
 /* ===================================================================
    THERAPY — configuração da landing /psicoterapia-analitica
@@ -762,8 +817,8 @@ export const DEFAULT_THERAPY = {
   whatsappNumber: '5581987349114',
 };
 
-export const getTherapy = () => {
-  const stored = readJson(SITEDATA_KEYS.therapy, null);
+export const getTherapy = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.therapy, null, seedOnly);
   if (!stored) return DEFAULT_THERAPY;
   // merge profundo em 1 nível (objeto com subobjetos)
   const merged = { ...DEFAULT_THERAPY };
@@ -782,9 +837,9 @@ export const setTherapy = (v) => writeJson(SITEDATA_KEYS.therapy, v);
    MATERIALS · COMING SOON
 =================================================================== */
 
-export const getMaterials  = () => readJson(SITEDATA_KEYS.materials,  MATERIALS_DEFAULT);
+export const getMaterials  = (seedOnly) => readJson(SITEDATA_KEYS.materials,  MATERIALS_DEFAULT, seedOnly);
 export const setMaterials  = (v) => writeJson(SITEDATA_KEYS.materials, v);
-export const getComingSoon = () => readJson(SITEDATA_KEYS.comingSoon, COMING_SOON_DEFAULT);
+export const getComingSoon = (seedOnly) => readJson(SITEDATA_KEYS.comingSoon, COMING_SOON_DEFAULT, seedOnly);
 export const setComingSoon = (v) => writeJson(SITEDATA_KEYS.comingSoon, v);
 
 /* ===================================================================
@@ -855,14 +910,14 @@ function normalizeContentTypes(stored) {
   })).sort((a, b) => a.ordem - b.ordem);
 }
 
-export const getCategories = () => normalizeCategories(readJson(SITEDATA_KEYS.categories, null));
+export const getCategories = (seedOnly) => normalizeCategories(readJson(SITEDATA_KEYS.categories, null, seedOnly));
 export const setCategories = (v) => writeJson(SITEDATA_KEYS.categories, v);
 
-export const getContentTypes = () => normalizeContentTypes(readJson(SITEDATA_KEYS.contentTypes, null));
+export const getContentTypes = (seedOnly) => normalizeContentTypes(readJson(SITEDATA_KEYS.contentTypes, null, seedOnly));
 export const setContentTypes = (v) => writeJson(SITEDATA_KEYS.contentTypes, v);
 
-export const getMateriaisPage = () => {
-  const stored = readJson(SITEDATA_KEYS.materiaisPage, null);
+export const getMateriaisPage = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.materiaisPage, null, seedOnly);
   if (!stored) return DEFAULT_MATERIAIS_PAGE;
   const hero = { ...DEFAULT_MATERIAIS_PAGE.hero, ...(stored.hero || {}) };
   const explanation = {
@@ -928,8 +983,8 @@ export const DEFAULT_TESTIMONIALS = [
   },
 ];
 
-export const getTestimonials = () => {
-  const stored = readJson(SITEDATA_KEYS.testimonials, null);
+export const getTestimonials = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.testimonials, null, seedOnly);
   if (!stored || !Array.isArray(stored) || stored.length === 0) return DEFAULT_TESTIMONIALS;
   return stored.map((t) => ({
     // hidrata campos faltando com defaults razoáveis
@@ -961,8 +1016,8 @@ export const DEFAULT_FAQS = [
     answer: 'Ainda não. Atendo como estagiário de psicologia em estágio clínico supervisionado pela Associação Allos. Ao concluir a graduação e obter registro no CRP, esta indicação será atualizada.' },
 ];
 
-export const getFaqs = () => {
-  const stored = readJson(SITEDATA_KEYS.faqs, null);
+export const getFaqs = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.faqs, null, seedOnly);
   if (!stored || !Array.isArray(stored) || stored.length === 0) return DEFAULT_FAQS;
   return stored;
 };
@@ -974,7 +1029,7 @@ export const setFaqs = (v) => writeJson(SITEDATA_KEYS.faqs, v);
 
 export const DEFAULT_SETTINGS = {
   whatsappNumber: '5581987349114',
-  whatsappMessage: 'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.',
+  whatsappMessage: 'Oi Ângelo, vim pelo site e queria trocar uma ideia.',
   instagramLink: 'https://instagram.com/psiangelo',
   youtubeLink: '',
   emailAddress: '',
@@ -983,8 +1038,8 @@ export const DEFAULT_SETTINGS = {
   accentColor: '#B48C50',
 };
 
-export const getSettings = () => {
-  const stored = readJson(SITEDATA_KEYS.settings, null);
+export const getSettings = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.settings, null, seedOnly);
   if (!stored) return DEFAULT_SETTINGS;
   return { ...DEFAULT_SETTINGS, ...stored };
 };
@@ -1015,8 +1070,8 @@ function normalizeGlossarioCategories(stored) {
   })).sort((a, b) => a.ordem - b.ordem);
 }
 
-export const getGlossarioCategories = () =>
-  normalizeGlossarioCategories(readJson(SITEDATA_KEYS.glossarioCategories, null));
+export const getGlossarioCategories = (seedOnly) =>
+  normalizeGlossarioCategories(readJson(SITEDATA_KEYS.glossarioCategories, null, seedOnly));
 export const setGlossarioCategories = (v) => writeJson(SITEDATA_KEYS.glossarioCategories, v);
 
 // Verbete: defaults + campos novos opcionais (`links`, `hidden`).
@@ -1039,7 +1094,7 @@ function normalizeGlossario(stored) {
   }));
 }
 
-export const getGlossario = () => normalizeGlossario(readJson(SITEDATA_KEYS.glossario, null));
+export const getGlossario = (seedOnly) => normalizeGlossario(readJson(SITEDATA_KEYS.glossario, null, seedOnly));
 export const setGlossario = (v) => writeJson(SITEDATA_KEYS.glossario, v);
 
 // Textos da página /glossario (hero + intro)
@@ -1057,8 +1112,8 @@ export const DEFAULT_GLOSSARIO_PAGE = {
   },
 };
 
-export const getGlossarioPage = () => {
-  const stored = readJson(SITEDATA_KEYS.glossarioPage, null);
+export const getGlossarioPage = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.glossarioPage, null, seedOnly);
   if (!stored) return DEFAULT_GLOSSARIO_PAGE;
   return {
     hero: { ...DEFAULT_GLOSSARIO_PAGE.hero, ...(stored.hero || {}) },
@@ -1133,7 +1188,7 @@ function normalizeEstudosPage(stored) {
   return { hero, blocks };
 }
 
-export const getEstudosPage = () => normalizeEstudosPage(readJson(SITEDATA_KEYS.estudosPage, null));
+export const getEstudosPage = (seedOnly) => normalizeEstudosPage(readJson(SITEDATA_KEYS.estudosPage, null, seedOnly));
 export const setEstudosPage = (v) => writeJson(SITEDATA_KEYS.estudosPage, v);
 
 /* ===================================================================
@@ -1144,10 +1199,12 @@ export const setEstudosPage = (v) => writeJson(SITEDATA_KEYS.estudosPage, v);
 export const DEFAULT_NAV_LABELS = {
   home:         'Home',
   psicoterapia: 'Psicoterapia',
-  blog:         'Blog',
+  blog:         'Ensaios',
   estudos:      'Estudos',
   materiais:    'Materiais',
   cursos:       'Cursos',
+  glossario:    'Glossário',
+  about:        'Sobre',
 };
 
 // Títulos editoriais das seções da home — cada chave é um id de seção
@@ -1167,6 +1224,7 @@ export const DEFAULT_SECTION_LABELS = {
   contato:     '',  // ContactCTA
   audience:    '',
   approach:    '',
+  newsletter:  '',  // Newsletter
 };
 
 export const DEFAULT_LABELS = {
@@ -1174,8 +1232,8 @@ export const DEFAULT_LABELS = {
   sections: DEFAULT_SECTION_LABELS,
 };
 
-export const getLabels = () => {
-  const stored = readJson(SITEDATA_KEYS.labels, null);
+export const getLabels = (seedOnly) => {
+  const stored = readJson(SITEDATA_KEYS.labels, null, seedOnly);
   if (!stored) return DEFAULT_LABELS;
   return {
     nav:      { ...DEFAULT_NAV_LABELS,     ...(stored.nav || {}) },

@@ -1,4 +1,6 @@
 import siteContent from '@/data/site-content.json';
+import { glossario } from '@/data/glossario';
+import { trilhas as TRILHAS_DEFAULT } from '@/data/trilhas';
 
 const BASE = 'https://psiangelo.github.io/Psiangelo';
 
@@ -8,11 +10,19 @@ function getPublishedPosts() {
   return posts.filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
 }
 
+// Mesma lógica de src/app/estudos/[trilha]/page.js: as trilhas realmente
+// publicadas vêm do snapshot (angelo_admin_trilhas), com fallback pro
+// default hardcoded em src/data/trilhas.js — e a rota usa slug||id.
+function getTrilhas() {
+  const stored = siteContent?.data?.angelo_admin_trilhas;
+  return Array.isArray(stored) && stored.length > 0 ? stored : TRILHAS_DEFAULT;
+}
+
 function slugifyTag(s) {
   return String(s || '')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
@@ -40,24 +50,22 @@ function toAbsolute(path, priority, changeFrequency, lastModified) {
 }
 
 export default function sitemap() {
+  // Reposicionamento 2026-07: o site deixou de ser "consultório com blog" e
+  // virou "um blog com um autor" — a psicoterapia está oculta enquanto o
+  // Ângelo não tem CRP, então as rotas /psicoterapia-analitica e /atendo
+  // saíram do sitemap por completo (anunciar uma página que hoje devolve
+  // placeholder é sinal ruim pro Google, não ganho).
   const staticRoutes = [
-    // Captação clínica — prioridade máxima
-    toAbsolute('',                                   1.0,  'weekly'),
-    toAbsolute('/psicoterapia-analitica',            1.0,  'weekly'),
-    toAbsolute('/psicoterapia-analitica/adultos',    0.95, 'monthly'),
-    toAbsolute('/psicoterapia-analitica/adolescentes', 0.95, 'monthly'),
-    toAbsolute('/psicoterapia-analitica/idosos',     0.95, 'monthly'),
-    toAbsolute('/atendo',                            0.9,  'monthly'),
+    // Blog-first — home e ensaios no topo
+    toAbsolute('',           1.0,  'weekly'),
+    toAbsolute('/blog',      0.9,  'weekly'),
+    toAbsolute('/glossario', 0.85, 'weekly'),
+
+    // Estudo — trilhas de leitura logo abaixo
+    toAbsolute('/estudos',   0.75, 'weekly'),
 
     // Autoridade / E-E-A-T
-    toAbsolute('/bio',        0.85, 'monthly'),
-
-    // Conteúdo e estudo
-    toAbsolute('/blog',       0.8, 'weekly'),
-    toAbsolute('/materiais',  0.7, 'weekly'),
-    toAbsolute('/cursos',     0.7, 'monthly'),
-    toAbsolute('/estudos',    0.8, 'weekly'),
-    toAbsolute('/glossario',  0.6, 'monthly'),
+    toAbsolute('/bio',       0.85, 'monthly'),
   ];
 
   // Posts do blog — um entry por post publicado com lastModified real
@@ -66,7 +74,7 @@ export default function sitemap() {
     const lm = p.updated_at || p.created_at;
     return toAbsolute(
       `/blog/${slug}`,
-      0.75,
+      0.8,
       'monthly',
       lm ? new Date(lm) : new Date(),
     );
@@ -74,8 +82,25 @@ export default function sitemap() {
 
   // Categorias do blog — um entry por tag única
   const tagRoutes = getUniqueTags().map((tag) =>
-    toAbsolute(`/blog/tag/${tag}`, 0.6, 'weekly'),
+    toAbsolute(`/blog/tag/${tag}`, 0.55, 'weekly'),
   );
 
-  return [...staticRoutes, ...postRoutes, ...tagRoutes];
+  // Verbetes do glossário — ~25 landings estáticas de cauda longa,
+  // hoje só a raiz /glossario/ estava no sitemap
+  const glossarioRoutes = (Array.isArray(glossario) ? glossario : [])
+    .filter((g) => g?.slug && !g.hidden)
+    .map((g) => toAbsolute(`/glossario/${g.slug}`, 0.65, 'monthly'));
+
+  // Trilhas de estudo — uma por trilha efetivamente publicada
+  const trilhaRoutes = getTrilhas()
+    .filter((t) => t?.slug || t?.id)
+    .map((t) => toAbsolute(`/estudos/${t.slug || t.id}`, 0.6, 'monthly'));
+
+  return [
+    ...staticRoutes,
+    ...postRoutes,
+    ...tagRoutes,
+    ...glossarioRoutes,
+    ...trilhaRoutes,
+  ];
 }

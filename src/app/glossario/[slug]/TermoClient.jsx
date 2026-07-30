@@ -17,7 +17,7 @@ function renderFullMarkdown(text) {
   return marked.parse(String(text || ''));
 }
 
-export default function TermoClient({ initialTermo, initialList, initialCategories, initialPosts = [], initialCourses = [] }) {
+export default function TermoClient({ initialTermo, initialList, initialCategories, initialPosts = [], initialCourses = [], relatedEssays = [] }) {
   const list       = useSitedata(getGlossario, initialList, SITEDATA_KEYS.glossario);
   const categories = useSitedata(getGlossarioCategories, initialCategories, SITEDATA_KEYS.glossarioCategories);
   const materials  = useSitedata(getMaterials, [], SITEDATA_KEYS.materials);
@@ -113,6 +113,24 @@ export default function TermoClient({ initialTermo, initialList, initialCategori
                       </li>
                     );
                   })}
+              </ul>
+            </aside>
+          )}
+
+          {/* Ensaios que tratam deste termo — fecha o ciclo ensaio → verbete →
+              ensaio. Vem de relatedEssays (calculado em build-time em
+              page.js, a partir do mesmo scanner usado no autolink). */}
+          {relatedEssays.length > 0 && (
+            <aside className="mt-14 pt-8 border-t border-border-subtle">
+              <p className="meta-caps-accent mb-3">Ensaios que tratam deste termo</p>
+              <ul className="space-y-1.5">
+                {relatedEssays.map((essay) => (
+                  <li key={essay.slug}>
+                    <Link href={`/blog/${essay.slug}/`} className="font-serif text-text hover:text-accent transition-colors">
+                      {essay.title}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </aside>
           )}

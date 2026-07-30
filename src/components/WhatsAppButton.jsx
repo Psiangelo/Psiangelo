@@ -5,12 +5,14 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useVisibility } from '@/lib/useVisibility';
 
 const HIDDEN_ROUTES = ['/admin'];
 
 export default function WhatsAppButton() {
   const pathname = usePathname() || '';
-  const hidden = HIDDEN_ROUTES.some((r) => pathname.includes(r));
+  const { visibility: v } = useVisibility();
+  const hidden = HIDDEN_ROUTES.some((r) => pathname.includes(r)) || v.whatsappFlutuante === false;
 
   const [visible, setVisible] = useState(false);
   const [ready, setReady] = useState(false);

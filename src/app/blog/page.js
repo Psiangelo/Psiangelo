@@ -1,6 +1,17 @@
 import BlogClient from './BlogClient';
+import siteContent from '@/data/site-content.json';
 
 const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
+
+function getInitialPosts() {
+  const posts = siteContent?.data?.angelo_admin_blog;
+  return Array.isArray(posts) ? posts : [];
+}
+
+function getInitialSeries() {
+  const series = siteContent?.data?.angelo_admin_blog_series;
+  return Array.isArray(series) ? series : [];
+}
 
 export const metadata = {
   title: 'Blog · Ensaios de psicologia analítica',
@@ -29,5 +40,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <BlogClient />;
+  return <BlogClient initialPosts={getInitialPosts()} initialSeriesList={getInitialSeries()} />;
 }

@@ -916,8 +916,9 @@ main:focus {
 }
 
 /* ====================== GLOSSARY TERM LINKS ====================== */
-/* Auto-links inseridos pelo GlossaryLinker no corpo dos posts.
-   Underline tracejado + cor accent. Hover revela o sublinhado solido. */
+/* Auto-links inseridos em build-time por src/lib/glossaryLinker.js (via
+   BlogPostView) no corpo dos posts. Underline tracejado + cor accent.
+   Hover revela o sublinhado solido. Ver TermPreview.jsx pro popover. */
 .blog-content .term-link {
   color: #B48C50;
   text-decoration: underline;
@@ -933,6 +934,57 @@ main:focus {
   color: #E8DDD0;
   text-decoration-style: solid;
   text-decoration-color: #B48C50;
+}
+
+/* Popover de preview do verbete (src/components/blog/TermPreview.jsx).
+   Singleton anexado ao <body>, position:fixed, clampado na viewport. */
+.term-preview-popover {
+  position: fixed;
+  z-index: 500;
+  width: min(280px, calc(100vw - 20px));
+  background: #1C1712;
+  border: 1px solid rgba(180, 140, 80, 0.35);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  padding: 14px 16px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  pointer-events: none;
+}
+.term-preview-popover.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.term-preview-popover .term-preview-title {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.95rem;
+  color: #E8DDD0;
+  margin: 0 0 6px 0;
+}
+.term-preview-popover .term-preview-short {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #B8AD9E;
+  margin: 0 0 10px 0;
+}
+.term-preview-popover .term-preview-link {
+  display: inline-block;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #B48C50;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(180, 140, 80, 0.4);
+  padding-bottom: 1px;
+}
+.term-preview-popover .term-preview-link:hover,
+.term-preview-popover .term-preview-link:focus-visible {
+  color: #E8DDD0;
+  border-bottom-color: #B48C50;
 }
 
 /* ====================== ESTUDOS · text block (markdown) ====================== */

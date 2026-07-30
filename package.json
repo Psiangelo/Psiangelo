@@ -8,6 +8,7 @@
     "start": "next start",
     "test:smoke": "playwright test",
     "test:smoke:install": "playwright install --with-deps chromium",
+    "test:glossary-linker": "node scripts/test-glossary-linker.mjs",
     "gen:og": "node scripts/gen-og-png.mjs",
     "gen:og:posts": "node scripts/gen-og-posts.mjs",
     "prebuild": "node scripts/sync-snapshot.mjs && node scripts/gen-og-posts.mjs"

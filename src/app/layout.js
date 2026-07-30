@@ -13,25 +13,24 @@ const SITE_URL = 'https://psiangelo.github.io/Psiangelo';
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Psicoterapia Junguiana Online · Adolescentes, Adultos e Idosos · Psiangelo',
+    default: 'Psiangelo — Ensaios e Glossário sobre Jung e Psicologia Analítica',
     template: '%s · Psiangelo',
   },
   description:
-    'Psicoterapia analítica online em abordagem junguiana, para adolescentes, adultos e idosos em todo o Brasil. Escuta clínica da tradição de Jung, por videochamada. Marque uma conversa inicial sem compromisso.',
+    'Um projeto de estudo público sobre a obra de Carl Gustav Jung: ensaios, glossário e trilhas de leitura em psicologia analítica, escritos por um estudante de psicologia em estágio clínico supervisionado.',
   keywords: [
-    'psicoterapia analítica online',
-    'psicoterapia junguiana online',
-    'terapia junguiana online',
-    'psicologia analítica online',
-    'análise junguiana online',
-    'terapeuta junguiano online',
-    'psicoterapia online Brasil',
-    'análise de sonhos online',
-    'terapia para adolescente online',
-    'terapia para idoso online',
-    'crise de meia idade',
+    'psicologia analítica',
+    'psicologia junguiana',
+    'Carl Gustav Jung',
+    'glossário junguiano',
     'individuação',
-    'segunda metade da vida',
+    'arquétipos',
+    'sombra',
+    'self',
+    'análise de sonhos',
+    'alquimia psicológica',
+    'sincronicidade',
+    'trilhas de leitura Jung',
     'Psiangelo',
   ],
   authors: [{ name: 'Psiangelo' }],
@@ -41,9 +40,9 @@ export const metadata = {
     locale: 'pt_BR',
     url: SITE_URL,
     siteName: 'Psiangelo',
-    title: 'Psicoterapia Junguiana Online · Psiangelo',
+    title: 'Psiangelo — Ensaios e Glossário sobre Jung',
     description:
-      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil. Marque uma conversa inicial sem compromisso.',
+      'Ensaios, glossário e trilhas de leitura sobre a obra de Carl Gustav Jung e a psicologia analítica.',
     images: [
       // Quadrado primeiro — WhatsApp/iMessage dão preferência à primeira imagem
       { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo', type: 'image/png' },
@@ -52,9 +51,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Psicoterapia Junguiana Online · Psiangelo',
+    title: 'Psiangelo — Ensaios e Glossário sobre Jung',
     description:
-      'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
+      'Ensaios, glossário e trilhas de leitura sobre a obra de Carl Gustav Jung e a psicologia analítica.',
     images: [`${SITE_URL}/og.png`],
   },
   robots: {

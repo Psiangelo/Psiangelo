@@ -1,9 +1,9 @@
 /**
- * Rota estática por post — existe pra social scrapers (WhatsApp, Twitter etc)
- * verem metadata específica (título, descrição, OG image gerada com filtro).
- *
- * Humanos que acessam essa URL são redirecionados client-side para /blog?post=slug
- * (mantém o SPA de navegação do blog que já existe em /blog/page.js).
+ * Rota estática por post — HTML de verdade no export estático (título, data,
+ * autor, tags e o content_html completo), não mais um redirect client-side.
+ * Isso é o que torna o blog rastreável pelo Google: antes, essa rota fazia
+ * `window.location.replace('/blog?post=slug')` e o crawler via conteúdo
+ * vazio; agora o post inteiro sai no HTML gerado no build.
  *
  * generateStaticParams lê o snapshot publicado (src/data/site-content.json)
  * e gera um HTML por slug no export estático.
@@ -19,10 +19,18 @@ function stripHighlights(t) {
   return typeof t === 'string' ? t.replace(/\*([^*]+)\*/g, '$1') : (t ?? '');
 }
 
-function getPosts() {
+function getAllPosts() {
   const posts = siteContent?.data?.angelo_admin_blog;
-  if (!Array.isArray(posts)) return [];
-  return posts.filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
+  return Array.isArray(posts) ? posts : [];
+}
+
+function getSeriesList() {
+  const series = siteContent?.data?.angelo_admin_blog_series;
+  return Array.isArray(series) ? series : [];
+}
+
+function getPosts() {
+  return getAllPosts().filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
 }
 
 export function generateStaticParams() {
@@ -150,7 +158,12 @@ export default function BlogSlugPage({ params }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       )}
-      <BlogSlugClient slug={params.slug} />
+      <BlogSlugClient
+        slug={params.slug}
+        initialPost={post || null}
+        initialAllPosts={getAllPosts()}
+        initialSeriesList={getSeriesList()}
+      />
     </>
   );
 }

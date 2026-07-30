@@ -1,20 +1,62 @@
 import { notFound } from 'next/navigation';
 import siteContent from '@/data/site-content.json';
 import { glossario as GLOSSARIO_DEFAULT, CATEGORIES as CATEGORIES_DEFAULT } from '@/data/glossario';
+import { buildGlossaryEntries, scanGlossaryMentions } from '@/lib/glossaryLinker';
 import TermoClient from './TermoClient';
 
+/**
+ * getList/getCategories replicam EXATAMENTE normalizeGlossario() /
+ * normalizeGlossarioCategories() de src/lib/sitedata.js (mesma fonte —
+ * angelo_admin_glossario / angelo_admin_glossario_categories do snapshot
+ * publicado, com o mesmo fallback pro default hardcoded).
+ *
+ * Não importamos getGlossario/getGlossarioCategories de @/lib/sitedata
+ * diretamente aqui de propósito: esse módulo é 'use client', e
+ * generateStaticParams/generateMetadata rodam em build-time, fora de
+ * qualquer client boundary — importar um módulo client faz o Next
+ * substituir os exports por referências client, que quebram o build
+ * ("TypeError: o is not a function") quando chamadas como função comum.
+ * Se normalizeGlossario() mudar de forma em sitedata.js, replique aqui.
+ *
+ * Antes deste arquivo lia src/data/glossario.js direto, ignorando o
+ * snapshot publicado: um verbete editado/criado no painel (GlossarioManager)
+ * não entrava aqui — nem era autolinkado nos ensaios, nem aparecia no
+ * índice de "ensaios que tratam deste termo" abaixo — sem nenhum erro
+ * visível.
+ */
 function getList() {
-  const list = siteContent?.data?.angelo_admin_glossario;
-  return Array.isArray(list) && list.length > 0
-    ? list
-    : GLOSSARIO_DEFAULT.map((g, i) => ({ ...g, links: [], hidden: false, ordem: i }));
+  const stored = siteContent?.data?.angelo_admin_glossario;
+  const base = Array.isArray(stored) && stored.length > 0 ? stored : GLOSSARIO_DEFAULT;
+  return base.map((g, i) => ({
+    slug: g.slug ?? `verbete-${i}`,
+    term: g.term ?? 'Verbete',
+    aliases: Array.isArray(g.aliases) ? g.aliases : [],
+    category: g.category ?? 'estrutura',
+    short: g.short ?? '',
+    full: g.full ?? '',
+    related: {
+      terms: g.related?.terms ?? [],
+      materials: g.related?.materials ?? [],
+    },
+    links: Array.isArray(g.links) ? g.links : [],
+    hidden: !!g.hidden,
+    ordem: typeof g.ordem === 'number' ? g.ordem : i,
+  }));
 }
 
 function getCategories() {
-  const cats = siteContent?.data?.angelo_admin_glossario_categories;
-  return Array.isArray(cats) && cats.length > 0
-    ? cats
-    : Object.entries(CATEGORIES_DEFAULT).map(([slug, info], i) => ({ slug, label: info.label, tone: info.tone, ordem: i }));
+  const stored = siteContent?.data?.angelo_admin_glossario_categories;
+  if (Array.isArray(stored) && stored.length > 0) {
+    return stored
+      .map((c, i) => ({
+        slug: c.slug ?? `cat-${i}`,
+        label: c.label ?? 'Categoria',
+        tone: c.tone ?? 'accent',
+        ordem: typeof c.ordem === 'number' ? c.ordem : i,
+      }))
+      .sort((a, b) => a.ordem - b.ordem);
+  }
+  return Object.entries(CATEGORIES_DEFAULT).map(([slug, info], i) => ({ slug, label: info.label, tone: info.tone, ordem: i }));
 }
 
 function getPosts() {
@@ -25,6 +67,29 @@ function getPosts() {
 function getCourses() {
   const courses = siteContent?.data?.angelo_admin_courses;
   return Array.isArray(courses) ? courses : [];
+}
+
+/**
+ * Ensaios que mencionam este termo — fecha o ciclo ensaio → verbete →
+ * ensaio (link interno bidirecional, bom pra SEO de silo temático).
+ * Reaproveita o mesmo scanner usado pro autolink em BlogPostView (sem a
+ * exclusão de auto-termo: o ensaio que É sobre "Sombra" deve aparecer aqui
+ * mesmo que não autolinke a si mesmo). Roda em build-time, uma vez por
+ * termo — custo desprezível (dezenas de posts, não milhares).
+ */
+function getRelatedEssays(slug, glossarioList) {
+  const entries = buildGlossaryEntries(glossarioList);
+  if (entries.length === 0) return [];
+  const posts = getPosts().filter((p) => p && (p.slug || p.id) && (!p.status || p.status === 'published'));
+  const out = [];
+  for (const post of posts) {
+    if (!post.content_html) continue;
+    const mentions = scanGlossaryMentions(post.content_html, entries);
+    if (mentions.includes(slug)) {
+      out.push({ slug: post.slug || post.id, title: post.title || 'Sem título' });
+    }
+  }
+  return out;
 }
 
 export function generateStaticParams() {
@@ -57,6 +122,7 @@ export default function TermoPage({ params }) {
       initialCategories={categories}
       initialPosts={getPosts()}
       initialCourses={getCourses()}
+      relatedEssays={getRelatedEssays(params.slug, list)}
     />
   );
 }

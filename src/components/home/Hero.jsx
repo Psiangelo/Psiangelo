@@ -4,14 +4,12 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import CursorGlow from '@/components/ui/CursorGlow';
 import AmbientVideo from '@/components/ui/AmbientVideo';
-import Button, { ArrowIcon, WhatsAppIcon } from '@/components/ui/Button';
+import Button, { ArrowIcon } from '@/components/ui/Button';
 import { PortraitHero } from '@/components/ui/Portrait';
 import {
   getHomepage,
-  getSettings,
   getTherapy,
   DEFAULT_HOMEPAGE,
-  DEFAULT_SETTINGS,
   DEFAULT_THERAPY,
   SITEDATA_KEYS,
 } from '@/lib/sitedata';
@@ -26,24 +24,17 @@ export default function Hero() {
     DEFAULT_HOMEPAGE.hero,
     SITEDATA_KEYS.homepage,
   );
-  const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
   const therapy = useSitedata(getTherapy, DEFAULT_THERAPY, SITEDATA_KEYS.therapy);
   const { visibility: v } = useVisibility();
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
   const showRichFX = !isMobile && !reducedMotion;
 
+  // Retrato reaproveitado de src/data (therapy.hero.photo): não é conteúdo
+  // da landing clínica, é só a fonte única da foto, mantida mesmo com a
+  // psicoterapia oculta — o dono pediu para preservar a foto na home.
   const photo = therapy?.hero?.photo || DEFAULT_THERAPY.hero.photo;
   const heroPhoto = clinicPhoto(photo?.src, 'hero');
-
-  const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
-  const whatsappMsg = encodeURIComponent(
-    settings.whatsappMessage ||
-      'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.',
-  );
-  const whatsappUrl = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`
-    : '#contato';
 
   // Cada letra sobe por trás da máscara de overflow do seu grupo
   const letterAnim = {
@@ -195,15 +186,19 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 1.1 }}
             className="btn-row"
           >
-            <Button href={whatsappUrl} variant="solid" iconLeft={<WhatsAppIcon />}>
-              Marcar conversa
-            </Button>
-            <Button href="/psicoterapia-analitica" variant="outline">
-              Como atendo
-            </Button>
             {v.blog !== false && (
-              <Link href="/blog" className="link-arrow">
+              <Button href="/blog" variant="solid" icon={<ArrowIcon />}>
                 Ler os ensaios
+              </Button>
+            )}
+            {v.estudos !== false && (
+              <Button href="/estudos" variant="outline">
+                Começar uma trilha
+              </Button>
+            )}
+            {v.glossario !== false && (
+              <Link href="/glossario" className="link-arrow">
+                Abrir o glossário
                 <ArrowIcon />
               </Link>
             )}

@@ -6,9 +6,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useVisibility } from '@/lib/useVisibility';
 import { useSitedata } from '@/lib/useSitedata';
-import { getLabels, getSettings, DEFAULT_LABELS, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { getLabels, DEFAULT_LABELS, SITEDATA_KEYS } from '@/lib/sitedata';
 import { LogoMarkInline } from '@/components/ui/LogoMark';
-import Button, { WhatsAppIcon } from '@/components/ui/Button';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -71,25 +70,17 @@ export default function Navbar() {
   const { visibility: v } = useVisibility();
   const labels = useSitedata(getLabels, DEFAULT_LABELS, SITEDATA_KEYS.labels);
   const navLabels = labels?.nav || DEFAULT_LABELS.nav;
+  // Site é "um blog com um autor": a navegação principal é ensaios, léxico e
+  // estudo, com Sobre por último (âncora na home). Psicoterapia/materiais/
+  // cursos ficam de fora do menu enquanto ocultos — voltam sozinhos se o
+  // admin religar a chave de visibilidade correspondente.
   const allLinks = [
-    { href: '/',                       label: navLabels.home         || 'Home',         key: 'home' },
-    { href: '/psicoterapia-analitica', label: navLabels.psicoterapia || 'Psicoterapia', key: 'psicoterapia' },
-    { href: '/blog',                   label: navLabels.blog         || 'Blog',         key: 'blog' },
-    { href: '/estudos',                label: navLabels.estudos      || 'Estudos',      key: 'estudos' },
-    { href: '/materiais',              label: navLabels.materiais    || 'Materiais',    key: 'materiais' },
-    { href: '/cursos',                 label: navLabels.cursos       || 'Cursos',       key: 'cursos' },
+    { href: '/blog',      label: navLabels.blog      || 'Ensaios',   key: 'blog' },
+    { href: '/glossario', label: navLabels.glossario || 'Glossário', key: 'glossario' },
+    { href: '/estudos',   label: navLabels.estudos   || 'Estudos',   key: 'estudos' },
+    { href: '/#sobre',    label: navLabels.about     || 'Sobre',     key: 'about' },
   ];
   const links = allLinks.filter((l) => v[l.key] !== false);
-
-  // CTA do header — mesma conversa do hero, disponível em qualquer página
-  const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
-  const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
-  const whatsappUrl = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        settings.whatsappMessage ||
-          'Oi Gabriel, vim pelo seu site e gostaria de marcar uma primeira conversa online.',
-      )}`
-    : '/psicoterapia-analitica';
 
   const isActive = (href) => {
     if (href === '/') return pathname === '/';
@@ -140,10 +131,6 @@ export default function Navbar() {
           );
         })}
       </ul>
-
-        <Button href={whatsappUrl} variant="solid" size="sm" iconLeft={<WhatsAppIcon />}>
-          Marcar conversa
-        </Button>
       </div>
 
       <button
@@ -186,17 +173,6 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Button
-                href={whatsappUrl}
-                variant="solid"
-                size="sm"
-                block
-                iconLeft={<WhatsAppIcon />}
-                onClick={() => setMobileOpen(false)}
-                className="mt-1"
-              >
-                Marcar conversa
-              </Button>
             </div>
           </motion.div>
         )}

@@ -27,17 +27,21 @@ export default function Footer({ showMaterialsCta = false }) {
     ? `https://wa.me/${String(settings.whatsappNumber).replace(/\D/g, '')}`
     : null;
 
-  const atendimento = [
+  // "Autor" substitui a antiga coluna "Atendimento" — com a psicoterapia
+  // oculta, aquela coluna ficava vazia (mostrava "Em breve"). /bio garante
+  // que a coluna sempre tenha algo, e a psicoterapia volta sozinha aqui
+  // quando o admin religar a visibilidade.
+  const autor = [
+    v.bio         !== false && { href: '/bio',                     label: 'Perfil' },
     v.psicoterapia !== false && { href: '/psicoterapia-analitica', label: 'Psicoterapia' },
-    v.psicoterapia !== false && { href: '/atendo',                 label: 'Marcar primeira conversa' },
   ].filter(Boolean);
 
   const conteudo = [
+    v.blog       !== false && { href: '/blog',       label: 'Ensaios' },
+    v.glossario  !== false && { href: '/glossario',  label: 'Glossário' },
     v.estudos    !== false && { href: '/estudos',    label: 'Estudos' },
     v.materiais  !== false && { href: '/materiais',  label: 'Materiais' },
-    v.blog       !== false && { href: '/blog',       label: 'Blog · Ensaios' },
     v.cursos     !== false && { href: '/cursos',     label: 'Cursos' },
-    v.glossario  !== false && { href: '/glossario',  label: 'Glossário' },
     v.blog       !== false && { href: '/feed.xml',   label: 'RSS' },
   ].filter(Boolean);
 
@@ -122,8 +126,8 @@ export default function Footer({ showMaterialsCta = false }) {
               <LogoMarkFull showTagline={false} />
             </div>
             <p className="text-[0.88rem] text-text-dim max-w-xs leading-[1.85]">
-              Clínica junguiana online em todo o Brasil — adolescentes,
-              adultos e idosos. Estudo público e escrita sobre a obra de Jung.
+              Um estudo público e uma escrita contínua sobre a obra de Carl
+              Gustav Jung: ensaios, glossário e trilhas de leitura.
             </p>
             {settings.whatsappNumber && (
               <a
@@ -138,9 +142,9 @@ export default function Footer({ showMaterialsCta = false }) {
             )}
           </div>
 
-          <FooterColumn title="Atendimento" items={atendimento} />
-          <FooterColumn title="Conteúdo"    items={conteudo} />
-          <FooterColumn title="Contato"     items={contato} />
+          <FooterColumn title="Autor"    items={autor} />
+          <FooterColumn title="Conteúdo" items={conteudo} />
+          <FooterColumn title="Contato"  items={contato} />
         </div>
       </div>
 

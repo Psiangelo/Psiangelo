@@ -1,31 +1,46 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { trilhas as TRILHAS_DEFAULT, TRILHA_TONE } from '@/data/trilhas';
-import { getTrilhas } from '@/lib/sitedata';
+import { getTrilhas, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 import { useTrilhaProgress } from '@/lib/useTrilhaProgress';
 import { useSectionLabel } from '@/lib/useLabels';
 import { OrbitalAccent, QuaternioSigil } from '@/components/illustrations';
 
 /**
- * StudyPaths — preview na home das 3 trilhas oficiais.
+ * StudyPaths — preview na home das trilhas publicadas.
  * Resolve o "em que ordem consumir" antes que o leitor pergunte.
+ *
+ * Usa useSitedata (seed-first) em vez de useState+useEffect com o default
+ * hardcoded: sem isso, o HTML estático saía sempre com as 3 trilhas de
+ * src/data/trilhas.js, mesmo quando o snapshot publicado tem só 1 — e o
+ * texto "três caminhos" ficava falso no próprio HTML gerado.
  */
 export default function StudyPaths() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
-  const [trilhas, setTrilhasList] = useState(TRILHAS_DEFAULT);
+  const trilhas = useSitedata(getTrilhas, TRILHAS_DEFAULT, SITEDATA_KEYS.trilhas);
   const { percentOf, progress } = useTrilhaProgress();
 
-  useEffect(() => {
-    setTrilhasList(getTrilhas());
-  }, []);
-
   if (!trilhas || trilhas.length === 0) return null;
+
+  // Texto precisa derivar da contagem real de trilhas publicadas: com uma
+  // trilha só, "três caminhos curados" seria falso.
+  const shownCount = Math.min(trilhas.length, 3);
+  const COUNT_WORD = { 1: 'Uma trilha', 2: 'Dois caminhos', 3: 'Três caminhos' };
+  const leadText = shownCount === 1
+    ? 'Uma trilha curada para quem chega: do primeiro contato com Jung ao aprofundamento contínuo. Ela indica a ordem, o tempo e os materiais.'
+    : `${COUNT_WORD[shownCount]} curados para quem chega: do primeiro contato com Jung ao aprofundamento contínuo. Cada trilha indica a ordem, o tempo e os materiais.`;
+  const gridCols = shownCount === 1
+    ? 'grid-cols-1 max-w-md mx-auto'
+    : shownCount === 2
+      ? 'grid-cols-1 md:grid-cols-2'
+      : 'grid-cols-1 md:grid-cols-3';
 
   // Procura uma trilha em andamento (tem progresso, mas não 100%)
   const ongoing = trilhas.find((t) => {
@@ -68,9 +83,7 @@ export default function StudyPaths() {
               variants={fadeUp}
               className="text-[0.95rem] text-text-dim leading-[1.85] max-w-xl"
             >
-              Três caminhos curados para quem chega — do primeiro contato com Jung
-              até a supervisão clínica continuada. Cada trilha indica a ordem,
-              o tempo e os materiais.
+              {leadText}
             </motion.p>
           </div>
           <motion.div variants={fadeUp}>
@@ -112,7 +125,7 @@ export default function StudyPaths() {
           </motion.div>
         )}
 
-        <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <motion.div variants={stagger} className={`grid ${gridCols} gap-5`}>
           {trilhas.slice(0, 3).map((t, i) => {
             const tone = TRILHA_TONE[t.archetype] || TRILHA_TONE.Self;
             const pct = percentOf(t);
