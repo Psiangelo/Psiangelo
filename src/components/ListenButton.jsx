@@ -15,6 +15,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
  * arrastavel (toque e mouse) e pular 15s pra tras/frente. Como a Web Speech API
  * nao expoe posicao de audio, a linha do tempo e estimada por caracteres:
  * cada chunk vira um intervalo, e o seek reinicia a fala no chunk correspondente.
+ *
+ * ⚠ Regra de ouro daqui: synth.cancel() e ASSINCRONO. O utterance cancelado
+ * ainda dispara onend/onerror depois, e esses handlers avancavam o indice e
+ * chamavam speak() de novo — resultado: duas falas concorrentes, pulos pra
+ * frente e retrocessos aleatorios a cada clique. Por isso toda interrupcao
+ * incrementa `epochRef`; handlers de uma epoca vencida sao ignorados, e os
+ * callbacks do utterance antigo sao desligados antes do cancel.
  */
 
 // chars por segundo de fala em pt-BR a 1x — calibrado por ouvido, serve pra estimar tempo
@@ -22,6 +29,8 @@ const CHARS_PER_SECOND = 14.5;
 const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];
 const SKIP_SECONDS = 15;
 const RATE_STORAGE_KEY = 'psiangelo:listen-rate';
+// ~150 chars a 1x ≈ 10s de fala: abaixo do ponto em que o Chrome engasga
+const MAX_CHUNK_LEN = 150;
 
 const formatTime = (seconds) => {
   if (!Number.isFinite(seconds) || seconds < 0) seconds = 0;
@@ -39,20 +48,37 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
   const [seeking, setSeeking] = useState(false);
   const [seekValue, setSeekValue] = useState(0);
 
+  // Refs espelham o estado porque os handlers da Web Speech API sobrevivem ao
+  // render que os criou — ler o state ali devolveria valor velho.
+  const stateRef = useRef('idle');
+  const charsRef = useRef(0);
+  const rateRef = useRef(1);
+  const epochRef = useRef(0);
+  const utterRef = useRef(null);
   const chunkIndexRef = useRef(0);
   const keepAliveRef = useRef(null);
-  const cancelledRef = useRef(false);
-  const rateRef = useRef(1);
   const tickRef = useRef(null);
   const chunkStartedAtRef = useRef(0); // timestamp do inicio do chunk atual
-  const pausedAtRef = useRef(0); // acumulado de tempo pausado dentro do chunk
+  const pausedAccRef = useRef(0); // tempo acumulado em pausa dentro do chunk
   const pauseBeganRef = useRef(0);
+  const seekingRef = useRef(false);
+  const seekValueRef = useRef(0);
 
-  // Quebra o texto em pedacos pequenos pra contornar o limite do Chrome Android (~200 chars).
+  const setPos = useCallback((value) => {
+    charsRef.current = value;
+    setCharsDone(value);
+  }, []);
+
+  const setPlayerState = useCallback((value) => {
+    stateRef.current = value;
+    setState(value);
+  }, []);
+
+  // Quebra o texto em pedacos pequenos pra contornar o limite do Chrome Android.
   // Prefere quebrar em sentencas; se ainda for grande, quebra em virgulas; ultimo recurso: hard split.
   const chunks = useMemo(() => {
     const full = [title, text].filter(Boolean).join('. ');
-    const maxLen = 180;
+    const maxLen = MAX_CHUNK_LEN;
     if (!full) return [];
     const sentences = full
       .replace(/\s+/g, ' ')
@@ -101,8 +127,165 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
   const totalSeconds = totalChars / (CHARS_PER_SECOND * rate);
   const currentChars = seeking ? seekValue : charsDone;
   const elapsedSeconds = currentChars / (CHARS_PER_SECOND * rate);
-  const percent = totalChars ? (currentChars / totalChars) * 100 : 0;
+  const percent = totalChars ? Math.min(100, (currentChars / totalChars) * 100) : 0;
 
+  // ── temporizadores ───────────────────────────────────────────────────────
+  const stopKeepAlive = useCallback(() => {
+    if (keepAliveRef.current) {
+      clearInterval(keepAliveRef.current);
+      keepAliveRef.current = null;
+    }
+  }, []);
+
+  const startKeepAlive = useCallback(() => {
+    if (keepAliveRef.current) return;
+    // Chrome Android pausa speech depois de ~15s: pulso a cada 8s mantem vivo.
+    // So pulsa se o player acredita estar tocando — senao o resume() ressuscita
+    // uma fala que o usuario acabou de pausar.
+    keepAliveRef.current = setInterval(() => {
+      const synth = window.speechSynthesis;
+      if (!synth || stateRef.current !== 'playing') return;
+      if (synth.speaking && !synth.paused) {
+        synth.pause();
+        synth.resume();
+      }
+    }, 8000);
+  }, []);
+
+  const stopTicker = useCallback(() => {
+    if (tickRef.current) {
+      clearInterval(tickRef.current);
+      tickRef.current = null;
+    }
+  }, []);
+
+  // Interpola a posicao dentro do chunk atual pelo tempo decorrido — onboundary
+  // nao dispara em todos os navegadores, entao o relogio e a fonte confiavel.
+  const startTicker = useCallback(() => {
+    if (tickRef.current) return;
+    tickRef.current = setInterval(() => {
+      if (stateRef.current !== 'playing' || seekingRef.current) return;
+      const i = chunkIndexRef.current;
+      const chunk = chunks[i];
+      if (!chunk || !chunkStartedAtRef.current) return;
+      const spentMs = Date.now() - chunkStartedAtRef.current - pausedAccRef.current;
+      const chunkSeconds = chunk.length / (CHARS_PER_SECOND * rateRef.current);
+      const frac = Math.max(0, Math.min(1, spentMs / 1000 / Math.max(chunkSeconds, 0.001)));
+      const next = offsets[i] + chunk.length * frac;
+      // a estimativa so anda pra frente: nunca deixa a barra recuar sozinha
+      if (next > charsRef.current) setPos(next);
+    }, 200);
+  }, [chunks, offsets, setPos]);
+
+  // ── nucleo da fala ───────────────────────────────────────────────────────
+  const getVoice = () => {
+    const voices = window.speechSynthesis.getVoices();
+    return (
+      voices.find((v) => v.lang === 'pt-BR' && /Google|Microsoft|Luciana|Felipe/i.test(v.name)) ||
+      voices.find((v) => v.lang === 'pt-BR') ||
+      voices.find((v) => v.lang?.startsWith('pt')) ||
+      voices[0]
+    );
+  };
+
+  /**
+   * Interrompe tudo e abre uma nova epoca. Devolve o numero da epoca: quem for
+   * falar depois precisa provar que ainda esta nela.
+   */
+  const hardCancel = useCallback(() => {
+    epochRef.current += 1;
+    const dead = utterRef.current;
+    if (dead) {
+      // desliga antes do cancel: o utterance morto ainda emite onend/onerror
+      dead.onstart = null;
+      dead.onend = null;
+      dead.onerror = null;
+      dead.onboundary = null;
+      utterRef.current = null;
+    }
+    const synth = window.speechSynthesis;
+    try { synth.cancel(); } catch {}
+    // cancel() com o synth pausado deixa a flag paused presa no Chrome, e a
+    // proxima utterance nunca comeca — resume() com a fila vazia e inofensivo
+    try { synth.resume(); } catch {}
+    stopTicker();
+    chunkStartedAtRef.current = 0;
+    pausedAccRef.current = 0;
+    pauseBeganRef.current = 0;
+    return epochRef.current;
+  }, [stopTicker]);
+
+  const finish = useCallback(() => {
+    stopKeepAlive();
+    stopTicker();
+    utterRef.current = null;
+    setPos(totalChars);
+    setPlayerState('idle');
+  }, [setPos, setPlayerState, stopKeepAlive, stopTicker, totalChars]);
+
+  const speakChunk = useCallback((index, epoch) => {
+    if (epoch !== epochRef.current) return; // epoca vencida: outro clique mandou
+    if (index >= chunks.length) { finish(); return; }
+
+    chunkIndexRef.current = index;
+    const u = new SpeechSynthesisUtterance(chunks[index]);
+    u.lang = 'pt-BR';
+    u.rate = rateRef.current;
+    u.pitch = 1.0;
+    const v = getVoice();
+    if (v) u.voice = v;
+
+    u.onstart = () => {
+      if (epoch !== epochRef.current) return;
+      chunkStartedAtRef.current = Date.now();
+      pausedAccRef.current = 0;
+      startKeepAlive();
+      startTicker();
+    };
+    u.onboundary = (e) => {
+      if (epoch !== epochRef.current || seekingRef.current) return;
+      if (typeof e?.charIndex === 'number') {
+        const next = offsets[index] + Math.min(e.charIndex, chunks[index].length);
+        if (next > charsRef.current) setPos(next);
+      }
+    };
+    u.onend = () => {
+      if (epoch !== epochRef.current) return;
+      setPos(offsets[index + 1] ?? totalChars);
+      speakChunk(index + 1, epoch);
+    };
+    u.onerror = (e) => {
+      // "interrupted"/"canceled" sao normais quando o usuario para ou busca
+      const err = e?.error;
+      if (epoch !== epochRef.current || err === 'interrupted' || err === 'canceled') return;
+      if (err) console.warn('[ListenButton] erro:', err);
+      setPos(offsets[index + 1] ?? totalChars);
+      speakChunk(index + 1, epoch);
+    };
+
+    utterRef.current = u;
+    window.speechSynthesis.speak(u);
+  }, [chunks, offsets, totalChars, finish, setPos, startKeepAlive, startTicker]);
+
+  /** Recomeca a fala num chunk. Unico caminho usado por play, seek, skip e velocidade. */
+  const playFromChunk = useCallback((index) => {
+    if (chunks.length === 0) return;
+    const clamped = Math.max(0, Math.min(index, chunks.length - 1));
+    const epoch = hardCancel();
+    setPos(offsets[clamped]);
+    setPlayerState('playing');
+    // deixa o cancel drenar a fila antes de falar de novo (Chrome engasga sem isso)
+    setTimeout(() => speakChunk(clamped, epoch), 80);
+  }, [chunks.length, hardCancel, offsets, setPos, setPlayerState, speakChunk]);
+
+  const chunkAtChar = useCallback((charPos) => {
+    for (let i = chunks.length - 1; i >= 0; i -= 1) {
+      if (charPos >= offsets[i]) return i;
+    }
+    return 0;
+  }, [chunks.length, offsets]);
+
+  // ── ciclo de vida ────────────────────────────────────────────────────────
   useEffect(() => {
     const has = typeof window !== 'undefined' && 'speechSynthesis' in window;
     setSupported(has);
@@ -115,6 +298,7 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
       } catch {}
     }
     return () => {
+      epochRef.current += 1;
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -125,192 +309,78 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
     };
   }, []);
 
-  const getVoice = () => {
-    const voices = window.speechSynthesis.getVoices();
-    return (
-      voices.find((v) => v.lang === 'pt-BR' && /Google|Microsoft|Luciana|Felipe/i.test(v.name)) ||
-      voices.find((v) => v.lang === 'pt-BR') ||
-      voices.find((v) => v.lang?.startsWith('pt')) ||
-      voices[0]
-    );
-  };
-
-  const startKeepAlive = () => {
-    if (keepAliveRef.current) return;
-    // Chrome Android pausa speech depois de ~15s: pulso a cada 10s mantem vivo
-    keepAliveRef.current = setInterval(() => {
-      const synth = window.speechSynthesis;
-      if (!synth) return;
-      if (synth.speaking && !synth.paused) {
-        synth.pause();
-        synth.resume();
-      }
-    }, 10000);
-  };
-
-  const stopKeepAlive = () => {
-    if (keepAliveRef.current) {
-      clearInterval(keepAliveRef.current);
-      keepAliveRef.current = null;
-    }
-  };
-
-  // Interpola a posicao dentro do chunk atual pelo tempo decorrido — onboundary
-  // nao dispara em todos os navegadores, entao o relogio e a fonte confiavel.
-  const startTicker = useCallback(() => {
-    if (tickRef.current) return;
-    tickRef.current = setInterval(() => {
-      const synth = typeof window !== 'undefined' ? window.speechSynthesis : null;
-      if (!synth || synth.paused || !synth.speaking) return;
-      const i = chunkIndexRef.current;
-      const chunk = chunks[i];
-      if (!chunk) return;
-      const spentMs = Date.now() - chunkStartedAtRef.current - pausedAtRef.current;
-      const chunkSeconds = chunk.length / (CHARS_PER_SECOND * rateRef.current);
-      const frac = Math.min(1, spentMs / 1000 / Math.max(chunkSeconds, 0.001));
-      setCharsDone(offsets[i] + chunk.length * frac);
-    }, 250);
-  }, [chunks, offsets]);
-
-  const stopTicker = () => {
-    if (tickRef.current) {
-      clearInterval(tickRef.current);
-      tickRef.current = null;
-    }
-  };
-
-  const speakNext = useCallback(() => {
-    if (cancelledRef.current) return;
-    const synth = window.speechSynthesis;
-    const i = chunkIndexRef.current;
-    if (i >= chunks.length) {
-      setState('idle');
-      setCharsDone(totalChars);
-      stopKeepAlive();
-      stopTicker();
-      return;
-    }
-
-    const u = new SpeechSynthesisUtterance(chunks[i]);
-    u.lang = 'pt-BR';
-    u.rate = rateRef.current;
-    u.pitch = 1.0;
-    const v = getVoice();
-    if (v) u.voice = v;
-
-    u.onstart = () => {
-      chunkStartedAtRef.current = Date.now();
-      pausedAtRef.current = 0;
-      setState('playing');
-      startKeepAlive();
-      startTicker();
-    };
-    u.onboundary = (e) => {
-      if (typeof e?.charIndex === 'number') {
-        setCharsDone(offsets[chunkIndexRef.current] + e.charIndex);
+  // A sintese e global ao navegador: sair da aba com a leitura rolando deixaria
+  // a voz solta. Ao voltar, o Chrome as vezes acorda pausado — normaliza.
+  useEffect(() => {
+    if (!supported) return undefined;
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible' && stateRef.current === 'playing') {
+        try { window.speechSynthesis.resume(); } catch {}
       }
     };
-    u.onend = () => {
-      if (cancelledRef.current) return;
-      chunkIndexRef.current += 1;
-      setCharsDone(offsets[chunkIndexRef.current] ?? totalChars);
-      speakNext();
-    };
-    u.onerror = (e) => {
-      // "interrupted" e "canceled" sao normais quando usuario para/busca; so loga outros
-      if (e?.error && e.error !== 'interrupted' && e.error !== 'canceled') {
-        console.warn('[ListenButton] erro:', e.error);
-      }
-      if (cancelledRef.current) return;
-      // tenta continuar no proximo chunk
-      chunkIndexRef.current += 1;
-      speakNext();
-    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, [supported]);
 
-    synth.speak(u);
-  }, [chunks, offsets, totalChars, startTicker]);
-
-  // Recomeca a fala a partir de um chunk — usado por seek, skip e troca de velocidade.
-  const playFromChunk = useCallback((index) => {
-    const synth = window.speechSynthesis;
-    const clamped = Math.max(0, Math.min(index, chunks.length - 1));
-    cancelledRef.current = true;
-    synth.cancel();
-    cancelledRef.current = false;
-    chunkIndexRef.current = clamped;
-    setCharsDone(offsets[clamped]);
-    // deixa o cancel drenar a fila antes de falar de novo (Chrome engasga sem isso)
-    setTimeout(() => {
-      if (!cancelledRef.current) speakNext();
-    }, 60);
-  }, [chunks.length, offsets, speakNext]);
-
-  const chunkAtChar = useCallback((charPos) => {
-    for (let i = chunks.length - 1; i >= 0; i -= 1) {
-      if (charPos >= offsets[i]) return i;
-    }
-    return 0;
-  }, [chunks.length, offsets]);
-
+  // ── comandos ─────────────────────────────────────────────────────────────
   const start = () => {
     if (!supported || chunks.length === 0) return;
     const synth = window.speechSynthesis;
-    synth.cancel();
-    cancelledRef.current = false;
-    chunkIndexRef.current = 0;
-    setCharsDone(0);
-    // feedback imediato: o painel abre no clique, sem esperar o onstart da voz
-    setState('playing');
+    const epoch = hardCancel();
+    setPos(0);
+    setPlayerState('playing'); // feedback imediato: o painel abre no clique
 
-    // Se vozes ainda nao carregaram (iOS frio), aguarda e ja comeca
-    const voicesReady = synth.getVoices().length > 0;
-    if (!voicesReady) {
-      let fired = false;
-      const kick = () => {
-        if (fired) return;
-        fired = true;
-        synth.removeEventListener('voiceschanged', kick);
-        speakNext();
-      };
-      synth.addEventListener('voiceschanged', kick);
-      // fallback: se o evento nao disparar em 500ms, tenta assim mesmo
-      setTimeout(kick, 500);
-    } else {
-      speakNext();
+    const kickoff = () => speakChunk(0, epoch);
+    if (synth.getVoices().length > 0) {
+      kickoff();
+      return;
     }
+    // vozes ainda nao carregaram (iOS frio): espera o evento, com rede de seguranca
+    let fired = false;
+    const kick = () => {
+      if (fired) return;
+      fired = true;
+      synth.removeEventListener('voiceschanged', kick);
+      kickoff();
+    };
+    synth.addEventListener('voiceschanged', kick);
+    setTimeout(kick, 500);
   };
 
   const toggle = () => {
     const synth = window.speechSynthesis;
-    if (state === 'idle') return start();
-    if (state === 'playing') {
-      synth.pause();
-      pauseBeganRef.current = Date.now();
-      stopKeepAlive();
+    if (stateRef.current === 'idle') return start();
+    if (stateRef.current === 'playing') {
+      setPlayerState('paused'); // antes do pause(): trava o keep-alive na hora
       stopTicker();
-      setState('paused');
+      pauseBeganRef.current = Date.now();
+      try { synth.pause(); } catch {}
       return;
     }
-    if (state === 'paused') {
-      if (pauseBeganRef.current) {
-        pausedAtRef.current += Date.now() - pauseBeganRef.current;
-        pauseBeganRef.current = 0;
-      }
-      synth.resume();
-      startKeepAlive();
-      startTicker();
-      setState('playing');
+    // retomando
+    if (pauseBeganRef.current) {
+      pausedAccRef.current += Date.now() - pauseBeganRef.current;
+      pauseBeganRef.current = 0;
     }
+    setPlayerState('playing');
+    try { synth.resume(); } catch {}
+    startKeepAlive();
+    startTicker();
+    // Safari/iOS as vezes ignora o resume() e a fala nunca volta: se em 400ms
+    // nada estiver falando, refaz o chunk atual do zero.
+    setTimeout(() => {
+      if (stateRef.current !== 'playing') return;
+      const s = window.speechSynthesis;
+      if (!s.speaking || s.paused) playFromChunk(chunkIndexRef.current);
+    }, 400);
   };
 
   const stop = () => {
-    cancelledRef.current = true;
+    hardCancel();
     stopKeepAlive();
-    stopTicker();
-    window.speechSynthesis.cancel();
     chunkIndexRef.current = 0;
-    setState('idle');
-    setCharsDone(0);
+    setPos(0);
+    setPlayerState('idle');
   };
 
   const changeRate = () => {
@@ -318,27 +388,42 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
     setRate(next);
     rateRef.current = next;
     try { window.localStorage.setItem(RATE_STORAGE_KEY, String(next)); } catch {}
-    // a rate de uma utterance ja iniciada e imutavel: refaz o chunk atual na nova velocidade
-    if (state !== 'idle') playFromChunk(chunkIndexRef.current);
+    // a rate de uma utterance ja iniciada e imutavel: refaz o chunk atual na
+    // nova velocidade, retomando de onde a estimativa parou
+    if (stateRef.current !== 'idle') playFromChunk(chunkAtChar(charsRef.current));
   };
 
   const skip = (seconds) => {
-    if (state === 'idle') return;
+    if (stateRef.current === 'idle') return;
     const delta = seconds * CHARS_PER_SECOND * rateRef.current;
-    const target = Math.max(0, Math.min(charsDone + delta, totalChars - 1));
+    const target = Math.max(0, Math.min(charsRef.current + delta, Math.max(totalChars - 1, 0)));
     playFromChunk(chunkAtChar(target));
   };
 
-  const commitSeek = (value) => {
-    setSeeking(false);
-    if (state === 'idle') {
-      // buscar com a leitura parada equivale a comecar dali
-      cancelledRef.current = false;
-      playFromChunk(chunkAtChar(value));
-      return;
-    }
-    playFromChunk(chunkAtChar(value));
+  const beginSeek = () => {
+    seekingRef.current = true;
+    setSeeking(true);
   };
+
+  const commitSeek = useCallback(() => {
+    if (!seekingRef.current) return;
+    seekingRef.current = false;
+    setSeeking(false);
+    playFromChunk(chunkAtChar(seekValueRef.current));
+  }, [chunkAtChar, playFromChunk]);
+
+  // Soltar o dedo/mouse fora da barra tambem precisa concluir a busca — senao o
+  // player fica preso em "arrastando" e o tempo congela.
+  useEffect(() => {
+    if (!seeking) return undefined;
+    const end = () => commitSeek();
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+    return () => {
+      window.removeEventListener('pointerup', end);
+      window.removeEventListener('pointercancel', end);
+    };
+  }, [seeking, commitSeek]);
 
   if (!supported || chunks.length === 0) {
     return null;
@@ -443,11 +528,18 @@ export default function ListenButton({ text, title, label = 'Ouvir' }) {
           max={Math.max(totalChars - 1, 1)}
           step={1}
           value={Math.round(currentChars)}
-          onChange={(e) => { setSeeking(true); setSeekValue(Number(e.target.value)); }}
-          onMouseUp={(e) => commitSeek(Number(e.currentTarget.value))}
-          onTouchEnd={(e) => commitSeek(Number(e.currentTarget.value))}
-          onKeyUp={(e) => commitSeek(Number(e.currentTarget.value))}
+          onPointerDown={beginSeek}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            seekValueRef.current = v;
+            setSeekValue(v);
+            // teclado e clique direto na trilha nao passam por pointerdown
+            if (!seekingRef.current) beginSeek();
+          }}
+          onKeyUp={commitSeek}
+          onBlur={commitSeek}
           aria-label="Posição da leitura"
+          aria-valuetext={`${formatTime(elapsedSeconds)} de ${formatTime(totalSeconds)}`}
           className="listen-seek absolute left-0 right-0 w-full appearance-none bg-transparent cursor-pointer"
         />
       </div>
