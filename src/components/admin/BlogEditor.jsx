@@ -432,6 +432,9 @@ const PullquoteBlockquote = Blockquote.extend({
 export default function BlogEditor({ content, onChange, placeholder = 'Comece a escrever...' }) {
   const [showLinkPopover, setShowLinkPopover] = useState(false);
   const linkBtnRef = useRef(null);
+  // Botão "apontar para verbete do glossário" (GlossaryTermPopover)
+  const [showTermPopover, setShowTermPopover] = useState(false);
+  const termBtnRef = useRef(null);
 
   const editor = useEditor({
     extensions: [
