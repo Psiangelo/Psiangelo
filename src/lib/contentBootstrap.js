@@ -15,6 +15,7 @@
 
 import snapshotLocal from '@/data/site-content.json';
 import { fetchLatestSnapshot, isSiteSupabaseConfigured } from '@/lib/supabase-site';
+import { markSynced } from '@/lib/unpublishedChanges';
 
 const VERSION_KEY = 'angelo_admin_content_version';
 
@@ -41,6 +42,16 @@ function applySnapshot(snapshot) {
     } catch {
       /* quota cheia — pula essa chave, continua as outras */
     }
+  }
+
+  // Acabou de sobrescrever o localStorage com um snapshot que já está no ar
+  // (publicado ou deployado): não há mudança pendente nenhuma. Sem esse
+  // carimbo, o banner do admin acusa "mudanças não publicadas" em qualquer
+  // navegador que ainda não tenha publicado por ali.
+  try {
+    markSynced(snapshot.published_at || version);
+  } catch {
+    /* noop */
   }
 
   try {

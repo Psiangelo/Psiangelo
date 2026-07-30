@@ -84,6 +84,33 @@ export function markPublished() {
   }
 }
 
+/**
+ * markSynced — carimba que o localStorage acabou de receber, sem edição
+ * nenhuma por cima, um snapshot que JÁ está publicado (ou que já foi ao ar
+ * no deploy).
+ *
+ * ⚠️ Por que isso existe: o carimbo de "última publicação" vive no
+ * localStorage do navegador. Num navegador sem esse carimbo (limpo, outro
+ * aparelho, aba anônima), `hasUnpublishedChanges` assumia que TODO o
+ * conteúdo era mudança pendente, e o banner «Você tem mudanças não
+ * publicadas» aparecia para sempre, dizendo «nunca publicado ainda» mesmo
+ * havendo publicações. Um aviso que está sempre ligado não avisa nada, e o
+ * Gabriel chegou a achar que o banner era inútil (30/07/2026).
+ *
+ * @param {string|number|null} publishedAt data da publicação de origem
+ */
+export function markSynced(publishedAt) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(HASH_KEY, computeSnapshotHash());
+    const iso = publishedAt ? new Date(publishedAt).toISOString() : new Date().toISOString();
+    localStorage.setItem(PUBLISHED_AT_KEY, iso);
+    window.dispatchEvent(new CustomEvent('admin:published'));
+  } catch {
+    /* noop */
+  }
+}
+
 export function hasUnpublishedChanges() {
   const current = computeSnapshotHash();
   const lastPublished = readLastPublishedHash();

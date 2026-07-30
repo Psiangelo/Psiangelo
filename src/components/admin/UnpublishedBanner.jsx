@@ -69,9 +69,11 @@ export default function UnpublishedBanner({ addToast, addLogEntry, onGoToPublish
     }
   };
 
+  // "Nunca publicado ainda" era mentira frequente: o carimbo é por navegador,
+  // então um navegador novo dizia isso mesmo havendo publicações no ar.
   const lastPublishedText = publishedAt
     ? `Última publicação: ${formatAgo(publishedAt)}`
-    : 'Nunca publicado ainda';
+    : 'Sem registro de publicação neste navegador';
 
   return (
     <AnimatePresence>
@@ -94,7 +96,7 @@ export default function UnpublishedBanner({ addToast, addLogEntry, onGoToPublish
                 Você tem mudanças não publicadas
               </p>
               <p className="text-[10px] sm:text-[11px] text-[#0E0C0A]/70 font-sans leading-tight">
-                {lastPublishedText} · mobile e visitantes veem o conteúdo antigo até você publicar
+                {lastPublishedText} · o que você editou está só neste navegador até publicar
               </p>
             </div>
           </div>
