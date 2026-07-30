@@ -6,7 +6,7 @@ import SectionLabel from '@/components/SectionLabel';
 import { fadeUp, stagger } from '@/lib/constants';
 import { QuaternioSigil } from '@/components/illustrations';
 import AmbientVideo from '@/components/ui/AmbientVideo';
-import { WhatsAppIcon } from '@/components/ui/Button';
+import { WhatsAppIcon, InstagramIcon } from '@/components/ui/Button';
 import { useAmbientMotion } from '@/lib/useAmbientMotion';
 import { getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
@@ -16,14 +16,8 @@ const SECONDARY_CONTACTS = [
   {
     label: 'Instagram',
     value: '@psiangelo',
-    href: 'https://instagram.com/psiangelo',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" />
-        <circle cx="12" cy="12" r="5" />
-        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-      </svg>
-    ),
+    href: 'https://www.instagram.com/psiangelo/',
+    icon: <span className="w-5 h-5 inline-flex"><InstagramIcon /></span>,
   },
   {
     label: 'E-mail',
@@ -51,13 +45,7 @@ export default function ContactCTA() {
       label: c.instagramLabel || 'Instagram',
       value: c.instagramValue,
       href: c.instagramUrl,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="5" />
-          <circle cx="12" cy="12" r="5" />
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-        </svg>
-      ),
+      icon: <span className="w-5 h-5 inline-flex"><InstagramIcon /></span>,
     },
     c.emailValue && {
       label: c.emailLabel || 'E-mail',

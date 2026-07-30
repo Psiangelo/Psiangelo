@@ -12,6 +12,7 @@ import { useSectionLabel } from '@/lib/useLabels';
 import { QuaternioSigil, SpiralAccent } from '@/components/illustrations';
 import { resolveImageSrc } from '@/lib/basepath';
 import PosterCover from '@/components/ui/PosterCover';
+import InstagramButton from '@/components/ui/InstagramButton';
 
 export default function About() {
   const ref = useRef(null);
@@ -109,6 +110,10 @@ export default function About() {
               >
                 γνῶθι σεαυτόν
               </span>
+            </div>
+
+            <div className="mt-8 flex justify-center lg:justify-start">
+              <InstagramButton size="sm" />
             </div>
           </motion.div>
 

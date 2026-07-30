@@ -1,5 +1,5 @@
 {
-  "version": 1785410377594,
+  "version": 1785410377595,
   "publishedAt": "2026-05-24T15:11:06.92118+00:00",
   "note": "Publicado via banner",
   "data": {
@@ -12,6 +12,15 @@
           "icon": "",
           "image": "",
           "label": "Contato",
+          "accent": "gold",
+          "hidden": false,
+          "description": ""
+        },
+        {
+          "href": "https://www.instagram.com/psiangelo/",
+          "icon": "",
+          "image": "",
+          "label": "Instagram",
           "accent": "gold",
           "hidden": false,
           "description": ""
@@ -4778,7 +4787,7 @@
         "emailLabel": "E-mail",
         "emailValue": "",
         "primaryText": "Me conta brevemente o que te traz e combinamos um horário. Costumo responder no mesmo dia.",
-        "instagramUrl": "https://instagram.com/psiangelo",
+        "instagramUrl": "https://www.instagram.com/psiangelo/",
         "primaryLabel": "Canal principal",
         "sectionLabel": "Agendar",
         "primaryButton": "Marcar conversa inicial",
@@ -4798,7 +4807,7 @@
       "accentColor": "#B48C50",
       "youtubeLink": "",
       "emailAddress": "",
-      "instagramLink": "https://www.instagram.com/",
+      "instagramLink": "https://www.instagram.com/psiangelo/",
       "showFAQSection": true,
       "whatsappNumber": "5581987349114",
       "showHeroSection": true,

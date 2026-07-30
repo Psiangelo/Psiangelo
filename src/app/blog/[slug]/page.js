@@ -54,12 +54,10 @@ export function generateMetadata({ params }) {
   }
 
   const title = stripHighlights(post.title) || 'Publicação';
-  const description =
-    stripHighlights(post.excerpt) ||
-    'Ensaio de psicologia analítica — Psiangelo. Psicoterapia junguiana online.';
+  const description = buildDescription(post);
   const slug = post.slug || post.id;
-  const ogImage  = `${SITE_URL}/og/posts/${slug}.png`;
-  const ogImageV = `${SITE_URL}/og/posts-v/${slug}.png`;
+  const ogImage  = `${SITE_URL}/og/posts/${slug}.jpg`;
+  const ogImageV = `${SITE_URL}/og/posts-v/${slug}.jpg`;
   // trailingSlash:true no next.config — canonical precisa bater com a rota real
   const url = `${SITE_URL}/blog/${slug}/`;
 
@@ -76,8 +74,8 @@ export function generateMetadata({ params }) {
       description,
       images: [
         // Vertical primeiro — scrapers do WhatsApp costumam pegar o primeiro
-        { url: ogImageV, width: 720,  height: 1280, alt: title, type: 'image/png' },
-        { url: ogImage,  width: 1200, height: 630,  alt: title, type: 'image/png' },
+        { url: ogImageV, width: 720,  height: 1280, alt: title, type: 'image/jpeg' },
+        { url: ogImage,  width: 1200, height: 630,  alt: title, type: 'image/jpeg' },
         // Fallback global, caso a imagem gerada não exista
         { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo' },
       ],
@@ -99,15 +97,25 @@ function stripHtml(s) {
   return typeof s === 'string' ? s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
 }
 
+// Descrição de compartilhamento: excerpt do painel; se vazio, deriva das
+// primeiras linhas do content_html (mesmo texto usado no schema.org abaixo).
+// Só cai no texto institucional genérico quando não há conteúdo real algum.
+function buildDescription(post) {
+  const excerpt = stripHighlights(post.excerpt);
+  if (excerpt) return excerpt;
+  const fromContent = stripHtml(post.content_html);
+  if (fromContent) {
+    return fromContent.length > 200 ? `${fromContent.slice(0, 197).trim()}…` : fromContent;
+  }
+  return 'Ensaio de psicologia analítica — Psiangelo. Psicoterapia junguiana online.';
+}
+
 function buildBlogPostingSchema(post) {
   if (!post) return null;
   const slug = post.slug || post.id;
   const url = `${SITE_URL}/blog/${slug}/`;
   const title = stripHighlights(post.title) || 'Publicação';
-  const description =
-    stripHighlights(post.excerpt) ||
-    stripHtml(post.content_html).slice(0, 280) ||
-    'Ensaio de psicologia analítica — Psiangelo.';
+  const description = buildDescription(post);
   const body = stripHtml(post.content_html);
   const wordCount = body ? body.split(/\s+/).filter(Boolean).length : undefined;
 
@@ -119,8 +127,8 @@ function buildBlogPostingSchema(post) {
     headline: title,
     description,
     image: [
-      `${SITE_URL}/og/posts-v/${slug}.png`,
-      `${SITE_URL}/og/posts/${slug}.png`,
+      `${SITE_URL}/og/posts-v/${slug}.jpg`,
+      `${SITE_URL}/og/posts/${slug}.jpg`,
     ],
     datePublished: post.created_at || post.updated_at,
     dateModified: post.updated_at || post.created_at,

@@ -8,7 +8,14 @@
  * Fonte das imagens: featured_image pode ser data URI (upload comprimido)
  * ou path relativo (ex. /images/...) que é resolvido em public/.
  *
- * Saída: public/og/posts/{slug}.png
+ * Saída: public/og/posts/{slug}.jpg (+ posts-v/{slug}.jpg pra vertical)
+ *
+ * O resvg só renderiza PNG (asPng()), que pra foto vira 1-1.5MB por ser
+ * lossless — pesado demais pro WhatsApp, que ignora o preview de og:image
+ * quando o arquivo demora/estoura o orçamento do crawler. Por isso o PNG
+ * intermediário é reamostrado (via .pixels RGBA) e reencodado como JPEG
+ * qualidade 78 com o jpeg-js (puro JS, sem binário nativo) — cai pra
+ * dezenas de KB sem perder a legibilidade do título sobreposto.
  *
  * Rodado automaticamente no prebuild (package.json) — não quebra o build
  * se algum post falhar: só loga e segue.
@@ -18,6 +25,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'no
 import { resolve, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Resvg } from '@resvg/resvg-js';
+import jpeg from 'jpeg-js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
@@ -281,6 +289,14 @@ function composeSvg({ imageUri, title, eyebrow, date, seed, width = WIDTH, heigh
 </svg>`;
 }
 
+// Renderiza o SVG e devolve um JPEG (Buffer) já comprimido — WhatsApp/redes
+// sociais tem orçamento curto de download pro preview; JPEG ~80 fica na
+// casa das dezenas de KB contra o ~1MB do PNG lossless equivalente.
+function renderToJpeg(svg, width, fontOpts) {
+  const rendered = new Resvg(svg, { fitTo: { mode: 'width', value: width }, font: fontOpts, background: BG }).render();
+  return jpeg.encode({ data: rendered.pixels, width: rendered.width, height: rendered.height }, 78).data;
+}
+
 function fmtDate(iso) {
   if (!iso) return '';
   try {
@@ -311,8 +327,8 @@ async function main() {
     if (!slug) { skip++; continue; }
     if (post.status && post.status !== 'published') { skip++; continue; }
 
-    const outFile  = resolve(out,  `${slug}.png`);
-    const outFileV = resolve(outV, `${slug}.png`);
+    const outFile  = resolve(out,  `${slug}.jpg`);
+    const outFileV = resolve(outV, `${slug}.jpg`);
     try {
       const imageUri  = await resolveImageDataUri(post.featured_image);
       // Vertical prefere featured_cover (já 9:16); fallback pra featured_image
@@ -334,15 +350,15 @@ async function main() {
 
       // Horizontal (Twitter/Facebook/Fallback)
       const svg = composeSvg({ imageUri, ...baseOpts, width: WIDTH, height: HEIGHT });
-      const png = new Resvg(svg, { fitTo: { mode: 'width', value: WIDTH }, font: fontOpts, background: BG }).render().asPng();
-      writeFileSync(outFile, png);
+      const jpg = renderToJpeg(svg, WIDTH, fontOpts);
+      writeFileSync(outFile, jpg);
 
       // Vertical (WhatsApp portrait)
       const svgV = composeSvg({ imageUri: imageUriV, ...baseOpts, width: V_WIDTH, height: V_HEIGHT });
-      const pngV = new Resvg(svgV, { fitTo: { mode: 'width', value: V_WIDTH }, font: fontOpts, background: BG }).render().asPng();
-      writeFileSync(outFileV, pngV);
+      const jpgV = renderToJpeg(svgV, V_WIDTH, fontOpts);
+      writeFileSync(outFileV, jpgV);
 
-      console.log(`✓ og/posts/${slug}.png (${(png.length/1024).toFixed(0)} KB) + posts-v (${(pngV.length/1024).toFixed(0)} KB)`);
+      console.log(`✓ og/posts/${slug}.jpg (${(jpg.length/1024).toFixed(0)} KB) + posts-v (${(jpgV.length/1024).toFixed(0)} KB)`);
       ok++;
     } catch (e) {
       console.warn(`✗ falhou ${slug}: ${e.message}`);

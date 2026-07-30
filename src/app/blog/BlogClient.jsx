@@ -18,6 +18,7 @@ import { useVisibility } from '@/lib/useVisibility';
 import { getBlogPosts, getBlogSeries, SITEDATA_KEYS } from '@/lib/sitedata';
 import AuthorBand from '@/components/AuthorBand';
 import PosterCover from '@/components/ui/PosterCover';
+import { formatPostDate } from '@/lib/formatDate';
 import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 import { BASE_PATH } from '@/lib/basepath';
 
@@ -34,12 +35,9 @@ const SERIES_STORAGE_KEY = SITEDATA_KEYS.blogSeries;
  */
 
 /* ====== Helpers ====== */
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  try {
-    return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-  } catch { return dateStr; }
-}
+// Data em UTC fixo, via helper compartilhado — sem isso, servidor e cliente
+// formatam fusos diferentes e a hidratação quebra. Ver src/lib/formatDate.js.
+const formatDate = formatPostDate;
 
 function calculateReadingTime(html) {
   if (!html) return 0;

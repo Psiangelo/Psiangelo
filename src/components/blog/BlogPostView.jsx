@@ -18,7 +18,8 @@ import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { linkGlossaryTerms } from '@/lib/glossaryLinker';
 import { getGlossario, getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
-import { BASE_PATH } from '@/lib/basepath';
+import { BASE_PATH, resolveImageSrc } from '@/lib/basepath';
+import { formatPostDate } from '@/lib/formatDate';
 import Newsletter from '@/components/ui/Newsletter';
 
 /**
@@ -35,12 +36,10 @@ import Newsletter from '@/components/ui/Newsletter';
  */
 
 /* ====== Helpers ====== */
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  try {
-    return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-  } catch { return dateStr; }
-}
+// Data em UTC fixo, via helper compartilhado. Formatar no fuso local fazia o
+// build (UTC) e o navegador do leitor (UTC-3) produzirem textos diferentes,
+// o que quebrava a hidratação e derrubava a página. Ver src/lib/formatDate.js.
+const formatDate = formatPostDate;
 
 function calculateReadingTime(html) {
   if (!html) return 0;
@@ -299,6 +298,16 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
   );
   const articleRef = useRef(null);
 
+  // Capa dupla: featured_image (horizontal, desktop) + featured_cover
+  // (vertical, cadastrada pra celular). Sem a troca por <picture>, o mobile
+  // herdava a mesma imagem 16/9 do desktop e virava uma tira fina no topo.
+  // Resolvido em HTML puro (sem JS medindo largura de janela): o navegador
+  // escolhe a <source> certa antes do primeiro paint, então funciona sem JS
+  // e sem salto de layout. Se só uma capa existir, ela cobre os dois casos.
+  const desktopCoverSrc = resolveImageSrc(post.featured_image || post.featured_cover);
+  const mobileCoverSrc = resolveImageSrc(post.featured_cover || post.featured_image);
+  const hasCover = Boolean(desktopCoverSrc || mobileCoverSrc);
+
   // Pullquote: detecta blockquotes curtas (<=220 chars) ou explicitas e
   // adiciona botao 'compartilhar trecho' que copia a URL
   useEffect(() => {
@@ -340,17 +349,24 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
     <>
       <ReadingProgressBar targetRef={articleRef} />
 
-      {/* Hero do post — fullbleed cover quando tem imagem */}
-      {post.featured_image ? (
+      {/* Hero do post — fullbleed cover quando tem imagem.
+          <picture> com <source media> troca a capa vertical (celular) pela
+          horizontal (desktop) no HTML servido, sem JS e sem CLS. */}
+      {hasCover ? (
         <header className="relative h-[55vh] md:h-[65vh] min-h-[420px] overflow-hidden" data-reading-hide="true">
-          <img
-            src={post.featured_image}
-            alt={post.featured_image_alt || post.title}
-            className="absolute inset-0 w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-            fetchPriority="high"
-            decoding="async"
-          />
+          <picture className="absolute inset-0 block w-full h-full">
+            {mobileCoverSrc && mobileCoverSrc !== desktopCoverSrc && (
+              <source media="(max-width: 767px)" srcSet={mobileCoverSrc} />
+            )}
+            <img
+              src={desktopCoverSrc || mobileCoverSrc}
+              alt={post.featured_image_alt || post.featured_cover_alt || post.title}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
           <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/30" />
           <div className="absolute inset-x-0 bottom-0 px-5 sm:px-6 md:px-12 pb-12 md:pb-16">
             <div className="max-w-[1180px] mx-auto">

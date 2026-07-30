@@ -11,6 +11,7 @@ import {
 import { useSitedata } from '@/lib/useSitedata';
 import { resolveImageSrc } from '@/lib/basepath';
 import { clinicPhoto } from '@/lib/clinicPhoto';
+import InstagramButton from '@/components/ui/InstagramButton';
 
 /**
  * AuthorBox — foto pequena + bio curta + CTA pra terapia, no fim de cada post.
@@ -61,12 +62,15 @@ export default function AuthorBox() {
         </div>
       </div>
 
-      <Link
-        href={cta.href}
-        className="shrink-0 w-full sm:w-auto text-center px-5 py-2.5 border border-accent/40 text-accent hover:bg-accent hover:text-bg transition-colors font-sans text-sm font-medium whitespace-nowrap"
-      >
-        {cta.label}
-      </Link>
+      <div className="shrink-0 w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <Link
+          href={cta.href}
+          className="text-center px-5 py-2.5 border border-accent/40 text-accent hover:bg-accent hover:text-bg transition-colors font-sans text-sm font-medium whitespace-nowrap"
+        >
+          {cta.label}
+        </Link>
+        <InstagramButton size="sm" label="@psiangelo" />
+      </div>
     </div>
   );
 }

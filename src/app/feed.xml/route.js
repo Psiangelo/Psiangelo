@@ -48,14 +48,14 @@ export function GET() {
       const link = `${BASE}/blog/${encodeURIComponent(slug)}/`;
       const pub = new Date(p.updated_at || Date.now()).toUTCString();
       const excerpt = p.excerpt || stripHtml(p.content_html).slice(0, 280);
-      const ogImage = `${BASE}/og/posts/${slug}.png`;
+      const ogImage = `${BASE}/og/posts/${slug}.jpg`;
       return `<item>
 <title>${escapeXml(stripHighlights(p.title) || 'Sem título')}</title>
 <link>${escapeXml(link)}</link>
 <guid isPermaLink="true">${escapeXml(link)}</guid>
 <pubDate>${pub}</pubDate>
 <description>${escapeXml(excerpt)}</description>
-<enclosure url="${escapeXml(ogImage)}" type="image/png" />
+<enclosure url="${escapeXml(ogImage)}" type="image/jpeg" />
 ${(p.tags || []).map((t) => `<category>${escapeXml(t)}</category>`).join('')}
 </item>`;
     })

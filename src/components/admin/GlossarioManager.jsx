@@ -51,6 +51,7 @@ const EMPTY_TERMO = (categoria) => ({
   related: { terms: [], materials: [] },
   links: [],
   hidden: false,
+  autolink: true,
 });
 
 /* ───────────────────── LinkPicker (mesma essência do TrilhasManager) ───────────────────── */
@@ -321,6 +322,14 @@ function VerbetesTab({ list, setList, categories, lists, addToast, addLogEntry }
     persist(list.map((t) => (t.slug === slug ? { ...t, hidden: !t.hidden } : t)));
   };
 
+  // Um clique, sem entrar em modo de edição — liga/desliga se este verbete
+  // vira link sozinho nos ensaios. Diferente de `hidden`: aqui o verbete
+  // continua com página própria, no índice e no sitemap; só deixa de ser
+  // autolinkado automaticamente (a marcação manual continua funcionando).
+  const toggleAutolink = (slug) => {
+    persist(list.map((t) => (t.slug === slug ? { ...t, autolink: t.autolink === false } : t)));
+  };
+
   const editingTermo = editing === 'new'
     ? EMPTY_TERMO(categories[0]?.slug)
     : list.find((t) => t.slug === editing);
@@ -331,7 +340,10 @@ function VerbetesTab({ list, setList, categories, lists, addToast, addLogEntry }
         <div>
           <h2 className="text-xl font-serif text-[#E8DDD0]">Verbetes</h2>
           <p className="text-xs text-[#6E6458] font-sans mt-1">
-            {list.length} no total · {list.filter((t) => !t.hidden).length} visíveis
+            {list.length} no total · {list.filter((t) => !t.hidden).length} visíveis · {list.filter((t) => t.autolink !== false).length} viram link sozinhos nos ensaios
+          </p>
+          <p className="text-[10px] text-[#6E6458]/70 font-sans mt-0.5">
+            "Ocultar" tira o verbete do site inteiro. "Vira link sozinho" só decide se ele é reconhecido automaticamente dentro dos ensaios — desligado, o verbete continua com página própria e só vira link onde você marcar o trecho à mão.
           </p>
         </div>
         {!editing && (
@@ -378,6 +390,14 @@ function VerbetesTab({ list, setList, categories, lists, addToast, addLogEntry }
                     <h3 className="font-serif text-base text-[#E8DDD0]">{t.term}</h3>
                     <span className="font-mono text-[9px] tracking-widest uppercase text-[#6E6458]">{t.category}</span>
                     {t.hidden && <span className="text-[9px] uppercase tracking-widest text-yellow-500 border border-yellow-500/30 px-1.5 py-0.5 rounded">oculto</span>}
+                    {t.autolink === false && (
+                      <span
+                        className="text-[9px] uppercase tracking-widest text-[#6E6458] border border-[rgba(180,140,80,0.2)] px-1.5 py-0.5 rounded"
+                        title="Só vira link nos ensaios onde for marcado à mão"
+                      >
+                        só à mão
+                      </span>
+                    )}
                     {(t.links || []).length > 0 && (
                       <span className="text-[9px] uppercase tracking-widest text-[#B48C50] border border-[#B48C50]/30 px-1.5 py-0.5 rounded">
                         {t.links.length} link{t.links.length === 1 ? '' : 's'}
@@ -387,6 +407,18 @@ function VerbetesTab({ list, setList, categories, lists, addToast, addLogEntry }
                   <p className="text-xs text-[#6E6458] line-clamp-2">{t.short}</p>
                 </div>
                 <div className="flex gap-1.5 shrink-0">
+                  <button
+                    onClick={() => toggleAutolink(t.slug)}
+                    className={
+                      'px-3 py-1.5 text-xs font-sans rounded-lg transition-colors border ' +
+                      (t.autolink === false
+                        ? 'border-[rgba(180,140,80,0.2)] text-[#6E6458] hover:border-[#B48C50] hover:text-[#B48C50]'
+                        : 'border-[#B48C50]/50 text-[#B48C50] bg-[#B48C50]/10')
+                    }
+                    title="Decide se este termo vira link sozinho quando aparecer em qualquer ensaio. Não afeta a marcação manual nem a página do verbete."
+                  >
+                    {t.autolink === false ? 'Vira link só à mão' : 'Vira link sozinho'}
+                  </button>
                   <button onClick={() => toggleHidden(t.slug)} className={BTN_SECONDARY} title={t.hidden ? 'Mostrar' : 'Ocultar'}>
                     {t.hidden ? 'Mostrar' : 'Ocultar'}
                   </button>

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import AmbientVideo from '@/components/ui/AmbientVideo';
 import Button, { ArrowIcon, WhatsAppIcon } from '@/components/ui/Button';
+import InstagramButton from '@/components/ui/InstagramButton';
 import { resolveImageSrc } from '@/lib/basepath';
 import { clinicPhoto } from '@/lib/clinicPhoto';
 import { useSitedata } from '@/lib/useSitedata';
@@ -120,6 +121,7 @@ export default function AuthorBand({
                 {secondary.label}
               </Button>
             )}
+            <InstagramButton />
           </div>
         </div>
       </motion.div>

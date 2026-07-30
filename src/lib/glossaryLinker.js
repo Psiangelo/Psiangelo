@@ -86,6 +86,11 @@ export function buildGlossaryEntries(glossarioList, { excludeSlugs } = {}) {
   const entries = [];
   for (const g of glossarioList || []) {
     if (!g || !g.slug || g.hidden) continue;
+    // autolink === false: dono desligou o autolink automático deste verbete
+    // (continua com página própria, no índice e no sitemap — só não vira
+    // link sozinho dentro de ensaios). Ausência do campo = ligado (default),
+    // pra não quebrar conteúdo antigo que nunca teve essa flag.
+    if (g.autolink === false) continue;
     if (exclude.has(g.slug)) continue;
     const variants = [g.term, ...(g.aliases || [])].filter((v) => typeof v === 'string' && v.trim());
     for (const variant of variants) {

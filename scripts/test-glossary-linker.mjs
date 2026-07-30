@@ -236,5 +236,32 @@ test('marcação manual tem prioridade e impede autolink do mesmo verbete depois
   assert.match(out, />lado rejeitado<\/a>/, 'o link tem que ser o trecho que o autor marcou');
 });
 
+test('verbete com autolink: false não é autolinkado', () => {
+  const glossario = [
+    ...GLOSSARIO,
+    { slug: 'eu-ego', term: 'Eu', aliases: [], short: 'Alias perigoso de teste.', autolink: false },
+  ];
+  const out = linkGlossaryTerms('<p>Eu cheguei cedo hoje.</p>', glossario, { basePath: '/Psiangelo' }).html;
+  assert.doesNotMatch(out, /term-link/, 'verbete com autolink:false não deveria virar link automático');
+});
+
+test('verbete com autolink: false continua funcionando por marcação manual', () => {
+  const glossario = [
+    ...GLOSSARIO,
+    { slug: 'eu-ego', term: 'Eu', aliases: [], short: 'Alias perigoso de teste.', autolink: false },
+  ];
+  const out = linkGlossaryTerms('<p>Aquele <span data-termo="eu-ego">Eu</span> ali é o Ego mesmo.</p>', glossario, {
+    basePath: '/Psiangelo',
+  }).html;
+  assert.match(out, /<a[^>]*data-term-slug="eu-ego"[^>]*>Eu<\/a>/, 'marcação manual deve valer mesmo com autolink desligado');
+});
+
+test('verbete sem o campo `autolink` (conteúdo antigo) se comporta como ligado', () => {
+  // simula um registro salvo antes de a flag existir — sem `autolink` no objeto
+  const glossario = [{ slug: 'complexo', term: 'Complexo', aliases: [], short: 'Núcleo afetivo autônomo.' }];
+  const out = linkGlossaryTerms('<p>O Complexo apareceu de novo.</p>', glossario, { basePath: '/Psiangelo' }).html;
+  assert.match(out, /<a[^>]*data-term-slug="complexo"[^>]*>Complexo<\/a>/, 'ausência do campo autolink deve equivaler a ligado');
+});
+
 console.log(`\n${passed} passaram, ${failed} falharam.`);
 if (failed > 0) process.exit(1);

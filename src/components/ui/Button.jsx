@@ -41,6 +41,19 @@ export function WhatsAppIcon() {
   );
 }
 
+// Mesmo desenho usado em ContactCTA (contorno de câmera + lente): é o único
+// elemento "de reconhecimento" do Instagram nos botões do site — nada de
+// gradiente roxo-laranja da marca, só currentColor herdando a paleta local.
+export function InstagramIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <rect x="2" y="2" width="20" height="20" rx="5" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 const isExternal = (href) =>
   typeof href === 'string' &&
   /^(https?:|mailto:|tel:)/.test(href);

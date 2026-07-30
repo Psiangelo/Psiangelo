@@ -1126,7 +1126,7 @@ export const getGlossarioCategories = (seedOnly) =>
   normalizeGlossarioCategories(readJson(SITEDATA_KEYS.glossarioCategories, null, seedOnly));
 export const setGlossarioCategories = (v) => writeJson(SITEDATA_KEYS.glossarioCategories, v);
 
-// Verbete: defaults + campos novos opcionais (`links`, `hidden`).
+// Verbete: defaults + campos novos opcionais (`links`, `hidden`, `autolink`).
 function normalizeGlossario(stored) {
   const base = Array.isArray(stored) && stored.length > 0 ? stored : GLOSSARIO_DEFAULT;
   return base.map((g, i) => ({
@@ -1142,6 +1142,15 @@ function normalizeGlossario(stored) {
     },
     links: Array.isArray(g.links) ? g.links : [],  // [{kind, value, label}]
     hidden: !!g.hidden,
+    // autolink: liga/desliga o autolink automático deste verbete nos ensaios
+    // (BlogPostView → linkGlossaryTerms → buildGlossaryEntries). Default true
+    // para não mudar o comportamento de nenhum verbete já cadastrado — só
+    // objetos que gravarem `autolink: false` explicitamente saem do autolink.
+    // A marcação manual (applyManualTerms) NUNCA consulta esta flag: mesmo
+    // com autolink desligado, marcar o trecho à mão continua funcionando —
+    // é justamente o caso de uso (ex.: "eu" desligado do automático, mas
+    // marcado à mão nos trechos em que de fato significa o Ego).
+    autolink: g.autolink !== false,
     ordem: typeof g.ordem === 'number' ? g.ordem : i,
   }));
 }

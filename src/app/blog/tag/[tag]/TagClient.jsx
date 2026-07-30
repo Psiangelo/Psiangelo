@@ -13,7 +13,13 @@ function readTime(html) {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-function fmt(dateStr) {
+import { formatPostDate } from '@/lib/formatDate';
+
+// Data em UTC fixo: sem isso, servidor e cliente formatam fusos diferentes
+// e a hidratação quebra. Ver src/lib/formatDate.js.
+const fmt = formatPostDate;
+
+function _fmtAntigo(dateStr) {
   if (!dateStr) return '';
   try {
     return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
