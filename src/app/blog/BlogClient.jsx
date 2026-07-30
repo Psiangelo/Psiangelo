@@ -157,7 +157,7 @@ function BlogCard({ post, variant = 'default' }) {
             <div className="mt-4 flex items-start gap-3">
               <span className="block w-8 h-px bg-accent/40 mt-[10px] flex-shrink-0 group-hover:bg-accent/80 transition-colors" />
               <p className={`text-text-dim leading-relaxed flex-1 ${
-                isLarge ? 'text-[0.95rem] line-clamp-3' : 'text-[0.82rem] line-clamp-2'
+                isLarge ? 'text-[0.95rem] line-clamp-4' : 'text-[0.82rem] line-clamp-3'
               }`}>
                 {post.excerpt}
               </p>

@@ -92,7 +92,7 @@ export default function RelatedPosts({ currentPost, allPosts }) {
                   {renderHighlightedTitle(p.title)}
                 </h3>
                 {p.excerpt && (
-                  <p className="mt-2 text-[0.82rem] text-text-dim leading-relaxed line-clamp-2">
+                  <p className="mt-2 text-[0.82rem] text-text-dim leading-relaxed line-clamp-3">
                     {p.excerpt}
                   </p>
                 )}

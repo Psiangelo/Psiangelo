@@ -1,7 +1,7 @@
 {
-  "version": 1785430000000,
+  "version": 1785450000000,
   "publishedAt": "2026-07-30T14:09:39.001101+00:00",
-  "note": "Publicado via banner",
+  "note": "Excerpts dos 4 posts (card, og:description, meta description)",
   "data": {
     "angelo_admin_bio": {
       "bio": "Estudante de psicologia, estagiário clínico. Aqui divido o que estudo, atendo e ensino.",
@@ -1885,7 +1885,7 @@
             }
           ]
         },
-        "excerpt": "",
+        "excerpt": "A história do discípulo que rompeu com Freud é falsa. Jung perseguia outra coisa: por que toda teoria confessa quem a escreveu.",
         "seriesId": "",
         "seo_title": "",
         "created_at": "2026-05-24T13:03:21.118Z",
@@ -2775,7 +2775,7 @@
             }
           ]
         },
-        "excerpt": "",
+        "excerpt": "Consciência não é estar acordado nem saber de si. É um foco estreito, e quanto mais unilateral, mais tensão se acumula do outro lado.",
         "seriesId": "",
         "seo_title": "",
         "created_at": "2026-04-24T00:40:45.651Z",
@@ -3510,7 +3510,7 @@
             }
           ]
         },
-        "excerpt": "",
+        "excerpt": "Jung não disse que a psicologia é uma ciência frágil. Disse que a clínica é um crime contra a ciência, e por que precisa ser assim.",
         "seriesId": "",
         "seo_title": "",
         "created_at": "2026-04-23T22:19:15.801Z",
@@ -4432,7 +4432,7 @@
             }
           ]
         },
-        "excerpt": "",
+        "excerpt": "Inconsciente não é um lugar dentro de você. É uma perturbação, deduzida como o astrônomo deduz o planeta que não vê pelo telescópio.",
         "seriesId": "",
         "seo_title": "",
         "created_at": "2026-04-23T16:07:10.670Z",

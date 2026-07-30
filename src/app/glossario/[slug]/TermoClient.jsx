@@ -160,7 +160,7 @@ export default function TermoClient({ initialTermo, initialList, initialCategori
                         {renderHighlightedTitle(essay.title)}
                       </h3>
                       {essay.excerpt && (
-                        <p className="mt-1.5 font-serif text-[0.86rem] leading-relaxed text-text-dim line-clamp-2">
+                        <p className="mt-1.5 font-serif text-[0.86rem] leading-relaxed text-text-dim line-clamp-3">
                           {essay.excerpt}
                         </p>
                       )}
