@@ -507,6 +507,26 @@ export default function BlogPage({ initialPosts = [], initialSeriesList = [] }) 
                   else if (mod === 3) { span = 'lg:col-span-2'; variant = 'text'; }
                   else if (mod === 4) { span = 'lg:col-span-4'; variant = 'large'; }
                   else if (mod === 6) { span = 'lg:col-span-2'; variant = 'text'; }
+                  /**
+                   * ⚠️ Post COM capa nunca vira card só-texto.
+                   *
+                   * A variante 'text' existe para dar ritmo visual à grade,
+                   * mas ela não renderiza imagem nenhuma. Como o slot era
+                   * decidido só pela posição na lista (`i % 7`), o post que
+                   * calhasse de cair em mod 3 ou 6 perdia a capa que o autor
+                   * cadastrou — foi o que aconteceu com "O que é inconsciente
+                   * em Jung?" em 30/07/2026, e aconteceria com qualquer outro
+                   * conforme a lista crescesse.
+                   *
+                   * A capa é o ativo do card: quem tem, mostra. A variante
+                   * 'text' fica para post sem capa, onde ela é a saída certa.
+                   */
+                  const temCapa = !!(post.featured_cover || post.featured_image);
+                  if (temCapa && variant === 'text') {
+                    variant = 'default';
+                    span = 'lg:col-span-2';
+                  }
+
                   // Capa vertical 9:16 — sempre default + span 2 (não fica
                   // gigante em 4-col como o horizontal)
                   if (post.featured_cover && variant !== 'text') {

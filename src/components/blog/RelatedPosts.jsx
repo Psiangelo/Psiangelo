@@ -57,10 +57,14 @@ export default function RelatedPosts({ currentPost, allPosts }) {
               href={`/blog/${p.slug || p.id}/`}
               className="group block w-full text-left bg-bg-card/60 border border-border-subtle hover:border-accent/40 transition-colors overflow-hidden h-full"
             >
-              {p.featured_image ? (
+              {/* Cai para a capa vertical quando não há horizontal: olhando
+                  só `featured_image`, um post que tivesse apenas a vertical
+                  ficava sem imagem aqui, com o ψ de placeholder, mesmo tendo
+                  capa cadastrada. Mesma precedência do resto do site. */}
+              {(p.featured_image || p.featured_cover) ? (
                 <PosterCover
-                  src={p.featured_image}
-                  alt={p.featured_image_alt || stripHighlights(p.title)}
+                  src={p.featured_image || p.featured_cover}
+                  alt={p.featured_image_alt || p.featured_cover_alt || stripHighlights(p.title)}
                   aspect="16/10"
                   seed={p.slug || p.id || p.title || ''}
                   intensity={2}
