@@ -141,11 +141,11 @@ export const DEFAULT_HOMEPAGE = {
     title: 'Sobre',
     paragraph1: 'Sou estudante de psicologia e mantenho este espaço como um caderno público de leitura da obra de Carl Gustav Jung: um corpus que venho indexando, cruzando e comentando desde a graduação.',
     paragraph2: 'Concilio essa leitura com a condução de um grupo de estudos, com a presidência da Liga de Psicologia Analítica da UNICAP e com o estágio clínico supervisionado pela Associação Allos, hoje meu único contato direto e regular com a prática clínica. O que publico aqui, ensaios, glossário e trilhas, nasce desse cruzamento entre estudo, orientação e a pouca prática que já tenho.',
-    paragraph3: 'O método é simples e tento ser rigoroso com ele: cada citação de Jung é conferida contra a fonte, referenciada por obra e parágrafo, nunca por memória ou por segunda mão. É esse rigor de fonte, não um título, que sustenta o que escrevo aqui.',
+    paragraph3: '',
     quoteText: 'Quem olha para fora, sonha; quem olha para dentro, desperta.',
     quoteAuthor: 'Carl Gustav Jung',
     credentials: [
-      { mark: '◆', label: 'Leitura',      detail: 'Corpus de Jung indexado e citado por obra e parágrafo' },
+      { mark: '◆', label: 'Leitura',      detail: 'Leitura sistemática da obra de Jung, em curso desde a graduação' },
       { mark: '◇', label: 'Escrita',      detail: 'Ensaios públicos sobre a obra de Jung' },
       { mark: '◆', label: 'Estudo',       detail: 'Condução de grupo de estudos' },
       { mark: '◇', label: 'Liga',         detail: 'Presidência · Psicologia Analítica · UNICAP' },
@@ -221,7 +221,7 @@ export const DEFAULT_HOMEPAGE = {
 const DEFAULT_AUTHOR = {
   name: 'Ângelo',
   credential: 'Estagiário em Psicologia · Associação Allos',
-  bio: 'Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir da leitura sistemática da obra de Jung — cada citação conferida contra a fonte, localizada por obra e parágrafo.',
+  bio: 'Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir do estudo contínuo da obra de Carl Gustav Jung.',
   photo: {
     src: '/images/angelo-terapia.png',
     alt: 'Ângelo',
@@ -608,8 +608,20 @@ export const DEFAULT_VISIBILITY = {
   faq:               false, // 2026-05-03: FAQ canônico vive na landing clínica (anti-canibalização)
   contato:           true,
   newsletter:        true,  // 2026-07-30: captura de e-mail (home + fim de cada ensaio)
+  // 2026-07-30: botão de psicoterapia no hero da home — oculto até o Ângelo ter CRP,
+  // chave própria (não reaproveita `psicoterapia`, que controla a landing inteira)
+  // pra ele poder ligar/desligar a landing e este atalho de forma independente.
+  homePsicoterapiaCta: false,
   // Blog
   blogAuthorBox:     true,  // caixa de autor (foto + bio + CTA) no fim de cada post
+  // 2026-07-30: botão "Como atendo" na faixa AuthorBand (fim de /blog e /estudos) —
+  // aponta pra /psicoterapia-analitica, oculto até o Ângelo ter CRP. Chave própria,
+  // independente de `psicoterapia` (landing) pelo mesmo motivo do item acima.
+  autorComoAtendo:   false,
+  // Botão "Acompanhe no Instagram" (InstagramButton) nos 3 blocos de autor
+  // (AuthorBand, AuthorBox, About). Ligado por padrão — some se desligado aqui
+  // OU se `angelo_admin_settings.instagramLink` estiver vazio.
+  autorInstagram:    true,
   // Extras
   whatsappFlutuante: true,
 };
@@ -1082,7 +1094,7 @@ export const setFaqs = (v) => writeJson(SITEDATA_KEYS.faqs, v);
 export const DEFAULT_SETTINGS = {
   whatsappNumber: '5581987349114',
   whatsappMessage: 'Oi Ângelo, vim pelo site e queria trocar uma ideia.',
-  instagramLink: 'https://instagram.com/psiangelo',
+  instagramLink: 'https://www.instagram.com/psiangelo/',
   youtubeLink: '',
   emailAddress: '',
   siteTitle: 'Psiangelo — Psicoterapia Junguiana Online',

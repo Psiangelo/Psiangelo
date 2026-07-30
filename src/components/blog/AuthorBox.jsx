@@ -9,6 +9,7 @@ import {
   SITEDATA_KEYS,
 } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
+import { useVisibility } from '@/lib/useVisibility';
 import { resolveImageSrc } from '@/lib/basepath';
 import { clinicPhoto } from '@/lib/clinicPhoto';
 import InstagramButton from '@/components/ui/InstagramButton';
@@ -24,6 +25,7 @@ import InstagramButton from '@/components/ui/InstagramButton';
  * Visibilidade controlada pela chave `blogAuthorBox` (Admin → Visibilidade).
  */
 export default function AuthorBox() {
+  const { visibility } = useVisibility();
   const bio = useSitedata(getBio, DEFAULT_BIO, SITEDATA_KEYS.bio);
   const cta = useSitedata(getBlogAuthorCta, DEFAULT_BLOG_AUTHOR_CTA, SITEDATA_KEYS.blogAuthorCta);
   const author = bio?.author || DEFAULT_BIO.author;
@@ -63,12 +65,19 @@ export default function AuthorBox() {
       </div>
 
       <div className="shrink-0 w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <Link
-          href={cta.href}
-          className="text-center px-5 py-2.5 border border-accent/40 text-accent hover:bg-accent hover:text-bg transition-colors font-sans text-sm font-medium whitespace-nowrap"
-        >
-          {cta.label}
-        </Link>
+        {/* Este CTA aponta pra /psicoterapia-analitica, que está oculta
+            enquanto o Ângelo não tem CRP — mandava o leitor para uma página
+            que devolve placeholder. Fica atrás da MESMA chave do botão
+            "Como atendo" (Admin → Bio → Identidade de autor), pra os dois
+            convites clínicos do blog acenderem juntos quando ele quiser. */}
+        {visibility?.autorComoAtendo === true && (
+          <Link
+            href={cta.href}
+            className="text-center px-5 py-2.5 border border-accent/40 text-accent hover:bg-accent hover:text-bg transition-colors font-sans text-sm font-medium whitespace-nowrap"
+          >
+            {cta.label}
+          </Link>
+        )}
         <InstagramButton size="sm" label="@psiangelo" />
       </div>
     </div>

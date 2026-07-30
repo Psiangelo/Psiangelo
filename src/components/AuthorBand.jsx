@@ -7,6 +7,7 @@ import InstagramButton from '@/components/ui/InstagramButton';
 import { resolveImageSrc } from '@/lib/basepath';
 import { clinicPhoto } from '@/lib/clinicPhoto';
 import { useSitedata } from '@/lib/useSitedata';
+import { useVisibility } from '@/lib/useVisibility';
 import {
   getBio,
   getSettings,
@@ -34,12 +35,20 @@ export default function AuthorBand({
   id = 'quem-escreve',
   eyebrow = 'Quem escreve',
   body,
-  secondary = { href: '/psicoterapia-analitica', label: 'Como atendo' },
+  // visKey: chave de visibilidade própria que precisa estar ligada pra este
+  // botão aparecer (ver DEFAULT_VISIBILITY.autorComoAtendo em sitedata.js).
+  // Oculto por padrão — a psicoterapia fica escondida enquanto o Ângelo não
+  // tem CRP. Quando o `secondary` é sobrescrito por quem chama (ex.:
+  // EstudosListingClient aponta pra /blog) sem passar `visKey`, o botão
+  // sempre aparece — só o "Como atendo" padrão é gateado.
+  secondary = { href: '/psicoterapia-analitica', label: 'Como atendo', visKey: 'autorComoAtendo' },
   video = '/video/materiais.mp4',
   poster = '/video/materiais.jpg',
 }) {
   const bio = useSitedata(getBio, DEFAULT_BIO, SITEDATA_KEYS.bio);
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const { visibility: v } = useVisibility();
+  const showSecondary = !!secondary?.href && (!secondary.visKey || v[secondary.visKey] === true);
 
   const author = bio?.author || DEFAULT_BIO.author;
   const photo = author?.photo;
@@ -116,7 +125,7 @@ export default function AuthorBand({
             <Button href={whatsappUrl} variant="solid" iconLeft={<WhatsAppIcon />}>
               Marcar conversa
             </Button>
-            {secondary?.href && (
+            {showSecondary && (
               <Button href={secondary.href} variant="outline" icon={<ArrowIcon />}>
                 {secondary.label}
               </Button>

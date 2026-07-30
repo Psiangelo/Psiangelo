@@ -16,7 +16,7 @@ const BASE = 'https://psiangelo.github.io/Psiangelo';
 const DEFAULT_AUTHOR = {
   name: 'Ângelo',
   credential: 'Estagiário em Psicologia · Associação Allos',
-  bio: 'Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir da leitura sistemática da obra de Jung — cada citação conferida contra a fonte, localizada por obra e parágrafo.',
+  bio: 'Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir do estudo contínuo da obra de Carl Gustav Jung.',
   photo: {
     src: '/images/angelo-terapia.png',
     alt: 'Ângelo',

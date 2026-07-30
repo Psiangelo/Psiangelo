@@ -1,5 +1,5 @@
 {
-  "version": 1785420576061,
+  "version": 1785430000000,
   "publishedAt": "2026-07-30T14:09:39.001101+00:00",
   "note": "Publicado via banner",
   "data": {
@@ -54,7 +54,7 @@
         }
       ],
       "author": {
-        "bio": "Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir da leitura sistemática da obra de Jung — cada citação conferida contra a fonte, localizada por obra e parágrafo.",
+        "bio": "Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir do estudo contínuo da obra de Carl Gustav Jung.",
         "name": "Ângelo",
         "photo": {
           "alt": "Ângelo",
@@ -4752,12 +4752,12 @@
         ],
         "paragraph1": "Sou estudante de psicologia e mantenho este espaço como um caderno público de leitura da obra de Carl Gustav Jung: um corpus que venho indexando, cruzando e comentando desde a graduação.",
         "paragraph2": "Concilio essa leitura com a condução de um grupo de estudos, com a presidência da Liga de Psicologia Analítica da UNICAP e com o estágio clínico supervisionado pela Associação Allos, hoje meu único contato direto e regular com a prática clínica. O que publico aqui, ensaios, glossário e trilhas, nasce desse cruzamento entre estudo, orientação e a pouca prática que já tenho.",
-        "paragraph3": "O método é simples e tento ser rigoroso com ele: cada citação de Jung é conferida contra a fonte, referenciada por obra e parágrafo, nunca por memória ou por segunda mão. É esse rigor de fonte, não um título, que sustenta o que escrevo aqui.",
+        "paragraph3": "",
         "credentials": [
           {
             "mark": "◆",
             "label": "Leitura",
-            "detail": "Corpus de Jung indexado e citado por obra e parágrafo"
+            "detail": "Leitura sistemática da obra de Jung, em curso desde a graduação"
           },
           {
             "mark": "◇",
@@ -4808,7 +4808,7 @@
       "accentColor": "#B48C50",
       "youtubeLink": "",
       "emailAddress": "",
-      "instagramLink": "https://www.instagram.com/",
+      "instagramLink": "https://www.instagram.com/psiangelo/",
       "showFAQSection": true,
       "whatsappNumber": "5581987349114",
       "showHeroSection": true,

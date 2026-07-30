@@ -196,6 +196,15 @@ export default function Hero() {
                 Começar uma trilha
               </Button>
             )}
+            {/* Oculto por padrão (v.homePsicoterapiaCta) enquanto o Ângelo não
+                tem CRP — chave própria em DEFAULT_VISIBILITY, liga quando quiser
+                anunciar o atendimento na home. Vive no hero (seção fixa, sem
+                lógica de divisor) pra não abrir buraco quando desligado. */}
+            {v.homePsicoterapiaCta && (
+              <Button href="/psicoterapia-analitica" variant="outline">
+                Conhecer a psicoterapia
+              </Button>
+            )}
             {v.glossario !== false && (
               <Link href="/glossario" className="link-arrow">
                 Abrir o glossário

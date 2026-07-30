@@ -41,6 +41,7 @@ const GROUPS = [
       { key: 'faq',               label: 'Perguntas frequentes (FAQ) — duplica /psicoterapia-analitica' },
       { key: 'newsletter',        label: 'Inscrição por e-mail (bloco de captura — home e fim de cada ensaio)' },
       { key: 'contato',           label: 'Convite de contato (ContactCTA)' },
+      { key: 'homePsicoterapiaCta', label: 'Botão "Conhecer a psicoterapia" no hero da home — desligado até ter CRP; liga quando quiser anunciar o atendimento na home' },
     ],
   },
   {
@@ -49,6 +50,8 @@ const GROUPS = [
     items: [
       { key: 'blogAuthorBox', label: 'Caixa de autor (foto + bio + CTA pra terapia) — fim de cada post' },
       { key: 'autor',         label: 'Faixa "quem escreve" (AuthorBand) — fim da listagem de ensaios e de estudos' },
+      { key: 'autorComoAtendo', label: 'Botão "Como atendo" dentro da faixa "quem escreve" — desligado até ter CRP; independente do link acima' },
+      { key: 'autorInstagram', label: 'Botão do Instagram nos blocos de autor (AuthorBand, caixa de autor, Sobre) — link vem de Configurações' },
     ],
   },
   {

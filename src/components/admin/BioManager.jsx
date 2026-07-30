@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { getBio, setBio, DEFAULT_BIO } from '@/lib/sitedata';
+import {
+  getBio, setBio, DEFAULT_BIO,
+  getSettings, setSettings, DEFAULT_SETTINGS,
+  getSiteVisibility, setSiteVisibility, DEFAULT_VISIBILITY,
+} from '@/lib/sitedata';
 import { BIO_ICON_OPTIONS, BioCardIcon, hasBioIcon, inferBioIcon } from '@/components/bio/BioCardIcons';
 import { BIO_ACCENTS } from '@/components/bio/BioAccents';
 
@@ -16,11 +20,31 @@ const BTN_DANGER_INLINE = 'text-red-400/70 hover:text-red-400 text-xs px-2 py-1'
 
 export default function BioManager({ addToast, addLogEntry }) {
   const [data, setData] = useState(DEFAULT_BIO);
+  // Instagram (settings.instagramLink) e os liga/desliga dos botões dos blocos
+  // de autor (visibility.autorInstagram / autorComoAtendo) não são dados do
+  // Bio — vivem em `angelo_admin_settings` e `angelo_admin_visibility`
+  // respectivamente (fonte única, usada por Configurações e Visibilidade).
+  // Trazidos pra cá só como UI de conveniência: o card "Identidade de autor"
+  // edita e salva os mesmos dados, sem duplicar onde ficam gravados.
+  const [settingsData, setSettingsData] = useState(DEFAULT_SETTINGS);
+  const [visibilityData, setVisibilityData] = useState(DEFAULT_VISIBILITY);
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     setData(getBio());
+    setSettingsData(getSettings());
+    setVisibilityData(getSiteVisibility());
   }, []);
+
+  const updateSettingField = (key, value) => {
+    setSettingsData((prev) => ({ ...prev, [key]: value }));
+    setDirty(true);
+  };
+
+  const toggleVisibilityField = (key, value) => {
+    setVisibilityData((prev) => ({ ...prev, [key]: value }));
+    setDirty(true);
+  };
 
   const update = (key, value) => {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -112,6 +136,8 @@ export default function BioManager({ addToast, addLogEntry }) {
 
   const persist = () => {
     setBio(data);
+    setSettings(settingsData);
+    setSiteVisibility(visibilityData);
     setDirty(false);
     addLogEntry?.('Bio/Linktree salva', `${data.images?.length || 0} imagens`);
     addToast?.('Bio salva', 'success');
@@ -393,6 +419,50 @@ export default function BioManager({ addToast, addLogEntry }) {
             rows={2}
             placeholder="Atendo como estagiário em psicologia, sob supervisão clínica..."
           />
+        </div>
+
+        {/* Instagram — o dado mora em Configurações (angelo_admin_settings.instagramLink),
+            usado também pelo Footer. Editar aqui grava lá mesmo, sem duplicar. */}
+        <div className="mt-4">
+          <label className={LABEL}>Link do Instagram (botão "Acompanhe" nos blocos de autor)</label>
+          <input
+            type="text"
+            value={settingsData.instagramLink || ''}
+            onChange={(e) => updateSettingField('instagramLink', e.target.value)}
+            className={INPUT}
+            placeholder="https://www.instagram.com/psiangelo/"
+          />
+          <p className="text-[10px] text-[#6E6458] mt-1">
+            Mesmo campo de Admin → Configurações → Contato e Redes Sociais — muda nos dois lugares.
+            Vazio, o botão de Instagram some.
+          </p>
+        </div>
+
+        {/* Liga/desliga dos botões que aparecem junto com essa identidade —
+            os dados vivem em Admin → Visibilidade, replicados aqui pra não
+            precisar trocar de aba. */}
+        <div className="mt-5 pt-4 border-t border-[rgba(180,140,80,0.08)]">
+          <label className={LABEL}>Botões nos blocos de autor</label>
+          <div className="space-y-3">
+            <AuthorToggle
+              label='Botão "Como atendo" (aponta pra Psicoterapia)'
+              hint='Faixa "Quem escreve" no fim de /blog e /estudos — oculto até você ter CRP.'
+              checked={!!visibilityData.autorComoAtendo}
+              onChange={(v) => toggleVisibilityField('autorComoAtendo', v)}
+            />
+            <AuthorToggle
+              label="Botão do Instagram"
+              hint="AuthorBand, caixa de autor no fim dos posts e Sobre (home) — some também se o link acima estiver vazio."
+              checked={!!visibilityData.autorInstagram}
+              onChange={(v) => toggleVisibilityField('autorInstagram', v)}
+            />
+            <AuthorToggle
+              label='Botão "Conhecer a psicoterapia" no hero da home'
+              hint="Some ao lado dos botões do hero — oculto até você ter CRP."
+              checked={!!visibilityData.homePsicoterapiaCta}
+              onChange={(v) => toggleVisibilityField('homePsicoterapiaCta', v)}
+            />
+          </div>
         </div>
       </div>
 
@@ -851,6 +921,36 @@ function ColorPicker({ value, onChange, positionInList = 0 }) {
       <p className="text-[10px] text-[#6E6458] italic">
         Clique numa cor pra fixar este card. Sem seleção, o /bio alterna entre as 10 cores pra dar ritmo visual.
       </p>
+    </div>
+  );
+}
+
+/* ---------- Toggle inline (mesma chave de angelo_admin_visibility) ---------- */
+function AuthorToggle({ checked, onChange, label, hint }) {
+  return (
+    <div className="flex items-start gap-3">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={`${checked ? 'Ocultar' : 'Mostrar'} ${label}`}
+        onClick={() => onChange(!checked)}
+        className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors mt-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B48C50] ${
+          checked ? 'bg-[#B48C50]' : 'bg-[rgba(180,140,80,0.15)]'
+        }`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full bg-[#0E0C0A] transition-transform ${
+            checked ? 'translate-x-5' : 'translate-x-1'
+          }`}
+        />
+      </button>
+      <button type="button" onClick={() => onChange(!checked)} className="flex-1 min-w-0 text-left">
+        <p className={`text-sm font-sans ${checked ? 'text-[#E8DDD0]' : 'text-[#6E6458]'} transition-colors`}>
+          {label}
+        </p>
+        {hint && <p className="text-[10px] text-[#6E6458] mt-0.5">{hint}</p>}
+      </button>
     </div>
   );
 }
