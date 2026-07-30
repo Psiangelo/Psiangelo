@@ -12,9 +12,16 @@ import {
   SITEDATA_KEYS,
 } from '@/lib/sitedata';
 import { resolveLink } from '@/lib/linkResolver';
+import { renderHighlightedTitle } from '@/lib/highlightTitle';
+import PosterCover from '@/components/ui/PosterCover';
 
 function renderFullMarkdown(text) {
   return marked.parse(String(text || ''));
+}
+
+/** Título em texto puro (para alt de imagem), sem a marcação *destaque*. */
+function stripHighlights(t) {
+  return String(t || '').replace(/\*([^*]+)\*/g, '$1');
 }
 
 export default function TermoClient({ initialTermo, initialList, initialCategories, initialPosts = [], initialCourses = [], relatedEssays = [] }) {
@@ -122,12 +129,35 @@ export default function TermoClient({ initialTermo, initialList, initialCategori
               page.js, a partir do mesmo scanner usado no autolink). */}
           {relatedEssays.length > 0 && (
             <aside className="mt-14 pt-8 border-t border-border-subtle">
-              <p className="meta-caps-accent mb-3">Ensaios que tratam deste termo</p>
-              <ul className="space-y-1.5">
-                {relatedEssays.map((essay) => (
+              <p className="meta-caps-accent mb-5">Ensaios que tratam deste termo</p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {relatedEssays.map((essay, i) => (
                   <li key={essay.slug}>
-                    <Link href={`/blog/${essay.slug}/`} className="font-serif text-text hover:text-accent transition-colors">
-                      {essay.title}
+                    <Link href={`/blog/${essay.slug}/`} className="group block">
+                      <PosterCover
+                        src={essay.cover}
+                        alt={essay.coverAlt || stripHighlights(essay.title)}
+                        aspect="16/9"
+                        seed={essay.slug}
+                        geoIndex={i}
+                        intensity={1}
+                        className="mb-3"
+                      />
+                      {essay.tags?.[0] && (
+                        <p className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-accent/80 mb-1.5">
+                          {essay.tags[0]}
+                        </p>
+                      )}
+                      {/* renderHighlightedTitle: sem isso o *asterisco* de
+                          destaque aparece cru, como aparecia até 30/07 */}
+                      <h3 className="font-serif text-[1.05rem] leading-snug text-text-bright group-hover:text-accent transition-colors">
+                        {renderHighlightedTitle(essay.title)}
+                      </h3>
+                      {essay.excerpt && (
+                        <p className="mt-1.5 font-serif text-[0.86rem] leading-relaxed text-text-dim line-clamp-2">
+                          {essay.excerpt}
+                        </p>
+                      )}
                     </Link>
                   </li>
                 ))}

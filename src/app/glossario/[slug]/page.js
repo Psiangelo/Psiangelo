@@ -86,10 +86,20 @@ function getRelatedEssays(slug, glossarioList) {
     if (!post.content_html) continue;
     const mentions = scanGlossaryMentions(post.content_html, entries);
     if (mentions.includes(slug)) {
-      out.push({ slug: post.slug || post.id, title: post.title || 'Sem título' });
+      out.push({
+        slug: post.slug || post.id,
+        title: post.title || 'Sem título',
+        excerpt: post.excerpt || '',
+        // capa: mesma precedência que os cards do blog usam
+        cover: post.featured_cover || post.featured_image || '',
+        coverAlt: post.featured_cover_alt || post.featured_image_alt || '',
+        tags: post.tags || [],
+        date: post.updated_at || post.created_at || null,
+      });
     }
   }
-  return out;
+  // mais recente primeiro, para o ensaio novo aparecer antes
+  return out.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 }
 
 export function generateStaticParams() {
