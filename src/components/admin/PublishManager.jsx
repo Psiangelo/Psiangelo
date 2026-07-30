@@ -117,7 +117,7 @@ export default function PublishManager({ addToast, addLogEntry }) {
   const handlePublishSupabase = async () => {
     if (!snapshot) return;
     if (!isSiteSupabaseWriteConfigured) {
-      addToast?.('Falta NEXT_PUBLIC_SUPABASE_SERVICE_KEY no .env.local', 'error');
+      addToast?.('Supabase não configurado neste build (falta URL/ANON_KEY)', 'error');
       return;
     }
     setPublishing(true);
@@ -285,9 +285,13 @@ export default function PublishManager({ addToast, addLogEntry }) {
             </ol>
             <pre className="bg-[#0E0C0A] border border-[rgba(180,140,80,0.1)] rounded-lg p-3 text-[11px] font-mono text-[#B8AD9E] overflow-x-auto">
 {`NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-NEXT_PUBLIC_SUPABASE_SERVICE_KEY=eyJ...`}
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...`}
             </pre>
+            <p className="text-xs text-[#6E6458]">
+              Só essas duas. <strong className="text-yellow-200/80">Nunca</strong> adicionar a service key como{' '}
+              <code className="text-[#B48C50] bg-[#0E0C0A] px-1 py-0.5 rounded">NEXT_PUBLIC_*</code>: no Next isso publica a
+              chave no JavaScript do site, e ela ignora o RLS. Publicar usa a sua sessão de login.
+            </p>
             <p className="text-xs text-[#6E6458]">
               Depois rode <code className="text-[#B48C50] bg-[#0E0C0A] px-1 py-0.5 rounded">npm run build</code>{' '}
               e commite o novo deploy. (O{' '}

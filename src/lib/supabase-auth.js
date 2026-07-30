@@ -51,3 +51,18 @@ export function onAuthChange(cb) {
   const { data } = client.auth.onAuthStateChange((_event, session) => cb(session));
   return () => data.subscription.unsubscribe();
 }
+
+/**
+ * getAuthedClient — o MESMO client que carrega a sessão do admin logado.
+ *
+ * É por aqui que toda escrita privilegiada passa (publicar snapshot, ler a
+ * lista de inscritos). O client manda o JWT do usuário logado em cada
+ * requisição, então o RLS do Postgres decide o que ele pode fazer.
+ *
+ * Antes disso o site usava uma service key exposta como NEXT_PUBLIC_*, o que
+ * a publicava no bundle e dava a qualquer visitante acesso total ao banco,
+ * ignorando o RLS. Não reintroduzir: escrita privilegiada é com sessão.
+ */
+export function getAuthedClient() {
+  return client;
+}

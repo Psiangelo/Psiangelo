@@ -1,27 +1,36 @@
+'use client';
+
 import { createClient } from '@supabase/supabase-js';
+import { getAuthedClient } from '@/lib/supabase-auth';
 
 /**
  * supabase-site — snapshots de conteúdo do admin publicados no Supabase.
  *
  * Visitantes: pegam o snapshot mais novo (via anon key) e populam localStorage.
- * Admin: publica novos snapshots (via service key) em 1 clique.
+ * Admin: publica novos snapshots com a PRÓPRIA SESSÃO (login do admin).
  *
- * Schema: setup/site-content-schema.sql
+ * ⚠️ Histórico importante: até 2026-07-30 a publicação usava uma service key
+ * exposta como NEXT_PUBLIC_SUPABASE_SERVICE_KEY. No Next, NEXT_PUBLIC_* vai
+ * para o bundle público — a chave estava servida no JS do site, e ela ignora
+ * o RLS, então qualquer visitante tinha acesso total ao banco. Foi removida.
+ * Escrita privilegiada agora é sempre com sessão autenticada + RLS.
+ *
+ * Schema e políticas: setup/site-content-schema.sql
  */
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY || '';
 
 export const isSiteSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
-export const isSiteSupabaseWriteConfigured = !!(supabaseUrl && supabaseServiceKey);
+
+/**
+ * Publicar deixou de depender de env var e passou a depender de login.
+ * Mantido o nome do export para não quebrar quem já importa.
+ */
+export const isSiteSupabaseWriteConfigured = isSiteSupabaseConfigured;
 
 const publicClient = isSiteSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } })
-  : null;
-
-const adminClient = isSiteSupabaseWriteConfigured
-  ? createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } })
   : null;
 
 const TABLE = 'site_content';
@@ -80,23 +89,42 @@ export async function fetchLatestSnapshot() {
 }
 
 /**
- * Insere um snapshot novo. Requer service key.
+ * Insere um snapshot novo. Requer ADMIN LOGADO (sessão do Supabase Auth).
+ * O RLS de `site_content` só aceita insert de `authenticated`.
  * Retorna { ok, version, error }.
  */
 export async function publishSnapshot({ data, note }) {
-  if (!adminClient) {
-    return { ok: false, error: 'Supabase service key não configurada (NEXT_PUBLIC_SUPABASE_SERVICE_KEY)' };
+  const client = getAuthedClient();
+  if (!client) {
+    return { ok: false, error: 'Supabase não configurado neste ambiente.' };
   }
+
+  // Sem sessão, o insert seria recusado pelo RLS com uma mensagem de banco
+  // incompreensível. Checar antes permite dizer o que fazer.
+  const { data: sessionData } = await client.auth.getSession();
+  if (!sessionData?.session) {
+    return { ok: false, error: 'Sessão expirada. Faça login de novo para publicar.' };
+  }
+
   const version = Date.now();
   try {
-    const { error } = await adminClient
+    const { error } = await client
       .from(TABLE)
       .insert({
         version,
         data,
         note: note || null,
       });
-    if (error) return { ok: false, error: error.message };
+    if (error) {
+      // 42501 = insufficient_privilege (RLS recusou)
+      if (error.code === '42501') {
+        return {
+          ok: false,
+          error: 'O banco recusou a publicação: sua conta não tem permissão de escrita. Rode setup/site-content-schema.sql no Supabase.',
+        };
+      }
+      return { ok: false, error: error.message };
+    }
     return { ok: true, version };
   } catch (err) {
     return { ok: false, error: err?.message || String(err) };

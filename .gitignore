@@ -8,3 +8,4 @@ out/
 # OG images geradas por post no prebuild (fallback global em public/og.png)
 public/og/posts/
 public/og/posts-v/
+test-results/

@@ -60,16 +60,27 @@ function applySnapshot(snapshot) {
 export async function applyPublishedSnapshot() {
   if (typeof window === 'undefined') return;
 
-  // 1. Supabase (se configurado) — publicação instantânea
+  // 1. O snapshot do BUNDLE primeiro.
+  //
+  // ⚠️ A ordem importa e já causou bug (2026-07-30): antes o remoto vinha
+  // primeiro e era aceito por ser mais novo que o `lastApplied` do
+  // navegador — que num visitante novo é 0. Resultado: uma publicação
+  // ANTIGA do Supabase sobrescrevia o conteúdo do build recém-deployado, e
+  // todo texto novo era revertido no navegador do visitante, sem erro
+  // nenhum aparecendo.
+  //
+  // Aplicando o local antes, ele carimba a versão do build. Aí o remoto só
+  // entra se for posterior ao build, que é exatamente quando ele deve
+  // ganhar: uma publicação feita pelo admin DEPOIS do último deploy.
+  applySnapshot(snapshotLocal);
+
+  // 2. Supabase (se configurado) — publicação instantânea, posterior ao build
   if (isSiteSupabaseConfigured) {
     try {
       const remote = await fetchLatestSnapshot();
-      if (remote && applySnapshot(remote)) return;
+      if (remote) applySnapshot(remote);
     } catch {
-      /* cai pro fallback */
+      /* fica com o do bundle, que já foi aplicado */
     }
   }
-
-  // 2. Fallback — snapshot commitado no repo
-  applySnapshot(snapshotLocal);
 }

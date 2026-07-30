@@ -1,4 +1,7 @@
+'use client';
+
 import { createClient } from '@supabase/supabase-js';
+import { getAuthedClient } from '@/lib/supabase-auth';
 
 /**
  * supabase-newsletter — captura de e-mail via Supabase (tabela `newsletter_subscribers`).
@@ -37,7 +40,7 @@ function isValidEmail(email) {
  * sucesso silencioso (alreadySubscribed: true) — quem já está inscrito não
  * deve ver mensagem de erro, e o app nunca expõe o erro cru do banco.
  */
-export async function subscribeToNewsletter(email, source = 'home') {
+export async function subscribeToNewsletter(email, source = 'home', consent = null) {
   const trimmed = String(email || '').trim().toLowerCase();
   if (!isValidEmail(trimmed)) {
     return { ok: false, error: 'E-mail inválido.' };
@@ -48,9 +51,18 @@ export async function subscribeToNewsletter(email, source = 'home') {
   }
 
   try {
-    const { error } = await client
-      .from(TABLE)
-      .insert({ email: trimmed, source });
+    // O texto do consentimento vai junto com o registro. A LGPD pede
+    // consentimento informado e específico, e exige poder DEMONSTRAR depois a
+    // que a pessoa consentiu — guardar só um booleano não prova nada, e se o
+    // texto mudar, quem assinou antes fica sem registro do que aceitou.
+    const row = { email: trimmed, source };
+    if (consent) {
+      row.consent_text = consent.text || null;
+      row.consent_version = consent.version ?? null;
+      row.consent_at = new Date().toISOString();
+    }
+
+    const { error } = await client.from(TABLE).insert(row);
 
     if (error) {
       if (error.code === UNIQUE_VIOLATION) {
@@ -63,4 +75,47 @@ export async function subscribeToNewsletter(email, source = 'home') {
   } catch {
     return { ok: false, error: 'unavailable' };
   }
+}
+
+/* ===================================================================
+   ADMIN — leitura e remoção da lista (exige sessão autenticada)
+
+   A anon key insere mas NÃO lê: a policy de SELECT em
+   newsletter_subscribers é só para `authenticated` (setup/newsletter.sql).
+   Se fosse legível pela anon key, qualquer visitante baixaria a lista
+   inteira de e-mails, porque essa chave vai no bundle público.
+=================================================================== */
+
+/** Lista os inscritos, do mais recente para o mais antigo. */
+export async function fetchSubscribers() {
+  const authed = getAuthedClient();
+  if (!authed) return { ok: false, error: 'not-configured' };
+
+  const { data: sessionData } = await authed.auth.getSession();
+  if (!sessionData?.session) return { ok: false, error: 'unauthenticated' };
+
+  const { data, error } = await authed
+    .from(TABLE)
+    .select('id, email, source, created_at, consent_at, consent_text, consent_version')
+    .order('created_at', { ascending: false });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, rows: data || [] };
+}
+
+/**
+ * Remove um inscrito. Existe porque a LGPD garante ao titular o direito de
+ * eliminação dos dados — o pedido de saída tem que ser executável de fato,
+ * e apagar é diferente de marcar como inativo.
+ */
+export async function deleteSubscriber(id) {
+  const authed = getAuthedClient();
+  if (!authed) return { ok: false, error: 'not-configured' };
+
+  const { data: sessionData } = await authed.auth.getSession();
+  if (!sessionData?.session) return { ok: false, error: 'unauthenticated' };
+
+  const { error } = await authed.from(TABLE).delete().eq('id', id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
 }

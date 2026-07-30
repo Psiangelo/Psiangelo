@@ -66,6 +66,12 @@ export default function sitemap() {
 
     // Autoridade / E-E-A-T
     toAbsolute('/bio',       0.85, 'monthly'),
+
+    // Documentos legais — prioridade baixa (não competem por busca), mas
+    // indexados de propósito: em assunto sensível, a existência pública de
+    // política de privacidade é sinal de confiança que o Google pondera.
+    toAbsolute('/privacidade', 0.3, 'yearly'),
+    toAbsolute('/cookies',     0.3, 'yearly'),
   ];
 
   // Posts do blog — um entry por post publicado com lastModified real

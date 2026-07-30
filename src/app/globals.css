@@ -1141,3 +1141,44 @@ main:focus {
   height: 100%;
   display: block;
 }
+
+/* ===================================================================
+   Páginas de política (privacidade, cookies) — src/components/ui/LegalPage
+   Prosa sóbria, sem ornamento: é texto para ler e para ser encontrado.
+=================================================================== */
+.legal-prose {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: var(--text-dim, #B8AD9E);
+  font-size: 0.98rem;
+  line-height: 1.85;
+}
+.legal-prose h2 {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: var(--text-bright, #E8DDD0);
+  font-size: 1.22rem;
+  line-height: 1.3;
+  margin: 2.6rem 0 0.9rem;
+}
+.legal-prose h3 {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: var(--text-bright, #E8DDD0);
+  font-size: 1.02rem;
+  margin: 1.9rem 0 0.6rem;
+}
+.legal-prose p { margin-bottom: 1.15rem; }
+.legal-prose ul { margin: 0 0 1.15rem 1.1rem; list-style: disc; }
+.legal-prose li { margin-bottom: 0.5rem; }
+.legal-prose a {
+  color: #B48C50;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-prose a:hover { color: var(--text-bright, #E8DDD0); }
+.legal-prose strong { color: var(--text-bright, #E8DDD0); font-weight: 400; }
+.legal-prose code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  color: #B48C50;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.1em 0.35em;
+}

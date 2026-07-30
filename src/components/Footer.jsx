@@ -54,6 +54,16 @@ export default function Footer({ showMaterialsCta = false }) {
     settings.emailAddress   && { href: `mailto:${settings.emailAddress}`, label: 'E-mail' },
   ].filter(Boolean);
 
+  // Documentos legais: sempre visíveis, sem depender de flag do admin. Uma
+  // política de privacidade que o dono pode desligar por engano não serve de
+  // nada, e o link para ela é o que a torna encontrável (pelo visitante e
+  // pelo Google, que trata a existência dessas páginas como sinal de confiança
+  // em site de assunto sensível).
+  const documentos = [
+    { href: '/privacidade', label: 'Privacidade' },
+    { href: '/cookies',     label: 'Cookies' },
+  ];
+
   return (
     <footer className="relative overflow-hidden border-t border-border-subtle">
       {/* Glow ambiente */}
@@ -121,7 +131,7 @@ export default function Footer({ showMaterialsCta = false }) {
 
       {/* Grid principal */}
       <div className="relative max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-10 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-10 md:gap-10">
           {/* Logo + manifesto */}
           <div>
             <div className="max-w-[280px] mb-5">
@@ -144,9 +154,10 @@ export default function Footer({ showMaterialsCta = false }) {
             )}
           </div>
 
-          <FooterColumn title="Autor"    items={autor} />
-          <FooterColumn title="Conteúdo" items={conteudo} />
-          <FooterColumn title="Contato"  items={contato} />
+          <FooterColumn title="Autor"      items={autor} />
+          <FooterColumn title="Conteúdo"   items={conteudo} />
+          <FooterColumn title="Contato"    items={contato} />
+          <FooterColumn title="Documentos" items={documentos} />
         </div>
       </div>
 

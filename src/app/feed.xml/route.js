@@ -17,6 +17,16 @@ function stripHtml(html = '') {
   return String(html).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Tira a marcação *asterisco* de destaque dos títulos.
+ *
+ * No site o asterisco vira a palavra em relevo (ver highlightTitle.jsx), mas
+ * num leitor de RSS ele aparece cru: «O que é *consciência* em Jung?».
+ */
+function stripHighlights(s = '') {
+  return String(s).replace(/\*([^*]+)\*/g, '$1');
+}
+
 function getPublishedPosts() {
   const data = siteContent?.data || {};
   const posts = data['angelo_admin_blog'] || [];
@@ -40,7 +50,7 @@ export function GET() {
       const excerpt = p.excerpt || stripHtml(p.content_html).slice(0, 280);
       const ogImage = `${BASE}/og/posts/${slug}.png`;
       return `<item>
-<title>${escapeXml(p.title || 'Sem título')}</title>
+<title>${escapeXml(stripHighlights(p.title) || 'Sem título')}</title>
 <link>${escapeXml(link)}</link>
 <guid isPermaLink="true">${escapeXml(link)}</guid>
 <pubDate>${pub}</pubDate>
@@ -57,7 +67,7 @@ ${(p.tags || []).map((t) => `<category>${escapeXml(t)}</category>`).join('')}
 <title>Psiangelo — Blog</title>
 <link>${BASE}/blog/</link>
 <atom:link href="${BASE}/feed.xml" rel="self" type="application/rss+xml" />
-<description>Ensaios sobre psicologia analítica, clínica junguiana e prática de estudo.</description>
+<description>Ensaios sobre a obra de Carl Gustav Jung: conceitos, epistemologia e prática de estudo da psicologia analítica.</description>
 <language>pt-BR</language>
 <lastBuildDate>${now}</lastBuildDate>
 ${items}

@@ -12,9 +12,11 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('smoke · renderização básica', () => {
-  test('home carrega e mostra marca Psiângelo', async ({ page }) => {
+  test('home carrega e mostra a marca', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Psiângelo/);
+    // A marca é "Psiangelo", sem circunflexo (o teste antigo exigia
+    // "Psiângelo", que não é como o site se escreve).
+    await expect(page).toHaveTitle(/Psiangelo/);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 
@@ -29,10 +31,15 @@ test.describe('smoke · renderização básica', () => {
     await expect(page.getByRole('button', { name: /Filtros/i })).toBeVisible();
   });
 
-  test('trilhas lista as 3 trilhas canônicas', async ({ page }) => {
-    await page.goto('/trilhas');
-    await expect(page.getByRole('heading', { name: /Trilhas/i })).toBeVisible();
-    await expect(page.getByText(/Começando em Jung/i)).toBeVisible();
+  // A rota é /estudos (havia um /trilhas que nunca existiu como rota), e o
+  // número de trilhas vem do que está publicado no admin — hoje uma. Por isso
+  // a asserção é "pelo menos uma trilha com link próprio", não uma contagem
+  // fixa nem um título específico, que engessariam o teste no conteúdo.
+  test('estudos lista ao menos uma trilha', async ({ page }) => {
+    await page.goto('/estudos');
+    await expect(page.locator('main')).toBeVisible();
+    const trilhas = page.locator('a[href*="/estudos/"]');
+    expect(await trilhas.count()).toBeGreaterThan(0);
   });
 
   test('blog renderiza (mesmo sem posts)', async ({ page }) => {

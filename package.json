@@ -35,6 +35,7 @@
     "react-dom": "^18.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@resvg/resvg-js": "^2.6.2",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",

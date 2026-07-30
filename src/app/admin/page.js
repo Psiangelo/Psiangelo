@@ -10,6 +10,7 @@ import VisibilityManager from '@/components/admin/VisibilityManager';
 import LabelsManager from '@/components/admin/LabelsManager';
 import SectionOrderManager from '@/components/admin/SectionOrderManager';
 import PublishManager from '@/components/admin/PublishManager';
+import SubscribersManager from '@/components/admin/SubscribersManager';
 import UnpublishedBanner from '@/components/admin/UnpublishedBanner';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import CategoriesManager from '@/components/admin/CategoriesManager';
@@ -2886,9 +2887,10 @@ function AdminPanel() {
       id: 'publish',
       label: 'Publicação',
       items: [
-        { id: 'visibility', label: 'Visibilidade',   icon: IconGrid },
-        { id: 'labels',     label: 'Nomes (labels)', icon: IconPen },
-        { id: 'publish',    label: 'Publicar',       icon: IconZap },
+        { id: 'visibility',  label: 'Visibilidade',   icon: IconGrid },
+        { id: 'labels',      label: 'Nomes (labels)', icon: IconPen },
+        { id: 'subscribers', label: 'Inscritos',      icon: IconUser },
+        { id: 'publish',     label: 'Publicar',       icon: IconZap },
       ],
     },
     {
@@ -3156,6 +3158,9 @@ function AdminPanel() {
               addToast={addToast}
               addLogEntry={addLogEntry}
             />
+          )}
+          {activeTab === 'subscribers' && (
+            <SubscribersManager key="subscribers" addToast={addToast} />
           )}
         </AnimatePresence>
         </main>

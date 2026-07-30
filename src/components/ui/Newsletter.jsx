@@ -2,8 +2,23 @@
 
 import { useId, useState } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { fadeUp, stagger } from '@/lib/constants';
 import { subscribeToNewsletter } from '@/lib/supabase-newsletter';
+
+/**
+ * Texto do consentimento, guardado junto com o e-mail no banco.
+ *
+ * LGPD: consentimento tem que ser livre, informado e específico, e você tem
+ * que conseguir PROVAR depois a que a pessoa consentiu. Por isso o texto vai
+ * para o banco junto com a data — se ele mudar, quem assinou antes continua
+ * com o registro do que aceitou de fato.
+ *
+ * Ao alterar este texto, suba a versão.
+ */
+export const CONSENT_VERSION = 1;
+export const CONSENT_TEXT =
+  'Aceito receber por e-mail os avisos de publicação do Psiangelo (ensaios, verbetes e trilhas) e declaro ter lido a Política de Privacidade. Sei que posso cancelar quando quiser.';
 
 /**
  * Newsletter — captura de e-mail.
@@ -31,19 +46,35 @@ export default function Newsletter({
   successMessage = 'Inscrição feita. Obrigado por acompanhar.',
   alreadySubscribedMessage = 'Você já está na lista. Obrigado.',
   errorMessage = 'Não deu para confirmar agora. Tenta de novo em instantes.',
+  consentLabel = 'Aceito receber os avisos de publicação por e-mail e li a',
+  consentRequiredMessage = 'Marque a caixa de consentimento para continuar.',
 }) {
   const inputId = useId();
+  const consentId = useId();
   const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
   const [message, setMessage] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (status === 'loading') return;
+
+    // Consentimento é pré-requisito, não detalhe: sem marcar, não envia.
+    // Marcar por padrão seria consentimento não-livre, o que a LGPD não aceita.
+    if (!consent) {
+      setStatus('error');
+      setMessage(consentRequiredMessage);
+      return;
+    }
+
     setStatus('loading');
     setMessage('');
 
-    const result = await subscribeToNewsletter(email, source);
+    const result = await subscribeToNewsletter(email, source, {
+      text: CONSENT_TEXT,
+      version: CONSENT_VERSION,
+    });
 
     if (result.ok) {
       setStatus('success');
@@ -93,9 +124,10 @@ export default function Newsletter({
         <motion.form
           variants={fadeUp}
           onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+          className="flex flex-col gap-4 max-w-md mx-auto"
           noValidate
         >
+          <div className="flex flex-col sm:flex-row gap-3">
           <label htmlFor={inputId} className="sr-only">
             Seu e-mail
           </label>
@@ -118,6 +150,31 @@ export default function Newsletter({
           >
             {status === 'loading' ? buttonLoadingLabel : buttonLabel}
           </button>
+          </div>
+
+          <label
+            htmlFor={consentId}
+            className="flex items-start gap-2.5 text-left cursor-pointer"
+          >
+            <input
+              id={consentId}
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              disabled={status === 'loading'}
+              className="mt-[0.2rem] w-4 h-4 shrink-0 accent-accent cursor-pointer"
+            />
+            <span className="font-sans text-[0.76rem] leading-relaxed text-text-dim">
+              {consentLabel}{' '}
+              <Link
+                href="/privacidade"
+                className="text-accent underline underline-offset-2 hover:text-text-bright transition-colors"
+              >
+                Política de Privacidade
+              </Link>
+              .
+            </span>
+          </label>
         </motion.form>
 
         <p aria-live="polite" className="mt-4 min-h-[1.25em] text-[0.85rem]">
@@ -128,6 +185,17 @@ export default function Newsletter({
             <span className="text-text-dim">{message}</span>
           )}
         </p>
+
+        {/* O que a pessoa está aceitando, em texto claro e antes do envio.
+            É a diferença entre consentimento informado e caixinha marcada. */}
+        <motion.p
+          variants={fadeUp}
+          className="mt-6 font-sans text-[0.72rem] leading-relaxed text-text-dim/70 max-w-md mx-auto"
+        >
+          Só aviso de publicação. Sem propaganda, sem parceiro comercial, sem repasse do seu
+          e-mail para ninguém. Frequência baixa: no máximo um por semana, e às vezes nenhum.
+          Para sair, é responder qualquer e-mail pedindo, ou usar o link de descadastro.
+        </motion.p>
       </motion.div>
     </section>
   );

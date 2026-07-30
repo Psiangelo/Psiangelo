@@ -152,42 +152,72 @@ export default function TermPreview({ articleRef, contentKey }) {
       pop.classList.add('is-visible');
     }
 
-    const anchors = Array.from(root.querySelectorAll('a.term-link'));
-    if (anchors.length === 0) {
-      pop.remove();
-      return undefined;
-    }
-
+    /**
+     * ⚠️ DELEGAÇÃO, não listener por âncora. Não voltar atrás nisso.
+     *
+     * O corpo do post entra por dangerouslySetInnerHTML, e depois da
+     * hidratação o useSitedata relê o post do localStorage: o HTML é
+     * recalculado e o React SUBSTITUI os nós do DOM. Listeners presos às
+     * âncoras antigas morrem com elas, e o efeito não roda de novo porque
+     * contentKey (post.id) continua o mesmo — resultado: o clique voltava a
+     * navegar e o card nunca abria (bug de 2026-07-30, reproduzido em
+     * navegador antes do conserto).
+     *
+     * Delegando no container, qualquer âncora que apareça depois já funciona.
+     * Por isso também usamos mouseover/mouseout e focusin/focusout, que
+     * borbulham, em vez de mouseenter/focus, que não borbulham.
+     */
     const hoverCapable = window.matchMedia && window.matchMedia('(hover: hover)').matches;
 
-    function onEnter(e) {
-      show(e.currentTarget, { pinned: false });
+    const termFrom = (e) => {
+      const el = e.target instanceof Element ? e.target.closest('a.term-link') : null;
+      return el && root.contains(el) ? el : null;
+    };
+
+    function onRootOver(e) {
+      const anchor = termFrom(e);
+      if (!anchor) return;
+      // mouseover borbulha e dispara de novo ao mover dentro do mesmo link;
+      // ignorar quando o card já está nesse termo evita reposicionar à toa
+      if (activeAnchorRef.current === anchor && !pop.hidden) return;
+      show(anchor, { pinned: false });
     }
-    function onLeave() {
+    function onRootOut(e) {
+      const anchor = termFrom(e);
+      if (!anchor) return;
+      // saiu pra dentro do próprio card: não esconde
+      const next = e.relatedTarget;
+      if (next instanceof Node && pop.contains(next)) return;
       scheduleHide();
     }
-    function onFocus(e) {
+    function onRootFocusIn(e) {
+      const anchor = termFrom(e);
+      if (!anchor) return;
       // foco por teclado (Tab) chegando no termo: mostra como prévia, igual
       // ao hover — só firma de verdade se o usuário ativar (Enter -> click)
-      show(e.currentTarget, { pinned: false });
+      show(anchor, { pinned: false });
     }
-    function onAnchorBlur(e) {
-      // se o foco está indo pro próprio card (botão fechar / link), não
-      // esconde — só esconde se saiu pra outro lugar
+    function onRootFocusOut(e) {
+      const anchor = termFrom(e);
+      if (!anchor) return;
       if (pinnedRef.current) return;
       const next = e.relatedTarget;
-      if (next && pop.contains(next)) return;
+      if (next instanceof Node && pop.contains(next)) return;
       scheduleHide(120);
     }
-    function onClick(e) {
-      // Ctrl/Cmd+clique ou clique do botão do meio: deixa o navegador tratar
-      // a abertura em nova aba/janela normalmente, sem interceptar.
+    function onRootClick(e) {
+      const anchor = termFrom(e);
+      if (!anchor) return;
+      // Ctrl/Cmd/Shift+clique ou botão do meio: deixa o navegador tratar a
+      // abertura em nova aba/janela normalmente, sem interceptar.
       if (e.button === 1 || e.ctrlKey || e.metaKey || e.shiftKey) return;
       e.preventDefault();
-      show(e.currentTarget, { pinned: true });
+      show(anchor, { pinned: true });
     }
-    function onAnchorKeyDown(e) {
-      if (e.key === 'Tab' && !e.shiftKey && activeAnchorRef.current === e.currentTarget && !pop.hidden) {
+    function onRootKeyDown(e) {
+      const anchor = termFrom(e);
+      if (!anchor) return;
+      if (e.key === 'Tab' && !e.shiftKey && activeAnchorRef.current === anchor && !pop.hidden) {
         // entra no card em vez de pular pro próximo elemento da página
         e.preventDefault();
         (closeBtn || linkEl)?.focus();
@@ -201,19 +231,17 @@ export default function TermPreview({ articleRef, contentKey }) {
       }
     }
 
-    anchors.forEach((a) => {
-      // hover só é ligado em dispositivos capazes de :hover — em touch,
-      // alguns navegadores emitem mouseenter/mouseleave "fantasmas" depois
-      // do toque, o que bagunçaria o estado firmado do card.
-      if (hoverCapable) {
-        a.addEventListener('mouseenter', onEnter);
-        a.addEventListener('mouseleave', onLeave);
-      }
-      a.addEventListener('focus', onFocus);
-      a.addEventListener('blur', onAnchorBlur);
-      a.addEventListener('click', onClick);
-      a.addEventListener('keydown', onAnchorKeyDown);
-    });
+    // hover só é ligado em dispositivos capazes de :hover — em touch, alguns
+    // navegadores emitem mouseover/mouseout "fantasmas" depois do toque, o
+    // que bagunçaria o estado firmado do card.
+    if (hoverCapable) {
+      root.addEventListener('mouseover', onRootOver);
+      root.addEventListener('mouseout', onRootOut);
+    }
+    root.addEventListener('focusin', onRootFocusIn);
+    root.addEventListener('focusout', onRootFocusOut);
+    root.addEventListener('click', onRootClick);
+    root.addEventListener('keydown', onRootKeyDown);
 
     pop.addEventListener('mouseenter', clearHideTimer);
     pop.addEventListener('mouseleave', () => scheduleHide(80));
@@ -228,7 +256,10 @@ export default function TermPreview({ articleRef, contentKey }) {
     }
     function onOutsideClick(e) {
       if (pop.hidden) return;
-      if (pop.contains(e.target) || anchors.includes(e.target)) return;
+      if (pop.contains(e.target)) return;
+      // clique num termo (qualquer um, inclusive os que entraram no DOM
+      // depois) não conta como "clique fora" — quem trata é onRootClick
+      if (e.target instanceof Element && e.target.closest('a.term-link')) return;
       hide();
     }
 
@@ -238,16 +269,14 @@ export default function TermPreview({ articleRef, contentKey }) {
     document.addEventListener('click', onOutsideClick, true);
 
     return () => {
-      anchors.forEach((a) => {
-        if (hoverCapable) {
-          a.removeEventListener('mouseenter', onEnter);
-          a.removeEventListener('mouseleave', onLeave);
-        }
-        a.removeEventListener('focus', onFocus);
-        a.removeEventListener('blur', onAnchorBlur);
-        a.removeEventListener('click', onClick);
-        a.removeEventListener('keydown', onAnchorKeyDown);
-      });
+      if (hoverCapable) {
+        root.removeEventListener('mouseover', onRootOver);
+        root.removeEventListener('mouseout', onRootOut);
+      }
+      root.removeEventListener('focusin', onRootFocusIn);
+      root.removeEventListener('focusout', onRootFocusOut);
+      root.removeEventListener('click', onRootClick);
+      root.removeEventListener('keydown', onRootKeyDown);
       document.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('scroll', onDismissScroll, { capture: true });
       window.removeEventListener('resize', onDismissScroll);
