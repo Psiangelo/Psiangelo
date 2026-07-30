@@ -72,12 +72,28 @@ export function generateMetadata({ params }) {
       siteName: 'Psiangelo',
       title,
       description,
+      /**
+       * ⚠️ UMA imagem só. Não voltar a declarar várias.
+       *
+       * Antes eram três (vertical, horizontal e o og-square genérico), na
+       * suposição de que o WhatsApp pegaria a primeira. Ele não pega: com
+       * múltiplas `og:image`, o scraper ficou com a ÚLTIMA — justamente o
+       * fallback genérico "Psiangelo · Nosce te ipsum". O resultado era todo
+       * link compartilhado sair com a marca genérica em vez da capa do post,
+       * mesmo com as imagens certas geradas e servindo 200 (30/07/2026).
+       *
+       * A escolhida é a horizontal 1200×630: já traz a capa do post com o
+       * título sobreposto, e é a proporção que rende preview grande no
+       * WhatsApp, no Telegram, no Facebook e no LinkedIn. A vertical continua
+       * sendo gerada e usada no site; ela não serve aqui porque scraper de
+       * mensageiro corta imagem muito alta.
+       *
+       * Sem fallback genérico de propósito: o gerador (scripts/gen-og-posts)
+       * cobre todo post publicado, e post sem capa ganha o ornamento
+       * geométrico com o título. Um fallback aqui só reintroduz o bug.
+       */
       images: [
-        // Vertical primeiro — scrapers do WhatsApp costumam pegar o primeiro
-        { url: ogImageV, width: 720,  height: 1280, alt: title, type: 'image/jpeg' },
-        { url: ogImage,  width: 1200, height: 630,  alt: title, type: 'image/jpeg' },
-        // Fallback global, caso a imagem gerada não exista
-        { url: `${SITE_URL}/og-square.png`, width: 1200, height: 1200, alt: 'Psiangelo' },
+        { url: ogImage, width: 1200, height: 630, alt: title, type: 'image/jpeg' },
       ],
       publishedTime: post.created_at,
       modifiedTime: post.updated_at,
@@ -126,9 +142,11 @@ function buildBlogPostingSchema(post) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     headline: title,
     description,
+    // Horizontal primeiro: o Google aceita várias proporções aqui (ao
+    // contrário do og:image, que precisa ser uma só — ver comentário acima).
     image: [
-      `${SITE_URL}/og/posts-v/${slug}.jpg`,
       `${SITE_URL}/og/posts/${slug}.jpg`,
+      `${SITE_URL}/og/posts-v/${slug}.jpg`,
     ],
     datePublished: post.created_at || post.updated_at,
     dateModified: post.updated_at || post.created_at,
