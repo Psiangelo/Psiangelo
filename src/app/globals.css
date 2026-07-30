@@ -1182,3 +1182,49 @@ main:focus {
   background: rgba(0, 0, 0, 0.25);
   padding: 0.1em 0.35em;
 }
+
+/* ── Player de leitura em voz alta (ListenButton) ───────────────────────── */
+.listen-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 24px;
+  margin: 0;
+  /* area de toque generosa no mobile sem engordar o traco visual */
+  touch-action: none;
+}
+.listen-seek::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 24px;
+}
+.listen-seek::-moz-range-track {
+  background: transparent;
+  height: 24px;
+}
+.listen-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: #B48C50;
+  border: 2px solid #0E0C0A;
+  cursor: pointer;
+}
+.listen-seek::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #B48C50;
+  border: 2px solid #0E0C0A;
+  cursor: pointer;
+}
+.listen-seek:focus-visible {
+  outline: none;
+}
+.listen-seek:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(180, 140, 80, 0.45);
+}
+.listen-seek:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px rgba(180, 140, 80, 0.45);
+}
