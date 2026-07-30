@@ -170,6 +170,17 @@ export const DEFAULT_HOMEPAGE = {
       },
     ],
   },
+  newsletter: {
+    eyebrow: 'Acompanhar por e-mail',
+    title: 'Um aviso por',
+    emphasis: 'e-mail, quando publico.',
+    lead: 'Sem newsletter semanal, sem funil. Um e-mail quando sai um ensaio novo, um verbete novo no glossário ou uma trilha nova.',
+    buttonLabel: 'Quero receber',
+    buttonLoadingLabel: 'Enviando…',
+    successMessage: 'Inscrição feita. Obrigado por acompanhar.',
+    alreadySubscribedMessage: 'Você já está na lista. Obrigado.',
+    errorMessage: 'Não deu para confirmar agora. Tenta de novo em instantes.',
+  },
   contact: {
     sectionLabel: 'Agendar',
     title: 'Pronto para uma primeira conversa?',
@@ -188,11 +199,43 @@ export const DEFAULT_HOMEPAGE = {
   },
 };
 
+/**
+ * DEFAULT_BIO.author — identidade de quem escreve/atende, independente da
+ * marca do Linktree (os campos `name`/`tagline`/`bio`/`avatar` acima são do
+ * /bio como cartão de visita, "Psiangelo"). É a fonte única de:
+ *  - AuthorBand (faixa "quem escreve" no fim de /blog e /estudos)
+ *  - AuthorBox (caixa "sobre quem escreve" no fim de cada post)
+ *  - Footer (disclaimer de estágio)
+ *  - StructuredData (JSON-LD Person, o que o Google lê)
+ *
+ * Antes vivia espalhada dentro de DEFAULT_THERAPY.hero.photo (config da
+ * landing de psicoterapia, hoje oculta) — o que forçava editar "quem
+ * escreve" dentro do gerenciador de Psicoterapia, e amarrava o texto dos
+ * ensaios ao texto de venda de atendimento. Esse bloco existe pra isso não
+ * acontecer de novo. DEFAULT_THERAPY.hero.photo continua intacto — a landing
+ * clínica mantém sua própria config quando for religada.
+ *
+ * Merge é raso (getBio faz `{ ...DEFAULT_BIO, ...stored }`): um snapshot
+ * antigo sem a chave `author` cai inteiro no default abaixo, sem quebrar.
+ */
+const DEFAULT_AUTHOR = {
+  name: 'Ângelo',
+  credential: 'Estagiário em Psicologia · Associação Allos',
+  bio: 'Estudante de psicologia, em estágio clínico supervisionado pela Associação Allos. Escrevo a partir da leitura sistemática da obra de Jung — cada citação conferida contra a fonte, localizada por obra e parágrafo.',
+  photo: {
+    src: '/images/angelo-terapia.png',
+    alt: 'Ângelo',
+  },
+  disclaimer:
+    'Atendo como estagiário em psicologia, sob supervisão clínica. Quando concluir a graduação e obtiver registro no CRP, esta indicação será atualizada.',
+};
+
 export const DEFAULT_BIO = {
   name: 'Psiangelo',
   tagline: 'Psicologia Analítica · Jung',
   bio: 'Estudante de psicologia, estagiário clínico. Aqui divido o que estudo, atendo e ensino.',
   avatar: '/images/angelo-portrait.png',
+  author: DEFAULT_AUTHOR,
   images: [],
   links: [
     {
@@ -447,6 +490,7 @@ export const getHomepage = (seedOnly) => {
     : { ...DEFAULT_HOMEPAGE.contact, ...(stored.contact || {}) };
   const about = { ...DEFAULT_HOMEPAGE.about, ...(stored.about || {}) };
   const manifesto = { ...DEFAULT_HOMEPAGE.manifesto, ...(stored.manifesto || {}) };
+  const newsletter = { ...DEFAULT_HOMEPAGE.newsletter, ...(stored.newsletter || {}) };
   // bussola: merge raso, mas mantém portals do default quando o admin não tocou
   const storedBussola = stored.bussola || {};
   const bussola = {
@@ -468,7 +512,7 @@ export const getHomepage = (seedOnly) => {
     if (migratedHero || migratedContact || migratedPrelude) {
       _homepageMigrated = true;
       try {
-        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, bussola, manifesto, prelude, about, contact }));
+        localStorage.setItem(SITEDATA_KEYS.homepage, JSON.stringify({ hero, bussola, manifesto, prelude, about, contact, newsletter }));
         // não dispara evento aqui pra evitar loop de re-render; o resultado retornado já tem a copy correta
       } catch {
         /* quota cheia — migração só em memória */
@@ -478,7 +522,7 @@ export const getHomepage = (seedOnly) => {
     }
   }
 
-  return { hero, bussola, manifesto, prelude, about, contact };
+  return { hero, bussola, manifesto, prelude, about, contact, newsletter };
 };
 export const setHomepage = (v) => writeJson(SITEDATA_KEYS.homepage, v);
 
@@ -487,9 +531,17 @@ export const getBio = (seedOnly) => {
   if (!stored) return DEFAULT_BIO;
   const links = Array.isArray(stored.links) ? stored.links : DEFAULT_BIO.links;
   const images = Array.isArray(stored.images) ? stored.images : DEFAULT_BIO.images;
+  // author é merge por campo (1 nível), não spread raso: um snapshot salvo
+  // antes de existir `photo`/`disclaimer` não pode fazer esses campos sumir.
+  const storedAuthor = stored.author && typeof stored.author === 'object' ? stored.author : {};
   return {
     ...DEFAULT_BIO,
     ...stored,
+    author: {
+      ...DEFAULT_BIO.author,
+      ...storedAuthor,
+      photo: { ...DEFAULT_BIO.author.photo, ...(storedAuthor.photo || {}) },
+    },
     images: images.map((img) => ({
       url: img.url ?? '',
       alt: img.alt ?? '',
@@ -1034,7 +1086,7 @@ export const DEFAULT_SETTINGS = {
   youtubeLink: '',
   emailAddress: '',
   siteTitle: 'Psiangelo — Psicoterapia Junguiana Online',
-  siteDescription: 'Psicoterapia analítica online em abordagem junguiana — adolescentes, adultos e idosos, em todo o Brasil.',
+  siteDescription: 'Ensaios, glossário e trilhas de leitura sobre a obra de Carl Gustav Jung e a psicologia analítica — um projeto de estudo público conduzido por um estudante de psicologia em estágio clínico supervisionado.',
   accentColor: '#B48C50',
 };
 

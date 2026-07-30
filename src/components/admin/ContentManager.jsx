@@ -161,9 +161,10 @@ export default function ContentManager({ addToast, addLogEntry }) {
     { id: 'hero',      label: 'Hero' },
     { id: 'manifesto', label: 'A casa' },
     { id: 'bussola',   label: 'Bússola' },
-    { id: 'prelude', label: 'Prelúdio' },
-    { id: 'about',   label: 'Sobre' },
-    { id: 'contact', label: 'Contato' },
+    { id: 'prelude',    label: 'Prelúdio' },
+    { id: 'about',      label: 'Sobre' },
+    { id: 'newsletter', label: 'Inscrição por e-mail' },
+    { id: 'contact',    label: 'Contato' },
   ];
 
   return (
@@ -402,6 +403,13 @@ export default function ContentManager({ addToast, addLogEntry }) {
               <label className={LABEL}>2º parágrafo</label>
               <textarea value={data.about.paragraph2} rows={4} onChange={(e) => updateBlock('about', 'paragraph2', e.target.value)} className={TEXTAREA} />
             </div>
+            <div>
+              <label className={LABEL}>Parágrafo 3 (método)</label>
+              <textarea value={data.about.paragraph3 ?? ''} rows={4} onChange={(e) => updateBlock('about', 'paragraph3', e.target.value)} className={TEXTAREA} />
+              <p className="text-[10px] text-[#6E6458] mt-1.5 font-sans italic">
+                O parágrafo do rigor de fonte — o que sustenta a autoridade do texto sem CRP. Deixe em branco pra ocultar.
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
                 <label className={LABEL}>Citação</label>
@@ -505,6 +513,70 @@ export default function ContentManager({ addToast, addLogEntry }) {
             ))}
           </div>
         </>
+      )}
+
+      {/* NEWSLETTER (captura de e-mail — home + fim de cada ensaio) */}
+      {activeBlock === 'newsletter' && (
+        <div className={CARD + ' space-y-4'}>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm uppercase tracking-widest text-[#6E6458] font-sans">
+              Inscrição por e-mail (home + fim de cada ensaio)
+            </h3>
+            <button
+              onClick={() => resetBlock('newsletter')}
+              className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#6E6458] hover:text-[#B48C50] transition-colors"
+              title="Substitui o conteúdo desta seção pelo texto padrão."
+            >
+              ↺ Restaurar
+            </button>
+          </div>
+          <p className="text-[11px] text-[#6E6458] font-sans italic">
+            Este bloco liga/desliga em Visibilidade → “Inscrição por e-mail”. Aqui você edita só os textos.
+          </p>
+          <div>
+            <label className={LABEL}>Eyebrow (linha mono pequena)</label>
+            <input value={data.newsletter?.eyebrow ?? ''} onChange={(e) => updateBlock('newsletter', 'eyebrow', e.target.value)} className={INPUT} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL}>Título — prefixo (regular)</label>
+              <input value={data.newsletter?.title ?? ''} onChange={(e) => updateBlock('newsletter', 'title', e.target.value)} className={INPUT} />
+            </div>
+            <div>
+              <label className={LABEL}>Título — ênfase (italic dourado)</label>
+              <input value={data.newsletter?.emphasis ?? ''} onChange={(e) => updateBlock('newsletter', 'emphasis', e.target.value)} className={INPUT} />
+            </div>
+          </div>
+          <div>
+            <label className={LABEL}>Chamada (lead, abaixo do título)</label>
+            <textarea value={data.newsletter?.lead ?? ''} rows={3} onChange={(e) => updateBlock('newsletter', 'lead', e.target.value)} className={TEXTAREA} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL}>Rótulo do botão</label>
+              <input value={data.newsletter?.buttonLabel ?? ''} onChange={(e) => updateBlock('newsletter', 'buttonLabel', e.target.value)} className={INPUT} />
+            </div>
+            <div>
+              <label className={LABEL}>Rótulo do botão (enviando…)</label>
+              <input value={data.newsletter?.buttonLoadingLabel ?? ''} onChange={(e) => updateBlock('newsletter', 'buttonLoadingLabel', e.target.value)} className={INPUT} />
+            </div>
+          </div>
+          <div className="border-t border-[rgba(180,140,80,0.1)] pt-3 space-y-4">
+            <h4 className="text-xs uppercase tracking-widest text-[#6E6458] font-sans">Mensagens de retorno</h4>
+            <div>
+              <label className={LABEL}>Sucesso (inscrição nova)</label>
+              <input value={data.newsletter?.successMessage ?? ''} onChange={(e) => updateBlock('newsletter', 'successMessage', e.target.value)} className={INPUT} />
+            </div>
+            <div>
+              <label className={LABEL}>Já estava inscrito</label>
+              <input value={data.newsletter?.alreadySubscribedMessage ?? ''} onChange={(e) => updateBlock('newsletter', 'alreadySubscribedMessage', e.target.value)} className={INPUT} />
+            </div>
+            <div>
+              <label className={LABEL}>Erro (nunca mostra o erro cru do banco)</label>
+              <input value={data.newsletter?.errorMessage ?? ''} onChange={(e) => updateBlock('newsletter', 'errorMessage', e.target.value)} className={INPUT} />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* CONTACT */}

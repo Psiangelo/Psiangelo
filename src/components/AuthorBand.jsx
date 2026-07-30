@@ -7,9 +7,9 @@ import { resolveImageSrc } from '@/lib/basepath';
 import { clinicPhoto } from '@/lib/clinicPhoto';
 import { useSitedata } from '@/lib/useSitedata';
 import {
-  getTherapy,
+  getBio,
   getSettings,
-  DEFAULT_THERAPY,
+  DEFAULT_BIO,
   DEFAULT_SETTINGS,
   SITEDATA_KEYS,
 } from '@/lib/sitedata';
@@ -22,9 +22,12 @@ import {
  * canônica continua morando em /psicoterapia-analitica/ (anti-canibalização de
  * SEO), aqui é só a costura.
  *
- * A foto, o nome e a credencial vêm da landing clínica, então não existe um
- * segundo lugar para manter atualizado. O que muda por página é o rótulo e o
- * texto: no blog é quem escreve, em estudos é quem organiza.
+ * Nome, foto, credencial e bio vêm de `getBio().author` — identidade de
+ * autor própria, editável em Admin → Bio / Linktree, independente da config
+ * da landing de psicoterapia (DEFAULT_THERAPY.hero.photo). É a mesma fonte
+ * usada por AuthorBox (caixa de autor no fim de cada post) e pelo JSON-LD.
+ * O que muda por página é só o rótulo e o texto: no blog é quem escreve,
+ * em estudos é quem organiza.
  */
 export default function AuthorBand({
   id = 'quem-escreve',
@@ -34,11 +37,12 @@ export default function AuthorBand({
   video = '/video/materiais.mp4',
   poster = '/video/materiais.jpg',
 }) {
-  const therapy = useSitedata(getTherapy, DEFAULT_THERAPY, SITEDATA_KEYS.therapy);
+  const bio = useSitedata(getBio, DEFAULT_BIO, SITEDATA_KEYS.bio);
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
 
-  const photo = therapy?.hero?.photo || DEFAULT_THERAPY.hero.photo;
-  const text = body || photo?.bio;
+  const author = bio?.author || DEFAULT_BIO.author;
+  const photo = author?.photo;
+  const text = body || author?.bio;
 
   const whatsappNumber = (settings.whatsappNumber || '').replace(/\D/g, '');
   const whatsappUrl = whatsappNumber
@@ -75,7 +79,7 @@ export default function AuthorBand({
               {/* Círculo de no máximo 176px: carregava o PNG de 2 MB pra isso */}
               <img
                 src={resolveImageSrc(clinicPhoto(photo.src, 'avatar').src)}
-                alt={photo.alt || 'Ângelo'}
+                alt={photo.alt || author?.name || 'Ângelo'}
                 className="w-full h-full object-cover"
                 style={{ objectPosition: 'center 20%' }}
                 loading="lazy"
@@ -93,10 +97,10 @@ export default function AuthorBand({
           <p className="meta-caps-accent mb-4">{eyebrow}</p>
 
           <h2 className="font-serif text-[clamp(1.6rem,3.2vw,2.4rem)] text-text-bright leading-[1.2] mb-4">
-            {photo?.name || 'Ângelo'}
-            {photo?.credential && (
+            {author?.name || 'Ângelo'}
+            {author?.credential && (
               <span className="block mt-2 font-sans text-[0.72rem] font-medium tracking-[0.2em] uppercase text-text-dim">
-                {photo.credential}
+                {author.credential}
               </span>
             )}
           </h2>

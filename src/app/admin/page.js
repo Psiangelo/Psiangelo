@@ -63,6 +63,7 @@ const DEFAULT_PASSWORD = 'Nilohihi1408!';
 
 const DEFAULT_SETTINGS = {
   whatsappNumber: '5581987349114',
+  whatsappMessage: 'Oi Ângelo, vim pelo site e queria trocar uma ideia.',
   instagramLink: '',
   youtubeLink: '',
   emailAddress: '',
@@ -2452,6 +2453,11 @@ function SettingsTab({ settings, setSettings, addToast, addLogEntry }) {
           <div>
             <label className={LABEL_CLASS}>Numero WhatsApp</label>
             <input value={settings.whatsappNumber} onChange={(e) => updateSetting('whatsappNumber', e.target.value)} placeholder="55XXXXXXXXXXX" className={INPUT_CLASS} />
+          </div>
+          <div className="sm:col-span-2">
+            <label className={LABEL_CLASS}>Mensagem padrão do WhatsApp</label>
+            <input value={settings.whatsappMessage || ''} onChange={(e) => updateSetting('whatsappMessage', e.target.value)} placeholder="Oi Ângelo, vim pelo site e queria trocar uma ideia." className={INPUT_CLASS} />
+            <p className="text-[10px] text-[#6E6458] mt-1.5 font-sans italic">Preenche o botão flutuante do WhatsApp e a faixa de autor (AuthorBand).</p>
           </div>
           <div>
             <label className={LABEL_CLASS}>Email</label>

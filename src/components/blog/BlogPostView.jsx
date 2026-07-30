@@ -16,7 +16,8 @@ import AuthorBox from '@/components/blog/AuthorBox';
 import { slugifyTag } from '@/lib/tagSlug';
 import { renderHighlightedTitle } from '@/lib/highlightTitle';
 import { linkGlossaryTerms } from '@/lib/glossaryLinker';
-import { getGlossario } from '@/lib/sitedata';
+import { getGlossario, getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
+import { useSitedata } from '@/lib/useSitedata';
 import { BASE_PATH } from '@/lib/basepath';
 import Newsletter from '@/components/ui/Newsletter';
 
@@ -291,6 +292,11 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
     [htmlWithIds, post.title, glossarioList]
   );
   const plainText = useMemo(() => stripHtmlToText(post.content_html), [post.content_html]);
+  const newsletterContent = useSitedata(
+    () => getHomepage().newsletter,
+    DEFAULT_HOMEPAGE.newsletter,
+    SITEDATA_KEYS.homepage,
+  );
   const articleRef = useRef(null);
 
   // Pullquote: detecta blockquotes curtas (<=220 chars) ou explicitas e
@@ -448,7 +454,7 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
 
             {visibility?.newsletter !== false && (
               <div className="mt-12" data-reading-hide="true">
-                <Newsletter source="blog-post" />
+                <Newsletter source="blog-post" {...newsletterContent} />
               </div>
             )}
 

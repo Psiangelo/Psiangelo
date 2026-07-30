@@ -55,6 +55,25 @@ export default function BioManager({ addToast, addLogEntry }) {
     setDirty(true);
   };
 
+  const updateAuthor = (key, value) => {
+    setData((prev) => ({
+      ...prev,
+      author: { ...(prev.author || DEFAULT_BIO.author), [key]: value },
+    }));
+    setDirty(true);
+  };
+
+  const updateAuthorPhoto = (key, value) => {
+    setData((prev) => ({
+      ...prev,
+      author: {
+        ...(prev.author || DEFAULT_BIO.author),
+        photo: { ...(prev.author?.photo || DEFAULT_BIO.author.photo), [key]: value },
+      },
+    }));
+    setDirty(true);
+  };
+
   const updateLink = (idx, key, value) => {
     const links = [...data.links];
     links[idx] = { ...links[idx], [key]: value };
@@ -258,6 +277,121 @@ export default function BioManager({ addToast, addLogEntry }) {
             className={TEXTAREA}
             rows={3}
             placeholder="Estudante de psicologia, estagiário clínico..."
+          />
+        </div>
+      </div>
+
+      {/* Identidade de autor — assinatura dos ensaios/estudos, não a marca do /bio */}
+      <div className={CARD}>
+        <h3 className="font-serif text-[#B48C50] mb-1 text-sm uppercase tracking-widest">
+          Identidade de autor
+        </h3>
+        <p className="text-[11px] text-[#6E6458] mb-4">
+          Nome, foto e texto de quem escreve — aparece na faixa "Quem escreve" no fim de
+          /blog e /estudos, na caixa de autor no fim de cada post, no rodapé (disclaimer de
+          estágio) e no JSON-LD que o Google lê. Independente da foto/nome da marca "Psiangelo"
+          acima (que é só do cartão /bio) e da página de Psicoterapia (hoje oculta).
+        </p>
+
+        {/* Foto do autor */}
+        <div className="mb-4">
+          <label className={LABEL}>Foto do autor</label>
+          <div className="flex items-start gap-3 flex-wrap">
+            <div className="w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-[rgba(180,140,80,0.2)] bg-[#0E0C0A]">
+              {data.author?.photo?.src ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={resolveLinkImage(data.author.photo.src)}
+                  alt="foto do autor"
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.style.opacity = '0.3'; }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#6E6458] text-[10px]">
+                  sem foto
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-[200px] space-y-2">
+              <input
+                type="text"
+                value={data.author?.photo?.src || ''}
+                onChange={(e) => updateAuthorPhoto('src', e.target.value)}
+                className={INPUT}
+                placeholder="/images/foto.jpg ou https://..."
+              />
+              <div className="flex gap-2 flex-wrap">
+                <label className={BTN_SECONDARY + ' cursor-pointer'}>
+                  Escolher arquivo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 800 * 1024) {
+                        addToast?.('Imagem muito grande (max 800KB). Use URL externa.', 'error');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = () => updateAuthorPhoto('src', reader.result);
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+              </div>
+              <input
+                type="text"
+                value={data.author?.photo?.alt || ''}
+                onChange={(e) => updateAuthorPhoto('alt', e.target.value)}
+                className={INPUT}
+                placeholder="Texto alternativo (alt)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL}>Nome</label>
+            <input
+              type="text"
+              value={data.author?.name || ''}
+              onChange={(e) => updateAuthor('name', e.target.value)}
+              className={INPUT}
+              placeholder="Ângelo"
+            />
+          </div>
+          <div>
+            <label className={LABEL}>Credencial (linha abaixo do nome)</label>
+            <input
+              type="text"
+              value={data.author?.credential || ''}
+              onChange={(e) => updateAuthor('credential', e.target.value)}
+              className={INPUT}
+              placeholder="Estagiário em Psicologia · Associação Allos"
+            />
+          </div>
+        </div>
+        <div className="mt-4">
+          <label className={LABEL}>Bio de autor (quem escreve, com que autoridade)</label>
+          <textarea
+            value={data.author?.bio || ''}
+            onChange={(e) => updateAuthor('bio', e.target.value)}
+            className={TEXTAREA}
+            rows={3}
+            placeholder="Estudante de psicologia, em estágio clínico supervisionado..."
+          />
+        </div>
+        <div className="mt-4">
+          <label className={LABEL}>Disclaimer de estágio (rodapé do site)</label>
+          <textarea
+            value={data.author?.disclaimer || ''}
+            onChange={(e) => updateAuthor('disclaimer', e.target.value)}
+            className={TEXTAREA}
+            rows={2}
+            placeholder="Atendo como estagiário em psicologia, sob supervisão clínica..."
           />
         </div>
       </div>

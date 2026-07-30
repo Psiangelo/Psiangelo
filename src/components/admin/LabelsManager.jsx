@@ -20,10 +20,12 @@ const BTN_SECONDARY = 'px-3 py-1.5 border border-[rgba(180,140,80,0.2)] text-[#B
 const NAV_FIELDS = [
   { key: 'home',         label: 'Home',         hint: 'Link "Home" da navbar' },
   { key: 'psicoterapia', label: 'Psicoterapia', hint: 'Link da landing /psicoterapia-analitica' },
-  { key: 'blog',         label: 'Blog',         hint: 'Link da página /blog' },
+  { key: 'blog',         label: 'Blog',         hint: 'Link da página /blog (default "Ensaios")' },
   { key: 'estudos',      label: 'Estudos',      hint: 'Link do hub /estudos' },
   { key: 'materiais',    label: 'Materiais',    hint: 'Link de /materiais' },
   { key: 'cursos',       label: 'Cursos',       hint: 'Link de /cursos' },
+  { key: 'glossario',    label: 'Glossário',    hint: 'Link da página /glossario' },
+  { key: 'about',        label: 'Sobre',        hint: 'Link "Sobre" da navbar (âncora /#sobre)' },
 ];
 
 const SECTION_FIELDS = [

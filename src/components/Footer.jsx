@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import JungQuote from '@/components/JungQuote';
 import { LogoMarkFull } from '@/components/ui/LogoMark';
 import TrilhaIcon from '@/components/estudos/icons';
-import { getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS } from '@/lib/sitedata';
+import { getSettings, DEFAULT_SETTINGS, getBio, DEFAULT_BIO, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
 import { useVisibility } from '@/lib/useVisibility';
 
@@ -19,6 +19,8 @@ import { useVisibility } from '@/lib/useVisibility';
  */
 export default function Footer({ showMaterialsCta = false }) {
   const settings = useSitedata(getSettings, DEFAULT_SETTINGS, SITEDATA_KEYS.settings);
+  const bio = useSitedata(getBio, DEFAULT_BIO, SITEDATA_KEYS.bio);
+  const author = bio?.author || DEFAULT_BIO.author;
   const { visibility: v } = useVisibility();
   const prefersReduced = useReducedMotion();
   const year = new Date().getFullYear();
@@ -155,15 +157,16 @@ export default function Footer({ showMaterialsCta = false }) {
         </div>
       </div>
 
-      {/* Disclaimer estagiário */}
-      <div className="relative max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 pb-8">
-        <p
-          className="font-serif italic text-[0.78rem] text-text-dim/60 text-center max-w-2xl mx-auto leading-relaxed"
-        >
-          Atendo como estagiário em psicologia, sob supervisão clínica.
-          Quando concluir a graduação e obtiver registro no CRP, esta indicação será atualizada.
-        </p>
-      </div>
+      {/* Disclaimer estagiário — editável em Admin → Bio / Linktree → Identidade de autor */}
+      {author?.disclaimer && (
+        <div className="relative max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 pb-8">
+          <p
+            className="font-serif italic text-[0.78rem] text-text-dim/60 text-center max-w-2xl mx-auto leading-relaxed"
+          >
+            {author.disclaimer}
+          </p>
+        </div>
+      )}
 
       {/* Copyright + tagline */}
       <div className="relative border-t border-border-subtle/40">

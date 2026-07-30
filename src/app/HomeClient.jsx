@@ -36,9 +36,11 @@ import {
   getTrilhas,
   getTestimonials,
   getFaqs,
+  getHomepage,
   SITEDATA_KEYS,
   DEFAULT_FAQS,
   DEFAULT_TESTIMONIALS,
+  DEFAULT_HOMEPAGE,
 } from '@/lib/sitedata';
 
 function Break({ children, pad = 'py-4' }) {
@@ -111,6 +113,11 @@ export default function HomePage() {
   const trilhas      = useSitedata(getTrilhas,       [], SITEDATA_KEYS.trilhas);
   const testimonials = useSitedata(getTestimonials,  DEFAULT_TESTIMONIALS, SITEDATA_KEYS.testimonials);
   const faqs         = useSitedata(getFaqs,          DEFAULT_FAQS,         SITEDATA_KEYS.faqs);
+  const newsletterContent = useSitedata(
+    () => getHomepage().newsletter,
+    DEFAULT_HOMEPAGE.newsletter,
+    SITEDATA_KEYS.homepage,
+  );
   const blogCount    = usePublishedBlogCount();
   const coursesCount = useCoursesCount();
 
@@ -149,7 +156,7 @@ export default function HomePage() {
     // O id no catálogo é 'estudos'; antes o renderer se chamava 'trilhas' e
     // nunca casava, então a seção de trilhas jamais aparecia na home.
     estudos:     () => (v.estudos !== false && has.trilhas ? <StudyPaths /> : null),
-    newsletter:  () => (v.newsletter !== false ? <Newsletter source="home" /> : null),
+    newsletter:  () => (v.newsletter !== false ? <Newsletter source="home" {...newsletterContent} /> : null),
     jungQuote:   () => <JungQuote />,
     materials:   () => (v.materiais && has.materials ? <MaterialsPreview /> : null),
     cursos:      () => (v.cursos && has.cursos ? <CoursesPreview /> : null),

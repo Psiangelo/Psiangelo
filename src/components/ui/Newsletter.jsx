@@ -26,6 +26,11 @@ export default function Newsletter({
   title = 'Um aviso por',
   emphasis = 'e-mail, quando publico.',
   lead = 'Sem newsletter semanal, sem funil. Um e-mail quando sai um ensaio novo, um verbete novo no glossário ou uma trilha nova.',
+  buttonLabel = 'Quero receber',
+  buttonLoadingLabel = 'Enviando…',
+  successMessage = 'Inscrição feita. Obrigado por acompanhar.',
+  alreadySubscribedMessage = 'Você já está na lista. Obrigado.',
+  errorMessage = 'Não deu para confirmar agora. Tenta de novo em instantes.',
 }) {
   const inputId = useId();
   const [email, setEmail] = useState('');
@@ -42,15 +47,11 @@ export default function Newsletter({
 
     if (result.ok) {
       setStatus('success');
-      setMessage(
-        result.alreadySubscribed
-          ? 'Você já está na lista. Obrigado.'
-          : 'Inscrição feita. Obrigado por acompanhar.',
-      );
+      setMessage(result.alreadySubscribed ? alreadySubscribedMessage : successMessage);
       setEmail('');
     } else {
       setStatus('error');
-      setMessage('Não deu para confirmar agora. Tenta de novo em instantes.');
+      setMessage(errorMessage);
     }
   }
 
@@ -115,7 +116,7 @@ export default function Newsletter({
             disabled={status === 'loading'}
             className="font-sans text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-bg bg-accent px-6 py-3 hover:bg-text-bright transition-colors disabled:opacity-60 disabled:cursor-wait whitespace-nowrap"
           >
-            {status === 'loading' ? 'Enviando…' : 'Quero receber'}
+            {status === 'loading' ? buttonLoadingLabel : buttonLabel}
           </button>
         </motion.form>
 

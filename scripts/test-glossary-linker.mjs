@@ -187,5 +187,17 @@ test('formato normalizado do sitedata.js (getGlossario/getGlossarioCategories) a
   assert.doesNotMatch(out, /data-term-slug="sombra"/, 'verbete hidden:true (editado no painel) não deve autolinkar');
 });
 
+test('âncora estática do termo continua um <a href> real, sem target/rel de nova aba', () => {
+  // O card do verbete (TermPreview.jsx) intercepta o clique via JS pra
+  // abrir o preview em vez de navegar, e o link "ver verbete completo" de
+  // dentro do card é quem abre em nova aba (target="_blank"). Mas o <a>
+  // gerado aqui no HTML estático tem que continuar sendo o link real pro
+  // silo (SEO + funciona sem JS) — nunca virar target="_blank" nem span.
+  const out = link('<p>A Sombra aparece nos sonhos.</p>');
+  assert.match(out, /<a href="\/Psiangelo\/glossario\/sombra\/" class="term-link" data-term-slug="sombra" data-term-title="Sombra" data-term-short="[^"]*">Sombra<\/a>/);
+  assert.doesNotMatch(out, /target="_blank"/);
+  assert.doesNotMatch(out, /<span[^>]*>Sombra<\/span>/);
+});
+
 console.log(`\n${passed} passaram, ${failed} falharam.`);
 if (failed > 0) process.exit(1);
