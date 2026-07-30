@@ -131,9 +131,12 @@ export default function Footer({ showMaterialsCta = false }) {
 
       {/* Grid principal */}
       <div className="relative max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-10 md:gap-10">
+        {/* No celular as colunas de links vão a 2 por linha: empilhadas em 1,
+            com 4 colunas de poucos itens cada, o rodapé virava uma tira longa
+            de espaço morto. A marca ocupa a linha inteira. */}
+        <div className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-x-6 gap-y-9 md:gap-10">
           {/* Logo + manifesto */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <div className="max-w-[280px] mb-5">
               <LogoMarkFull showTagline={false} />
             </div>

@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import VisibilityGate from '@/components/VisibilityGate';
 import { useSitedata } from '@/lib/useSitedata';
+import { useVisibility } from '@/lib/useVisibility';
 import {
   getGlossario, getGlossarioCategories, getMaterials,
   SITEDATA_KEYS,
@@ -25,6 +26,7 @@ function stripHighlights(t) {
 }
 
 export default function TermoClient({ initialTermo, initialList, initialCategories, initialPosts = [], initialCourses = [], relatedEssays = [] }) {
+  const { visibility } = useVisibility();
   const list       = useSitedata(getGlossario, initialList, SITEDATA_KEYS.glossario);
   const categories = useSitedata(getGlossarioCategories, initialCategories, SITEDATA_KEYS.glossarioCategories);
   const materials  = useSitedata(getMaterials, [], SITEDATA_KEYS.materials);
@@ -38,7 +40,11 @@ export default function TermoClient({ initialTermo, initialList, initialCategori
   const relatedTerms = (term.related?.terms || [])
     .map((slug) => list.find((g) => g.slug === slug))
     .filter(Boolean);
-  const relatedMaterials = (term.related?.materials || [])
+  // Materiais só aparecem se a seção /materiais estiver visível. Com ela
+  // oculta (é o caso hoje: a venda é fase futura), esses itens viravam links
+  // para uma página que devolve placeholder — o leitor clicava e não chegava
+  // a lugar nenhum.
+  const relatedMaterials = (visibility?.materiais === false ? [] : (term.related?.materials || []))
     .map((id) => materials.find((m) => m.id === id))
     .filter(Boolean);
   const fullHtml = renderFullMarkdown(term.full);

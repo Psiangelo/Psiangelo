@@ -119,14 +119,16 @@ export function slugsToExcludeForTitle(title, glossarioList) {
  * (ainda não vista) de cada entrada. Se `link` for true, produz o HTML com
  * <a> inseridos; sempre retorna a lista de slugs encontrados, em ordem.
  */
-function walk(html, entries, { link }) {
+function walk(html, entries, { link, seed } = {}) {
   if (!html || !entries || entries.length === 0) {
     return { html: html || '', mentions: [] };
   }
 
   const tokens = tokenizeHtml(html);
   let skipDepth = 0;
-  const seen = new Set();
+  // `seed`: slugs já resolvidos pela marcação manual, para o autolink não
+  // linkar o mesmo verbete uma segunda vez logo abaixo.
+  const seen = new Set(seed || []);
   const mentions = [];
   let out = '';
 
@@ -205,9 +207,80 @@ export function scanGlossaryMentions(html, entries) {
  *                            próprio termo (heurística best-effort)
  * @param options.basePath    prefixo de rota (ex: '/Psiangelo')
  */
+/**
+ * Palavras que NUNCA viram link automático, mesmo estando no glossário como
+ * alias. São palavras funcionais do português: linká-las enche o texto de
+ * ruído e manda o leitor para um verbete que não tem relação com a frase.
+ *
+ * Motivo concreto (30/07/2026): «eu» é alias de Ego, e o autolink transformou
+ * um «eu» qualquer do meio de um parágrafo em link para o verbete Ego.
+ *
+ * Isso NÃO impede a marcação manual: se o autor marcar «eu» de propósito num
+ * trecho em que a palavra de fato significa o Ego, a marca manual vale.
+ */
+const NUNCA_AUTOLINK = new Set([
+  'eu', 'me', 'mim', 'si', 'se', 'ele', 'ela', 'nos', 'nós',
+  'ser', 'sou', 'é', 'ter', 'tem', 'ver', 'ir', 'dar',
+  'um', 'uma', 'the', 'de', 'da', 'do', 'em', 'no', 'na',
+]);
+
+/**
+ * Resolve as marcações MANUAIS `<span data-termo="slug">texto</span>`,
+ * postas pelo autor no editor, em âncoras de verbete.
+ *
+ * Roda ANTES do autolink e tem prioridade sobre ele: o que o autor marcou de
+ * propósito vale mais que o casamento de grafia. Os slugs resolvidos aqui
+ * entram em `seen`, para o autolink não linkar o mesmo verbete de novo logo
+ * adiante.
+ *
+ * O span guarda só o slug; título e definição são lidos do glossário atual,
+ * então reescrever um verbete atualiza o que aparece no card de todos os
+ * posts, sem tocar no conteúdo deles.
+ *
+ * Slug que não existe mais (verbete renomeado ou apagado): vira texto comum,
+ * sem link quebrado.
+ */
+export function applyManualTerms(html, glossarioList, { basePath = '' } = {}) {
+  const usados = new Set();
+  if (!html || typeof html !== 'string') return { html: html || '', usados };
+
+  const porSlug = new Map();
+  for (const g of glossarioList || []) {
+    if (g && g.slug && !g.hidden) porSlug.set(g.slug, g);
+  }
+
+  const out = html.replace(
+    /<span([^>]*?)data-termo="([^"]*)"([^>]*?)>([\s\S]*?)<\/span>/gi,
+    (full, _pre, slug, _pos, texto) => {
+      const verbete = porSlug.get(slug);
+      if (!verbete) return texto; // verbete sumiu: devolve o texto puro
+      usados.add(slug);
+      const href = `${basePath || ''}/glossario/${slug}/`;
+      return (
+        `<a href="${href}" class="term-link" data-term-slug="${escapeAttr(slug)}"` +
+        ` data-term-title="${escapeAttr(verbete.term || slug)}"` +
+        ` data-term-short="${escapeAttr(verbete.short || '')}">${texto}</a>`
+      );
+    },
+  );
+
+  return { html: out, usados };
+}
+
 export function linkGlossaryTerms(html, glossarioList, { title, basePath = '' } = {}) {
+  // 1. o que o autor marcou à mão manda
+  const manual = applyManualTerms(html, glossarioList, { basePath });
+
+  // 2. autolink para o resto, pulando o que já foi marcado e as palavras
+  //    funcionais que nunca devem virar link sozinhas
   const exclude = slugsToExcludeForTitle(title, glossarioList);
-  const entries = buildGlossaryEntries(glossarioList, { excludeSlugs: exclude });
-  const result = walk(html, entries, { link: { basePath } });
-  return { html: result.html, linkedSlugs: result.mentions.map((m) => m.slug) };
+  const entries = buildGlossaryEntries(glossarioList, { excludeSlugs: exclude }).filter(
+    (e) => !NUNCA_AUTOLINK.has(String(e.variant).trim().toLowerCase()),
+  );
+
+  const result = walk(manual.html, entries, { link: { basePath }, seed: manual.usados });
+  return {
+    html: result.html,
+    linkedSlugs: [...manual.usados, ...result.mentions.map((m) => m.slug)],
+  };
 }

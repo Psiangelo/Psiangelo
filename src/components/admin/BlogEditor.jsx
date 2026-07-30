@@ -13,6 +13,8 @@ import Highlight from '@tiptap/extension-highlight';
 import Color from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Node, mergeAttributes } from '@tiptap/core';
+import GlossaryTermMark from '@/components/admin/GlossaryTermMark';
+import GlossaryTermPopover from '@/components/admin/GlossaryTermPopover';
 import { useCallback, useState, useEffect, useRef } from 'react';
 
 // ─── Custom Callout Extension ───────────────────────────────────────
@@ -138,6 +140,13 @@ const icons = {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
       <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  ),
+  glossary: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      <path d="M9 7h7" />
     </svg>
   ),
   image: (
@@ -451,6 +460,7 @@ export default function BlogEditor({ content, onChange, placeholder = 'Comece a 
       Color,
       TextStyle,
       Callout,
+      GlossaryTermMark,
       Details,
       DetailsSummary,
     ],
@@ -552,6 +562,36 @@ export default function BlogEditor({ content, onChange, placeholder = 'Comece a 
               initialUrl={editor.getAttributes('link').href}
               onSubmit={handleInsertLink}
               onClose={() => setShowLinkPopover(false)}
+            />
+          )}
+        </div>
+
+        {/* Verbete do glossário — marcação manual, para o que o autolink não
+            tem como adivinhar (ver GlossaryTermMark.js) */}
+        <div ref={termBtnRef} className="relative">
+          <ToolbarBtn
+            icon={icons.glossary}
+            label="Apontar para verbete do glossário"
+            active={editor.isActive('glossaryTerm')}
+            onClick={() => setShowTermPopover(!showTermPopover)}
+          />
+          {showTermPopover && (
+            <GlossaryTermPopover
+              selectedText={editor.state.doc.textBetween(
+                editor.state.selection.from,
+                editor.state.selection.to,
+                ' ',
+              )}
+              currentSlug={editor.getAttributes('glossaryTerm').slug}
+              onSubmit={(slug) => {
+                editor.chain().focus().setGlossaryTerm(slug).run();
+                setShowTermPopover(false);
+              }}
+              onRemove={() => {
+                editor.chain().focus().unsetGlossaryTerm().run();
+                setShowTermPopover(false);
+              }}
+              onClose={() => setShowTermPopover(false)}
             />
           )}
         </div>

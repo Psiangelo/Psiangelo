@@ -17,6 +17,7 @@ const GLOSSARIO = [
   { slug: 'inconsciente-coletivo', term: 'Inconsciente coletivo', aliases: ['psique objetiva'], short: 'Substrato comum.' },
   { slug: 'self', term: 'Self', aliases: ['si-mesmo', 'si mesmo'], short: 'Centro regulador.' },
   { slug: 'numinoso', term: 'Numinoso', aliases: [], short: 'Sagrado, terrível, fascinante.' },
+  { slug: 'complexo', term: 'Complexo', aliases: [], short: 'Núcleo afetivo autônomo.' },
 ];
 
 let passed = 0;
@@ -197,6 +198,42 @@ test('âncora estática do termo continua um <a href> real, sem target/rel de no
   assert.match(out, /<a href="\/Psiangelo\/glossario\/sombra\/" class="term-link" data-term-slug="sombra" data-term-title="Sombra" data-term-short="[^"]*">Sombra<\/a>/);
   assert.doesNotMatch(out, /target="_blank"/);
   assert.doesNotMatch(out, /<span[^>]*>Sombra<\/span>/);
+});
+
+test('palavra funcional ("eu", alias de Ego) NÃO vira link automático', () => {
+  // "eu" é alias de Ego no glossário real. Autolinkar toda ocorrência de "eu"
+  // mandava o leitor para o verbete Ego numa frase que não tem relação
+  // nenhuma com o conceito (bug real, 30/07/2026).
+  const out = link('<p>Como eu disse antes, isso é assim.</p>');
+  assert.doesNotMatch(out, /term-link/, 'não deveria linkar nada aqui');
+  assert.match(out, /Como eu disse antes/);
+});
+
+test('o termo canônico curto (Ego) continua sendo autolinkado', () => {
+  // a lista de palavras funcionais não pode derrubar o próprio termo
+  const out = link('<p>O Ego é o centro da consciência.</p>');
+  assert.match(out, /<a[^>]*data-term-slug="ego"[^>]*>Ego<\/a>/);
+});
+
+test('marcação manual <span data-termo> vira link do verbete', () => {
+  const out = link('<p>Aquele <span data-termo="complexo">núcleo afetivo</span> apareceu.</p>');
+  assert.match(out, /<a[^>]*data-term-slug="complexo"[^>]*>núcleo afetivo<\/a>/);
+  // título e definição vêm do glossário ATUAL, não congelados no post
+  assert.match(out, /data-term-title="Complexo"/);
+});
+
+test('marcação manual para verbete inexistente vira texto puro, sem link quebrado', () => {
+  const out = link('<p>Um <span data-termo="nao-existe">trecho</span> qualquer.</p>');
+  assert.doesNotMatch(out, /term-link/);
+  assert.doesNotMatch(out, /data-termo/);
+  assert.match(out, /<p>Um trecho qualquer\.<\/p>/);
+});
+
+test('marcação manual tem prioridade e impede autolink do mesmo verbete depois', () => {
+  const out = link('<p>Aquele <span data-termo="sombra">lado rejeitado</span> aparece. A Sombra insiste.</p>');
+  const count = (out.match(/data-term-slug="sombra"/g) || []).length;
+  assert.equal(count, 1, `verbete marcado à mão não deve ser autolinkado de novo: ${out}`);
+  assert.match(out, />lado rejeitado<\/a>/, 'o link tem que ser o trecho que o autor marcou');
 });
 
 console.log(`\n${passed} passaram, ${failed} falharam.`);
