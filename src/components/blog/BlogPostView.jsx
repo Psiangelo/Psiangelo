@@ -121,12 +121,18 @@ function ReadingProgressBar({ targetRef }) {
   );
 }
 
-/* ====== TOC Sticky lateral ====== */
-function StickyTOC({ headings }) {
+/* ====== Sumário do ensaio ======
+   Duas apresentações da mesma régua: barra lateral fixa no desktop e bloco
+   recolhível no topo do post no celular. O scroll-spy vive no BlogPostView e é
+   passado às duas, para existir UM listener de scroll e não dois — no mobile a
+   barra lateral continua montada (só escondida por CSS), então o segundo
+   listener rodaria a cada rolagem sem pintar nada na tela. */
+
+function useSecaoAtiva(headings) {
   const [activeId, setActiveId] = useState(null);
 
   useEffect(() => {
-    if (!headings.length) return;
+    if (!headings.length) return undefined;
     const handleScroll = () => {
       const offsets = headings
         .map((h) => {
@@ -144,11 +150,10 @@ function StickyTOC({ headings }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [headings]);
 
-  if (headings.length < 3) return null;
+  return activeId;
+}
 
-  // -1 (nenhuma seção passou ainda) cai no primeiro item, como antes
-  const iAtivo = Math.max(0, headings.findIndex((h) => h.id === activeId));
-
+function montarSumario(headings, activeId) {
   /* Qual nível conta como "seção" é relativo ao post, não fixo em h2: há post
      no ar com um único h2 de abertura e dez h3, e tratar h3 como subseção
      deixava dez itens recuados e sem número. Seção = o menor nível que aparece
@@ -161,9 +166,78 @@ function StickyTOC({ headings }) {
   const niveis = Object.keys(porNivel).map(Number).sort((a, b) => a - b);
   const nivelSecao = niveis.find((l) => porNivel[l] >= 2) ?? niveis[0];
 
-  let n = 0;
-  const numeros = headings.map((h) => ((h.level || 2) <= nivelSecao ? (n += 1) : null));
+  // -1 (nenhuma seção passou ainda) cai no primeiro item
+  const iAtivo = Math.max(0, headings.findIndex((h) => h.id === activeId));
 
+  let n = 0;
+  const itens = headings.map((h, i) => {
+    const secao = (h.level || 2) <= nivelSecao;
+    return {
+      ...h,
+      secao,
+      numero: secao ? (n += 1) : null,
+      ativo: i === iAtivo,
+      passou: i <= iAtivo,
+    };
+  });
+
+  return { itens, iAtivo, totalSecoes: n };
+}
+
+function TOCItens({ itens, onNavegar }) {
+  return (
+    <ul className="toc-list max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
+      {itens.map((it, i) => (
+        <li key={it.id || i}>
+          <a
+            href={`#${it.id}`}
+            onClick={onNavegar}
+            className="toc-item"
+            data-active={it.ativo}
+            data-passed={it.passou}
+            data-level={it.secao ? 2 : 3}
+            aria-current={it.ativo ? 'true' : undefined}
+          >
+            {it.numero !== null && (
+              <span className="toc-num" aria-hidden="true">{String(it.numero).padStart(2, '0')}</span>
+            )}
+            <span className="toc-text">{it.text}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* No celular o sumário serve como mapa prévio do ensaio, não como navegação
+   permanente: por isso é um bloco recolhível no topo, fechado por padrão, e não
+   um elemento fixo — o canto inferior já tem o WhatsApp e o voltar-ao-topo.
+   Fecha sozinho ao escolher uma seção, senão continuaria aberto ocupando a tela
+   quando o leitor voltasse ao começo do post. */
+function TOCMobile({ headings, activeId }) {
+  const ref = useRef(null);
+  if (headings.length < 3) return null;
+  const { itens, totalSecoes } = montarSumario(headings, activeId);
+
+  return (
+    <details ref={ref} className="toc-mobile lg:hidden" data-reading-hide="true">
+      <summary className="toc-mobile-summary">
+        <span className="meta-caps-accent">Neste artigo</span>
+        <span className="toc-mobile-meta">
+          {totalSecoes} seções
+          <span className="toc-mobile-chevron" aria-hidden="true" />
+        </span>
+      </summary>
+      <div className="toc-mobile-corpo">
+        <TOCItens itens={itens} onNavegar={() => { if (ref.current) ref.current.open = false; }} />
+      </div>
+    </details>
+  );
+}
+
+function StickyTOC({ headings, activeId }) {
+  if (headings.length < 3) return null;
+  const { itens, iAtivo } = montarSumario(headings, activeId);
 
   return (
     <nav className="lg:sticky lg:top-28" aria-label="Sumário do artigo">
@@ -174,25 +248,7 @@ function StickyTOC({ headings }) {
           <span className="toc-count-total">/{String(headings.length).padStart(2, '0')}</span>
         </span>
       </div>
-      <ul className="toc-list max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
-        {headings.map((h, i) => (
-          <li key={h.id || i}>
-            <a
-              href={`#${h.id}`}
-              className="toc-item"
-              data-active={i === iAtivo}
-              data-passed={i <= iAtivo}
-              data-level={(h.level || 2) <= nivelSecao ? 2 : 3}
-              aria-current={i === iAtivo ? 'true' : undefined}
-            >
-              {numeros[i] !== null && (
-                <span className="toc-num" aria-hidden="true">{String(numeros[i]).padStart(2, '0')}</span>
-              )}
-              <span className="toc-text">{h.text}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <TOCItens itens={itens} />
     </nav>
   );
 }
@@ -317,6 +373,8 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
     SITEDATA_KEYS.homepage,
   );
   const articleRef = useRef(null);
+  // um listener só, compartilhado pelas duas apresentações do sumário
+  const secaoAtiva = useSecaoAtiva(headings);
 
   // Capa dupla: featured_image (horizontal, desktop) + featured_cover
   // (vertical, cadastrada pra celular). Sem a troca por <picture>, o mobile
@@ -481,6 +539,8 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
               </div>
             )}
 
+            <TOCMobile headings={headings} activeId={secaoAtiva} />
+
             <BlogPostBody html={htmlWithGlossaryLinks} />
             <TermPreview articleRef={articleRef} contentKey={post.id} />
 
@@ -512,7 +572,7 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
 
           {/* TOC sticky lateral — só desktop */}
           <aside className="hidden lg:block" data-reading-hide="true">
-            <StickyTOC headings={headings} />
+            <StickyTOC headings={headings} activeId={secaoAtiva} />
           </aside>
         </div>
       </div>

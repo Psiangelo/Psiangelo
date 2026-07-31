@@ -1014,6 +1014,56 @@ main:focus {
 }
 .toc-count-total { color: rgba(140, 131, 120, 0.7); }
 
+/* --- versão do celular: mapa prévio recolhível, no topo do post --- */
+.toc-mobile {
+  margin: 0 0 2rem;
+  border: 1px solid rgba(180, 140, 80, 0.14);
+  border-radius: 4px;
+  background: rgba(28, 23, 18, 0.45);
+}
+.toc-mobile-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+/* o triângulo padrão do <details> não combina com o resto; o chevron abaixo o substitui */
+.toc-mobile-summary::-webkit-details-marker { display: none; }
+.toc-mobile-summary::marker { content: ''; }
+.toc-mobile-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: rgba(140, 131, 120, 0.9);
+  white-space: nowrap;
+}
+.toc-mobile-chevron {
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid #B48C50;
+  border-bottom: 1px solid #B48C50;
+  transform: rotate(45deg) translate(-1px, -2px);
+  transition: transform 0.25s ease;
+}
+.toc-mobile[open] .toc-mobile-chevron {
+  transform: rotate(-135deg) translate(-2px, -1px);
+}
+.toc-mobile-corpo {
+  padding: 0.35rem 1rem 0.9rem;
+  border-top: 1px solid rgba(180, 140, 80, 0.1);
+}
+/* dentro do bloco a lista não rola: ela É o conteúdo aberto */
+.toc-mobile .toc-list {
+  max-height: none;
+  overflow: visible;
+}
+
 /* âncora do sumário não pode parar embaixo da navbar fixa */
 .blog-content h2[id],
 .blog-content h3[id],
