@@ -146,32 +146,52 @@ function StickyTOC({ headings }) {
 
   if (headings.length < 3) return null;
 
+  // -1 (nenhuma seção passou ainda) cai no primeiro item, como antes
+  const iAtivo = Math.max(0, headings.findIndex((h) => h.id === activeId));
+
+  /* Qual nível conta como "seção" é relativo ao post, não fixo em h2: há post
+     no ar com um único h2 de abertura e dez h3, e tratar h3 como subseção
+     deixava dez itens recuados e sem número. Seção = o menor nível que aparece
+     ao menos duas vezes; o que vier abaixo dele é subseção. */
+  const porNivel = {};
+  headings.forEach((h) => {
+    const l = h.level || 2;
+    porNivel[l] = (porNivel[l] || 0) + 1;
+  });
+  const niveis = Object.keys(porNivel).map(Number).sort((a, b) => a - b);
+  const nivelSecao = niveis.find((l) => porNivel[l] >= 2) ?? niveis[0];
+
+  let n = 0;
+  const numeros = headings.map((h) => ((h.level || 2) <= nivelSecao ? (n += 1) : null));
+
+
   return (
-    <nav className="lg:sticky lg:top-28">
-      <p className="meta-caps-accent mb-4 pb-3 border-b border-accent/20">
-        Neste artigo
-      </p>
-      <ul className="space-y-1.5 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
-        {headings.map((h, i) => {
-          const active = activeId === h.id;
-          return (
-            <li key={i} style={{ paddingLeft: `${(h.level - 1) * 12}px` }}>
-              <a
-                href={`#${h.id}`}
-                className={`group flex items-start gap-2 text-[0.78rem] py-1 leading-snug transition-colors ${
-                  active ? 'text-accent' : 'text-text-dim hover:text-accent'
-                }`}
-              >
-                <span
-                  className={`mt-2 w-2 h-px transition-all flex-shrink-0 ${
-                    active ? 'w-4 bg-accent' : 'bg-border-hover group-hover:w-3 group-hover:bg-accent/60'
-                  }`}
-                />
-                <span className={active ? 'font-medium' : ''}>{h.text}</span>
-              </a>
-            </li>
-          );
-        })}
+    <nav className="lg:sticky lg:top-28" aria-label="Sumário do artigo">
+      <div className="flex items-baseline justify-between gap-3 mb-4 pb-3 border-b border-accent/20">
+        <p className="meta-caps-accent">Neste artigo</p>
+        <span className="toc-count" aria-hidden="true">
+          {String(iAtivo + 1).padStart(2, '0')}
+          <span className="toc-count-total">/{String(headings.length).padStart(2, '0')}</span>
+        </span>
+      </div>
+      <ul className="toc-list max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
+        {headings.map((h, i) => (
+          <li key={h.id || i}>
+            <a
+              href={`#${h.id}`}
+              className="toc-item"
+              data-active={i === iAtivo}
+              data-passed={i <= iAtivo}
+              data-level={(h.level || 2) <= nivelSecao ? 2 : 3}
+              aria-current={i === iAtivo ? 'true' : undefined}
+            >
+              {numeros[i] !== null && (
+                <span className="toc-num" aria-hidden="true">{String(numeros[i]).padStart(2, '0')}</span>
+              )}
+              <span className="toc-text">{h.text}</span>
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   );

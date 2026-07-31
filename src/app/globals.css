@@ -915,6 +915,115 @@ main:focus {
   color: #E8DDD0;
 }
 
+/* ====================== SUMÁRIO DO ENSAIO (StickyTOC) ====================== */
+/* Régua de leitura: um trilho vertical à esquerda que se preenche em dourado
+   até a seção onde o leitor está, com um losango marcando o ponto.
+   ⚠️ Cada <a> desenha o próprio segmento do trilho (border-left), e é isso que
+   torna a linha contínua sem medir nada em JS. Por isso os itens não podem
+   ganhar margin vertical (nada de space-y no <ul>): qualquer margem abre um
+   buraco visível no trilho. */
+
+.toc-list {
+  margin: 0;
+  list-style: none;
+  /* ⚠️ o <ul> rola (max-h + overflow-y), e overflow-y:auto obriga o eixo x a
+     recortar também: sem esta folga, a metade esquerda do losango é cortada e
+     ele vira uma seta. */
+  padding-left: 4px;
+}
+
+.toc-item {
+  position: relative;
+  /* flex, e não block, para a segunda linha de um título longo alinhar com a
+     primeira em vez de voltar para debaixo do número */
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  border-left: 1px solid rgba(180, 140, 80, 0.13);
+  padding: 0.5rem 0 0.5rem 1.15rem;
+  color: #8C8378;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  transition: color 0.25s ease, border-color 0.45s ease;
+}
+
+/* trecho do trilho já percorrido */
+.toc-item[data-passed='true'] {
+  border-left-color: rgba(180, 140, 80, 0.5);
+}
+
+/* losango sobre o trilho */
+.toc-item::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0.92rem;
+  width: 5px;
+  height: 5px;
+  background: rgba(180, 140, 80, 0.28);
+  transform: rotate(45deg);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.toc-item:hover::before {
+  background: #B48C50;
+}
+.toc-item[data-active='true']::before {
+  background: #D4A853;
+  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.15);
+  transform: rotate(45deg) scale(1.3);
+}
+
+.toc-num {
+  flex: 0 0 auto;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: rgba(180, 140, 80, 0.45);
+  transition: color 0.25s ease;
+}
+
+.toc-item:hover { color: #E8DDD0; }
+.toc-item:hover .toc-num { color: #B48C50; }
+.toc-item[data-active='true'] { color: #E8DDD0; }
+.toc-item[data-active='true'] .toc-num { color: #D4A853; }
+
+/* subseção: recua, perde o número e ganha um losango menor.
+   O recuo precisa passar de onde COMEÇA O TEXTO da seção (padding + largura do
+   número + gap ≈ 43px), e não do padding dela: com 2rem a subseção terminava à
+   esquerda da seção e a hierarquia aparecia invertida. */
+.toc-item[data-level='3'],
+.toc-item[data-level='4'] {
+  padding-left: 3.4rem;
+  font-size: 0.73rem;
+}
+.toc-item[data-level='3']::before,
+.toc-item[data-level='4']::before {
+  width: 4px;
+  height: 4px;
+  left: -2.5px;
+  top: 0.85rem;
+}
+
+.toc-count {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: #B48C50;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.toc-count-total { color: rgba(140, 131, 120, 0.7); }
+
+/* âncora do sumário não pode parar embaixo da navbar fixa */
+.blog-content h2[id],
+.blog-content h3[id],
+.blog-content h4[id] {
+  scroll-margin-top: 6rem;
+}
+/* o scroll suave do clique já vem do `html { scroll-behavior: smooth }` lá do
+   topo deste arquivo, que respeita prefers-reduced-motion. O que faltava era só
+   a margem acima: sem ela o título parava atrás da navbar fixa. */
+
 /* ====================== GLOSSARY TERM LINKS ====================== */
 /* Auto-links inseridos em build-time por src/lib/glossaryLinker.js (via
    BlogPostView) no corpo dos posts. Underline tracejado + cor accent.
