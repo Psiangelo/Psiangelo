@@ -936,6 +936,36 @@ main:focus {
   text-decoration-color: #B48C50;
 }
 
+/* Sinal de "isto abre um card": ? sobrescrito depois do termo.
+   O sublinhado tracejado sozinho não avisa nada em tela de toque, onde não
+   existe hover nem cursor:help — o leitor passava direto sem saber que dava
+   pra clicar. Pedido do Gabriel em 31/07/2026.
+   display:inline-block tira o ? do sublinhado do <a> (decoração de texto do
+   pai não atravessa filho inline-block), senão o tracejado passava por baixo. */
+.blog-content .term-link::after {
+  content: '?';
+  display: inline-block;
+  vertical-align: super;
+  font-family: var(--font-sans, ui-sans-serif, sans-serif);
+  font-size: 0.58em;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: 0.12em;
+  color: #B48C50;
+  opacity: 0.75;
+  transition: opacity 0.2s, color 0.2s;
+}
+@supports (content: 'a' / 'b') {
+  /* alt vazio: o leitor de tela anuncia "tipologia", não "tipologia ponto de
+     interrogação". Fora do @supports o ? apareceria como texto no fallback. */
+  .blog-content .term-link::after { content: '?' / ''; }
+}
+.blog-content .term-link:hover::after,
+.blog-content .term-link:focus-visible::after {
+  opacity: 1;
+  color: #E8DDD0;
+}
+
 /* Card de preview do verbete (src/components/blog/TermPreview.jsx).
    Singleton anexado ao <body>, position:fixed, clampado na viewport.
    Hover mostra como prévia rápida; clique firma (fica até Esc/fechar/fora). */

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   getGlossario, setGlossario,
@@ -37,6 +37,48 @@ function readJsonSafe(key, fallback) {
   } catch {
     return fallback;
   }
+}
+
+/**
+ * CommaListInput — campo de lista separada por vírgula (aliases, relacionados).
+ *
+ * ⚠️ NÃO voltar ao padrão `value={arr.join(', ')} onChange={split+trim+filter}`.
+ * Ele torna impossível digitar a vírgula: no instante em que ela é digitada,
+ * `split(',')` produz um item vazio no fim, `filter(Boolean)` o descarta, e o
+ * `join(', ')` reconstrói a string SEM a vírgula — o caractere some do campo no
+ * ato e o segundo item nunca começa. Bug relatado pelo Gabriel em 31/07/2026,
+ * nos três campos deste editor.
+ *
+ * Aqui o que o usuário digitou vive em estado local e é o que aparece na tela;
+ * o array só é derivado para o pai. Enquanto o campo está sendo editado, o
+ * valor de fora não sobrescreve o texto. O blur normaliza a exibição.
+ */
+function CommaListInput({ value, onChange, ...props }) {
+  const arr = Array.isArray(value) ? value : [];
+  const joined = arr.join(', ');
+  const [text, setText] = useState(joined);
+  const editando = useRef(false);
+
+  // ressincroniza ao trocar de verbete, mas nunca por cima de quem está digitando
+  useEffect(() => {
+    if (!editando.current) setText(joined);
+  }, [joined]);
+
+  return (
+    <input
+      {...props}
+      value={text}
+      onChange={(e) => {
+        editando.current = true;
+        setText(e.target.value);
+        onChange(e.target.value.split(',').map((s) => s.trim()).filter(Boolean));
+      }}
+      onBlur={() => {
+        editando.current = false;
+        setText(arr.join(', '));
+      }}
+    />
+  );
 }
 
 const EMPTY_LINK = () => ({ kind: 'url', value: '', label: '' });
@@ -196,9 +238,9 @@ function TermoEditor({ termo, categories, onChange, onCancel, onDelete, lists })
 
       <div>
         <label className={LABEL}>Aliases (separados por vírgula — para busca)</label>
-        <input
-          value={(draft.aliases || []).join(', ')}
-          onChange={(e) => update('aliases', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+        <CommaListInput
+          value={draft.aliases}
+          onChange={(v) => update('aliases', v)}
           placeholder="si-mesmo, si mesmo"
           className={INPUT}
         />
@@ -239,18 +281,18 @@ function TermoEditor({ termo, categories, onChange, onCancel, onDelete, lists })
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label className={LABEL}>Termos relacionados (slugs separados por vírgula)</label>
-          <input
-            value={(draft.related?.terms || []).join(', ')}
-            onChange={(e) => update('related', { ...(draft.related || {}), terms: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+          <CommaListInput
+            value={draft.related?.terms}
+            onChange={(v) => update('related', { ...(draft.related || {}), terms: v })}
             placeholder="ego, individuacao"
             className={INPUT + ' font-mono text-xs'}
           />
         </div>
         <div>
           <label className={LABEL}>Materiais relacionados (ids)</label>
-          <input
-            value={(draft.related?.materials || []).join(', ')}
-            onChange={(e) => update('related', { ...(draft.related || {}), materials: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+          <CommaListInput
+            value={draft.related?.materials}
+            onChange={(v) => update('related', { ...(draft.related || {}), materials: v })}
             placeholder="consciencia-complexo-ego"
             className={INPUT + ' font-mono text-xs'}
           />
