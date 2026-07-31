@@ -15,6 +15,13 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
+  /* /blog/<slug>/ é post; /blog/ e /blog/tag/<tag>/ não são. Só o post desenha
+     a própria barra de progresso de leitura. */
+  const ehPaginaDePost = (() => {
+    const partes = (pathname || '').split('/').filter(Boolean);
+    return partes[0] === 'blog' && partes.length === 2 && partes[1] !== 'tag';
+  })();
+
   useEffect(() => {
     // A versão anterior fazia setState em CADA evento de scroll e lia
     // scrollHeight junto, o que força recálculo de layout a cada quadro. Agora:
@@ -178,7 +185,13 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {scrolled && (
+      {/* Na página de um post esta barra fica de fora: o BlogPostView já
+          desenha a sua logo abaixo (ReadingProgressBar), e as duas juntas
+          apareciam como dois filetes dourados quase colados medindo coisas
+          diferentes — esta mede a rolagem da página inteira (que só chega a
+          100% depois do rodapé), a de lá mede o corpo do ensaio. Fica a do
+          ensaio, que é a que interessa a quem está lendo. */}
+      {scrolled && !ehPaginaDePost && (
         <motion.div
           className="absolute bottom-0 left-0 h-px bg-accent/40"
           style={{ width: `${scrollProgress * 100}%` }}
