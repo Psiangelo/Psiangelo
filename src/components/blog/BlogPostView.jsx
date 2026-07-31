@@ -14,7 +14,7 @@ import TermPreview from '@/components/blog/TermPreview';
 import BlogPostBody from '@/components/blog/BlogPostBody';
 import AuthorBox from '@/components/blog/AuthorBox';
 import { slugifyTag } from '@/lib/tagSlug';
-import { renderHighlightedTitle } from '@/lib/highlightTitle';
+import { renderHighlightedTitle, stripHighlights } from '@/lib/highlightTitle';
 import { linkGlossaryTerms } from '@/lib/glossaryLinker';
 import { getGlossario, getHomepage, DEFAULT_HOMEPAGE, SITEDATA_KEYS } from '@/lib/sitedata';
 import { useSitedata } from '@/lib/useSitedata';
@@ -50,6 +50,11 @@ function calculateReadingTime(html) {
 function stripHtmlToText(html) {
   if (!html) return '';
   return html
+    /* O <details> é o aparato do ensaio (referências, notas de edição). Ficava
+       na locução, e quem ouvia o post até o fim recebia "p. 31 — o homem como
+       quantité négligeable. p. 35 — o objeto que coloca as questões..." lido em
+       voz alta depois do último parágrafo. */
+    .replace(/<details[\s\S]*?<\/details>/gi, ' ')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>/gi, '.\n')
     .replace(/<\/h[1-6]>/gi, '.\n')
@@ -521,7 +526,7 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
       )}
 
       {/* Corpo do post + TOC sticky */}
-      <div className="px-5 sm:px-6 md:px-12 py-12 md:py-16">
+      <div className="reading-shell px-5 sm:px-6 md:px-12 py-12 md:py-16">
         <div className="max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-12 lg:gap-16">
           <motion.article
             ref={articleRef}
@@ -534,7 +539,9 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
 
             {plainText && plainText.length > 100 && (
               <div className="mb-8 flex items-center gap-3 flex-wrap" data-reading-hide="true">
-                <ListenButton text={plainText} title={post.title} />
+                {/* sem os asteriscos: eles marcam o destaque dourado do título
+                    e estavam indo para a locução como texto */}
+                <ListenButton text={plainText} title={stripHighlights(post.title)} />
                 <ReadingMode />
               </div>
             )}

@@ -37,6 +37,8 @@ import { useEffect, useRef } from 'react';
 export default function TermPreview({ articleRef, contentKey }) {
   const activeAnchorRef = useRef(null);
   const pinnedRef = useRef(false);
+  // marca o focusin que nós mesmos provocamos ao devolver o foco no fechamento
+  const fechandoRef = useRef(false);
 
   useEffect(() => {
     const root = articleRef?.current;
@@ -70,10 +72,19 @@ export default function TermPreview({ articleRef, contentKey }) {
       linkEl = null;
     }
 
+    /* ⚠️ Devolver o foco ao termo dispara `focusin`, e `focusin` mostra o card.
+       No desktop isso passava batido porque o clique do mouse já tinha deixado
+       o link focado, então o focus() não mudava nada. No celular o toque NÃO
+       foca o link: o focus() era uma mudança real, o focusin disparava e o card
+       reabria no mesmo quadro — o X parecia não funcionar (só "fechava" pelo
+       clique fora, que não devolve foco). A flag ignora esse focusin. */
     function hideAndReturnFocus() {
       const anchor = activeAnchorRef.current;
       hide();
-      if (anchor) anchor.focus();
+      if (!anchor) return;
+      fechandoRef.current = true;
+      anchor.focus();
+      setTimeout(() => { fechandoRef.current = false; }, 0);
     }
 
     function scheduleHide(delay = 150) {
@@ -124,9 +135,10 @@ export default function TermPreview({ articleRef, contentKey }) {
 
     function show(anchor, { pinned = false } = {}) {
       clearHideTimer();
-      // se já existe outro card firmado e essa chamada é só hover (não
-      // firmada), não atropela o que o usuário abriu de propósito
-      if (pinnedRef.current && !pinned && activeAnchorRef.current !== anchor) return;
+      // um card firmado nunca é rebaixado por hover/foco, nem no mesmo termo:
+      // com a checagem antiga, o Shift+Tab do botão fechar voltava ao termo e
+      // desfirmava o card que o usuário tinha aberto de propósito
+      if (pinnedRef.current && !pinned) return;
 
       const title = anchor.dataset.termTitle || anchor.textContent;
       const short = anchor.dataset.termShort || '';
@@ -193,6 +205,7 @@ export default function TermPreview({ articleRef, contentKey }) {
     function onRootFocusIn(e) {
       const anchor = termFrom(e);
       if (!anchor) return;
+      if (fechandoRef.current) return; // foco devolvido pelo fechamento: não reabrir
       // foco por teclado (Tab) chegando no termo: mostra como prévia, igual
       // ao hover — só firma de verdade se o usuário ativar (Enter -> click)
       show(anchor, { pinned: false });

@@ -257,7 +257,13 @@ body.reading-mode .blog-post-body {
   font-size: 1.1rem;
   line-height: 1.9;
 }
-body.reading-mode main > div:first-child {
+/* ⚠️ Isto já foi `main > div:first-child`, e o primeiro <div> do <main> não é o
+   conteúdo: é a barra de progresso de leitura (fixed, h-[2px], fundo
+   rgba(19,17,16,.4), z-400, pointer-events:none). Ela recebia os 48px de
+   padding e virava um retângulo fixo atravessando a tela inteira — a "faixa
+   eterna" logo abaixo do topo, que ninguém achava porque não responde a clique
+   e porque a classe do elemento diz h-[2px]. O alvo agora é explícito. */
+body.reading-mode .reading-shell {
   padding-top: 3rem;
 }
 body.reading-mode .whatsapp-button {

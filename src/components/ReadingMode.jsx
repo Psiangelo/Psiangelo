@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 /**
@@ -15,7 +16,11 @@ import { AnimatePresence, motion } from 'framer-motion';
  */
 export default function ReadingMode() {
   const [active, setActive] = useState(false);
+  const [montado, setMontado] = useState(false);
   const triggerRef = useRef(null);
+
+  // o botão de sair vai por portal para o <body>; ver o comentário lá embaixo
+  useEffect(() => setMontado(true), []);
 
   useEffect(() => {
     const body = document.body;
@@ -53,25 +58,35 @@ export default function ReadingMode() {
         <span>Modo leitura</span>
       </button>
 
-      <AnimatePresence>
-        {active && (
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            onClick={() => setActive(false)}
-            aria-label="Sair do modo leitura (ESC)"
-            title="ESC"
-            className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-5 z-[150] inline-flex items-center gap-2 px-5 py-3 bg-accent hover:bg-text-bright text-bg font-sans text-[0.68rem] font-semibold tracking-[0.2em] uppercase shadow-lg shadow-black/40 transition-colors focus-visible:outline-2 focus-visible:outline focus-visible:outline-text-bright focus-visible:outline-offset-2"
-            autoFocus
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 6l12 12M6 18L18 6" />
-            </svg>
-            Sair leitura
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* ⚠️ Portal obrigatório, não é preciosismo. Este componente é montado
+          dentro da barra de ações do post, que leva data-reading-hide="true" e
+          portanto vira `display:none` justamente quando o modo leitura liga.
+          Um elemento position:fixed dentro de um ancestral com display:none não
+          é renderizado, então o botão de sair sumia com o pai: no desktop dava
+          pra sair pelo ESC, mas no celular não havia ESC nem botão, e o único
+          jeito de sair era recarregar a página. */}
+      {montado && createPortal(
+        <AnimatePresence>
+          {active && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              onClick={() => setActive(false)}
+              aria-label="Sair do modo leitura (ESC)"
+              title="ESC"
+              className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-5 z-[150] inline-flex items-center gap-2 px-5 py-3 bg-accent hover:bg-text-bright text-bg font-sans text-[0.68rem] font-semibold tracking-[0.2em] uppercase shadow-lg shadow-black/40 transition-colors focus-visible:outline-2 focus-visible:outline focus-visible:outline-text-bright focus-visible:outline-offset-2"
+              autoFocus
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 6l12 12M6 18L18 6" />
+              </svg>
+              Sair leitura
+            </motion.button>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
   );
 }
