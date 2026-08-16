@@ -9,3 +9,6 @@ out/
 public/og/posts/
 public/og/posts-v/
 test-results/
+
+# cache do Python dos scripts locais
+scripts/__pycache__/

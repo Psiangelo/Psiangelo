@@ -40,7 +40,124 @@ const formatTime = (seconds) => {
   return `${m}:${String(s).padStart(2, '0')}`;
 };
 
-export default function ListenButton({ text, title, label = 'Ouvir' }) {
+export default function ListenButton({ text, title, label = 'Ouvir', audioSrc = null }) {
+  // Quando existe mp3 narrado com a voz dele (gerado por scripts/narrar_posts.py),
+  // ele ganha do speechSynthesis: voz real, posição real, seek real. O componente de
+  // voz sintética abaixo continua inteiro, como plano B para post sem áudio.
+  // ⚠️ Começa em `false` de propósito: o player da voz do navegador aparece IMEDIATAMENTE.
+  // Segurar a renderização até o fetch responder deixava a página sem botão nenhum
+  // sempre que a resposta demorasse ou o host não respondesse ao HEAD (foi assim que
+  // os 9 testes do player quebraram de uma vez).
+  const [temArquivo, setTemArquivo] = useState(false);
+
+  useEffect(() => {
+    if (!audioSrc) return undefined;
+    let vivo = true;
+    // HEAD é barato e não baixa o mp3; 404 aqui é o caso normal do post sem narração
+    fetch(audioSrc, { method: 'HEAD' })
+      .then((r) => { if (vivo && r.ok) setTemArquivo(true); })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, [audioSrc]);
+
+  if (temArquivo) return <AudioPlayer src={audioSrc} label={label} />;
+  return <SpeechPlayer text={text} title={title} label={label} />;
+}
+
+/** Player do mp3 narrado: o <audio> nativo já dá tempo e busca de verdade. */
+function AudioPlayer({ src, label }) {
+  const ref = useRef(null);
+  const [tocando, setTocando] = useState(false);
+  const [pos, setPos] = useState(0);
+  const [dur, setDur] = useState(0);
+  const [rate, setRate] = useState(1);
+
+  useEffect(() => {
+    try {
+      const saved = parseFloat(window.localStorage.getItem(RATE_STORAGE_KEY));
+      if (SPEEDS.includes(saved)) setRate(saved);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (ref.current) ref.current.playbackRate = rate;
+  }, [rate]);
+
+  const toggle = () => {
+    const a = ref.current;
+    if (!a) return;
+    if (a.paused) { a.play(); setTocando(true); } else { a.pause(); setTocando(false); }
+  };
+
+  const skip = (segundos) => {
+    const a = ref.current;
+    if (a) a.currentTime = Math.max(0, Math.min(a.currentTime + segundos, a.duration || 0));
+  };
+
+  const trocaVelocidade = () => {
+    const next = SPEEDS[(SPEEDS.indexOf(rate) + 1) % SPEEDS.length];
+    setRate(next);
+    try { window.localStorage.setItem(RATE_STORAGE_KEY, String(next)); } catch {}
+  };
+
+  return (
+    <div className="w-full max-w-xl border border-accent/40 bg-accent/[0.04] px-4 py-3">
+      <audio
+        ref={ref}
+        src={src}
+        preload="metadata"
+        onLoadedMetadata={(e) => setDur(e.currentTarget.duration || 0)}
+        onTimeUpdate={(e) => setPos(e.currentTarget.currentTime)}
+        onEnded={() => setTocando(false)}
+      />
+      <div className="flex items-center gap-2">
+        <button onClick={() => skip(-SKIP_SECONDS)} aria-label={`Voltar ${SKIP_SECONDS} segundos`}
+          className="p-2 text-text-dim hover:text-accent transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M11 5 4 12l7 7" /><path d="M20 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <button onClick={toggle} aria-label={tocando ? 'Pausar' : `${label} com a voz do autor`}
+          className="flex items-center justify-center w-11 h-11 border border-accent text-accent bg-accent/10 hover:bg-accent/20 transition-colors">
+          {tocando ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+          )}
+        </button>
+        <button onClick={() => skip(SKIP_SECONDS)} aria-label={`Avançar ${SKIP_SECONDS} segundos`}
+          className="p-2 text-text-dim hover:text-accent transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M13 5l7 7-7 7" /><path d="M4 5l7 7-7 7" />
+          </svg>
+        </button>
+        <span className="ml-1 font-mono text-[0.6rem] tracking-[0.12em] text-text-dim tabular-nums">
+          {formatTime(pos)} / {formatTime(dur)}
+        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="font-mono text-[0.55rem] tracking-[0.18em] uppercase text-accent/70">voz do autor</span>
+          <button onClick={trocaVelocidade} aria-label={`Velocidade ${rate}x`}
+            className="min-w-[3rem] px-2 py-2.5 border border-border-subtle text-text-dim hover:text-accent hover:border-accent/50 font-mono text-[0.62rem] tracking-[0.12em] transition-colors tabular-nums">
+            {rate}x
+          </button>
+        </div>
+      </div>
+      <div className="relative mt-3 h-6 flex items-center">
+        <div className="absolute left-0 right-0 h-[3px] bg-border-subtle/60" />
+        <div className="absolute left-0 h-[3px] bg-accent pointer-events-none"
+          style={{ width: `${dur ? (pos / dur) * 100 : 0}%` }} />
+        <input
+          type="range" min={0} max={Math.max(dur, 0.1)} step={0.1} value={pos}
+          onChange={(e) => { const v = Number(e.target.value); setPos(v); if (ref.current) ref.current.currentTime = v; }}
+          aria-label="Posição da narração"
+          className="listen-seek absolute left-0 right-0 w-full appearance-none bg-transparent cursor-pointer"
+        />
+      </div>
+    </div>
+  );
+}
+
+function SpeechPlayer({ text, title, label = 'Ouvir' }) {
   const [state, setState] = useState('idle'); // idle | playing | paused
   const [supported, setSupported] = useState(false);
   const [rate, setRate] = useState(1);

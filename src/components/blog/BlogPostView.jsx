@@ -541,7 +541,11 @@ export default function BlogPostView({ post, allPosts, seriesList, visibility })
               <div className="mb-8 flex items-center gap-3 flex-wrap" data-reading-hide="true">
                 {/* sem os asteriscos: eles marcam o destaque dourado do título
                     e estavam indo para a locução como texto */}
-                <ListenButton text={plainText} title={stripHighlights(post.title)} />
+                <ListenButton
+                  text={plainText}
+                  title={stripHighlights(post.title)}
+                  audioSrc={post.slug ? `${BASE_PATH}/audio/${post.slug}.mp3` : null}
+                />
                 <ReadingMode />
               </div>
             )}
